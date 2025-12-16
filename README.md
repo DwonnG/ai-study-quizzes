@@ -16,11 +16,11 @@ Interactive study quizzes I built using AI when my 4th grader had **5 exams in o
 
 ## 🎯 Live Demos
 
-- [Grammar Quiz](./grammar_quiz.html) - Irregular verbs, homophones, plurals
-- [Fractions Quiz](./fractions_quiz.html) - Spanish immersion math
-- [Science Quiz](./science_sound_light_quiz.html) - Sound & Light (Spanish)
-- [Social Studies Quiz](./social_studies_quiz.html) - Bill of Rights, 3 Branches
-- [Daily Brain Boost](./daily_brain_boost.html) - Multiplication + Vocabulary
+- 📝 [Grammar Quiz](https://dwonng.github.io/ai-study-quizzes/grammar_quiz.html) - Irregular verbs, homophones, plurals
+- 🔢 [Fractions Quiz](https://dwonng.github.io/ai-study-quizzes/fractions_quiz.html) - Spanish immersion math
+- 🔬 [Science Quiz](https://dwonng.github.io/ai-study-quizzes/science_sound_light_quiz.html) - Sound & Light (Spanish)
+- 🏛️ [Social Studies Quiz](https://dwonng.github.io/ai-study-quizzes/social_studies_quiz.html) - Bill of Rights, 3 Branches
+- 🧠 [Daily Brain Boost](https://dwonng.github.io/ai-study-quizzes/daily_brain_boost.html) - Multiplication + Vocabulary
 
 ---
 
@@ -57,7 +57,7 @@ These quizzes helped them study faster and actually enjoy it!
 ## 🚀 How to Use
 
 ### Option 1: Use Live Links (Easiest)
-Just click the demo links above if viewing on GitHub Pages!
+Just click any quiz link above and they work instantly in your browser!
 
 ### Option 2: Download & Open Locally
 1. **Download** the `.html` file you want (click file → Download)
