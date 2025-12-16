@@ -2,6 +2,16 @@
 
 Interactive study quizzes I built using AI when my 4th grader had **5 exams in one week**!
 
+![Quiz Results](./images/results-screen.png)
+
+---
+
+## 📸 Screenshots
+
+| Flashcards | Quiz Question | Translation |
+|------------|---------------|---------|
+| ![Flashcards](./images/flashcards.png) | ![Quiz](./images/quiz-question.png) | ![Results](./images/spanish_translation.png) |
+
 ---
 
 ## 🎯 Live Demos
