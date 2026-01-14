@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧮 Fracciones Quiz - Unidad 4a</title>
+    <style>
+        :root {
+            --primary: #2196F3;
+            --secondary: #FF9800;
+            --accent: #4CAF50;
+            --success: #4CAF50;
+            --danger: #f44336;
+            --warning: #ff9800;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a237e 0%, #283593 50%, #3949ab 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        header {
+            text-align: center;
+            padding: 25px 20px;
+            background: linear-gradient(135deg, rgba(33,150,243,0.3), rgba(255,152,0,0.3));
+            border-radius: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #64B5F6, #FFB74D, #81C784);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle { font-size: 1em; opacity: 0.9; }
+        
+        /* START SCREEN */
+        .start-screen {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        .start-screen h2 { color: #1a237e; margin-bottom: 10px; }
+        .start-screen p { color: #666; margin-bottom: 20px; }
+        
+        .vocab-section { margin: 25px 0; text-align: left; }
+        .vocab-section h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.3em;
+        }
+        
+        .vocab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        
+        .vocab-card {
+            background: linear-gradient(135deg, #f5f5f5, #eeeeee);
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border: 2px solid transparent;
+            position: relative;
+        }
+        
+        .vocab-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        
+        .vocab-card .front, .vocab-card .back {
+            backface-visibility: hidden;
+            transition: transform 0.5s;
+        }
+        
+        .vocab-card .back {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            transform: rotateY(180deg);
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border-radius: 10px;
+        }
+        
+        .vocab-card.flipped .front { transform: rotateY(180deg); }
+        .vocab-card.flipped .back { transform: rotateY(0deg); }
+        
+        .vocab-card .term { font-weight: bold; color: #333; font-size: 1em; margin-bottom: 5px; }
+        .vocab-card .tap-hint { font-size: 0.75em; color: #999; margin-top: 5px; }
+        .vocab-card .definition { font-size: 0.9em; color: #555; line-height: 1.4; }
+        .vocab-card .example { font-size: 0.8em; color: #1565c0; font-style: italic; margin-top: 8px; }
+        
+        .vocab-card.adding { border-color: #2196F3; }
+        .vocab-card.comparing { border-color: #FF9800; }
+        .vocab-card.equivalent { border-color: #4CAF50; }
+        .vocab-card.decomposing { border-color: #9C27B0; }
+        .vocab-card.mixed { border-color: #E91E63; }
+        
+        .category-label {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.7em;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 8px;
+        }
+        
+        .category-label.adding { background: linear-gradient(135deg, #2196F3, #1976D2); }
+        .category-label.comparing { background: linear-gradient(135deg, #FF9800, #F57C00); }
+        .category-label.equivalent { background: linear-gradient(135deg, #4CAF50, #388E3C); }
+        .category-label.decomposing { background: linear-gradient(135deg, #9C27B0, #7B1FA2); }
+        .category-label.mixed { background: linear-gradient(135deg, #E91E63, #C2185B); }
+        
+        .btn-start {
+            background: linear-gradient(135deg, #2196F3, #FF9800);
+            color: white;
+            padding: 18px 50px;
+            font-size: 1.3em;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .btn-start:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(33, 150, 243, 0.4);
+        }
+        
+        .quiz-content { display: none; }
+        .quiz-content.active { display: block; }
+        
+        .shuffle-notice {
+            background: linear-gradient(135deg, rgba(76,175,80,0.3), rgba(139,195,74,0.3));
+            border: 1px solid rgba(76,175,80,0.5);
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        
+        .shuffle-notice span { color: #8BC34A; font-weight: bold; }
+        
+        .score-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.12);
+            padding: 12px 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            font-size: 1em;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .score-bar span { display: flex; align-items: center; gap: 6px; }
+        
+        .timer-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.08);
+            padding: 10px 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+        
+        .question-timer { display: flex; align-items: center; gap: 8px; font-size: 1.1em; font-weight: bold; }
+        
+        .timer-circle {
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            background: conic-gradient(#2196F3 var(--timer-progress, 100%), rgba(255,255,255,0.2) 0%);
+            position: relative;
+        }
+        
+        .timer-circle::before {
+            content: '';
+            position: absolute;
+            width: 36px; height: 36px;
+            background: #1a237e;
+            border-radius: 50%;
+        }
+        
+        .timer-circle span { position: relative; z-index: 1; }
+        .timer-circle.warning { background: conic-gradient(var(--warning) var(--timer-progress, 100%), rgba(255,255,255,0.2) 0%); }
+        .timer-circle.danger { background: conic-gradient(var(--danger) var(--timer-progress, 100%), rgba(255,255,255,0.2) 0%); animation: pulse 0.5s infinite; }
+        
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        
+        .timer-progress-bar { flex: 1; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; overflow: hidden; }
+        .timer-progress-fill { height: 100%; background: linear-gradient(90deg, #2196F3, #FF9800); border-radius: 3px; transition: width 1s linear; width: 100%; }
+        .timer-progress-fill.warning { background: linear-gradient(90deg, var(--warning), #ffc107); }
+        .timer-progress-fill.danger { background: linear-gradient(90deg, var(--danger), #FF9800); }
+        
+        .total-timer { display: flex; align-items: center; gap: 6px; font-size: 1em; opacity: 0.9; }
+        
+        .progress-container { width: 100%; height: 8px; background: rgba(255,255,255,0.2); border-radius: 8px; margin-bottom: 20px; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, #2196F3, #FF9800); border-radius: 8px; transition: width 0.5s ease; width: 0%; }
+        
+        .question-card {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            display: none;
+            animation: slideIn 0.4s ease;
+        }
+        
+        .question-card.active { display: block; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .question-number {
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            display: inline-block;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+        
+        .question-number.adding { background: linear-gradient(135deg, #2196F3, #1976D2); }
+        .question-number.comparing { background: linear-gradient(135deg, #FF9800, #F57C00); }
+        .question-number.equivalent { background: linear-gradient(135deg, #4CAF50, #388E3C); }
+        .question-number.decomposing { background: linear-gradient(135deg, #9C27B0, #7B1FA2); }
+        .question-number.mixed { background: linear-gradient(135deg, #E91E63, #C2185B); }
+        
+        .question-text { font-size: 1.2em; margin-bottom: 20px; line-height: 1.6; color: #222; }
+        
+        .fraction {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            margin: 0 4px;
+            font-size: 0.9em;
+        }
+        
+        .fraction .num { border-bottom: 2px solid #333; padding: 0 4px; }
+        .fraction .den { padding: 0 4px; }
+        
+        .mixed-number {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        .mixed-number .whole { font-size: 1.1em; }
+        
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        
+        .option {
+            padding: 15px 18px;
+            background: #f5f5f5;
+            border: 3px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.05em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .option:hover:not(.disabled) { background: #e3f2fd; border-color: #2196F3; transform: translateX(5px); }
+        .option.correct { background: #c8e6c9 !important; border-color: var(--success) !important; }
+        .option.incorrect { background: #ffcdd2 !important; border-color: var(--danger) !important; }
+        .option.disabled { cursor: not-allowed; opacity: 0.7; }
+        
+        .option-letter {
+            width: 32px; height: 32px;
+            background: #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .option.correct .option-letter { background: var(--success); color: white; }
+        .option.incorrect .option-letter { background: var(--danger); color: white; }
+        
+        .feedback { margin-top: 18px; padding: 18px; border-radius: 12px; display: none; animation: fadeIn 0.3s ease; }
+        .feedback.show { display: block; }
+        .feedback.correct { background: linear-gradient(135deg, #c8e6c9, #a5d6a7); color: #1b5e20; }
+        .feedback.incorrect { background: linear-gradient(135deg, #ffcdd2, #ef9a9a); color: #b71c1c; }
+        .feedback.timeout { background: linear-gradient(135deg, #fff3e0, #ffe0b2); color: #e65100; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .btn { padding: 14px 30px; font-size: 1.05em; border: none; border-radius: 25px; cursor: pointer; transition: all 0.3s ease; font-weight: bold; margin-top: 15px; }
+        .btn-next { background: linear-gradient(135deg, #2196F3, #FF9800); color: white; display: none; }
+        .btn-next.show { display: inline-block; }
+        .btn-next:hover { transform: scale(1.05); box-shadow: 0 5px 20px rgba(33, 150, 243, 0.4); }
+        .btn-restart { background: linear-gradient(135deg, #4CAF50, #388E3C); color: white; }
+        .btn-restart:hover { transform: scale(1.05); }
+        
+        .results { text-align: center; display: none; }
+        .results.show { display: block; }
+        
+        .results-card {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        .final-score {
+            font-size: 3.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #2196F3, #FF9800);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .grade { font-size: 1.8em; margin: 15px 0; }
+        .emoji-result { font-size: 3.5em; margin: 15px 0; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0; }
+        .stat-box { background: #f5f5f5; padding: 12px; border-radius: 10px; }
+        .stat-box .stat-value { font-size: 1.6em; font-weight: bold; color: #2196F3; }
+        .stat-box .stat-label { font-size: 0.85em; color: #666; }
+        
+        /* Review Section */
+        .review-section { margin: 25px 0; text-align: left; }
+        .review-section h3 { color: var(--danger); margin-bottom: 15px; text-align: center; font-size: 1.1em; }
+        .review-section.perfect h3 { color: var(--success); }
+        .review-topics { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        
+        .review-topic {
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .review-topic.adding { background: linear-gradient(135deg, #2196F3, #1976D2); }
+        .review-topic.comparing { background: linear-gradient(135deg, #FF9800, #F57C00); }
+        .review-topic.equivalent { background: linear-gradient(135deg, #4CAF50, #388E3C); }
+        .review-topic.decomposing { background: linear-gradient(135deg, #9C27B0, #7B1FA2); }
+        .review-topic.mixed { background: linear-gradient(135deg, #E91E63, #C2185B); }
+        
+        .review-topic .miss-count { background: rgba(255,255,255,0.3); padding: 2px 8px; border-radius: 10px; font-size: 0.85em; }
+        .perfect-badge { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, var(--success), #8BC34A); color: white; padding: 12px 24px; border-radius: 25px; font-size: 1.1em; font-weight: bold; }
+        
+        .category-breakdown { margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 12px; }
+        .category-breakdown h4 { margin-bottom: 12px; color: #333; font-size: 1em; }
+        .breakdown-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+        .breakdown-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: white; border-radius: 8px; font-size: 0.85em; }
+        .breakdown-item .cat-name { font-weight: 500; color: #555; }
+        .breakdown-item .cat-score { font-weight: bold; padding: 2px 8px; border-radius: 10px; }
+        .breakdown-item .cat-score.perfect { background: #c8e6c9; color: #2e7d32; }
+        .breakdown-item .cat-score.good { background: #fff3e0; color: #e65100; }
+        .breakdown-item .cat-score.needs-work { background: #ffcdd2; color: #c62828; }
+        
+        .translation { font-size: 0.85em; color: #666; font-style: italic; margin-top: 5px; }
+        
+        /* HOVER TRANSLATIONS */
+        .translate {
+            text-decoration: underline;
+            text-decoration-style: dotted;
+            text-decoration-color: #2196F3;
+            cursor: help;
+            position: relative;
+        }
+        
+        .translate:hover::after {
+            content: attr(data-en);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #1a237e, #283593);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            white-space: nowrap;
+            z-index: 100;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+            font-style: normal;
+            text-decoration: none;
+        }
+        
+        .translate:hover::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(8px);
+            border: 6px solid transparent;
+            border-top-color: #1a237e;
+            z-index: 100;
+        }
+        
+        /* Show all translations toggle */
+        .show-translations .translate::after {
+            position: relative;
+            display: inline;
+            bottom: auto;
+            left: auto;
+            transform: none;
+            background: none;
+            color: #1565c0;
+            padding: 0;
+            box-shadow: none;
+            font-size: 0.85em;
+            content: " (" attr(data-en) ")";
+        }
+        
+        .show-translations .translate::before {
+            display: none;
+        }
+        
+        .show-translations .translate {
+            text-decoration: none;
+        }
+        
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(33, 150, 243, 0.1);
+            border-radius: 10px;
+        }
+        
+        .toggle-label {
+            font-size: 0.95em;
+            color: #333;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: #ccc;
+            border-radius: 13px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .toggle-switch.active {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+        }
+        
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .toggle-switch.active::after {
+            transform: translateX(24px);
+        }
+        
+        @media (max-width: 600px) {
+            .score-bar, .timer-bar { flex-direction: column; text-align: center; }
+            .stats-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 1.6em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧮 Fracciones Quiz</h1>
+            <p class="subtitle">Unidad 4a: Investigando Fracciones • Unit 4a: Investigating Fractions</p>
+        </header>
+        
+        <!-- START SCREEN -->
+        <div class="start-screen" id="start-screen">
+            <h2>📖 ¡Repasa el Vocabulario Primero!</h2>
+            <p>Toca cada tarjeta para ver la definición. • Tap each card to see the definition.</p>
+            
+            <div class="vocab-section">
+                <h3>🎯 Términos Clave / Key Terms</h3>
+                <div class="vocab-grid">
+                    <div class="vocab-card adding" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label adding">SUMAR/RESTAR</span>
+                                <div class="term">Denominador Común</div>
+                                <div class="tap-hint">👆 toca para voltear</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">When fractions have the SAME bottom number, you can add/subtract them directly.</div>
+                            <div class="example">³⁄₈ + ¹⁄₈ = ⁴⁄₈ (same denominator: 8)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="vocab-card adding" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label adding">SUMAR/RESTAR</span>
+                                <div class="term">Numerador / Denominador</div>
+                                <div class="tap-hint">👆 toca para voltear</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition"><strong>Numerador</strong> = top number (parts you have)<br><strong>Denominador</strong> = bottom number (total parts)</div>
+                            <div class="example">In ³⁄₈: 3 is numerator, 8 is denominator</div>
+                        </div>
+                    </div>
+                    
+                    <div class="vocab-card comparing" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label comparing">COMPARAR</span>
+                                <div class="term">Comparar Fracciones</div>
+                                <div class="tap-hint">👆 toca para voltear</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">Use &lt;, &gt;, or = to compare. Make denominators the same first!</div>
+                            <div class="example">²⁄₅ = ⁴⁄₁₀ (multiply by 2/2)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="vocab-card equivalent" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label equivalent">EQUIVALENTE</span>
+                                <div class="term">Fracciones Equivalentes</div>
+                                <div class="tap-hint">👆 toca para voltear</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">Fractions that represent the SAME amount. Multiply or divide top AND bottom by same number.</div>
+                            <div class="example">²⁄₃ = ⁴⁄₆ = ⁶⁄₉ (all equal!)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="vocab-card equivalent" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label equivalent">EQUIVALENTE</span>
+                                <div class="term">Simplificar / Reducir</div>
+                                <div class="tap-hint">👆 toca para voltear</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">Divide top and bottom by the same number to get a simpler equivalent fraction.</div>
+                            <div class="example">⁶⁄₁₀ ÷ ²⁄₂ = ³⁄₅</div>
+                        </div>
+                    </div>
+                    
+                    <div class="vocab-card mixed" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label mixed">NÚMEROS MIXTOS</span>
+                                <div class="term">Número Mixto</div>
+                                <div class="tap-hint">👆 toca para voltear</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">A whole number AND a fraction together.</div>
+                            <div class="example">2³⁄₄ = 2 + ³⁄₄ (two and three-fourths)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="vocab-card decomposing" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label decomposing">DESCOMPONER</span>
+                                <div class="term">Fracciones Unitarias</div>
+                                <div class="tap-hint">👆 toca para voltear</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">A fraction with 1 as the numerator. Any fraction is a sum of unit fractions!</div>
+                            <div class="example">³⁄₄ = ¹⁄₄ + ¹⁄₄ + ¹⁄₄</div>
+                        </div>
+                    </div>
+                    
+                    <div class="vocab-card decomposing" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label decomposing">DESCOMPONER</span>
+                                <div class="term">Suma de Fracciones</div>
+                                <div class="tap-hint">👆 toca para voltear</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">Write a fraction as a sum of smaller fractions with the same denominator.</div>
+                            <div class="example">⁸⁄₁₀ = ⁵⁄₁₀ + ³⁄₁₀ OR ¹⁄₁₀+¹⁄₁₀+...8 times</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-start" onclick="startQuiz()">🚀 ¡Comenzar Quiz!</button>
+        </div>
+        
+        <!-- QUIZ CONTENT -->
+        <div class="quiz-content" id="quiz-content">
+        
+        <div class="shuffle-notice">
+            🔀 <span>¡Las preguntas Y respuestas cambian cada vez!</span><br>
+            ✅ <span>5 temas garantizados:</span> Sumar/Restar • Comparar • Equivalentes • Descomponer • Números Mixtos
+        </div>
+        
+        <div class="toggle-container">
+            <span class="toggle-label">🇺🇸 Show English Translations</span>
+            <div class="toggle-switch" id="translation-toggle" onclick="toggleTranslations()"></div>
+        </div>
+        
+        <div class="score-bar">
+            <span>📊 Puntos: <strong id="current-score">0</strong></span>
+            <span>❓ Pregunta: <strong id="question-num">1</strong> / <strong id="total-questions">15</strong></span>
+            <span>🔥 Racha: <strong id="streak">0</strong></span>
+        </div>
+        
+        <div class="timer-bar">
+            <div class="question-timer">
+                <div class="timer-circle" id="timer-circle">
+                    <span id="question-time">30</span>
+                </div>
+                <span>seg</span>
+            </div>
+            <div class="timer-progress-bar">
+                <div class="timer-progress-fill" id="timer-progress"></div>
+            </div>
+            <div class="total-timer">
+                <span>⏱️</span>
+                <strong id="total-time">0:00</strong>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container"></div>
+        
+        </div>
+        
+        <div class="results" id="results">
+            <div class="results-card">
+                <div class="emoji-result" id="result-emoji">🎉</div>
+                <h2>Quiz Complete!</h2>
+                <div class="final-score" id="final-score">0%</div>
+                <div class="grade" id="grade"></div>
+                
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-value" id="stat-correct">0</div>
+                        <div class="stat-label">Correct</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="stat-time">0:00</div>
+                        <div class="stat-label">Time</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="stat-avg">0s</div>
+                        <div class="stat-label">Avg/Question</div>
+                    </div>
+                </div>
+                
+                <p id="result-message"></p>
+                
+                <div class="review-section" id="review-section"></div>
+                <div class="category-breakdown" id="category-breakdown"></div>
+                
+                <button class="btn btn-restart" onclick="restartQuiz()">🔄 Try Again</button>
+                <button class="btn btn-restart" onclick="reviewVocab()" style="background: linear-gradient(135deg, #009688, #00796b); margin-left: 10px;">📖 Review Vocabulary</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const allQuestions = [
+            // ===== ADDING/SUBTRACTING FRACTIONS =====
+            {
+                category: "Sumar y Restar",
+                categoryClass: "adding",
+                question: "Tres <span class='translate' data-en='friends'>amigos</span> <span class='translate' data-en='painted'>pintaron</span> una <span class='translate' data-en='fence'>cerca</span>. Aziel pintó <span class='fraction'><span class='num'>3</span><span class='den'>8</span></span> y Eddie pintó <span class='fraction'><span class='num'>1</span><span class='den'>8</span></span>. ¿Qué <span class='translate' data-en='fraction'>fracción</span> pintó Caleb (<span class='translate' data-en='the rest'>el resto</span>)?",
+                options: ["4/8", "3/8", "2/8", "5/8"],
+                correctAnswer: "4/8",
+                explanation: "3/8 + 1/8 = 4/8 painted. Subtract: 8/8 - 4/8 = 4/8 for Caleb."
+            },
+            {
+                category: "Sumar y Restar",
+                categoryClass: "adding",
+                question: "Reagan <span class='translate' data-en='needs'>necesita</span> <span class='translate' data-en='chocolate chips'>chispas de chocolate</span>: <span class='fraction'><span class='num'>5</span><span class='den'>6</span></span> + <span class='fraction'><span class='num'>2</span><span class='den'>6</span></span> + <span class='fraction'><span class='num'>3</span><span class='den'>6</span></span> <span class='translate' data-en='cups'>tazas</span>. ¿<span class='translate' data-en='How many'>Cuántas</span> tazas <span class='translate' data-en='in total'>en total</span>?",
+                options: ["10/6", "8/6", "9/6", "11/6"],
+                correctAnswer: "10/6",
+                explanation: "5/6 + 2/6 + 3/6 = 10/6 (or 1 4/6). Add the numerators when denominators are the same!"
+            },
+            {
+                category: "Sumar y Restar",
+                categoryClass: "adding",
+                question: "Chloe <span class='translate' data-en='baked'>horneó</span> 8 <span class='translate' data-en='cakes'>pasteles</span>. <span class='translate' data-en='Left over'>Sobraron</span> 2<span class='fraction'><span class='num'>2</span><span class='den'>6</span></span>. ¿Cuántos <span class='translate' data-en='were eaten'>se comieron</span>?",
+                options: ["5 4/6", "6 2/6", "5 2/6", "4 4/6"],
+                correctAnswer: "5 4/6",
+                explanation: "8 - 2 2/6 = 5 4/6 cakes were eaten."
+            },
+            {
+                category: "Sumar y Restar",
+                categoryClass: "adding",
+                question: "Kaylee horneó 4<span class='fraction'><span class='num'>3</span><span class='den'>5</span></span> <span class='translate' data-en='pounds'>libras</span> de <span class='translate' data-en='cookies'>galletas</span> y <span class='translate' data-en='gave'>dio</span> 2<span class='fraction'><span class='num'>2</span><span class='den'>5</span></span> libras. ¿Cuántas <span class='translate' data-en='does she have left'>le quedan</span>?",
+                options: ["2 1/5", "2 3/5", "1 1/5", "3 1/5"],
+                correctAnswer: "2 1/5",
+                explanation: "4 3/5 - 2 2/5 = 2 1/5 pounds. Subtract: (4-2) = 2 and (3/5 - 2/5) = 1/5"
+            },
+            {
+                category: "Sumar y Restar",
+                categoryClass: "adding",
+                question: "Mavis <span class='translate' data-en='has'>tiene</span> 1<span class='fraction'><span class='num'>3</span><span class='den'>4</span></span> tazas de <span class='translate' data-en='nuts'>nueces</span> y 3<span class='fraction'><span class='num'>2</span><span class='den'>4</span></span> tazas de <span class='translate' data-en='raisins'>pasas</span>. ¿Cuántas tazas de <span class='translate' data-en='trail mix'>mezcla</span> en total?",
+                options: ["5 1/4", "4 5/4", "4 1/4", "5 2/4"],
+                correctAnswer: "5 1/4",
+                explanation: "1 3/4 + 3 2/4 = 4 5/4 = 5 1/4 cups. (1+3=4, 3/4+2/4=5/4=1 1/4, total: 5 1/4)"
+            },
+            {
+                category: "Sumar y Restar",
+                categoryClass: "adding",
+                question: "¿<span class='translate' data-en='What is'>Cuál es</span> <span class='fraction'><span class='num'>7</span><span class='den'>10</span></span> + <span class='fraction'><span class='num'>2</span><span class='den'>10</span></span>?",
+                options: ["9/10", "5/10", "9/20", "7/10"],
+                correctAnswer: "9/10",
+                explanation: "7/10 + 2/10 = 9/10. When denominators match, just add the numerators!"
+            },
+            {
+                category: "Sumar y Restar",
+                categoryClass: "adding",
+                question: "¿Cuál es <span class='fraction'><span class='num'>11</span><span class='den'>12</span></span> - <span class='fraction'><span class='num'>5</span><span class='den'>12</span></span>?",
+                options: ["6/12", "16/12", "6/24", "5/12"],
+                correctAnswer: "6/12",
+                explanation: "11/12 - 5/12 = 6/12 (= 1/2). Subtract numerators when denominators are the same."
+            },
+            {
+                category: "Sumar y Restar",
+                categoryClass: "adding",
+                question: "3<span class='fraction'><span class='num'>2</span><span class='den'>8</span></span> + 2<span class='fraction'><span class='num'>4</span><span class='den'>8</span></span> = ?",
+                options: ["5 6/8", "5 2/8", "6 6/8", "5 6/16"],
+                correctAnswer: "5 6/8",
+                explanation: "3 + 2 = 5, and 2/8 + 4/8 = 6/8. Total: 5 6/8"
+            },
+            
+            // ===== COMPARING FRACTIONS =====
+            {
+                category: "Comparar Fracciones",
+                categoryClass: "comparing",
+                question: "Isabela <span class='translate' data-en='lives'>vive</span> <span class='fraction'><span class='num'>2</span><span class='den'>5</span></span> <span class='translate' data-en='mile'>milla</span> del <span class='translate' data-en='park'>parque</span>. Oliver vive <span class='fraction'><span class='num'>4</span><span class='den'>10</span></span> milla. ¿Cuál <span class='translate' data-en='symbol'>símbolo</span> es <span class='translate' data-en='correct'>correcto</span>?",
+                options: ["2/5 = 4/10", "2/5 > 4/10", "2/5 < 4/10", "Cannot compare"],
+                correctAnswer: "2/5 = 4/10",
+                explanation: "2/5 = 4/10 because 2/5 × 2/2 = 4/10. They're equivalent! Same distance."
+            },
+            {
+                category: "Comparar Fracciones",
+                categoryClass: "comparing",
+                question: "¿Cuál <span class='translate' data-en='comparison'>comparación</span> es <span class='translate' data-en='TRUE'>VERDADERA</span>?",
+                options: ["3/4 > 5/8", "1/5 > 1/4", "3/6 > 9/12", "3/8 > 5/4"],
+                correctAnswer: "3/4 > 5/8",
+                explanation: "3/4 = 6/8, and 6/8 > 5/8. Convert to common denominators to compare!"
+            },
+            {
+                category: "Comparar Fracciones",
+                categoryClass: "comparing",
+                question: "<span class='translate' data-en='Select'>Selecciona</span> la fracción <span class='translate' data-en='LARGER'>MAYOR</span>: <span class='fraction'><span class='num'>2</span><span class='den'>3</span></span> o <span class='fraction'><span class='num'>3</span><span class='den'>5</span></span>?",
+                options: ["2/3", "3/5", "Son iguales", "No se puede comparar"],
+                correctAnswer: "2/3",
+                explanation: "2/3 = 10/15 and 3/5 = 9/15. Since 10/15 > 9/15, then 2/3 > 3/5"
+            },
+            {
+                category: "Comparar Fracciones",
+                categoryClass: "comparing",
+                question: "¿Cuál fracción es <span class='translate' data-en='LESS'>MENOR</span> que <span class='fraction'><span class='num'>1</span><span class='den'>2</span></span>?",
+                options: ["3/8", "4/6", "5/8", "3/4"],
+                correctAnswer: "3/8",
+                explanation: "1/2 = 4/8, and 3/8 < 4/8. The others are greater than 1/2."
+            },
+            {
+                category: "Comparar Fracciones",
+                categoryClass: "comparing",
+                question: "<span class='translate' data-en='Order from'>Ordena de</span> MENOR a MAYOR: <span class='fraction'><span class='num'>1</span><span class='den'>4</span></span>, <span class='fraction'><span class='num'>1</span><span class='den'>2</span></span>, <span class='fraction'><span class='num'>3</span><span class='den'>4</span></span>",
+                options: ["1/4, 1/2, 3/4", "3/4, 1/2, 1/4", "1/2, 1/4, 3/4", "1/4, 3/4, 1/2"],
+                correctAnswer: "1/4, 1/2, 3/4",
+                explanation: "1/4 = 0.25, 1/2 = 0.5, 3/4 = 0.75. Smallest to largest: 1/4, 1/2, 3/4"
+            },
+            {
+                category: "Comparar Fracciones",
+                categoryClass: "comparing",
+                question: "¿Cuáles DOS fracciones son <span class='translate' data-en='greater than'>mayores que</span> <span class='fraction'><span class='num'>1</span><span class='den'>4</span></span> y <span class='translate' data-en='less than'>menores que</span> <span class='fraction'><span class='num'>3</span><span class='den'>6</span></span>?",
+                options: ["2/4 y 3/8", "2/5 y 3/8", "2/3 y 5/8", "2/4 y 2/3"],
+                correctAnswer: "2/5 y 3/8",
+                explanation: "3/6 = 1/2 = 4/8. Between 1/4 and 1/2: 2/5 (=0.4) and 3/8 (=0.375) work. 2/4=1/2 is equal, not less."
+            },
+            
+            // ===== EQUIVALENT FRACTIONS =====
+            {
+                category: "Fracciones Equivalentes",
+                categoryClass: "equivalent",
+                question: "Eliana tiene <span class='translate' data-en='snowflakes'>copos de nieve</span>. <span class='fraction'><span class='num'>6</span><span class='den'>10</span></span> son <span class='translate' data-en='silver'>plateados</span>. ¿Cuál es la <span class='translate' data-en='equivalent fraction'>fracción equivalente</span> <span class='translate' data-en='simplified'>simplificada</span>?",
+                options: ["3/5", "2/3", "1/2", "4/6"],
+                correctAnswer: "3/5",
+                explanation: "6/10 ÷ 2/2 = 3/5. Divide numerator and denominator by 2."
+            },
+            {
+                category: "Fracciones Equivalentes",
+                categoryClass: "equivalent",
+                question: "¿El Sr. Delacruz (<span class='fraction'><span class='num'>2</span><span class='den'>3</span></span> de <span class='translate' data-en='cake'>pastel</span>) <span class='translate' data-en='ate'>comió</span> <span class='translate' data-en='the same as'>lo mismo que</span> el Sr. Parlier (<span class='fraction'><span class='num'>4</span><span class='den'>6</span></span> de pastel)?",
+                options: ["Sí, son equivalentes", "No, 2/3 es mayor", "No, 4/6 es mayor", "No se puede saber"],
+                correctAnswer: "Sí, son equivalentes",
+                explanation: "2/3 × 2/2 = 4/6. They're the same amount! 2/3 = 4/6"
+            },
+            {
+                category: "Fracciones Equivalentes",
+                categoryClass: "equivalent",
+                question: "¿Cuál fracción es <span class='translate' data-en='equivalent'>equivalente</span> a <span class='fraction'><span class='num'>4</span><span class='den'>6</span></span> pero NO está en <span class='translate' data-en='thirds'>tercios</span> ni <span class='translate' data-en='sixths'>sextos</span>?",
+                options: ["8/12", "2/3", "6/9", "12/18"],
+                correctAnswer: "8/12",
+                explanation: "4/6 × 2/2 = 8/12. Also 6/9 and 12/18 work, but 8/12 is in twelfths."
+            },
+            {
+                category: "Fracciones Equivalentes",
+                categoryClass: "equivalent",
+                question: "¿Cuál fracción NO es equivalente a <span class='fraction'><span class='num'>1</span><span class='den'>2</span></span>?",
+                options: ["3/5", "2/4", "4/8", "5/10"],
+                correctAnswer: "3/5",
+                explanation: "2/4, 4/8, and 5/10 all = 1/2. But 3/5 = 0.6 ≠ 0.5"
+            },
+            {
+                category: "Fracciones Equivalentes",
+                categoryClass: "equivalent",
+                question: "<span class='translate' data-en='Find'>Encuentra</span> la fracción equivalente: <span class='fraction'><span class='num'>3</span><span class='den'>4</span></span> = <span class='fraction'><span class='num'>?</span><span class='den'>12</span></span>",
+                options: ["9/12", "6/12", "8/12", "4/12"],
+                correctAnswer: "9/12",
+                explanation: "3/4 × 3/3 = 9/12. Multiply top and bottom by 3."
+            },
+            
+            // ===== DECOMPOSING FRACTIONS =====
+            {
+                category: "Descomponer Fracciones",
+                categoryClass: "decomposing",
+                question: "¿Cómo <span class='translate' data-en='write'>escribir</span> <span class='fraction'><span class='num'>8</span><span class='den'>10</span></span> como <span class='translate' data-en='sum'>suma</span> de <span class='translate' data-en='UNIT fractions'>fracciones UNITARIAS</span>?",
+                options: ["1/10 + 1/10 + 1/10 + 1/10 + 1/10 + 1/10 + 1/10 + 1/10", "8/10 + 0/10", "4/10 + 4/10", "2/10 + 6/10"],
+                correctAnswer: "1/10 + 1/10 + 1/10 + 1/10 + 1/10 + 1/10 + 1/10 + 1/10",
+                explanation: "Unit fractions have 1 as the numerator. 8/10 = eight 1/10s added together."
+            },
+            {
+                category: "Descomponer Fracciones",
+                categoryClass: "decomposing",
+                question: "¿Qué 3 <span class='translate' data-en='numerators'>numeradores</span> <span class='translate' data-en='make TRUE'>hacen VERDADERA</span> la <span class='translate' data-en='equation'>ecuación</span>? <span class='fraction'><span class='num'>□</span><span class='den'>6</span></span> + <span class='fraction'><span class='num'>□</span><span class='den'>6</span></span> + <span class='fraction'><span class='num'>□</span><span class='den'>6</span></span> = 2",
+                options: ["4, 4, 4", "6, 3, 3", "5, 4, 3", "2, 2, 2"],
+                correctAnswer: "4, 4, 4",
+                explanation: "2 = 12/6. We need □ + □ + □ = 12. Only 4+4+4 = 12 ✓"
+            },
+            {
+                category: "Descomponer Fracciones",
+                categoryClass: "decomposing",
+                question: "¿Cuál es <span class='translate' data-en='another way'>otra forma</span> de escribir <span class='fraction'><span class='num'>5</span><span class='den'>8</span></span>?",
+                options: ["3/8 + 2/8", "4/8 + 2/8", "1/8 + 1/8", "6/8 - 2/8"],
+                correctAnswer: "3/8 + 2/8",
+                explanation: "3/8 + 2/8 = 5/8 ✓. Also 1/8+4/8 would work."
+            },
+            {
+                category: "Descomponer Fracciones",
+                categoryClass: "decomposing",
+                question: "<span class='translate' data-en='Write'>Escribe</span> <span class='fraction'><span class='num'>7</span><span class='den'>12</span></span> como suma de <span class='translate' data-en='two fractions'>dos fracciones</span>:",
+                options: ["4/12 + 3/12", "5/12 + 3/12", "6/12 + 2/12", "1/12 + 5/12"],
+                correctAnswer: "4/12 + 3/12",
+                explanation: "4/12 + 3/12 = 7/12 ✓. (4+3=7, same denominator)"
+            },
+            {
+                category: "Descomponer Fracciones",
+                categoryClass: "decomposing",
+                question: "¿<span class='translate' data-en='How many'>Cuántas</span> fracciones unitarias de <span class='fraction'><span class='num'>1</span><span class='den'>5</span></span> <span class='translate' data-en='are needed'>se necesitan</span> para <span class='translate' data-en='make'>hacer</span> <span class='fraction'><span class='num'>4</span><span class='den'>5</span></span>?",
+                options: ["4", "5", "3", "1"],
+                correctAnswer: "4",
+                explanation: "4/5 = 1/5 + 1/5 + 1/5 + 1/5 = four unit fractions of 1/5"
+            },
+            
+            // ===== MIXED NUMBERS =====
+            {
+                category: "Números Mixtos",
+                categoryClass: "mixed",
+                question: "<span class='translate' data-en='Convert'>Convierte</span> <span class='fraction'><span class='num'>11</span><span class='den'>4</span></span> a <span class='translate' data-en='mixed number'>número mixto</span>:",
+                options: ["2 3/4", "2 1/4", "3 1/4", "1 3/4"],
+                correctAnswer: "2 3/4",
+                explanation: "11 ÷ 4 = 2 remainder 3. So 11/4 = 2 3/4"
+            },
+            {
+                category: "Números Mixtos",
+                categoryClass: "mixed",
+                question: "Convierte 3<span class='fraction'><span class='num'>2</span><span class='den'>5</span></span> a <span class='translate' data-en='improper fraction'>fracción impropia</span>:",
+                options: ["17/5", "15/5", "12/5", "32/5"],
+                correctAnswer: "17/5",
+                explanation: "3 × 5 = 15, + 2 = 17. So 3 2/5 = 17/5"
+            },
+            {
+                category: "Números Mixtos",
+                categoryClass: "mixed",
+                question: "¿Cuál <span class='translate' data-en='mixed number'>número mixto</span> es <span class='translate' data-en='equal to'>igual a</span> <span class='fraction'><span class='num'>19</span><span class='den'>6</span></span>?",
+                options: ["3 1/6", "2 7/6", "3 2/6", "2 5/6"],
+                correctAnswer: "3 1/6",
+                explanation: "19 ÷ 6 = 3 remainder 1. So 19/6 = 3 1/6"
+            },
+            {
+                category: "Números Mixtos",
+                categoryClass: "mixed",
+                question: "5<span class='fraction'><span class='num'>3</span><span class='den'>4</span></span> - 2<span class='fraction'><span class='num'>1</span><span class='den'>4</span></span> = ?",
+                options: ["3 2/4", "3 1/4", "2 2/4", "4 2/4"],
+                correctAnswer: "3 2/4",
+                explanation: "5 - 2 = 3 and 3/4 - 1/4 = 2/4. Answer: 3 2/4 (or 3 1/2)"
+            },
+            {
+                category: "Números Mixtos",
+                categoryClass: "mixed",
+                question: "2<span class='fraction'><span class='num'>5</span><span class='den'>8</span></span> + 1<span class='fraction'><span class='num'>6</span><span class='den'>8</span></span> = ?",
+                options: ["4 3/8", "3 11/8", "3 3/8", "4 1/8"],
+                correctAnswer: "4 3/8",
+                explanation: "2 + 1 = 3, and 5/8 + 6/8 = 11/8 = 1 3/8. Total: 3 + 1 3/8 = 4 3/8"
+            },
+            {
+                category: "Números Mixtos",
+                categoryClass: "mixed",
+                question: "¿Cuál es <span class='translate' data-en='greater'>mayor</span>: 2<span class='fraction'><span class='num'>3</span><span class='den'>4</span></span> o 2<span class='fraction'><span class='num'>5</span><span class='den'>8</span></span>?",
+                options: ["2 3/4", "2 5/8", "Son iguales", "No se puede saber"],
+                correctAnswer: "2 3/4",
+                explanation: "2 3/4 = 2 6/8. Since 6/8 > 5/8, then 2 3/4 > 2 5/8"
+            }
+        ];
+
+        const categoryQuotas = {
+            "Sumar y Restar": 4,
+            "Comparar Fracciones": 4,
+            "Fracciones Equivalentes": 3,
+            "Descomponer Fracciones": 2,
+            "Números Mixtos": 3
+        };
+
+        const QUESTION_TIME = 120; // 2 minutes per question for math
+
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function prepareQuestion(q) {
+            const shuffledOptions = shuffleArray([...q.options]);
+            return { ...q, options: shuffledOptions, correct: shuffledOptions.indexOf(q.correctAnswer) };
+        }
+
+        function selectBalancedQuestions() {
+            const selected = [];
+            const byCategory = {};
+            
+            allQuestions.forEach(q => {
+                if (!byCategory[q.category]) byCategory[q.category] = [];
+                byCategory[q.category].push(q);
+            });
+            
+            for (const [category, quota] of Object.entries(categoryQuotas)) {
+                const categoryQuestions = byCategory[category] || [];
+                const shuffled = shuffleArray(categoryQuestions);
+                selected.push(...shuffled.slice(0, quota));
+            }
+            
+            return shuffleArray(selected);
+        }
+
+        let questionTimer = QUESTION_TIME;
+        let questionTimerInterval = null;
+        let totalTimeElapsed = 0;
+        let totalTimerInterval = null;
+        let currentQuestions = [];
+        let currentQuestion = 0;
+        let score = 0;
+        let streak = 0;
+        let answered = false;
+        let categoryStats = {};
+
+        function initCategoryStats() {
+            categoryStats = {};
+            for (const category of Object.keys(categoryQuotas)) {
+                const sample = allQuestions.find(q => q.category === category);
+                categoryStats[category] = { 
+                    correct: 0, 
+                    total: 0, 
+                    class: sample ? sample.categoryClass : "adding" 
+                };
+            }
+        }
+
+        function recordAnswer(category, isCorrect) {
+            if (categoryStats[category]) {
+                categoryStats[category].total++;
+                if (isCorrect) categoryStats[category].correct++;
+            }
+        }
+
+        function initQuiz() {
+            initCategoryStats();
+            currentQuestions = selectBalancedQuestions().map(prepareQuestion);
+            document.getElementById('total-questions').textContent = currentQuestions.length;
+            startTotalTimer();
+            renderQuestion();
+        }
+
+        function startTotalTimer() {
+            totalTimeElapsed = 0;
+            totalTimerInterval = setInterval(() => {
+                totalTimeElapsed++;
+                const m = Math.floor(totalTimeElapsed / 60);
+                const s = totalTimeElapsed % 60;
+                document.getElementById('total-time').textContent = `${m}:${s.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function startQuestionTimer() {
+            questionTimer = QUESTION_TIME;
+            updateTimerDisplay();
+            questionTimerInterval = setInterval(() => {
+                questionTimer--;
+                updateTimerDisplay();
+                if (questionTimer <= 0) { clearInterval(questionTimerInterval); timeOut(); }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            document.getElementById('question-time').textContent = questionTimer;
+            const progress = (questionTimer / QUESTION_TIME) * 100;
+            document.getElementById('timer-progress').style.width = progress + '%';
+            document.getElementById('timer-circle').style.setProperty('--timer-progress', progress + '%');
+            
+            const circle = document.getElementById('timer-circle');
+            const bar = document.getElementById('timer-progress');
+            circle.classList.remove('warning', 'danger');
+            bar.classList.remove('warning', 'danger');
+            
+            if (questionTimer <= 5) { circle.classList.add('danger'); bar.classList.add('danger'); }
+            else if (questionTimer <= 10) { circle.classList.add('warning'); bar.classList.add('warning'); }
+        }
+
+        function stopQuestionTimer() {
+            if (questionTimerInterval) { clearInterval(questionTimerInterval); questionTimerInterval = null; }
+        }
+
+        function timeOut() {
+            if (answered) return;
+            answered = true;
+            const q = currentQuestions[currentQuestion];
+            recordAnswer(q.category, false);
+            document.querySelectorAll('.option').forEach((opt, i) => {
+                opt.classList.add('disabled');
+                if (i === q.correct) opt.classList.add('correct');
+            });
+            streak = 0;
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback show timeout';
+            feedback.innerHTML = `<strong>⏰ Time's Up!</strong> Answer: <strong>${q.correctAnswer}</strong>. ${q.explanation}`;
+            document.getElementById('next-btn').classList.add('show');
+            updateScore();
+        }
+
+        function renderQuestion() {
+            stopQuestionTimer();
+            const q = currentQuestions[currentQuestion];
+            document.getElementById('quiz-container').innerHTML = `
+                <div class="question-card active">
+                    <span class="question-number ${q.categoryClass}">🧮 ${q.category}</span>
+                    <p class="question-text">${q.question}</p>
+                    <div class="options">
+                        ${q.options.map((opt, i) => `
+                            <div class="option" onclick="selectAnswer(${i})">
+                                <span class="option-letter">${String.fromCharCode(65 + i)}</span>
+                                <span>${opt}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback"></div>
+                    <button class="btn btn-next" id="next-btn" onclick="nextQuestion()">
+                        ${currentQuestion < currentQuestions.length - 1 ? 'Next →' : 'Results 🎯'}
+                    </button>
+                </div>
+            `;
+            answered = false;
+            updateProgress();
+            startQuestionTimer();
+        }
+
+        function selectAnswer(index) {
+            if (answered) return;
+            answered = true;
+            stopQuestionTimer();
+            const q = currentQuestions[currentQuestion];
+            const isCorrect = index === q.correct;
+            recordAnswer(q.category, isCorrect);
+            
+            document.querySelectorAll('.option').forEach((opt, i) => {
+                opt.classList.add('disabled');
+                if (i === q.correct) opt.classList.add('correct');
+                else if (i === index) opt.classList.add('incorrect');
+            });
+            
+            const feedback = document.getElementById('feedback');
+            if (isCorrect) {
+                score++; streak++;
+                const bonus = questionTimer >= 100 ? ' <span style="color:#4CAF50;font-weight:bold;">⚡ Fast!</span>' : '';
+                feedback.className = 'feedback show correct';
+                feedback.innerHTML = `<strong>✅ Correct!</strong>${bonus} ${q.explanation}`;
+            } else {
+                streak = 0;
+                feedback.className = 'feedback show incorrect';
+                feedback.innerHTML = `<strong>❌ Incorrect.</strong> Answer: <strong>${q.correctAnswer}</strong>. ${q.explanation}`;
+            }
+            document.getElementById('next-btn').classList.add('show');
+            updateScore();
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < currentQuestions.length) renderQuestion();
+            else showResults();
+        }
+
+        function updateScore() {
+            document.getElementById('current-score').textContent = score;
+            document.getElementById('streak').textContent = streak;
+        }
+
+        function updateProgress() {
+            document.getElementById('question-num').textContent = currentQuestion + 1;
+            document.getElementById('progress-bar').style.width = ((currentQuestion) / currentQuestions.length) * 100 + '%';
+        }
+
+        function showResults() {
+            stopQuestionTimer();
+            clearInterval(totalTimerInterval);
+            document.getElementById('quiz-container').innerHTML = '';
+            document.getElementById('results').classList.add('show');
+            
+            const pct = Math.round((score / currentQuestions.length) * 100);
+            document.getElementById('final-score').textContent = pct + '%';
+            document.getElementById('stat-correct').textContent = `${score}/${currentQuestions.length}`;
+            
+            const m = Math.floor(totalTimeElapsed / 60), s = totalTimeElapsed % 60;
+            document.getElementById('stat-time').textContent = `${m}:${s.toString().padStart(2, '0')}`;
+            document.getElementById('stat-avg').textContent = `${Math.round(totalTimeElapsed / currentQuestions.length)}s`;
+            
+            let emoji, grade, msg;
+            if (pct >= 90) { emoji = '🏆'; grade = 'A - Excellent!'; msg = 'You\'re a fractions expert! 🧮'; }
+            else if (pct >= 80) { emoji = '🌟'; grade = 'B - Great Job!'; msg = 'Excellent fraction skills!'; }
+            else if (pct >= 70) { emoji = '👍'; grade = 'C - Good Work!'; msg = 'Keep practicing!'; }
+            else if (pct >= 60) { emoji = '📚'; grade = 'D - Keep Studying!'; msg = 'Review the study guide!'; }
+            else { emoji = '💪'; grade = 'Keep Trying!'; msg = 'Practice makes perfect!'; }
+            
+            document.getElementById('result-emoji').textContent = emoji;
+            document.getElementById('grade').textContent = grade;
+            document.getElementById('result-message').textContent = msg;
+            document.getElementById('progress-bar').style.width = '100%';
+            
+            generateReviewSection();
+            generateCategoryBreakdown();
+        }
+
+        function generateReviewSection() {
+            const reviewSection = document.getElementById('review-section');
+            const needsReview = [];
+            
+            // English category names for display
+            const categoryEnglish = {
+                "Sumar y Restar": "Adding & Subtracting",
+                "Comparar Fracciones": "Comparing Fractions",
+                "Fracciones Equivalentes": "Equivalent Fractions",
+                "Descomponer Fracciones": "Decomposing Fractions",
+                "Números Mixtos": "Mixed Numbers"
+            };
+            
+            for (const [category, stats] of Object.entries(categoryStats)) {
+                if (stats.total > 0) {
+                    const missed = stats.total - stats.correct;
+                    if (missed > 0) {
+                        needsReview.push({ 
+                            category: categoryEnglish[category] || category, 
+                            missed, 
+                            total: stats.total, 
+                            cssClass: stats.class 
+                        });
+                    }
+                }
+            }
+            
+            needsReview.sort((a, b) => b.missed - a.missed);
+            
+            if (needsReview.length === 0) {
+                reviewSection.className = 'review-section perfect';
+                reviewSection.innerHTML = `
+                    <h3>🎯 Topics to Review</h3>
+                    <div class="review-topics">
+                        <div class="perfect-badge">⭐ Perfect! No topics need review! ⭐</div>
+                    </div>
+                `;
+            } else {
+                reviewSection.className = 'review-section';
+                reviewSection.innerHTML = `
+                    <h3>📚 Topics to Review</h3>
+                    <div class="review-topics">
+                        ${needsReview.map(item => `
+                            <div class="review-topic ${item.cssClass}">
+                                ${item.category}
+                                <span class="miss-count">${item.missed} missed</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+        }
+
+        function generateCategoryBreakdown() {
+            const breakdownSection = document.getElementById('category-breakdown');
+            const items = [];
+            
+            // English category names for display
+            const categoryEnglish = {
+                "Sumar y Restar": "Adding & Subtracting",
+                "Comparar Fracciones": "Comparing Fractions",
+                "Fracciones Equivalentes": "Equivalent Fractions",
+                "Descomponer Fracciones": "Decomposing Fractions",
+                "Números Mixtos": "Mixed Numbers"
+            };
+            
+            for (const [category, stats] of Object.entries(categoryStats)) {
+                if (stats.total > 0) {
+                    const pct = Math.round((stats.correct / stats.total) * 100);
+                    let scoreClass = 'needs-work';
+                    if (pct === 100) scoreClass = 'perfect';
+                    else if (pct >= 50) scoreClass = 'good';
+                    
+                    items.push({ 
+                        category: categoryEnglish[category] || category, 
+                        correct: stats.correct, 
+                        total: stats.total, 
+                        pct, 
+                        scoreClass 
+                    });
+                }
+            }
+            
+            breakdownSection.innerHTML = `
+                <h4>📊 Score by Category</h4>
+                <div class="breakdown-grid">
+                    ${items.map(item => `
+                        <div class="breakdown-item">
+                            <span class="cat-name">${item.category}</span>
+                            <span class="cat-score ${item.scoreClass}">${item.correct}/${item.total}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0; score = 0; streak = 0; answered = false; totalTimeElapsed = 0;
+            initCategoryStats();
+            document.getElementById('results').classList.remove('show');
+            updateScore();
+            initQuiz();
+        }
+
+        function flipCard(card) {
+            card.classList.toggle('flipped');
+        }
+        
+        function toggleTranslations() {
+            const toggle = document.getElementById('translation-toggle');
+            const quizContent = document.getElementById('quiz-content');
+            toggle.classList.toggle('active');
+            quizContent.classList.toggle('show-translations');
+        }
+
+        function startQuiz() {
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('quiz-content').classList.add('active');
+            initQuiz();
+        }
+
+        function reviewVocab() {
+            currentQuestion = 0; score = 0; streak = 0; answered = false; totalTimeElapsed = 0;
+            initCategoryStats();
+            document.getElementById('results').classList.remove('show');
+            document.getElementById('quiz-content').classList.remove('active');
+            document.getElementById('start-screen').style.display = 'block';
+            document.getElementById('progress-bar').style.width = '0%';
+            updateScore();
+            
+            document.querySelectorAll('.vocab-card').forEach(card => {
+                card.classList.remove('flipped');
+            });
+        }
+    </script>
+</body>
+</html>
+

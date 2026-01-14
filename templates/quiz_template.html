@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- ========================================================
+         INTERACTIVE QUIZ TEMPLATE v2.0
+         ========================================================
+         
+         HOW TO USE THIS TEMPLATE:
+         
+         1. CUSTOMIZE THE TITLE (search for [YOUR SUBJECT])
+            - Change the <title> and <h1> to your subject
+         
+         2. ADD VOCABULARY FLASHCARDS (search for VOCAB FLASHCARDS)
+            - Add cards for key terms students should know
+            - Each card has a front (term) and back (definition)
+         
+         3. UPDATE THE CATEGORIES (search for CATEGORY TOPICS)
+            - List your topics in the shuffle notice banner
+         
+         4. ADD YOUR QUESTIONS (search for ADD QUESTIONS HERE)
+            - Follow the question format in allQuestions array
+            - Group by category
+            - Include 3-5x more questions than needed for variety
+         
+         5. SET CATEGORY QUOTAS (search for CATEGORY QUOTAS)
+            - Define how many questions from each category per quiz
+            - This GUARANTEES balanced coverage of all topics
+         
+         6. ADJUST SETTINGS (search for QUIZ SETTINGS)
+            - QUESTION_TIME: seconds per question (25-30 recommended)
+         
+         7. CUSTOMIZE COLORS (search for COLOR THEME)
+            - Change CSS variables to match your subject
+         
+         FEATURES INCLUDED:
+         ✅ Vocabulary flashcard review before quiz
+         ✅ Shuffled questions AND answers each time
+         ✅ Guaranteed coverage of all topics
+         ✅ Per-question timer with visual countdown
+         ✅ Total time tracking
+         ✅ Instant feedback with explanations
+         ✅ Score tracking with streak counter
+         ✅ Results with personalized review recommendations
+         ✅ Category-by-category score breakdown
+         
+         ======================================================== -->
+    <title>📚 [YOUR SUBJECT] Quiz</title>
+    <style>
+        /* ============================================
+           COLOR THEME - Customize these!
+           ============================================ */
+        :root {
+            --primary: #e91e63;      /* Main accent color */
+            --secondary: #9c27b0;    /* Secondary color */
+            --accent: #673ab7;       /* Third color */
+            --success: #4CAF50;      /* Correct answers */
+            --danger: #f44336;       /* Wrong answers */
+            --warning: #ff9800;      /* Timer warning */
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        
+        .container { max-width: 850px; margin: 0 auto; }
+        
+        header {
+            text-align: center;
+            padding: 25px 20px;
+            background: linear-gradient(135deg, rgba(233,30,99,0.2), rgba(156,39,176,0.2));
+            border-radius: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle { font-size: 1em; opacity: 0.9; }
+        
+        /* START SCREEN */
+        .start-screen {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        .start-screen h2 { color: #333; margin-bottom: 10px; }
+        .start-screen p { color: #666; margin-bottom: 20px; }
+        
+        .vocab-section { margin: 25px 0; text-align: left; }
+        .vocab-section h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.3em;
+        }
+        
+        .vocab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        
+        .vocab-card {
+            background: linear-gradient(135deg, #f5f5f5, #eeeeee);
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border: 2px solid transparent;
+            position: relative;
+        }
+        
+        .vocab-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        
+        .vocab-card .front, .vocab-card .back {
+            backface-visibility: hidden;
+            transition: transform 0.5s;
+        }
+        
+        .vocab-card .back {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            transform: rotateY(180deg);
+            background: linear-gradient(135deg, #fce4ec, #f8bbd9);
+            border-radius: 10px;
+        }
+        
+        .vocab-card.flipped .front { transform: rotateY(180deg); }
+        .vocab-card.flipped .back { transform: rotateY(0deg); }
+        
+        .vocab-card .term { font-weight: bold; color: #333; font-size: 1em; margin-bottom: 5px; }
+        .vocab-card .tap-hint { font-size: 0.75em; color: #999; margin-top: 5px; }
+        .vocab-card .definition { font-size: 0.9em; color: #555; line-height: 1.4; }
+        .vocab-card .example { font-size: 0.8em; color: #7b1fa2; font-style: italic; margin-top: 8px; }
+        
+        /* Category colors for vocab cards - add more as needed */
+        .vocab-card.category1 { border-color: var(--primary); }
+        .vocab-card.category2 { border-color: var(--secondary); }
+        .vocab-card.category3 { border-color: #3f51b5; }
+        .vocab-card.category4 { border-color: #009688; }
+        
+        .category-label {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.7em;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 8px;
+        }
+        
+        .category-label.category1 { background: linear-gradient(135deg, var(--primary), #c2185b); }
+        .category-label.category2 { background: linear-gradient(135deg, var(--secondary), #7b1fa2); }
+        .category-label.category3 { background: linear-gradient(135deg, #3f51b5, #303f9f); }
+        .category-label.category4 { background: linear-gradient(135deg, #009688, #00796b); }
+        
+        .btn-start {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 18px 50px;
+            font-size: 1.3em;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .btn-start:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(233, 30, 99, 0.4);
+        }
+        
+        .quiz-content { display: none; }
+        .quiz-content.active { display: block; }
+        
+        .shuffle-notice {
+            background: linear-gradient(135deg, rgba(76,175,80,0.3), rgba(139,195,74,0.3));
+            border: 1px solid rgba(76,175,80,0.5);
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        
+        .shuffle-notice span { color: #8BC34A; font-weight: bold; }
+        
+        .score-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.12);
+            padding: 12px 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            font-size: 1em;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .score-bar span { display: flex; align-items: center; gap: 6px; }
+        
+        .timer-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.08);
+            padding: 10px 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+        
+        .question-timer { display: flex; align-items: center; gap: 8px; font-size: 1.1em; font-weight: bold; }
+        
+        .timer-circle {
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            background: conic-gradient(var(--primary) var(--timer-progress, 100%), rgba(255,255,255,0.2) 0%);
+            position: relative;
+        }
+        
+        .timer-circle::before {
+            content: '';
+            position: absolute;
+            width: 36px; height: 36px;
+            background: #1a1a2e;
+            border-radius: 50%;
+        }
+        
+        .timer-circle span { position: relative; z-index: 1; }
+        .timer-circle.warning { background: conic-gradient(var(--warning) var(--timer-progress, 100%), rgba(255,255,255,0.2) 0%); }
+        .timer-circle.danger { background: conic-gradient(var(--danger) var(--timer-progress, 100%), rgba(255,255,255,0.2) 0%); animation: pulse 0.5s infinite; }
+        
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        
+        .timer-progress-bar { flex: 1; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; overflow: hidden; }
+        .timer-progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 3px; transition: width 1s linear; width: 100%; }
+        .timer-progress-fill.warning { background: linear-gradient(90deg, var(--warning), #ffc107); }
+        .timer-progress-fill.danger { background: linear-gradient(90deg, var(--danger), var(--primary)); }
+        
+        .total-timer { display: flex; align-items: center; gap: 6px; font-size: 1em; opacity: 0.9; }
+        
+        .progress-container { width: 100%; height: 8px; background: rgba(255,255,255,0.2); border-radius: 8px; margin-bottom: 20px; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 8px; transition: width 0.5s ease; width: 0%; }
+        
+        .question-card {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            display: none;
+            animation: slideIn 0.4s ease;
+        }
+        
+        .question-card.active { display: block; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Question category badges - add more as needed */
+        .question-number {
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            display: inline-block;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+        
+        .question-number.category1 { background: linear-gradient(135deg, var(--primary), #c2185b); }
+        .question-number.category2 { background: linear-gradient(135deg, var(--secondary), #7b1fa2); }
+        .question-number.category3 { background: linear-gradient(135deg, #3f51b5, #303f9f); }
+        .question-number.category4 { background: linear-gradient(135deg, #009688, #00796b); }
+        
+        .question-text { font-size: 1.2em; margin-bottom: 20px; line-height: 1.5; color: #222; }
+        .question-text code { background: #f5f5f5; padding: 2px 8px; border-radius: 4px; font-family: monospace; color: #c2185b; }
+        
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        
+        .option {
+            padding: 15px 18px;
+            background: #f5f5f5;
+            border: 3px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.05em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .option:hover:not(.disabled) { background: #fce4ec; border-color: var(--primary); transform: translateX(5px); }
+        .option.correct { background: #c8e6c9 !important; border-color: var(--success) !important; }
+        .option.incorrect { background: #ffcdd2 !important; border-color: var(--danger) !important; }
+        .option.disabled { cursor: not-allowed; opacity: 0.7; }
+        
+        .option-letter {
+            width: 32px; height: 32px;
+            background: #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .option.correct .option-letter { background: var(--success); color: white; }
+        .option.incorrect .option-letter { background: var(--danger); color: white; }
+        
+        .feedback { margin-top: 18px; padding: 18px; border-radius: 12px; display: none; animation: fadeIn 0.3s ease; }
+        .feedback.show { display: block; }
+        .feedback.correct { background: linear-gradient(135deg, #c8e6c9, #a5d6a7); color: #1b5e20; }
+        .feedback.incorrect { background: linear-gradient(135deg, #ffcdd2, #ef9a9a); color: #b71c1c; }
+        .feedback.timeout { background: linear-gradient(135deg, #fff3e0, #ffe0b2); color: #e65100; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .btn { padding: 14px 30px; font-size: 1.05em; border: none; border-radius: 25px; cursor: pointer; transition: all 0.3s ease; font-weight: bold; margin-top: 15px; }
+        .btn-next { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; display: none; }
+        .btn-next.show { display: inline-block; }
+        .btn-next:hover { transform: scale(1.05); box-shadow: 0 5px 20px rgba(233, 30, 99, 0.4); }
+        .btn-restart { background: linear-gradient(135deg, var(--accent), #512da8); color: white; }
+        .btn-restart:hover { transform: scale(1.05); }
+        
+        .results { text-align: center; display: none; }
+        .results.show { display: block; }
+        
+        .results-card {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        .final-score {
+            font-size: 3.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .grade { font-size: 1.8em; margin: 15px 0; }
+        .emoji-result { font-size: 3.5em; margin: 15px 0; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0; }
+        .stat-box { background: #f5f5f5; padding: 12px; border-radius: 10px; }
+        .stat-box .stat-value { font-size: 1.6em; font-weight: bold; color: var(--primary); }
+        .stat-box .stat-label { font-size: 0.85em; color: #666; }
+        
+        /* Review Section */
+        .review-section { margin: 25px 0; text-align: left; }
+        .review-section h3 { color: var(--danger); margin-bottom: 15px; text-align: center; font-size: 1.1em; }
+        .review-section.perfect h3 { color: var(--success); }
+        .review-topics { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        
+        .review-topic {
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .review-topic.category1 { background: linear-gradient(135deg, var(--primary), #c2185b); }
+        .review-topic.category2 { background: linear-gradient(135deg, var(--secondary), #7b1fa2); }
+        .review-topic.category3 { background: linear-gradient(135deg, #3f51b5, #303f9f); }
+        .review-topic.category4 { background: linear-gradient(135deg, #009688, #00796b); }
+        
+        .review-topic .miss-count { background: rgba(255,255,255,0.3); padding: 2px 8px; border-radius: 10px; font-size: 0.85em; }
+        .perfect-badge { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, var(--success), #8BC34A); color: white; padding: 12px 24px; border-radius: 25px; font-size: 1.1em; font-weight: bold; }
+        
+        .category-breakdown { margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 12px; }
+        .category-breakdown h4 { margin-bottom: 12px; color: #333; font-size: 1em; }
+        .breakdown-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+        .breakdown-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: white; border-radius: 8px; font-size: 0.85em; }
+        .breakdown-item .cat-name { font-weight: 500; color: #555; }
+        .breakdown-item .cat-score { font-weight: bold; padding: 2px 8px; border-radius: 10px; }
+        .breakdown-item .cat-score.perfect { background: #c8e6c9; color: #2e7d32; }
+        .breakdown-item .cat-score.good { background: #fff3e0; color: #e65100; }
+        .breakdown-item .cat-score.needs-work { background: #ffcdd2; color: #c62828; }
+        
+        @media (max-width: 600px) {
+            .score-bar, .timer-bar { flex-direction: column; text-align: center; }
+            .stats-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 1.6em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <!-- ====== STEP 1: CHANGE YOUR TITLE HERE ====== -->
+            <h1>📚 [YOUR SUBJECT] Quiz</h1>
+            <p class="subtitle">Topic 1 • Topic 2 • Topic 3 • Topic 4</p>
+        </header>
+        
+        <!-- ====== START SCREEN WITH VOCABULARY REVIEW ====== -->
+        <div class="start-screen" id="start-screen">
+            <h2>📖 Review Vocabulary First!</h2>
+            <p>Tap each card to see the definition. Study these terms before you start!</p>
+            
+            <!-- ====== VOCAB FLASHCARDS - ADD YOUR TERMS HERE ====== -->
+            <div class="vocab-section">
+                <h3>🎯 Key Terms to Know</h3>
+                <div class="vocab-grid">
+                    <!-- Example flashcard - duplicate and modify -->
+                    <div class="vocab-card category1" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label category1">TOPIC 1</span>
+                                <div class="term">Term Name</div>
+                                <div class="tap-hint">👆 tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">Definition of the term goes here.</div>
+                            <div class="example">Example: usage in a sentence</div>
+                        </div>
+                    </div>
+                    
+                    <div class="vocab-card category2" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label category2">TOPIC 2</span>
+                                <div class="term">Another Term</div>
+                                <div class="tap-hint">👆 tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">Definition here.</div>
+                            <div class="example">Example here.</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Add more vocab cards as needed -->
+                </div>
+            </div>
+            
+            <button class="btn-start" onclick="startQuiz()">🚀 Start Quiz!</button>
+        </div>
+        
+        <!-- ====== QUIZ CONTENT (hidden until start) ====== -->
+        <div class="quiz-content" id="quiz-content">
+        
+        <!-- ====== CATEGORY TOPICS - UPDATE THIS LIST ====== -->
+        <div class="shuffle-notice">
+            🔀 <span>Questions AND answers shuffle every time!</span><br>
+            ✅ <span>All topics guaranteed:</span> Topic 1 • Topic 2 • Topic 3 • Topic 4
+        </div>
+        
+        <div class="score-bar">
+            <span>📊 Score: <strong id="current-score">0</strong></span>
+            <span>❓ Question: <strong id="question-num">1</strong> / <strong id="total-questions">15</strong></span>
+            <span>🔥 Streak: <strong id="streak">0</strong></span>
+        </div>
+        
+        <div class="timer-bar">
+            <div class="question-timer">
+                <div class="timer-circle" id="timer-circle">
+                    <span id="question-time">25</span>
+                </div>
+                <span>sec</span>
+            </div>
+            <div class="timer-progress-bar">
+                <div class="timer-progress-fill" id="timer-progress"></div>
+            </div>
+            <div class="total-timer">
+                <span>⏱️</span>
+                <strong id="total-time">0:00</strong>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container"></div>
+        
+        </div><!-- end quiz-content -->
+        
+        <div class="results" id="results">
+            <div class="results-card">
+                <div class="emoji-result" id="result-emoji">🎉</div>
+                <h2>Quiz Complete!</h2>
+                <div class="final-score" id="final-score">0%</div>
+                <div class="grade" id="grade"></div>
+                
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-value" id="stat-correct">0</div>
+                        <div class="stat-label">Correct</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="stat-time">0:00</div>
+                        <div class="stat-label">Time</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="stat-avg">0s</div>
+                        <div class="stat-label">Avg/Q</div>
+                    </div>
+                </div>
+                
+                <p id="result-message"></p>
+                
+                <!-- Review Section -->
+                <div class="review-section" id="review-section"></div>
+                <div class="category-breakdown" id="category-breakdown"></div>
+                
+                <button class="btn btn-restart" onclick="restartQuiz()">🔄 Try Again</button>
+                <button class="btn btn-restart" onclick="reviewVocab()" style="background: linear-gradient(135deg, #009688, #00796b); margin-left: 10px;">📖 Review Vocab</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ============================================================
+           ADD QUESTIONS HERE
+           
+           Question Format:
+           {
+               category: "Category Name",        // Topic name (must match categoryQuotas)
+               categoryClass: "category1",       // CSS class (category1, category2, etc.)
+               question: "Your question here?",  // Use <code>word</code> to highlight
+               options: ["A", "B", "C", "D"],    // 4 answer choices
+               correctAnswer: "B",               // Must EXACTLY match one option
+               explanation: "Why this is correct."
+           }
+           
+           TIP: Add 3-5x more questions than needed per category for variety!
+           ============================================================ */
+        const allQuestions = [
+            // ===== CATEGORY 1 QUESTIONS =====
+            {
+                category: "Topic 1",
+                categoryClass: "category1",
+                question: "Sample question for topic 1?",
+                options: ["Option A", "Option B", "Option C", "Option D"],
+                correctAnswer: "Option B",
+                explanation: "Explanation of why Option B is correct."
+            },
+            {
+                category: "Topic 1",
+                categoryClass: "category1",
+                question: "Another question for topic 1?",
+                options: ["Choice 1", "Choice 2", "Choice 3", "Choice 4"],
+                correctAnswer: "Choice 3",
+                explanation: "Explanation here."
+            },
+            
+            // ===== CATEGORY 2 QUESTIONS =====
+            {
+                category: "Topic 2",
+                categoryClass: "category2",
+                question: "Sample question for topic 2?",
+                options: ["Answer A", "Answer B", "Answer C", "Answer D"],
+                correctAnswer: "Answer A",
+                explanation: "Explanation here."
+            },
+            
+            // ===== CATEGORY 3 QUESTIONS =====
+            {
+                category: "Topic 3",
+                categoryClass: "category3",
+                question: "Sample question for topic 3?",
+                options: ["First", "Second", "Third", "Fourth"],
+                correctAnswer: "Third",
+                explanation: "Explanation here."
+            },
+            
+            // ===== CATEGORY 4 QUESTIONS =====
+            {
+                category: "Topic 4",
+                categoryClass: "category4",
+                question: "Sample question for topic 4?",
+                options: ["Yes", "No", "Maybe", "Sometimes"],
+                correctAnswer: "Yes",
+                explanation: "Explanation here."
+            }
+            // Add more questions following the same format...
+        ];
+
+        /* ============================================================
+           CATEGORY QUOTAS
+           Define how many questions from each category per quiz.
+           This GUARANTEES all topics are covered!
+           Total should equal desired quiz length.
+           ============================================================ */
+        const categoryQuotas = {
+            "Topic 1": 4,    // 4 questions from Topic 1
+            "Topic 2": 4,    // 4 questions from Topic 2
+            "Topic 3": 4,    // 4 questions from Topic 3
+            "Topic 4": 3     // 3 questions from Topic 4
+            // Total: 15 questions
+        };
+
+        /* ============================================================
+           QUIZ SETTINGS
+           ============================================================ */
+        const QUESTION_TIME = 25;  // Seconds per question (25-30 recommended)
+
+        /* ============================================================
+           QUIZ ENGINE - Generally no need to modify below this line
+           ============================================================ */
+        
+        // Shuffle function
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function prepareQuestion(q) {
+            const shuffledOptions = shuffleArray([...q.options]);
+            return { ...q, options: shuffledOptions, correct: shuffledOptions.indexOf(q.correctAnswer) };
+        }
+
+        function selectBalancedQuestions() {
+            const selected = [];
+            const byCategory = {};
+            
+            allQuestions.forEach(q => {
+                if (!byCategory[q.category]) byCategory[q.category] = [];
+                byCategory[q.category].push(q);
+            });
+            
+            for (const [category, quota] of Object.entries(categoryQuotas)) {
+                const categoryQuestions = byCategory[category] || [];
+                const shuffled = shuffleArray(categoryQuestions);
+                selected.push(...shuffled.slice(0, quota));
+            }
+            
+            return shuffleArray(selected);
+        }
+
+        // Timer and quiz state
+        let questionTimer = QUESTION_TIME;
+        let questionTimerInterval = null;
+        let totalTimeElapsed = 0;
+        let totalTimerInterval = null;
+        let currentQuestions = [];
+        let currentQuestion = 0;
+        let score = 0;
+        let streak = 0;
+        let answered = false;
+        
+        // Track performance by category
+        let categoryStats = {};
+        
+        function initCategoryStats() {
+            categoryStats = {};
+            for (const category of Object.keys(categoryQuotas)) {
+                // Try to find the CSS class for this category
+                const sample = allQuestions.find(q => q.category === category);
+                categoryStats[category] = { 
+                    correct: 0, 
+                    total: 0, 
+                    class: sample ? sample.categoryClass : "category1" 
+                };
+            }
+        }
+        
+        function recordAnswer(category, isCorrect) {
+            if (categoryStats[category]) {
+                categoryStats[category].total++;
+                if (isCorrect) categoryStats[category].correct++;
+            }
+        }
+
+        function initQuiz() {
+            initCategoryStats();
+            currentQuestions = selectBalancedQuestions().map(prepareQuestion);
+            document.getElementById('total-questions').textContent = currentQuestions.length;
+            startTotalTimer();
+            renderQuestion();
+        }
+
+        function startTotalTimer() {
+            totalTimeElapsed = 0;
+            totalTimerInterval = setInterval(() => {
+                totalTimeElapsed++;
+                const m = Math.floor(totalTimeElapsed / 60);
+                const s = totalTimeElapsed % 60;
+                document.getElementById('total-time').textContent = `${m}:${s.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function startQuestionTimer() {
+            questionTimer = QUESTION_TIME;
+            updateTimerDisplay();
+            questionTimerInterval = setInterval(() => {
+                questionTimer--;
+                updateTimerDisplay();
+                if (questionTimer <= 0) { clearInterval(questionTimerInterval); timeOut(); }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            document.getElementById('question-time').textContent = questionTimer;
+            const progress = (questionTimer / QUESTION_TIME) * 100;
+            document.getElementById('timer-progress').style.width = progress + '%';
+            document.getElementById('timer-circle').style.setProperty('--timer-progress', progress + '%');
+            
+            const circle = document.getElementById('timer-circle');
+            const bar = document.getElementById('timer-progress');
+            circle.classList.remove('warning', 'danger');
+            bar.classList.remove('warning', 'danger');
+            
+            if (questionTimer <= 5) { circle.classList.add('danger'); bar.classList.add('danger'); }
+            else if (questionTimer <= 10) { circle.classList.add('warning'); bar.classList.add('warning'); }
+        }
+
+        function stopQuestionTimer() {
+            if (questionTimerInterval) { clearInterval(questionTimerInterval); questionTimerInterval = null; }
+        }
+
+        function timeOut() {
+            if (answered) return;
+            answered = true;
+            const q = currentQuestions[currentQuestion];
+            recordAnswer(q.category, false);
+            document.querySelectorAll('.option').forEach((opt, i) => {
+                opt.classList.add('disabled');
+                if (i === q.correct) opt.classList.add('correct');
+            });
+            streak = 0;
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback show timeout';
+            feedback.innerHTML = `<strong>⏰ Time's Up!</strong> Answer: <strong>${q.correctAnswer}</strong>. ${q.explanation}`;
+            document.getElementById('next-btn').classList.add('show');
+            updateScore();
+        }
+
+        function renderQuestion() {
+            stopQuestionTimer();
+            const q = currentQuestions[currentQuestion];
+            document.getElementById('quiz-container').innerHTML = `
+                <div class="question-card active">
+                    <span class="question-number ${q.categoryClass}">📚 ${q.category}</span>
+                    <p class="question-text">${q.question}</p>
+                    <div class="options">
+                        ${q.options.map((opt, i) => `
+                            <div class="option" onclick="selectAnswer(${i})">
+                                <span class="option-letter">${String.fromCharCode(65 + i)}</span>
+                                <span>${opt}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback"></div>
+                    <button class="btn btn-next" id="next-btn" onclick="nextQuestion()">
+                        ${currentQuestion < currentQuestions.length - 1 ? 'Next →' : 'Results 🎯'}
+                    </button>
+                </div>
+            `;
+            answered = false;
+            updateProgress();
+            startQuestionTimer();
+        }
+
+        function selectAnswer(index) {
+            if (answered) return;
+            answered = true;
+            stopQuestionTimer();
+            const q = currentQuestions[currentQuestion];
+            const isCorrect = index === q.correct;
+            recordAnswer(q.category, isCorrect);
+            
+            document.querySelectorAll('.option').forEach((opt, i) => {
+                opt.classList.add('disabled');
+                if (i === q.correct) opt.classList.add('correct');
+                else if (i === index) opt.classList.add('incorrect');
+            });
+            
+            const feedback = document.getElementById('feedback');
+            if (isCorrect) {
+                score++; streak++;
+                const bonus = questionTimer >= 20 ? ' <span style="color:#4CAF50;font-weight:bold;">⚡ Fast!</span>' : '';
+                feedback.className = 'feedback show correct';
+                feedback.innerHTML = `<strong>✅ Correct!</strong>${bonus} ${q.explanation}`;
+            } else {
+                streak = 0;
+                feedback.className = 'feedback show incorrect';
+                feedback.innerHTML = `<strong>❌ Incorrect.</strong> Answer: <strong>${q.correctAnswer}</strong>. ${q.explanation}`;
+            }
+            document.getElementById('next-btn').classList.add('show');
+            updateScore();
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < currentQuestions.length) renderQuestion();
+            else showResults();
+        }
+
+        function updateScore() {
+            document.getElementById('current-score').textContent = score;
+            document.getElementById('streak').textContent = streak;
+        }
+
+        function updateProgress() {
+            document.getElementById('question-num').textContent = currentQuestion + 1;
+            document.getElementById('progress-bar').style.width = ((currentQuestion) / currentQuestions.length) * 100 + '%';
+        }
+
+        function showResults() {
+            stopQuestionTimer();
+            clearInterval(totalTimerInterval);
+            document.getElementById('quiz-container').innerHTML = '';
+            document.getElementById('results').classList.add('show');
+            
+            const pct = Math.round((score / currentQuestions.length) * 100);
+            document.getElementById('final-score').textContent = pct + '%';
+            document.getElementById('stat-correct').textContent = `${score}/${currentQuestions.length}`;
+            
+            const m = Math.floor(totalTimeElapsed / 60), s = totalTimeElapsed % 60;
+            document.getElementById('stat-time').textContent = `${m}:${s.toString().padStart(2, '0')}`;
+            document.getElementById('stat-avg').textContent = `${Math.round(totalTimeElapsed / currentQuestions.length)}s`;
+            
+            let emoji, grade, msg;
+            if (pct >= 90) { emoji = '🏆'; grade = 'A - Outstanding!'; msg = 'Excellent work!'; }
+            else if (pct >= 80) { emoji = '🌟'; grade = 'B - Great Job!'; msg = 'Very good!'; }
+            else if (pct >= 70) { emoji = '👍'; grade = 'C - Good Work!'; msg = 'Keep practicing!'; }
+            else if (pct >= 60) { emoji = '📚'; grade = 'D - Keep Studying!'; msg = 'Review the material!'; }
+            else { emoji = '💪'; grade = 'Keep Trying!'; msg = 'Practice makes perfect!'; }
+            
+            document.getElementById('result-emoji').textContent = emoji;
+            document.getElementById('grade').textContent = grade;
+            document.getElementById('result-message').textContent = msg;
+            document.getElementById('progress-bar').style.width = '100%';
+            
+            generateReviewSection();
+            generateCategoryBreakdown();
+        }
+        
+        function generateReviewSection() {
+            const reviewSection = document.getElementById('review-section');
+            const needsReview = [];
+            
+            for (const [category, stats] of Object.entries(categoryStats)) {
+                if (stats.total > 0) {
+                    const missed = stats.total - stats.correct;
+                    if (missed > 0) {
+                        needsReview.push({ category, missed, total: stats.total, cssClass: stats.class });
+                    }
+                }
+            }
+            
+            needsReview.sort((a, b) => b.missed - a.missed);
+            
+            if (needsReview.length === 0) {
+                reviewSection.className = 'review-section perfect';
+                reviewSection.innerHTML = `
+                    <h3>🎯 Topics to Review</h3>
+                    <div class="review-topics">
+                        <div class="perfect-badge">⭐ Perfect! No topics need review! ⭐</div>
+                    </div>
+                `;
+            } else {
+                reviewSection.className = 'review-section';
+                reviewSection.innerHTML = `
+                    <h3>📚 Topics to Review</h3>
+                    <div class="review-topics">
+                        ${needsReview.map(item => `
+                            <div class="review-topic ${item.cssClass}">
+                                ${item.category}
+                                <span class="miss-count">${item.missed} missed</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+        }
+        
+        function generateCategoryBreakdown() {
+            const breakdownSection = document.getElementById('category-breakdown');
+            const items = [];
+            
+            for (const [category, stats] of Object.entries(categoryStats)) {
+                if (stats.total > 0) {
+                    const pct = Math.round((stats.correct / stats.total) * 100);
+                    let scoreClass = 'needs-work';
+                    if (pct === 100) scoreClass = 'perfect';
+                    else if (pct >= 50) scoreClass = 'good';
+                    
+                    items.push({ category, correct: stats.correct, total: stats.total, pct, scoreClass });
+                }
+            }
+            
+            breakdownSection.innerHTML = `
+                <h4>📊 Score by Category</h4>
+                <div class="breakdown-grid">
+                    ${items.map(item => `
+                        <div class="breakdown-item">
+                            <span class="cat-name">${item.category}</span>
+                            <span class="cat-score ${item.scoreClass}">${item.correct}/${item.total}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0; score = 0; streak = 0; answered = false; totalTimeElapsed = 0;
+            initCategoryStats();
+            document.getElementById('results').classList.remove('show');
+            updateScore();
+            initQuiz();
+        }
+        
+        // Flashcard flip function
+        function flipCard(card) {
+            card.classList.toggle('flipped');
+        }
+        
+        // Start quiz function
+        function startQuiz() {
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('quiz-content').classList.add('active');
+            initQuiz();
+        }
+        
+        // Go back to vocab review
+        function reviewVocab() {
+            currentQuestion = 0; score = 0; streak = 0; answered = false; totalTimeElapsed = 0;
+            initCategoryStats();
+            document.getElementById('results').classList.remove('show');
+            document.getElementById('quiz-content').classList.remove('active');
+            document.getElementById('start-screen').style.display = 'block';
+            document.getElementById('progress-bar').style.width = '0%';
+            updateScore();
+            
+            document.querySelectorAll('.vocab-card').forEach(card => {
+                card.classList.remove('flipped');
+            });
+        }
+        
+        // Don't auto-start - wait for user to click Start Quiz
+    </script>
+</body>
+</html>

@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔊💡 Ciencias - Sonido y Luz - Quiz Interactivo</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, rgba(255,193,7,0.2), rgba(156,39,176,0.2));
+            border-radius: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #ffc107, #ff5722, #9c27b0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        /* TRANSLATION TOGGLE */
+        .translation-toggle {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1em;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .toggle-switch.active {
+            background: #4CAF50;
+        }
+        
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+        }
+        
+        .toggle-switch.active::after {
+            transform: translateX(30px);
+        }
+        
+        .toggle-hint {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        /* VOCABULARY TOOLTIP STYLES */
+        .vocab-word {
+            position: relative;
+            border-bottom: 2px dotted #ffc107;
+            cursor: help;
+            color: inherit;
+            font-weight: 600;
+        }
+        
+        .vocab-word::after {
+            content: attr(data-english);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #333, #444);
+            color: #ffc107;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 0.85em;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            font-weight: normal;
+        }
+        
+        .vocab-word::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: #333;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 100;
+            margin-bottom: -8px;
+        }
+        
+        .vocab-word:hover::after,
+        .vocab-word:hover::before,
+        .show-translations .vocab-word::after,
+        .show-translations .vocab-word::before {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .show-translations .vocab-word {
+            background: rgba(255,193,7,0.2);
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        
+        /* START SCREEN - VOCABULARY REVIEW */
+        .start-screen {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        .start-screen h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #9c27b0;
+        }
+        
+        .vocab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        
+        .vocab-card {
+            background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .vocab-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-color: #ffc107;
+        }
+        
+        .vocab-card.flipped {
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+        }
+        
+        .vocab-spanish {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #9c27b0;
+            margin-bottom: 5px;
+        }
+        
+        .vocab-english {
+            font-size: 0.95em;
+            color: #666;
+        }
+        
+        .vocab-card .vocab-english {
+            display: none;
+        }
+        
+        .vocab-card.flipped .vocab-english,
+        .vocab-card:hover .vocab-english {
+            display: block;
+        }
+        
+        .vocab-emoji {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+        
+        .btn-start {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 20px auto 0;
+            padding: 18px 40px;
+            font-size: 1.3em;
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            color: #333;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .btn-start:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(255,193,7,0.4);
+        }
+        
+        .vocab-instructions {
+            text-align: center;
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .score-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            padding: 15px 25px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .score-bar span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* TIMER STYLES */
+        .timer-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.08);
+            padding: 12px 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            gap: 20px;
+        }
+        
+        .question-timer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .timer-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            background: conic-gradient(#ffc107 var(--timer-progress, 100%), rgba(255,255,255,0.2) 0%);
+            position: relative;
+        }
+        
+        .timer-circle::before {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: #1a1a2e;
+            border-radius: 50%;
+        }
+        
+        .timer-circle span {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .timer-circle.warning {
+            background: conic-gradient(#ff9800 var(--timer-progress, 100%), rgba(255,255,255,0.2) 0%);
+        }
+        
+        .timer-circle.danger {
+            background: conic-gradient(#f44336 var(--timer-progress, 100%), rgba(255,255,255,0.2) 0%);
+            animation: pulse 0.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .total-timer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .timer-progress-bar {
+            flex: 1;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .timer-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffc107, #ff9800);
+            border-radius: 4px;
+            transition: width 1s linear, background 0.3s;
+            width: 100%;
+        }
+        
+        .timer-progress-fill.warning {
+            background: linear-gradient(90deg, #ff9800, #ffc107);
+        }
+        
+        .timer-progress-fill.danger {
+            background: linear-gradient(90deg, #f44336, #e91e63);
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ffc107, #ff5722);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+        
+        .question-card {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+        
+        .question-card.active {
+            display: block;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .question-number {
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            color: #333;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: inline-block;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .question-number.sound {
+            background: linear-gradient(135deg, #9c27b0 0%, #673ab7 100%);
+            color: white;
+        }
+        
+        .question-number.light {
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            color: #333;
+        }
+        
+        .question-number.vocab {
+            background: linear-gradient(135deg, #00bcd4 0%, #03a9f4 100%);
+            color: white;
+        }
+        
+        .question-text {
+            font-size: 1.25em;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            color: #222;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            padding: 18px 20px;
+            background: #f5f5f5;
+            border: 3px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .option:hover:not(.disabled) {
+            background: #fff3e0;
+            border-color: #ff9800;
+            transform: translateX(5px);
+        }
+        
+        .option.selected {
+            border-color: #ff9800;
+            background: #fff3e0;
+        }
+        
+        .option.correct {
+            background: #c8e6c9 !important;
+            border-color: #4CAF50 !important;
+        }
+        
+        .option.incorrect {
+            background: #ffcdd2 !important;
+            border-color: #f44336 !important;
+        }
+        
+        .option.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .option-letter {
+            width: 35px;
+            height: 35px;
+            background: #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .option.correct .option-letter {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .option.incorrect .option-letter {
+            background: #f44336;
+            color: white;
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .feedback.show {
+            display: block;
+        }
+        
+        .feedback.correct {
+            background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+            color: #1b5e20;
+        }
+        
+        .feedback.incorrect {
+            background: linear-gradient(135deg, #ffcdd2, #ef9a9a);
+            color: #b71c1c;
+        }
+        
+        .feedback.timeout {
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+            color: #e65100;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .btn {
+            padding: 15px 35px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        
+        .btn-next {
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            color: #333;
+            display: none;
+        }
+        
+        .btn-next.show {
+            display: inline-block;
+        }
+        
+        .btn-next:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(255, 193, 7, 0.4);
+        }
+        
+        .btn-restart {
+            background: linear-gradient(135deg, #9c27b0 0%, #673ab7 100%);
+            color: white;
+        }
+        
+        .btn-restart:hover {
+            transform: scale(1.05);
+        }
+        
+        .results {
+            text-align: center;
+            display: none;
+        }
+        
+        .results.show {
+            display: block;
+        }
+        
+        .results-card {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        .final-score {
+            font-size: 4em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ffc107 0%, #ff5722 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .grade {
+            font-size: 2em;
+            margin: 20px 0;
+        }
+        
+        .emoji-result {
+            font-size: 4em;
+            margin: 20px 0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .stat-box {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 12px;
+        }
+        
+        .stat-box .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #ff9800;
+        }
+        
+        .stat-box .stat-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .time-bonus {
+            color: #ffc107;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 600px) {
+            .score-bar {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .timer-bar {
+                flex-direction: column;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 1.6em;
+            }
+            
+            .vocab-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .translation-toggle {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔊 Sonido y Luz 💡</h1>
+            <p class="subtitle">Quiz Interactivo de Ciencias</p>
+        </header>
+        
+        <!-- START SCREEN WITH VOCABULARY -->
+        <div class="start-screen" id="start-screen">
+            <h2>📚 ¡Repasa el Vocabulario Primero!</h2>
+            <p class="vocab-instructions">👆 Toca las tarjetas para ver la traducción en inglés (Tap cards to see English)</p>
+            
+            <div class="vocab-grid">
+                <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+                    <div class="vocab-emoji">🔊</div>
+                    <div class="vocab-spanish">Sonido</div>
+                    <div class="vocab-english">Sound</div>
+                </div>
+                <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+                    <div class="vocab-emoji">〰️</div>
+                    <div class="vocab-spanish">Vibrar / Vibraciones</div>
+                    <div class="vocab-english">Vibrate / Vibrations</div>
+                </div>
+                <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+                    <div class="vocab-emoji">🎵</div>
+                    <div class="vocab-spanish">Tono (Pitch)</div>
+                    <div class="vocab-english">Pitch (high/low sound)</div>
+                </div>
+                <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+                    <div class="vocab-emoji">📢</div>
+                    <div class="vocab-spanish">Volumen</div>
+                    <div class="vocab-english">Volume (loud/soft)</div>
+                </div>
+                <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+                    <div class="vocab-emoji">🌊</div>
+                    <div class="vocab-spanish">Ondas Sonoras</div>
+                    <div class="vocab-english">Sound Waves</div>
+                </div>
+                <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+                    <div class="vocab-emoji">📊</div>
+                    <div class="vocab-spanish">Frecuencia</div>
+                    <div class="vocab-english">Frequency</div>
+                </div>
+                <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+                    <div class="vocab-emoji">🧱</div>
+                    <div class="vocab-spanish">Materia / Medio</div>
+                    <div class="vocab-english">Matter / Medium</div>
+                </div>
+                <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+                    <div class="vocab-emoji">💨</div>
+                    <div class="vocab-spanish">Sólido / Líquido / Gas</div>
+                    <div class="vocab-english">Solid / Liquid / Gas</div>
+                </div>
+                <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+                    <div class="vocab-emoji">💡</div>
+                    <div class="vocab-spanish">Luz</div>
+                    <div class="vocab-english">Light</div>
+                </div>
+                <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+                    <div class="vocab-emoji">👀</div>
+                    <div class="vocab-spanish">Vista</div>
+                    <div class="vocab-english">Sight (seeing)</div>
+                </div>
+                <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+                    <div class="vocab-emoji">👂</div>
+                    <div class="vocab-spanish">Audición</div>
+                    <div class="vocab-english">Hearing</div>
+                </div>
+                <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+                    <div class="vocab-emoji">🖐️</div>
+                    <div class="vocab-spanish">Los 5 Sentidos</div>
+                    <div class="vocab-english">The 5 Senses</div>
+                </div>
+                <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+                    <div class="vocab-emoji">💬</div>
+                    <div class="vocab-spanish">Comunicación</div>
+                    <div class="vocab-english">Communication</div>
+                </div>
+                <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+                    <div class="vocab-emoji">📱</div>
+                    <div class="vocab-spanish">Dispositivos</div>
+                    <div class="vocab-english">Devices</div>
+                </div>
+                <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+                    <div class="vocab-emoji">🏃</div>
+                    <div class="vocab-spanish">Velocidad</div>
+                    <div class="vocab-english">Speed</div>
+                </div>
+                <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+                    <div class="vocab-emoji">🔔</div>
+                    <div class="vocab-spanish">Campana</div>
+                    <div class="vocab-english">Bell</div>
+                </div>
+            </div>
+            
+            <button class="btn-start" onclick="startQuiz()">🚀 ¡Comenzar el Quiz!</button>
+        </div>
+        
+        <!-- QUIZ SECTION (hidden initially) -->
+        <div id="quiz-section" class="hidden">
+            <!-- Translation Toggle -->
+            <div class="translation-toggle">
+                <div class="toggle-label">
+                    <span>🌐 Mostrar traducciones (Show translations)</span>
+                    <div class="toggle-switch" id="translation-toggle" onclick="toggleTranslations()"></div>
+                </div>
+                <div class="toggle-hint">
+                    💡 Pasa el mouse sobre las <span class="vocab-word" data-english="underlined words">palabras subrayadas</span> para ver la traducción
+                </div>
+            </div>
+            
+            <div class="score-bar">
+                <span>📊 Puntos: <strong id="current-score">0</strong></span>
+                <span>❓ Pregunta: <strong id="question-num">1</strong> / <strong id="total-questions">20</strong></span>
+                <span>🔥 Racha: <strong id="streak">0</strong></span>
+            </div>
+            
+            <!-- TIMER BAR -->
+            <div class="timer-bar">
+                <div class="question-timer">
+                    <div class="timer-circle" id="timer-circle">
+                        <span id="question-time">120</span>
+                    </div>
+                    <span>segundos</span>
+                </div>
+                <div class="timer-progress-bar">
+                    <div class="timer-progress-fill" id="timer-progress"></div>
+                </div>
+                <div class="total-timer">
+                    <span>⏱️ Total:</span>
+                    <strong id="total-time">0:00</strong>
+                </div>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            
+            <div id="quiz-container">
+                <!-- Questions will be inserted here by JavaScript -->
+            </div>
+        </div>
+        
+        <div class="results" id="results">
+            <div class="results-card">
+                <div class="emoji-result" id="result-emoji">🎉</div>
+                <h2>¡Quiz Completado! (Quiz Complete!)</h2>
+                <div class="final-score" id="final-score">0%</div>
+                <div class="grade" id="grade"></div>
+                
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-value" id="stat-correct">0</div>
+                        <div class="stat-label">Correctas (Correct)</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="stat-time">0:00</div>
+                        <div class="stat-label">Tiempo (Time)</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="stat-avg">0s</div>
+                        <div class="stat-label">Promedio (Average)</div>
+                    </div>
+                </div>
+                
+                <p id="result-message"></p>
+                <button class="btn btn-restart" onclick="restartQuiz()">🔄 Intentar de Nuevo (Try Again)</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Helper function to create vocab words with translations
+        function v(spanish, english) {
+            return `<span class="vocab-word" data-english="${english}">${spanish}</span>`;
+        }
+        
+        const questions = [
+            // SOUND - VIBRATION
+            {
+                category: "🔊 Sonido (Sound)",
+                categoryClass: "sound",
+                question: `Un objeto produce un ${v('sonido', 'sound')} cuando...`,
+                options: [
+                    `Es ${v('pesado', 'heavy')}`, 
+                    `Se ${v('calienta', 'heats up')}`, 
+                    `${v('Vibra', 'Vibrates')}`, 
+                    `${v('Crece', 'Grows')}`
+                ],
+                correct: 2,
+                explanation: `Objects make sound when they VIBRATE! ¡Los objetos producen ${v('sonido', 'sound')} cuando ${v('VIBRAN', 'VIBRATE')}!`
+            },
+            {
+                category: "🔊 Sonido (Sound)",
+                categoryClass: "sound",
+                question: `Una ${v('campana', 'bell')} puede generar ${v('sonido', 'sound')} porque...`,
+                options: [
+                    `Está hecha de ${v('metal', 'metal')}`, 
+                    `Está muy ${v('pesada', 'heavy')}`, 
+                    `Es ${v('sólida', 'solid')}`, 
+                    `Puede ${v('vibrar', 'vibrate')}`
+                ],
+                correct: 3,
+                explanation: `The bell makes sound because it CAN VIBRATE. La ${v('campana', 'bell')} genera ${v('sonido', 'sound')} porque PUEDE ${v('VIBRAR', 'VIBRATE')}.`
+            },
+            {
+                category: "🔊 Sonido (Sound)",
+                categoryClass: "sound",
+                question: `Cuando se golpea un ${v('diapasón', 'tuning fork')} contra una mesa, este comenzará a ${v('vibrar', 'vibrate')}. Podemos decir que ${v('vibra', 'vibrates')} porque...`,
+                options: [
+                    `Genera ${v('sonido', 'sound')}`, 
+                    `Se ${v('calienta', 'heats up')}`, 
+                    `Su ${v('tamaño', 'size')} aumenta`, 
+                    `Cambia de ${v('color', 'color')}`
+                ],
+                correct: 0,
+                explanation: `We know it vibrates because it MAKES SOUND. Sabemos que ${v('vibra', 'vibrates')} porque GENERA ${v('SONIDO', 'SOUND')}.`
+            },
+            // PITCH
+            {
+                category: "🎵 Tono (Pitch)",
+                categoryClass: "sound",
+                question: `Si soplas en dos ${v('silbatos', 'whistles')}, el más ${v('corto', 'short')} hará un ${v('sonido', 'sound')}...`,
+                options: [
+                    `Más ${v('alto', 'high')} (${v('agudo', 'high-pitched')})`, 
+                    `Más ${v('bajo', 'low')} (${v('grave', 'deep')})`, 
+                    `Más ${v('fuerte', 'loud')}`, 
+                    `Más ${v('suave', 'soft')}`
+                ],
+                correct: 0,
+                explanation: `SHORTER objects make HIGHER sounds because they vibrate faster. Los objetos más ${v('CORTOS', 'SHORT')} = sonidos más ${v('ALTOS', 'HIGH')} (${v('agudos', 'high-pitched')}).`
+            },
+            {
+                category: "🎵 Tono (Pitch)",
+                categoryClass: "sound",
+                question: `Cuando una ${v('liga', 'rubber band')} estirada se suelta, genera un ${v('sonido', 'sound')}. ${v('Estirar', 'Stretching')} más la liga hace que ${v('vibre', 'vibrate')} más ${v('rápido', 'fast')}. ¿Cuál es el resultado?`,
+                options: [
+                    `La liga ya no produce ${v('sonido', 'sound')}`, 
+                    `La liga produce un ${v('sonido', 'sound')} más ${v('fuerte', 'loud')}`, 
+                    `La liga produce un ${v('sonido', 'sound')} más duradero`, 
+                    `La liga produce un ${v('sonido', 'sound')} más ${v('agudo', 'high-pitched')}`
+                ],
+                correct: 3,
+                explanation: `Faster vibration = HIGHER pitch. ${v('Vibrar', 'Vibrate')} más ${v('RÁPIDO', 'FAST')} = ${v('tono', 'pitch')} más ${v('AGUDO', 'HIGH')}.`
+            },
+            {
+                category: "🎵 Tono (Pitch)",
+                categoryClass: "sound",
+                question: `Los objetos que tienen un ${v('tono', 'pitch')} más ${v('bajo', 'low')} ${v('vibran', 'vibrate')}...`,
+                options: [
+                    `Más ${v('rápido', 'fast')}`, 
+                    `Más ${v('lentamente', 'slowly')}`, 
+                    `Más ${v('fuerte', 'loud')}`, 
+                    `Sin parar`
+                ],
+                correct: 1,
+                explanation: `LOW pitch = SLOW vibration. HIGH pitch = FAST vibration. ${v('Tono', 'Pitch')} ${v('BAJO', 'LOW')} = ${v('vibración', 'vibration')} ${v('LENTA', 'SLOW')}.`
+            },
+            // SOUND TRAVEL
+            {
+                category: "🚀 Viaje del Sonido (Sound Travel)",
+                categoryClass: "sound",
+                question: `El ${v('sonido', 'sound')} NO viaja en el ${v('espacio', 'space')} porque...`,
+                options: [
+                    `Hace mucho ${v('frío', 'cold')}`, 
+                    `No tiene ${v('materia', 'matter')} por la cual viajar`, 
+                    `Es muy ${v('oscuro', 'dark')}`, 
+                    `Está muy ${v('lejos', 'far')}`
+                ],
+                correct: 1,
+                explanation: `Sound needs MATTER (solid, liquid, or gas) to travel. In space there's no matter! El ${v('sonido', 'sound')} necesita ${v('MATERIA', 'MATTER')} para viajar.`
+            },
+            {
+                category: "🚀 Viaje del Sonido (Sound Travel)",
+                categoryClass: "sound",
+                question: `El ${v('sonido', 'sound')} viaja MÁS ${v('RÁPIDO', 'FAST')} a través de...`,
+                options: [
+                    `Un ${v('gas', 'gas')} (${v('aire', 'air')})`, 
+                    `Un ${v('líquido', 'liquid')} (${v('agua', 'water')})`, 
+                    `Un ${v('sólido', 'solid')} (${v('metal', 'metal')})`, 
+                    `El ${v('vacío', 'vacuum')} (${v('espacio', 'space')})`
+                ],
+                correct: 2,
+                explanation: `Sound travels FASTEST through SOLIDS because molecules are closer together. El ${v('sonido', 'sound')} viaja más ${v('rápido', 'fast')} en ${v('SÓLIDOS', 'SOLIDS')}.`
+            },
+            {
+                category: "🚀 Viaje del Sonido (Sound Travel)",
+                categoryClass: "sound",
+                question: `El ${v('sonido', 'sound')} viaja más ${v('LENTO', 'SLOW')} a través de un ${v('gas', 'gas')} porque...`,
+                options: [
+                    `El ${v('gas', 'gas')} es muy ${v('caliente', 'hot')}`, 
+                    `Las ${v('moléculas', 'molecules')} se ${v('dispersan', 'spread apart')}`, 
+                    `El ${v('gas', 'gas')} es ${v('invisible', 'invisible')}`, 
+                    `El ${v('gas', 'gas')} no tiene ${v('peso', 'weight')}`
+                ],
+                correct: 1,
+                explanation: `In gases, molecules are SPREAD APART, so sound travels slower. En los ${v('gases', 'gases')}, las ${v('moléculas', 'molecules')} están más ${v('separadas', 'spread apart')}.`
+            },
+            // INSTRUMENTS
+            {
+                category: "🎻 Instrumentos (Instruments)",
+                categoryClass: "sound",
+                question: `¿Cómo producen ${v('sonido', 'sound')} los instrumentos de ${v('CUERDA', 'STRING')} (${v('violín', 'violin')}, ${v('guitarra', 'guitar')})?`,
+                options: [
+                    `${v('Soplando', 'Blowing')} ${v('aire', 'air')}`, 
+                    `${v('Vibrando', 'Vibrating')} ${v('cuerdas', 'strings')}`, 
+                    `${v('Golpeando', 'Hitting')}`, 
+                    `Con ${v('electricidad', 'electricity')}`
+                ],
+                correct: 1,
+                explanation: `String instruments make sound when the STRINGS VIBRATE. Los instrumentos de ${v('cuerda', 'string')} producen ${v('sonido', 'sound')} cuando las ${v('CUERDAS', 'STRINGS')} ${v('VIBRAN', 'VIBRATE')}.`
+            },
+            {
+                category: "🎺 Instrumentos (Instruments)",
+                categoryClass: "sound",
+                question: `¿Cómo producen ${v('sonido', 'sound')} los instrumentos de ${v('VIENTO', 'WIND')} (${v('trompeta', 'trumpet')}, ${v('flauta', 'flute')})?`,
+                options: [
+                    `${v('Vibrando', 'Vibrating')} ${v('cuerdas', 'strings')}`, 
+                    `${v('Soplando', 'Blowing')} ${v('aire', 'air')}`, 
+                    `${v('Golpeando', 'Hitting')}`, 
+                    `${v('Frotando', 'Rubbing')}`
+                ],
+                correct: 1,
+                explanation: `Wind instruments make sound by BLOWING AIR through them. Los instrumentos de ${v('viento', 'wind')} producen ${v('sonido', 'sound')} ${v('SOPLANDO', 'BLOWING')} ${v('AIRE', 'AIR')}.`
+            },
+            {
+                category: "🥁 Instrumentos (Instruments)",
+                categoryClass: "sound",
+                question: `¿Cómo producen ${v('sonido', 'sound')} los instrumentos de ${v('PERCUSIÓN', 'PERCUSSION')} (${v('tambor', 'drum')})?`,
+                options: [
+                    `${v('Vibrando', 'Vibrating')} ${v('cuerdas', 'strings')}`, 
+                    `${v('Soplando', 'Blowing')} ${v('aire', 'air')}`, 
+                    `${v('Golpeando', 'Striking/Hitting')}`, 
+                    `Con ${v('electricidad', 'electricity')}`
+                ],
+                correct: 2,
+                explanation: `Percussion instruments make sound when you STRIKE/HIT them. Los instrumentos de ${v('percusión', 'percussion')} producen ${v('sonido', 'sound')} cuando los ${v('GOLPEAS', 'HIT')}.`
+            },
+            // ANIMALS AND SOUND
+            {
+                category: "🐕 Animales y Sonido (Animals & Sound)",
+                categoryClass: "sound",
+                question: `Los ${v('perros', 'dogs')} pueden ${v('escuchar', 'hear')} ${v('sonidos', 'sounds')} que los ${v('humanos', 'humans')} NO pueden ${v('oír', 'hear')}. Estos son ${v('sonidos', 'sounds')} de...`,
+                options: [
+                    `${v('Baja', 'Low')} ${v('frecuencia', 'frequency')}`, 
+                    `${v('Alta', 'High')} ${v('frecuencia', 'frequency')}`, 
+                    `${v('Frecuencia', 'Frequency')} media`, 
+                    `Sin ${v('frecuencia', 'frequency')}`
+                ],
+                correct: 1,
+                explanation: `Dogs can hear HIGH FREQUENCY sounds that humans cannot hear. Los ${v('perros', 'dogs')} pueden ${v('escuchar', 'hear')} ${v('sonidos', 'sounds')} de ${v('ALTA', 'HIGH')} ${v('FRECUENCIA', 'FREQUENCY')}.`
+            },
+            {
+                category: "🦇 Animales y Sonido (Animals & Sound)",
+                categoryClass: "sound",
+                question: `Los ${v('murciélagos', 'bats')} usan ${v('sonidos', 'sounds')} de ${v('alta frecuencia', 'high frequency')} para...`,
+                options: [
+                    `${v('Comunicarse', 'Communicate')} con otros ${v('murciélagos', 'bats')}`, 
+                    `${v('Localizar', 'Locate')} ${v('objetos', 'objects')}`, 
+                    `${v('Asustar', 'Scare')} a los ${v('depredadores', 'predators')}`, 
+                    `${v('Dormir', 'Sleep')} mejor`
+                ],
+                correct: 1,
+                explanation: `Bats use high frequency sounds to LOCATE OBJECTS (echolocation). Los ${v('murciélagos', 'bats')} usan ${v('sonidos', 'sounds')} de ${v('alta frecuencia', 'high frequency')} para ${v('LOCALIZAR', 'LOCATE')} ${v('OBJETOS', 'OBJECTS')}.`
+            },
+            // LIGHT AND COMMUNICATION
+            {
+                category: "📺 Luz y Comunicación (Light & Communication)",
+                categoryClass: "light",
+                question: `La ${v('televisión', 'television')} les permite a las ${v('personas', 'people')} ${v('ver', 'see')} y ${v('oír', 'hear')} cosas, lo que significa que puede...`,
+                options: [
+                    `Generar ${v('luz', 'light')} y ${v('sonido', 'sound')}`, 
+                    `Ponerse muy ${v('caliente', 'hot')}`, 
+                    `${v('Moverse', 'Move')} de un lugar a otro`, 
+                    `${v('Romperse', 'Break')} muy fácilmente`
+                ],
+                correct: 0,
+                explanation: `TV can make LIGHT (screen) AND SOUND (speakers). La TV puede GENERAR ${v('LUZ', 'LIGHT')} (la ${v('pantalla', 'screen')}) Y ${v('SONIDO', 'SOUND')} (los ${v('parlantes', 'speakers')}).`
+            },
+            {
+                category: "🚦 Luz y Comunicación (Light & Communication)",
+                categoryClass: "light",
+                question: `Un ${v('semáforo', 'traffic light')} les dice a las ${v('personas', 'people')} lo que deben hacer a través de diferentes ${v('colores', 'colors')}. ¿Qué ${v('sentido', 'sense')} debe usar una ${v('persona', 'person')}?`,
+                options: [
+                    `${v('Audición', 'Hearing')} (${v('oír', 'hear')})`, 
+                    `${v('Vista', 'Sight')} (${v('ver', 'see')})`, 
+                    `${v('Gusto', 'Taste')} (probar)`, 
+                    `${v('Olfato', 'Smell')} (${v('oler', 'smell')})`
+                ],
+                correct: 1,
+                explanation: `You need to use SIGHT to see the traffic light colors (red, yellow, green). Necesitas usar la ${v('VISTA', 'SIGHT')} para ${v('ver', 'see')} los ${v('colores', 'colors')} del ${v('semáforo', 'traffic light')}.`
+            },
+            {
+                category: "📞 Comunicación (Communication)",
+                categoryClass: "light",
+                question: `¿Qué elemento hace uso del ${v('SONIDO', 'SOUND')} para ${v('comunicar', 'communicate')}?`,
+                options: [
+                    `${v('Lápiz', 'Pencil')}`, 
+                    `${v('Linterna', 'Flashlight')}`, 
+                    `${v('Imán', 'Magnet')}`, 
+                    `${v('Teléfono', 'Telephone')}`
+                ],
+                correct: 3,
+                explanation: `The TELEPHONE uses sound to communicate (you can hear someone's voice). El ${v('TELÉFONO', 'TELEPHONE')} usa ${v('sonido', 'sound')} para ${v('comunicar', 'communicate')}.`
+            },
+            {
+                category: "🔦 Luz (Light)",
+                categoryClass: "light",
+                question: `El ${v('maestro', 'teacher')} usa una ${v('linterna', 'flashlight')} para enviar una señal. ¿Cuál ${v('estudiante', 'student')} recibirá mejor la señal?`,
+                options: [
+                    `El que está ${v('detrás', 'behind')} de la ${v('linterna', 'flashlight')}`, 
+                    `El que está al ${v('lado', 'side')}`, 
+                    `El que está ${v('enfrente', 'in front')} de la ${v('luz', 'light')}`, 
+                    `El que está ${v('arriba', 'above')}`
+                ],
+                correct: 2,
+                explanation: `Light travels in a straight line, so the student IN FRONT of the flashlight receives the signal. La ${v('luz', 'light')} viaja en línea ${v('recta', 'straight')}, así que el ${v('estudiante', 'student')} ${v('ENFRENTE', 'IN FRONT')} recibirá la señal.`
+            },
+            // VOCABULARY
+            {
+                category: "📚 Vocabulario (Vocabulary)",
+                categoryClass: "vocab",
+                question: `La forma en que los ${v('seres vivos', 'living beings')} intercambian ${v('información', 'information')} se llama...`,
+                options: [
+                    `${v('Dispositivos', 'Devices')}`, 
+                    `${v('Larga distancia', 'Long distance')}`, 
+                    `${v('Sentidos', 'Senses')}`, 
+                    `${v('Comunicación', 'Communication')}`
+                ],
+                correct: 3,
+                explanation: `COMMUNICATION is the way living beings exchange information. ${v('COMUNICACIÓN', 'COMMUNICATION')} es la forma en que los ${v('seres vivos', 'living beings')} intercambian ${v('información', 'information')}.`
+            },
+            {
+                category: "📚 Vocabulario (Vocabulary)",
+                categoryClass: "vocab",
+                question: `Las cinco formas naturales en las que la ${v('gente', 'people')} recibe ${v('información', 'information')} son los...`,
+                options: [
+                    `${v('Dispositivos', 'Devices')}`, 
+                    `${v('Larga distancia', 'Long distance')}`, 
+                    `${v('Sentidos', 'Senses')}`, 
+                    `${v('Comunicación', 'Communication')}`
+                ],
+                correct: 2,
+                explanation: `The 5 SENSES are: sight, hearing, smell, taste, and touch. Los 5 ${v('SENTIDOS', 'SENSES')} son: ${v('vista', 'sight')}, ${v('oído', 'hearing')}, ${v('olfato', 'smell')}, ${v('gusto', 'taste')} y ${v('tacto', 'touch')}.`
+            },
+            {
+                category: "📚 Vocabulario (Vocabulary)",
+                categoryClass: "vocab",
+                question: `Los ${v('objetos', 'objects')} que desempeñan una labor se llaman...`,
+                options: [
+                    `${v('Dispositivos', 'Devices')}`, 
+                    `${v('Larga distancia', 'Long distance')}`, 
+                    `${v('Sentidos', 'Senses')}`, 
+                    `${v('Comunicación', 'Communication')}`
+                ],
+                correct: 0,
+                explanation: `DEVICES are objects that perform a task or function. ${v('DISPOSITIVOS', 'DEVICES')} son ${v('objetos', 'objects')} que realizan una tarea o función.`
+            },
+            {
+                category: "📚 Vocabulario (Vocabulary)",
+                categoryClass: "vocab",
+                question: `El ${v('movimiento', 'movement')} ${v('rápido', 'fast')} hacia ${v('adelante', 'forward')} y hacia ${v('atrás', 'backward')} se llama...`,
+                options: [
+                    `${v('Velocidad', 'Speed')}`, 
+                    `${v('Vibraciones', 'Vibrations')}`, 
+                    `${v('Materia', 'Matter')}`, 
+                    `${v('Sonido', 'Sound')}`
+                ],
+                correct: 1,
+                explanation: `VIBRATIONS is the rapid back and forth movement. ${v('VIBRACIONES', 'VIBRATIONS')} es el ${v('movimiento', 'movement')} ${v('rápido', 'fast')} de ida y vuelta.`
+            },
+            {
+                category: "📚 Vocabulario (Vocabulary)",
+                categoryClass: "vocab",
+                question: `La ${v('materia', 'matter')} por la que viajan las ${v('ondas', 'waves')} de ${v('sonido', 'sound')} se llama...`,
+                options: [
+                    `${v('Velocidad', 'Speed')}`, 
+                    `${v('Vibraciones', 'Vibrations')}`, 
+                    `${v('Materia', 'Matter')}/Medio`, 
+                    `${v('Sonido', 'Sound')}`
+                ],
+                correct: 2,
+                explanation: `MATTER/MEDIUM is what allows sound to travel (air, water, solids). La ${v('MATERIA', 'MATTER')} o MEDIO es lo que permite que el ${v('sonido', 'sound')} viaje.`
+            },
+            // COMPONENTS OF SOUND
+            {
+                category: "🔊 Componentes (Components)",
+                categoryClass: "sound",
+                question: `¿Cuántos componentes tiene el ${v('sonido', 'sound')} según tu guía de estudio?`,
+                options: [
+                    `3 componentes`, 
+                    `4 componentes`, 
+                    `5 componentes`, 
+                    `6 componentes`
+                ],
+                correct: 2,
+                explanation: `Sound has 5 components: Sound waves, Frequency, Pitch, Volume, and Decibels. El ${v('sonido', 'sound')} tiene 5 componentes: ${v('Ondas sonoras', 'Sound waves')}, ${v('Frecuencia', 'Frequency')}, ${v('Pitch', 'Pitch')} (${v('tono', 'tone')}), ${v('Volumen', 'Volume')} y ${v('Decibelios', 'Decibels')}.`
+            },
+            {
+                category: "🔊 Componentes (Components)",
+                categoryClass: "sound",
+                question: `¿Qué describe el ${v('VOLUMEN', 'VOLUME')} del ${v('sonido', 'sound')}?`,
+                options: [
+                    `Qué tan ${v('alto', 'high')} o ${v('bajo', 'low')} es el ${v('tono', 'pitch')}`, 
+                    `Qué tan ${v('fuerte', 'loud')} o ${v('suave', 'soft')} es el ${v('sonido', 'sound')}`, 
+                    `Qué tan ${v('rápido', 'fast')} viaja`, 
+                    `De qué ${v('color', 'color')} es`
+                ],
+                correct: 1,
+                explanation: `VOLUME describes how LOUD or SOFT a sound is. El ${v('VOLUMEN', 'VOLUME')} describe qué tan ${v('FUERTE', 'LOUD')} o ${v('SUAVE', 'SOFT')} es un ${v('sonido', 'sound')}.`
+            }
+        ];
+
+        // Shuffle array function
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Translation toggle
+        let showTranslations = false;
+        
+        function toggleTranslations() {
+            showTranslations = !showTranslations;
+            const toggle = document.getElementById('translation-toggle');
+            const container = document.getElementById('quiz-container');
+            
+            toggle.classList.toggle('active', showTranslations);
+            
+            if (showTranslations) {
+                document.body.classList.add('show-translations');
+            } else {
+                document.body.classList.remove('show-translations');
+            }
+        }
+
+        // TIMER VARIABLES
+        const QUESTION_TIME = 120;
+        let questionTimer = QUESTION_TIME;
+        let questionTimerInterval = null;
+        let totalTimeElapsed = 0;
+        let totalTimerInterval = null;
+        
+        let shuffledQuestions = [];
+        let currentQuestion = 0;
+        let score = 0;
+        let streak = 0;
+        let answered = false;
+        
+        function startQuiz() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-section').classList.remove('hidden');
+            initQuiz();
+        }
+
+        function initQuiz() {
+            shuffledQuestions = shuffleArray(questions);
+            document.getElementById('total-questions').textContent = shuffledQuestions.length;
+            startTotalTimer();
+            renderQuestion();
+        }
+
+        function startTotalTimer() {
+            totalTimeElapsed = 0;
+            totalTimerInterval = setInterval(() => {
+                totalTimeElapsed++;
+                updateTotalTimeDisplay();
+            }, 1000);
+        }
+
+        function updateTotalTimeDisplay() {
+            const minutes = Math.floor(totalTimeElapsed / 60);
+            const seconds = totalTimeElapsed % 60;
+            document.getElementById('total-time').textContent = 
+                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function startQuestionTimer() {
+            questionTimer = QUESTION_TIME;
+            updateQuestionTimerDisplay();
+            
+            questionTimerInterval = setInterval(() => {
+                questionTimer--;
+                updateQuestionTimerDisplay();
+                
+                if (questionTimer <= 0) {
+                    clearInterval(questionTimerInterval);
+                    timeOut();
+                }
+            }, 1000);
+        }
+
+        function updateQuestionTimerDisplay() {
+            const timerElement = document.getElementById('question-time');
+            const timerCircle = document.getElementById('timer-circle');
+            const timerProgress = document.getElementById('timer-progress');
+            
+            timerElement.textContent = questionTimer;
+            
+            const progressPercent = (questionTimer / QUESTION_TIME) * 100;
+            timerProgress.style.width = progressPercent + '%';
+            timerCircle.style.setProperty('--timer-progress', progressPercent + '%');
+            
+            timerCircle.classList.remove('warning', 'danger');
+            timerProgress.classList.remove('warning', 'danger');
+            
+            if (questionTimer <= 5) {
+                timerCircle.classList.add('danger');
+                timerProgress.classList.add('danger');
+            } else if (questionTimer <= 10) {
+                timerCircle.classList.add('warning');
+                timerProgress.classList.add('warning');
+            }
+        }
+
+        function stopQuestionTimer() {
+            if (questionTimerInterval) {
+                clearInterval(questionTimerInterval);
+                questionTimerInterval = null;
+            }
+        }
+
+        function timeOut() {
+            if (answered) return;
+            answered = true;
+            
+            const q = shuffledQuestions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            const feedback = document.getElementById('feedback');
+            const nextBtn = document.getElementById('next-btn');
+            
+            options.forEach((opt, i) => {
+                opt.classList.add('disabled');
+                if (i === q.correct) {
+                    opt.classList.add('correct');
+                }
+            });
+            
+            streak = 0;
+            feedback.className = 'feedback show timeout';
+            feedback.innerHTML = `<strong>⏰ Time's up! ¡Se acabó el tiempo!</strong><br>${q.explanation}`;
+            
+            nextBtn.classList.add('show');
+            updateScore();
+        }
+
+        function renderQuestion() {
+            stopQuestionTimer();
+            
+            const container = document.getElementById('quiz-container');
+            const q = shuffledQuestions[currentQuestion];
+            
+            container.innerHTML = `
+                <div class="question-card active">
+                    <span class="question-number ${q.categoryClass}">${q.category}</span>
+                    <p class="question-text">${q.question}</p>
+                    <div class="options">
+                        ${q.options.map((opt, i) => `
+                            <div class="option" onclick="selectAnswer(${i})" data-index="${i}">
+                                <span class="option-letter">${String.fromCharCode(65 + i)}</span>
+                                <span>${opt}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback"></div>
+                    <button class="btn btn-next" id="next-btn" onclick="nextQuestion()">
+                        ${currentQuestion < shuffledQuestions.length - 1 ? 'Siguiente → Next' : 'Ver Resultados 🎯'}
+                    </button>
+                </div>
+            `;
+            
+            answered = false;
+            updateProgress();
+            startQuestionTimer();
+        }
+
+        function selectAnswer(index) {
+            if (answered) return;
+            answered = true;
+            stopQuestionTimer();
+            
+            const q = shuffledQuestions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            const feedback = document.getElementById('feedback');
+            const nextBtn = document.getElementById('next-btn');
+            
+            options.forEach((opt, i) => {
+                opt.classList.add('disabled');
+                if (i === q.correct) {
+                    opt.classList.add('correct');
+                } else if (i === index) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            if (index === q.correct) {
+                score++;
+                streak++;
+                let bonusMsg = '';
+                if (questionTimer >= 25) {
+                    bonusMsg = ' <span class="time-bonus">⚡ Speed Bonus!</span>';
+                }
+                feedback.className = 'feedback show correct';
+                feedback.innerHTML = `<strong>✅ Correct! ¡Correcto!</strong>${bonusMsg}<br>${q.explanation}`;
+            } else {
+                streak = 0;
+                feedback.className = 'feedback show incorrect';
+                feedback.innerHTML = `<strong>❌ Not quite. No exactamente.</strong><br>${q.explanation}`;
+            }
+            
+            nextBtn.classList.add('show');
+            updateScore();
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < shuffledQuestions.length) {
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function updateScore() {
+            document.getElementById('current-score').textContent = score;
+            document.getElementById('streak').textContent = streak;
+        }
+
+        function updateProgress() {
+            document.getElementById('question-num').textContent = currentQuestion + 1;
+            const progress = ((currentQuestion) / shuffledQuestions.length) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+        }
+
+        function showResults() {
+            stopQuestionTimer();
+            clearInterval(totalTimerInterval);
+            
+            document.getElementById('quiz-section').classList.add('hidden');
+            document.getElementById('results').classList.add('show');
+            
+            const percentage = Math.round((score / shuffledQuestions.length) * 100);
+            document.getElementById('final-score').textContent = percentage + '%';
+            
+            document.getElementById('stat-correct').textContent = `${score}/${shuffledQuestions.length}`;
+            
+            const minutes = Math.floor(totalTimeElapsed / 60);
+            const seconds = totalTimeElapsed % 60;
+            document.getElementById('stat-time').textContent = 
+                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            const avgTime = Math.round(totalTimeElapsed / shuffledQuestions.length);
+            document.getElementById('stat-avg').textContent = `${avgTime}s`;
+            
+            let emoji, grade, message;
+            if (percentage >= 90) {
+                emoji = '🏆';
+                grade = 'A - Outstanding! ¡Sobresaliente!';
+                message = 'You\'re a sound & light scientist! ¡Eres un científico! 🔊💡';
+            } else if (percentage >= 80) {
+                emoji = '🌟';
+                grade = 'B - Great! ¡Excelente!';
+                message = 'Great job understanding sound and light!';
+            } else if (percentage >= 70) {
+                emoji = '👍';
+                grade = 'C - Good! ¡Buen Trabajo!';
+                message = 'Good effort! Review vibrations and pitch.';
+            } else if (percentage >= 60) {
+                emoji = '📚';
+                grade = 'D - Keep Studying! ¡Sigue Estudiando!';
+                message = 'You\'re getting there! Review the vocabulary.';
+            } else {
+                emoji = '💪';
+                grade = 'Keep Trying! ¡Sigue Intentando!';
+                message = 'Don\'t give up! Study and try again!';
+            }
+            
+            document.getElementById('result-emoji').textContent = emoji;
+            document.getElementById('grade').textContent = grade;
+            document.getElementById('result-message').textContent = message;
+            document.getElementById('progress-bar').style.width = '100%';
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            streak = 0;
+            answered = false;
+            totalTimeElapsed = 0;
+            
+            document.getElementById('results').classList.remove('show');
+            document.getElementById('start-screen').classList.remove('hidden');
+            document.getElementById('quiz-section').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
