@@ -1,0 +1,2049 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌿 Ecosistemas - Quiz Interactivo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 200, 80, 0.2) 0%, transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(60, 180, 200, 0.2) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(255, 200, 50, 0.1) 0%, transparent 50%),
+                linear-gradient(160deg, #134e5e 0%, #2d6a4f 40%, #40916c 70%, #52b788 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M40 40c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20zm40 0c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Floating nature icons */
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(3deg); }
+        }
+
+        @keyframes floatReverse {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(15px) rotate(-3deg); }
+        }
+
+        @keyframes sway {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        .floating-icon {
+            position: fixed;
+            font-size: 2.5rem;
+            opacity: 0.2;
+            pointer-events: none;
+            z-index: 0;
+            animation: float 7s ease-in-out infinite;
+        }
+
+        .floating-icon:nth-child(even) {
+            animation: floatReverse 9s ease-in-out infinite;
+        }
+
+        .floating-icon.icon-1 { top: 8%; left: 5%; animation-delay: 0s; }
+        .floating-icon.icon-2 { top: 15%; right: 6%; animation-delay: 1s; }
+        .floating-icon.icon-3 { top: 55%; left: 2%; animation-delay: 2s; }
+        .floating-icon.icon-4 { top: 70%; right: 4%; animation-delay: 3s; }
+        .floating-icon.icon-5 { top: 35%; right: 2%; animation-delay: 4s; }
+        .floating-icon.icon-6 { bottom: 10%; left: 6%; animation-delay: 5s; }
+        .floating-icon.icon-7 { top: 45%; left: 4%; animation-delay: 6s; }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        /* Translation Toggle */
+        .translation-toggle {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            width: 50px;
+            height: 26px;
+            background-color: rgba(255,255,255,0.3);
+            border-radius: 26px;
+            position: relative;
+            transition: 0.3s;
+        }
+
+        .slider:before {
+            content: "";
+            position: absolute;
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .toggle-switch input:checked + .slider {
+            background-color: #95d5b2;
+        }
+
+        .toggle-switch input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            padding: 15px 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .timer {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #b7e4c7;
+        }
+
+        .timer.warning {
+            color: #ffd166;
+        }
+
+        .timer.danger {
+            color: #ef476f;
+            animation: pulse 0.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .progress, .score {
+            font-size: 1.1rem;
+        }
+
+        .score {
+            color: #b7e4c7;
+        }
+
+        /* Question Card */
+        .question-card {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .category-producers { background: #d8f3dc; color: #1b4332; }
+        .category-consumers { background: #ffe5d9; color: #9d4d00; }
+        .category-decomposers { background: #e2d6c5; color: #5c4a32; }
+        .category-foodchain { background: #caf0f8; color: #023e8a; }
+        .category-ecosystem { background: #fde2e4; color: #9d0208; }
+
+        .question-text {
+            font-size: 1.25rem;
+            margin-bottom: 25px;
+            line-height: 1.7;
+        }
+
+        /* Translatable words */
+        .translatable {
+            position: relative;
+            border-bottom: 1px dotted #666;
+            cursor: help;
+        }
+
+        .translatable .translation {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            z-index: 100;
+        }
+
+        .translatable:hover .translation,
+        .show-translations .translatable .translation {
+            display: block;
+        }
+
+        /* Answer Options */
+        .options {
+            display: grid;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 18px 25px;
+            background: #f8f9fa;
+            border: 3px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .option:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            border-color: #40916c;
+            background: #d8f3dc;
+        }
+
+        .option.correct {
+            border-color: #2d6a4f;
+            background: #b7e4c7;
+        }
+
+        .option.incorrect {
+            border-color: #e63946;
+            background: #ffe5e5;
+        }
+
+        .option-letter {
+            width: 36px;
+            height: 36px;
+            background: #dee2e6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .option.selected .option-letter {
+            background: #40916c;
+            color: white;
+        }
+
+        .option.correct .option-letter {
+            background: #2d6a4f;
+            color: white;
+        }
+
+        .option.incorrect .option-letter {
+            background: #e63946;
+            color: white;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #40916c, #2d6a4f);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(45, 106, 79, 0.4);
+        }
+
+        .btn-primary:disabled {
+            background: #adb5bd;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #0077b6, #023e8a);
+            color: white;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* Feedback */
+        .feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: #d8f3dc;
+            border-left: 5px solid #2d6a4f;
+        }
+
+        .feedback.incorrect {
+            background: #ffe5e5;
+            border-left: 5px solid #e63946;
+        }
+
+        .feedback h4 {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .feedback .explanation {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .example-box {
+            background: rgba(255,255,255,0.7);
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .emoji-list {
+            font-size: 1.3rem;
+            letter-spacing: 5px;
+        }
+
+        /* Results Screen */
+        .results {
+            display: none;
+            text-align: center;
+        }
+
+        .results-card {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+        }
+
+        .score-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .score-circle.good {
+            background: linear-gradient(135deg, #40916c, #52b788);
+        }
+
+        .score-circle.okay {
+            background: linear-gradient(135deg, #f4a261, #e9c46a);
+        }
+
+        .score-circle.needs-work {
+            background: linear-gradient(135deg, #e63946, #f4a261);
+        }
+
+        .score-number {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .score-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .results h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-item {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Category Breakdown */
+        .category-breakdown {
+            text-align: left;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .category-breakdown h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .category-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .category-row:last-child {
+            border-bottom: none;
+        }
+
+        .category-name {
+            font-weight: 500;
+        }
+
+        .category-score {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .category-score.excellent { background: #d8f3dc; color: #1b4332; }
+        .category-score.good { background: #fff3cd; color: #856404; }
+        .category-score.needs-practice { background: #ffe5e5; color: #c62828; }
+
+        /* Review Section */
+        .review-section {
+            text-align: left;
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #fff3cd, #ffeeba);
+            border-radius: 15px;
+            border-left: 5px solid #ffc107;
+        }
+
+        .review-section h3 {
+            color: #856404;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .review-section ul {
+            margin-left: 20px;
+            color: #555;
+        }
+
+        .review-section li {
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+
+        /* Start Screen */
+        .start-screen {
+            text-align: center;
+        }
+
+        .start-card {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+        }
+
+        .topic-list {
+            text-align: left;
+            max-width: 450px;
+            margin: 25px auto;
+        }
+
+        .topic-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .topic-icon {
+            font-size: 1.6rem;
+        }
+
+        .instructions {
+            background: #d8f3dc;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 25px 0;
+            text-align: left;
+        }
+
+        .instructions h4 {
+            margin-bottom: 10px;
+            color: #1b4332;
+        }
+
+        .instructions ul {
+            margin-left: 20px;
+            color: #2d6a4f;
+        }
+
+        .instructions li {
+            margin: 6px 0;
+        }
+
+        /* Missed Questions Review Styles */
+        .missed-questions-section {
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .missed-questions-section h3 {
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .missed-question-card {
+            background: #fff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #e63946;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .missed-question-card .category-badge {
+            margin-bottom: 10px;
+        }
+
+        .missed-question-card .question-text {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .missed-question-card .correct-answer {
+            background: #d8f3dc;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .missed-question-card .correct-answer strong {
+            color: #1b4332;
+        }
+
+        .missed-question-card .explanation {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        .review-toggle-btn {
+            background: linear-gradient(135deg, #e63946, #d62839);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: all 0.2s;
+        }
+
+        .review-toggle-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(230, 57, 70, 0.3);
+        }
+
+        .missed-questions-list {
+            display: none;
+        }
+
+        .missed-questions-list.visible {
+            display: block;
+        }
+
+        /* Flashcard Styles */
+        .flashcard-screen {
+            display: none;
+        }
+
+        .flashcard-container {
+            perspective: 1000px;
+            margin: 20px auto;
+            max-width: 500px;
+        }
+
+        .flashcard {
+            position: relative;
+            width: 100%;
+            height: 320px;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease;
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+        }
+
+        .flashcard-front {
+            background: linear-gradient(135deg, #1e3a5f, #2d5a87);
+            color: white;
+            border: 3px solid rgba(255,255,255,0.3);
+        }
+
+        .flashcard-back {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-term {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .flashcard-spanish {
+            font-size: 1.1rem;
+            opacity: 0.85;
+            margin-bottom: 20px;
+        }
+
+        .flashcard-emoji {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+        }
+
+        .flashcard-definition {
+            font-size: 1.15rem;
+            text-align: center;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .flashcard-examples {
+            font-size: 1.5rem;
+            letter-spacing: 8px;
+        }
+
+        .tap-hint {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-top: 15px;
+        }
+
+        .flashcard-nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .flashcard-nav button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .flashcard-progress {
+            text-align: center;
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .flashcard-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dot.active {
+            background: #b7e4c7;
+            transform: scale(1.2);
+        }
+
+        .dot:hover {
+            background: rgba(255,255,255,0.5);
+        }
+
+        .study-options {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        .study-options h3 {
+            margin-bottom: 15px;
+            color: #b7e4c7;
+        }
+
+        .btn-study {
+            background: linear-gradient(135deg, #f4a261, #e9c46a);
+            color: #333;
+            margin: 5px;
+        }
+
+        .btn-study:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(244, 162, 97, 0.4);
+        }
+
+        /* Language Button Styles */
+        .language-btn {
+            border: 3px solid transparent;
+            transition: all 0.3s;
+            min-width: 150px;
+        }
+        
+        .language-btn.active {
+            border-color: #b7e4c7;
+            box-shadow: 0 0 20px rgba(183, 228, 199, 0.5);
+            transform: scale(1.05);
+        }
+        
+        .language-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6rem; }
+            .question-text { font-size: 1.1rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .option { padding: 15px; font-size: 1rem; }
+            .floating-icon { display: none; }
+            .flashcard { height: 280px; }
+            .flashcard-term { font-size: 1.6rem; }
+            .flashcard-definition { font-size: 1rem; }
+            .language-btn { min-width: 130px; padding: 10px 15px !important; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating nature decorations -->
+    <div class="floating-icon icon-1">🌱</div>
+    <div class="floating-icon icon-2">🦋</div>
+    <div class="floating-icon icon-3">🌿</div>
+    <div class="floating-icon icon-4">🐛</div>
+    <div class="floating-icon icon-5">🌻</div>
+    <div class="floating-icon icon-6">🍄</div>
+    <div class="floating-icon icon-7">🦎</div>
+
+    <div class="container">
+        <h1>🌿 Ecosistemas Quiz</h1>
+        <p class="subtitle">Ecosystems Study Guide</p>
+
+        <!-- Start Screen -->
+        <div id="startScreen" class="start-screen">
+            <div class="start-card">
+                <h2>🌍 Ready to Explore Ecosystems?</h2>
+                
+                <!-- Language Mode Selector -->
+                <div style="background: rgba(255,255,255,0.15); border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 15px; text-align: center;">🌐 Choose Quiz Language / Elige el idioma:</h4>
+                    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                        <button class="btn language-btn" id="langSpanish" onclick="setLanguage('spanish')" style="background: linear-gradient(135deg, #e63946, #d62839); padding: 15px 25px;">
+                            🇲🇽 Spanish Mode<br>
+                            <small style="opacity: 0.8;">(Como en la escuela)</small>
+                        </button>
+                        <button class="btn language-btn" id="langEnglish" onclick="setLanguage('english')" style="background: linear-gradient(135deg, #1d3557, #457b9d); padding: 15px 25px;">
+                            🇺🇸 English Mode<br>
+                            <small style="opacity: 0.8;">(Full English)</small>
+                        </button>
+                    </div>
+                    <p id="languageStatus" style="text-align: center; margin-top: 10px; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
+                        Currently: 🇲🇽 Spanish Mode (like school test)
+                    </p>
+                </div>
+
+                <div class="topic-list">
+                    <div class="topic-item">
+                        <span class="topic-icon">🌱</span>
+                        <span><strong>Productores</strong> - Plants & producers</span>
+                    </div>
+                    <div class="topic-item">
+                        <span class="topic-icon">🦁</span>
+                        <span><strong>Consumidores</strong> - Animals & consumers</span>
+                    </div>
+                    <div class="topic-item">
+                        <span class="topic-icon">🍄</span>
+                        <span><strong>Descomponedores</strong> - Decomposers</span>
+                    </div>
+                    <div class="topic-item">
+                        <span class="topic-icon">🔗</span>
+                        <span><strong>Cadenas alimentarias</strong> - Food chains & webs</span>
+                    </div>
+                    <div class="topic-item">
+                        <span class="topic-icon">🌍</span>
+                        <span><strong>Ecosistemas</strong> - Balance & factors</span>
+                    </div>
+                </div>
+
+                <div class="instructions">
+                    <h4>📋 Instructions / Instrucciones:</h4>
+                    <ul>
+                        <li>⏱️ <strong>60 seconds</strong> per question</li>
+                        <li>🎯 Read carefully - ¡Lee con cuidado!</li>
+                        <li>📝 <strong>20 questions</strong> from your actual school test!</li>
+                        <li>🌿 Think about how organisms connect!</li>
+                    </ul>
+                </div>
+
+                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn btn-study" onclick="startFlashcards()">📚 Study Flashcards First</button>
+                    <button class="btn btn-primary" onclick="startQuiz()">¡Comenzar! / Start Quiz 🌱</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Translation Toggle (for flashcards) -->
+        <input type="checkbox" id="translationToggle" style="display: none;">
+
+        <!-- Flashcard Screen -->
+        <div id="flashcardScreen" class="flashcard-screen">
+            <h2 style="text-align: center; margin-bottom: 10px;">📚 Flashcards de Ecosistemas</h2>
+            <p style="text-align: center; color: rgba(255,255,255,0.8); margin-bottom: 20px;">Tap the card to flip it!</p>
+            
+            <div class="flashcard-container">
+                <div class="flashcard" id="flashcard" onclick="flipCard()">
+                    <div class="flashcard-face flashcard-front">
+                        <div class="flashcard-emoji" id="cardEmoji">🌱</div>
+                        <div class="flashcard-term" id="cardTerm">Productor</div>
+                        <div class="flashcard-spanish" id="cardSpanish">(Producer)</div>
+                        <div class="tap-hint">👆 Tap to see definition</div>
+                    </div>
+                    <div class="flashcard-face flashcard-back">
+                        <div class="flashcard-definition" id="cardDefinition">
+                            An organism that makes its own food using energy from the sun through photosynthesis.
+                        </div>
+                        <div class="flashcard-examples" id="cardExamples">🌳🌿🌻🌾</div>
+                        <div class="tap-hint">👆 Tap to see next term</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flashcard-progress" id="flashcardProgress">Card 1 of 12</div>
+            
+            <div class="flashcard-dots" id="flashcardDots"></div>
+
+            <div class="flashcard-nav">
+                <button class="nav-btn" id="flashcardPrevBtn" onclick="prevCard()">← Previous</button>
+                <button class="nav-btn" id="flashcardNextBtn" onclick="nextCard()">Next →</button>
+            </div>
+
+            <div class="study-options">
+                <h3>Ready to test yourself?</h3>
+                <button class="btn btn-primary" onclick="startQuizFromFlashcards()">Start Quiz 🌱</button>
+                <button class="btn nav-btn" onclick="backToStart()">← Back to Menu</button>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quizScreen" style="display: none;">
+            <div class="stats-bar">
+                <div class="timer" id="timer">⏱️ 1:00</div>
+                <div class="progress" id="progress">Question 1 of 15</div>
+                <div class="score" id="currentScore">Score: 0</div>
+            </div>
+
+            <div class="question-card" id="questionCard">
+                <span class="category-badge" id="categoryBadge"></span>
+                <div class="question-text" id="questionText"></div>
+                <div class="options" id="optionsContainer"></div>
+                <div class="feedback" id="feedback">
+                    <h4 id="feedbackTitle"></h4>
+                    <div class="explanation" id="feedbackExplanation"></div>
+                </div>
+                <div class="button-container">
+                    <button class="btn btn-primary" id="submitBtn" onclick="submitAnswer()" disabled>
+                        Submit Answer
+                    </button>
+                    <button class="btn btn-secondary" id="nextBtn" onclick="nextQuestion()" style="display: none;">
+                        Next Question →
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="results">
+            <div class="results-card">
+                <h2>🎉 Quiz Complete!</h2>
+                
+                <div class="score-circle" id="scoreCircle">
+                    <div class="score-number" id="finalScore">0%</div>
+                    <div class="score-label">Score</div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="correctCount">0</div>
+                        <div class="stat-label">Correct ✅</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="incorrectCount">0</div>
+                        <div class="stat-label">Incorrect ❌</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalTime">0:00</div>
+                        <div class="stat-label">Total Time ⏱️</div>
+                    </div>
+                </div>
+
+                <div class="category-breakdown" id="categoryBreakdown">
+                    <h3>📊 Score by Topic</h3>
+                </div>
+
+                <div class="review-section" id="reviewSection" style="display: none;">
+                    <h3>📚 Topics to Review</h3>
+                    <ul id="reviewList"></ul>
+                </div>
+
+                <!-- Missed Questions Review -->
+                <div class="missed-questions-section" id="missedQuestionsSection" style="display: none;">
+                    <h3>❌ Questions You Missed</h3>
+                    <p style="color: #666; margin-bottom: 15px;">Review these questions to strengthen your understanding!</p>
+                    <button class="review-toggle-btn" onclick="toggleMissedQuestions()">
+                        📖 Show Missed Questions
+                    </button>
+                    <div class="missed-questions-list" id="missedQuestionsList"></div>
+                </div>
+
+                <div class="button-container" style="margin-top: 30px;">
+                    <button class="btn btn-primary" onclick="restartQuiz()">🔄 Try Again</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Flashcard Data
+        const flashcards = [
+            {
+                emoji: "🌱",
+                term: "Productor",
+                english: "(Producer)",
+                definition: "An organism that MAKES its own food using energy from the sun through photosynthesis.",
+                examples: "🌳🌿🌻🌾"
+            },
+            {
+                emoji: "☀️",
+                term: "Fotosíntesis",
+                english: "(Photosynthesis)",
+                definition: "The process plants use to make food from sunlight + water + carbon dioxide → sugar + oxygen.",
+                examples: "☀️💧🌬️→🍬💨"
+            },
+            {
+                emoji: "🦁",
+                term: "Consumidor",
+                english: "(Consumer)",
+                definition: "An organism that gets energy by EATING other organisms. Cannot make its own food.",
+                examples: "🐰🦊🦁🐻"
+            },
+            {
+                emoji: "🥬",
+                term: "Herbívoro",
+                english: "(Herbivore)",
+                definition: "A consumer that eats ONLY PLANTS. 'Herb' = plant, 'vore' = eater.",
+                examples: "🐰🦌🐄🐘"
+            },
+            {
+                emoji: "🥩",
+                term: "Carnívoro",
+                english: "(Carnivore)",
+                definition: "A consumer that eats ONLY MEAT (other animals). 'Carn' = meat, 'vore' = eater.",
+                examples: "🦁🦅🦈🐺"
+            },
+            {
+                emoji: "🥗",
+                term: "Omnívoro",
+                english: "(Omnivore)",
+                definition: "A consumer that eats BOTH plants AND meat. 'Omni' = all, 'vore' = eater.",
+                examples: "🐻🐷👤🐒"
+            },
+            {
+                emoji: "🍄",
+                term: "Descomponedor",
+                english: "(Decomposer)",
+                definition: "An organism that breaks down DEAD matter and returns nutrients to the soil. Nature's recyclers!",
+                examples: "🍄🦠🐛🪲"
+            },
+            {
+                emoji: "🔗",
+                term: "Cadena Alimentaria",
+                english: "(Food Chain)",
+                definition: "A simple LINE showing how energy flows from one organism to another. Shows ONE path of who eats whom.",
+                examples: "🌿→🐛→🐸→🐍"
+            },
+            {
+                emoji: "🕸️",
+                term: "Red Alimentaria",
+                english: "(Food Web)",
+                definition: "MANY food chains connected together. Shows ALL the feeding relationships in an ecosystem.",
+                examples: "🔗🔗🔗 = 🕸️"
+            },
+            {
+                emoji: "🌍",
+                term: "Ecosistema",
+                english: "(Ecosystem)",
+                definition: "All living things (plants, animals) and non-living things (water, rocks, air) in an area, all working together.",
+                examples: "🌳🦁💧🌤️🪨"
+            },
+            {
+                emoji: "🏠",
+                term: "Necesidades Básicas",
+                english: "(Basic Needs)",
+                definition: "The THREE things all animals need to survive: FOOD (comida), WATER (agua), and SHELTER (refugio).",
+                examples: "🍎💧🏠"
+            },
+            {
+                emoji: "→",
+                term: "Flecha en Cadena",
+                english: "(Arrow in Food Chain)",
+                definition: "Shows the DIRECTION of energy flow. Points FROM the food TO the eater. Read as 'is eaten by' or 'gives energy to'.",
+                examples: "🌿 → 🐰 = grass gives energy to rabbit"
+            },
+            {
+                emoji: "♻️",
+                term: "Ciclo de Energía",
+                english: "(Energy Cycle)",
+                definition: "Energy flows: SUN → Producers (plants make food) → Consumers (animals eat) → Decomposers (break down dead matter) → Nutrients back to soil for plants!",
+                examples: "☀️→🌱→🐰→🦊→💀→🍄→🌱"
+            }
+        ];
+
+        // Language Mode State
+        let languageMode = 'spanish'; // 'spanish' or 'english'
+        
+        function setLanguage(mode) {
+            languageMode = mode;
+            
+            // Update button states
+            document.getElementById('langSpanish').classList.toggle('active', mode === 'spanish');
+            document.getElementById('langEnglish').classList.toggle('active', mode === 'english');
+            
+            // Update status text
+            const status = document.getElementById('languageStatus');
+            if (mode === 'spanish') {
+                status.innerHTML = 'Currently: 🇲🇽 <strong>Spanish Mode</strong> (like school test)';
+            } else {
+                status.innerHTML = 'Currently: 🇺🇸 <strong>English Mode</strong> (full English)';
+            }
+        }
+        
+        // Initialize language button state
+        document.addEventListener('DOMContentLoaded', () => {
+            setLanguage('spanish');
+        });
+
+        // Flashcard State
+        let currentCardIndex = 0;
+        let isFlipped = false;
+
+        // Flashcard Functions
+        function startFlashcards() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('flashcardScreen').style.display = 'block';
+            currentCardIndex = 0;
+            isFlipped = false;
+            renderDots();
+            loadCard();
+        }
+
+        function renderDots() {
+            const dotsContainer = document.getElementById('flashcardDots');
+            dotsContainer.innerHTML = '';
+            flashcards.forEach((_, idx) => {
+                const dot = document.createElement('span');
+                dot.className = 'dot' + (idx === currentCardIndex ? ' active' : '');
+                dot.onclick = () => goToCard(idx);
+                dotsContainer.appendChild(dot);
+            });
+        }
+
+        function loadCard() {
+            const card = flashcards[currentCardIndex];
+            document.getElementById('cardEmoji').textContent = card.emoji;
+            document.getElementById('cardTerm').textContent = card.term;
+            document.getElementById('cardSpanish').textContent = card.english;
+            document.getElementById('cardDefinition').textContent = card.definition;
+            document.getElementById('cardExamples').textContent = card.examples;
+            document.getElementById('flashcardProgress').textContent = `Card ${currentCardIndex + 1} of ${flashcards.length}`;
+            
+            // Reset flip state
+            document.getElementById('flashcard').classList.remove('flipped');
+            isFlipped = false;
+
+            // Update dots
+            document.querySelectorAll('.dot').forEach((dot, idx) => {
+                dot.classList.toggle('active', idx === currentCardIndex);
+            });
+
+            // Update nav buttons
+            document.getElementById('flashcardPrevBtn').disabled = currentCardIndex === 0;
+        }
+
+        function flipCard() {
+            const flashcard = document.getElementById('flashcard');
+            isFlipped = !isFlipped;
+            flashcard.classList.toggle('flipped', isFlipped);
+        }
+
+        function nextCard() {
+            if (currentCardIndex < flashcards.length - 1) {
+                currentCardIndex++;
+                loadCard();
+            }
+        }
+
+        function prevCard() {
+            if (currentCardIndex > 0) {
+                currentCardIndex--;
+                loadCard();
+            }
+        }
+
+        function goToCard(index) {
+            currentCardIndex = index;
+            loadCard();
+        }
+
+        function startQuizFromFlashcards() {
+            document.getElementById('flashcardScreen').style.display = 'none';
+            document.getElementById('quizScreen').style.display = 'block';
+            
+            shuffledQuestions = selectQuestions();
+            currentQuestion = 0;
+            score = 0;
+            totalTimeUsed = 0;
+            categoryScores = {};
+            missedQuestions = []; // Reset missed questions
+            
+            loadQuestion();
+        }
+
+        function backToStart() {
+            document.getElementById('flashcardScreen').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'block';
+        }
+
+        // Question Bank - 20 Questions from Actual School Test (Bilingual)
+        const questions = [
+            // Q3 - Decomposers in forest ecosystem
+            {
+                category: "Decomposers",
+                categoryClass: "category-decomposers",
+                spanish: {
+                    question: `🌲 Lee el pasaje sobre un ecosistema forestal. ¿Qué es el descomponedor en la foto?`,
+                    options: [`Pastos`, `Conejos`, `Sol`, `Hongos`]
+                },
+                english: {
+                    question: `🌲 Read the passage about a forest ecosystem. What is the decomposer in the photo?`,
+                    options: [`Grass`, `Rabbits`, `Sun`, `Fungi/Mushrooms`]
+                },
+                correct: 3,
+                explanation: `<strong>🍄 Hongos (Fungi/Mushrooms) are decomposers!</strong>
+                <div class="example-box">
+                    Decomposers break down dead matter:<br>
+                    🍄 Hongos (Fungi) ✅<br>
+                    🦠 Bacterias (Bacteria) ✅<br>
+                    🐛 Gusanos (Worms) ✅
+                </div>
+                <p>Grass = Producer, Rabbits = Consumer, Sun = Energy source</p>`
+            },
+            // Q4 - What do rabbits eat?
+            {
+                category: "Consumers",
+                categoryClass: "category-consumers",
+                spanish: {
+                    question: `🐰 En el ecosistema forestal, ¿qué parte del ecosistema comen los conejos?`,
+                    options: [`Sol`, `Arboles`, `Halcones`, `Pastos`]
+                },
+                english: {
+                    question: `🐰 In the forest ecosystem, what part of the ecosystem do rabbits eat?`,
+                    options: [`Sun`, `Trees`, `Hawks`, `Grass`]
+                },
+                correct: 3,
+                explanation: `<strong>🐰 Rabbits eat GRASS (pastos)!</strong>
+                <div class="example-box">
+                    Rabbits are herbivores - they eat plants!<br>
+                    🐰 eats 🌿 Grass/Pastos ✅<br>
+                    NOT trees (too tough), NOT sun (not food), NOT hawks (rabbits don't hunt!)
+                </div>`
+            },
+            // Q5 - Yellowstone wolves
+            {
+                category: "Food Chains",
+                categoryClass: "category-foodchain",
+                spanish: {
+                    question: `🐺 En el parque nacional de Yellowstone aumentó la cantidad de lobos. ¿Cuál de los siguientes es MÁS PROBABLE que ocurra?`,
+                    options: [
+                        `El número de árboles van a disminuirá (menos)`,
+                        `El número de pumas en el valle aumentará (mas)`,
+                        `El número de ríos aumentará (mas)`,
+                        `El número de bisonetas disminuirá (menos)`
+                    ]
+                },
+                english: {
+                    question: `🐺 In Yellowstone National Park, the number of wolves increased. What is MOST LIKELY to happen?`,
+                    options: [
+                        `The number of trees will decrease`,
+                        `The number of mountain lions will increase`,
+                        `The number of rivers will increase`,
+                        `The number of bison will decrease`
+                    ]
+                },
+                correct: 3,
+                explanation: `<strong>More wolves 🐺 = Less prey animals!</strong>
+                <div class="example-box">
+                    🐺 Wolves eat bison, elk, deer<br>
+                    More wolves = More hunting = Fewer bison!<br>
+                    ⬆️ Predators = ⬇️ Prey
+                </div>`
+            },
+            // Q6 - Food chain: Owl energy source
+            {
+                category: "Food Chains",
+                categoryClass: "category-foodchain",
+                spanish: {
+                    question: `🦉 El siguiente diagrama muestra una cadena alimentaria (pasto→saltamontes→rana→búho). De acuerdo con el diagrama, el búho recibe energía(comida) directamente del:`,
+                    options: [`Halcón`, `Saltamontes`, `Césped`, `Rana`]
+                },
+                english: {
+                    question: `🦉 The following diagram shows a food chain (grass→grasshopper→frog→owl). According to the diagram, the owl gets energy (food) directly from the:`,
+                    options: [`Hawk`, `Grasshopper`, `Grass`, `Frog`]
+                },
+                correct: 3,
+                explanation: `<strong>🦉 Owls eat FROGS in this food chain!</strong>
+                <div class="example-box">
+                    🌿 Grass → 🦗 Grasshopper → 🐸 Frog → 🦉 Owl<br>
+                    Follow the arrows! The owl eats what comes RIGHT BEFORE it = Frog!
+                </div>`
+            },
+            // Q7 - Manatees and plants
+            {
+                category: "Food Chains",
+                categoryClass: "category-foodchain",
+                spanish: {
+                    question: `🦭 Los manatíes de Florida comen plantas submarinas. Si los manatíes se extinguieran, ¿cómo se verían afectadas MÁS PROBABLEMENTE las poblaciones de plantas submarinas?`,
+                    options: [
+                        `Las poblaciones de plantas permanecerían iguales`,
+                        `Las poblaciones de plantas desaparecerían (menos)`,
+                        `Las poblaciones de plantas aumentarían (mas)`,
+                        `Las poblaciones de plantas disminuirían (menos)`
+                    ]
+                },
+                english: {
+                    question: `🦭 Florida manatees eat underwater plants. If manatees went extinct, how would underwater plant populations MOST LIKELY be affected?`,
+                    options: [
+                        `Plant populations would stay the same`,
+                        `Plant populations would disappear`,
+                        `Plant populations would INCREASE`,
+                        `Plant populations would decrease`
+                    ]
+                },
+                correct: 2,
+                explanation: `<strong>No manatees = MORE plants! 🌿⬆️</strong>
+                <div class="example-box">
+                    If nothing is eating the plants, they will grow MORE!<br>
+                    🦭 Manatees gone = 🌿 Plants not being eaten = Plants INCREASE!
+                </div>`
+            },
+            // Q8 - Pond food web: Ducks removed
+            {
+                category: "Food Chains",
+                categoryClass: "category-foodchain",
+                spanish: {
+                    question: `🦆 La imagen muestra una red alimentaria de un estanque (Algas→Larvas de mosquitos→Pato). Los cazadores han comido a todos los patos. ¿Cómo podría esto cambiar la red alimentaria?`,
+                    options: [`Mas larvas de mosquitos`, `Menos Alga`, `Menos caracoles`, `Mas Patos`]
+                },
+                english: {
+                    question: `🦆 The image shows a pond food web (Algae→Mosquito larvae→Duck). Hunters have eaten all the ducks. How could this change the food web?`,
+                    options: [`More mosquito larvae`, `Less algae`, `Fewer snails`, `More ducks`]
+                },
+                correct: 0,
+                explanation: `<strong>No ducks = MORE mosquito larvae! 🦟⬆️</strong>
+                <div class="example-box">
+                    Ducks eat mosquito larvae.<br>
+                    🦆 Ducks gone = No one eating larvae = 🦟 MORE mosquito larvae!
+                </div>`
+            },
+            // Q9 - What are decomposers?
+            {
+                category: "Decomposers",
+                categoryClass: "category-decomposers",
+                spanish: {
+                    question: `🕸️ El diagrama muestra la red alimentaria de un pastizal. ¿Qué organismos se pueden clasificar como descomponedores?`,
+                    options: [`Halcones y musarañas`, `Hongos y bacterias`, `Saltamontes y ardillas`, `Pájaros insectívoros y musarañas`]
+                },
+                english: {
+                    question: `🕸️ The diagram shows a grassland food web. Which organisms can be classified as decomposers?`,
+                    options: [`Hawks and shrews`, `Fungi and bacteria`, `Grasshoppers and squirrels`, `Insect-eating birds and shrews`]
+                },
+                correct: 1,
+                explanation: `<strong>🍄 Fungi and bacteria are DECOMPOSERS!</strong>
+                <div class="example-box">
+                    Decomposers = Break down dead matter<br>
+                    🍄 Hongos (Fungi) ✅<br>
+                    🦠 Bacterias (Bacteria) ✅<br>
+                    Hawks, squirrels, birds = Consumers (they eat other living things)
+                </div>`
+            },
+            // Q10 - Food web: What eats mice?
+            {
+                category: "Food Chains",
+                categoryClass: "category-foodchain",
+                spanish: {
+                    question: `🐭 En el diagrama se muestra una red alimentaria. ¿Qué organismo come los ratones?`,
+                    options: [`Césped`, `Grillo`, `Halcón`, `Ciervo`]
+                },
+                english: {
+                    question: `🐭 The diagram shows a food web. What organism eats mice?`,
+                    options: [`Grass`, `Cricket`, `Hawk`, `Deer`]
+                },
+                correct: 2,
+                explanation: `<strong>🦅 Hawks eat mice!</strong>
+                <div class="example-box">
+                    Look for PREDATORS of mice:<br>
+                    🦅 Hawks eat mice ✅<br>
+                    🦉 Owls eat mice ✅<br>
+                    🐍 Snakes eat mice ✅<br>
+                    Grass = food for mice, not predator!
+                </div>`
+            },
+            // Q11 - What doesn't affect ecosystems?
+            {
+                category: "Ecosystem",
+                categoryClass: "category-ecosystem",
+                spanish: {
+                    question: `🌍 ¿Cuál NO afecta a los ecosistemas?`,
+                    options: [`Humanos`, `Desastres naturales (Tornados, Huracanes, Tormentas, Volcanes, Temblores)`, `Pokemon`, `Fuegos`]
+                },
+                english: {
+                    question: `🌍 What does NOT affect ecosystems?`,
+                    options: [`Humans`, `Natural disasters (Tornados, Hurricanes, Storms, Volcanoes, Earthquakes)`, `Pokemon`, `Fires`]
+                },
+                correct: 2,
+                explanation: `<strong>Pokemon are NOT REAL! 🎮</strong>
+                <div class="example-box">
+                    Real things that affect ecosystems:<br>
+                    👤 Humans ✅ (pollution, building, hunting)<br>
+                    🌪️ Natural disasters ✅<br>
+                    🔥 Fires ✅<br>
+                    🎮 Pokemon ❌ (fictional/not real!)
+                </div>`
+            },
+            // Q12 - Energy flow in rainforest
+            {
+                category: "Ecosystem",
+                categoryClass: "category-ecosystem",
+                spanish: {
+                    question: `☀️ En una selva tropical, la energía del Sol fluiría primero a un:`,
+                    options: [`Consumidor`, `Descomponedor`, `Productor`, `Tundra`]
+                },
+                english: {
+                    question: `☀️ In a tropical rainforest, energy from the Sun would flow first to a:`,
+                    options: [`Consumer`, `Decomposer`, `Producer`, `Tundra`]
+                },
+                correct: 2,
+                explanation: `<strong>☀️ Sun energy goes to PRODUCERS first!</strong>
+                <div class="example-box">
+                    Energy flow: ☀️ Sun → 🌱 Producers (plants)<br>
+                    Plants use photosynthesis to capture sun energy!<br>
+                    Then: 🌱 → 🐰 Consumers → 🍄 Decomposers
+                </div>`
+            },
+            // Q13 - Predator removed
+            {
+                category: "Food Chains",
+                categoryClass: "category-foodchain",
+                spanish: {
+                    question: `🦁 Si se elimina una especie de depredador de un ecosistema, la presa:`,
+                    options: [`Incrementará (mas)`, `Va a disminuir (menos)`, `Será el mismo`, `Desaparecerá`]
+                },
+                english: {
+                    question: `🦁 If a predator species is removed from an ecosystem, the prey will:`,
+                    options: [`Increase`, `Decrease`, `Stay the same`, `Disappear`]
+                },
+                correct: 0,
+                explanation: `<strong>No predators = MORE prey! ⬆️</strong>
+                <div class="example-box">
+                    🦁 Predator gone = Nothing hunting the prey<br>
+                    🐰 Prey population INCREASES!<br>
+                    (But eventually may run out of food)
+                </div>`
+            },
+            // Q14 - Georgia ecosystem: Fungi disappear
+            {
+                category: "Decomposers",
+                categoryClass: "category-decomposers",
+                spanish: {
+                    question: `🍄 Los hongos se encuentran en ambientes húmedos. ¿Qué pasaría MÁS PROBABLEMENTE si los hongos dejaran de crecer en un ecosistema de Georgia?`,
+                    options: [
+                        `Los productores aumentaría (mas)`,
+                        `Los consumidores aumentaría (mas)`,
+                        `Los consumidores disminuiría (menos)`,
+                        `La cantidad de agua y luz solar aumentaría (mas)`
+                    ]
+                },
+                english: {
+                    question: `🍄 Fungi are found in humid environments. What would MOST LIKELY happen if fungi stopped growing in a Georgia ecosystem?`,
+                    options: [
+                        `Producers would increase`,
+                        `Consumers would increase`,
+                        `Consumers would decrease`,
+                        `The amount of water and sunlight would increase`
+                    ]
+                },
+                correct: 0,
+                explanation: `<strong>No fungi = Producers increase (temporarily)!</strong>
+                <div class="example-box">
+                    🍄 Fungi (decomposers) break down dead matter<br>
+                    Without them: Dead matter piles up initially<br>
+                    But also: Less competition = 🌱 Producers grow more at first
+                </div>`
+            },
+            // Q15 - Primary energy
+            {
+                category: "Ecosystem",
+                categoryClass: "category-ecosystem",
+                spanish: {
+                    question: `☀️ ¿Que es la energía primaria de nuestro planeta?`,
+                    options: [`Sol`, `Productores`, `Descomponedores`, `Consumidores`]
+                },
+                english: {
+                    question: `☀️ What is the primary energy source of our planet?`,
+                    options: [`Sun`, `Producers`, `Decomposers`, `Consumers`]
+                },
+                correct: 0,
+                explanation: `<strong>☀️ The SUN is the primary energy source!</strong>
+                <div class="example-box">
+                    Energy starts with the SUN!<br>
+                    ☀️ Sun → 🌱 Producers → 🐰 Consumers → 🍄 Decomposers<br>
+                    Without the sun, no life could exist!
+                </div>`
+            },
+            // Q16 - What we need to survive
+            {
+                category: "Ecosystem",
+                categoryClass: "category-ecosystem",
+                spanish: {
+                    question: `🏠 ¿Que necesitamos para sobrevivir?`,
+                    options: [`Agua, ropa, comida`, `Comida, aire, transportación`, `Agua, aire, refugio`, `Agua, comida, aire, sol`]
+                },
+                english: {
+                    question: `🏠 What do we need to survive?`,
+                    options: [`Water, clothes, food`, `Food, air, transportation`, `Water, air, shelter`, `Water, food, air, sun`]
+                },
+                correct: 3,
+                explanation: `<strong>Basic survival needs!</strong>
+                <div class="example-box">
+                    All living things need:<br>
+                    💧 Agua (Water)<br>
+                    🍎 Comida (Food)<br>
+                    🌬️ Aire (Air)<br>
+                    ☀️ Sol (Sun) - for energy!
+                </div>`
+            },
+            // Q17 - NOT a type of consumer
+            {
+                category: "Consumers",
+                categoryClass: "category-consumers",
+                spanish: {
+                    question: `🦁 ¿Cuál NO es un tipo de consumidor?`,
+                    options: [`Carnívoro`, `Productor`, `Herbívoro`, `Omnívoro`]
+                },
+                english: {
+                    question: `🦁 Which is NOT a type of consumer?`,
+                    options: [`Carnivore`, `Producer`, `Herbivore`, `Omnivore`]
+                },
+                correct: 1,
+                explanation: `<strong>🌱 Producers are NOT consumers!</strong>
+                <div class="example-box">
+                    Types of CONSUMERS:<br>
+                    🥬 Herbívoro (Herbivore) - eats plants ✅<br>
+                    🥩 Carnívoro (Carnivore) - eats meat ✅<br>
+                    🥗 Omnívoro (Omnivore) - eats both ✅<br>
+                    🌱 Productor = Makes own food (NOT a consumer!)
+                </div>`
+            },
+            // Q18 - NOT a producer
+            {
+                category: "Producers",
+                categoryClass: "category-producers",
+                spanish: {
+                    question: `🌱 ¿Cual NO ES un productor?`,
+                    options: [`Árbol`, `Flor`, `Planta`, `Serpiente`]
+                },
+                english: {
+                    question: `🌱 Which is NOT a producer?`,
+                    options: [`Tree`, `Flower`, `Plant`, `Snake`]
+                },
+                correct: 3,
+                explanation: `<strong>🐍 Snakes are NOT producers!</strong>
+                <div class="example-box">
+                    Producers make their own food (photosynthesis):<br>
+                    🌳 Árbol (Tree) = Producer ✅<br>
+                    🌸 Flor (Flower) = Producer ✅<br>
+                    🌿 Planta (Plant) = Producer ✅<br>
+                    🐍 Serpiente (Snake) = Consumer! ❌
+                </div>`
+            },
+            // Q19 - Examples of decomposers
+            {
+                category: "Decomposers",
+                categoryClass: "category-decomposers",
+                spanish: {
+                    question: `🍄 ¿Cuáles son ejemplos de descomponedores?`,
+                    options: [`Humanos, tiburones, leones`, `Ciervos, conejos, ardillas`, `Hierbas, árboles, verduras`, `Bacterias, gusanos, hongos`]
+                },
+                english: {
+                    question: `🍄 What are examples of decomposers?`,
+                    options: [`Humans, sharks, lions`, `Deer, rabbits, squirrels`, `Grass, trees, vegetables`, `Bacteria, worms, fungi`]
+                },
+                correct: 3,
+                explanation: `<strong>🍄 Bacteria, worms, and fungi are decomposers!</strong>
+                <div class="example-box">
+                    Decomposers break down dead matter:<br>
+                    🦠 Bacterias (Bacteria) ✅<br>
+                    🐛 Gusanos (Worms) ✅<br>
+                    🍄 Hongos (Fungi) ✅<br>
+                    Deer, rabbits = Consumers (herbivores)
+                </div>`
+            },
+            // Q20 - African savanna drought
+            {
+                category: "Food Chains",
+                categoryClass: "category-foodchain",
+                spanish: {
+                    question: `🦓 La cadena alimentaria de la sabana africana: Césped→Cebra→León. ¿Qué pasaría con las poblaciones de animales si la mayoría de los pastos murieran por una larga sequía?`,
+                    options: [
+                        `La población de cebras aumentaría porque las cebras no tendrían que competir con la hierba por los recursos`,
+                        `La población de leones no se vería afectada porque los leones no comen pasto`,
+                        `La población de cebras disminuiría porque las cebras dependen de la hierba para obtener la energía`,
+                        `La población de leones no se vería afectada porque los leones pueden sobrevivir en condiciones de sequía`
+                    ]
+                },
+                english: {
+                    question: `🦓 The African savanna food chain: Grass→Zebra→Lion. What would happen to animal populations if most grass died from a long drought?`,
+                    options: [
+                        `Zebra population would increase because zebras wouldn't compete with grass for resources`,
+                        `Lion population wouldn't be affected because lions don't eat grass`,
+                        `Zebra population would decrease because zebras depend on grass for energy`,
+                        `Lion population wouldn't be affected because lions can survive in drought conditions`
+                    ]
+                },
+                correct: 2,
+                explanation: `<strong>No grass = Zebras decrease! 🦓⬇️</strong>
+                <div class="example-box">
+                    🌿 Grass → 🦓 Zebras → 🦁 Lions<br>
+                    No grass = Zebras have no food = Zebras die/decrease!<br>
+                    Then lions would also decrease (no zebras to eat)
+                </div>`
+            }
+        ];
+
+        // Quiz State
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedAnswer = null;
+        let timer = null;
+        let timeLeft = 60;
+        let totalTimeUsed = 0;
+        let shuffledQuestions = [];
+        let categoryScores = {};
+        let answered = false;
+        let missedQuestions = []; // Track incorrect answers for review
+
+        // Shuffle array
+        function shuffle(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        // Select questions with category balance
+        function selectQuestions() {
+            // Use ALL 20 questions from the actual school test (shuffled order)
+            const allQuestions = questions.map((q, idx) => ({...q, originalIndex: idx}));
+            return shuffle(allQuestions);
+        }
+
+        // Start Quiz
+        function startQuiz() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('quizScreen').style.display = 'block';
+            
+            shuffledQuestions = selectQuestions();
+            currentQuestion = 0;
+            score = 0;
+            totalTimeUsed = 0;
+            categoryScores = {};
+            missedQuestions = []; // Reset missed questions
+            
+            loadQuestion();
+        }
+
+        // Load Question
+        function loadQuestion() {
+            if (currentQuestion >= shuffledQuestions.length) {
+                showResults();
+                return;
+            }
+
+            const q = shuffledQuestions[currentQuestion];
+            answered = false;
+            selectedAnswer = null;
+
+            // Get language-specific content
+            const langContent = languageMode === 'english' ? q.english : q.spanish;
+
+            // Update progress
+            document.getElementById('progress').textContent = 
+                `Question ${currentQuestion + 1} of ${shuffledQuestions.length}`;
+            document.getElementById('currentScore').textContent = `Score: ${score}`;
+
+            // Set category badge
+            const badge = document.getElementById('categoryBadge');
+            badge.textContent = q.category;
+            badge.className = `category-badge ${q.categoryClass}`;
+
+            // Set question based on language mode
+            document.getElementById('questionText').innerHTML = langContent.question;
+
+            // Create shuffled options based on language mode
+            const optionsWithIndex = langContent.options.map((opt, idx) => ({
+                text: opt,
+                isCorrect: idx === q.correct
+            }));
+            const shuffledOptions = shuffle(optionsWithIndex);
+            
+            // Store correct index
+            q.shuffledCorrect = shuffledOptions.findIndex(opt => opt.isCorrect);
+
+            // Render options
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+            const letters = ['A', 'B', 'C', 'D'];
+            
+            shuffledOptions.forEach((opt, idx) => {
+                const div = document.createElement('div');
+                div.className = 'option';
+                div.innerHTML = `
+                    <span class="option-letter">${letters[idx]}</span>
+                    <span>${opt.text}</span>
+                `;
+                div.onclick = () => selectOption(idx);
+                container.appendChild(div);
+            });
+
+            // Reset UI
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('submitBtn').style.display = 'inline-block';
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('nextBtn').style.display = 'none';
+
+            // Start timer
+            startTimer();
+
+            // Check translation toggle
+            const toggle = document.getElementById('translationToggle');
+            document.getElementById('questionCard').classList.toggle('show-translations', toggle.checked);
+        }
+
+        // Timer
+        function startTimer() {
+            clearInterval(timer);
+            timeLeft = 60;
+            updateTimerDisplay();
+            
+            timer = setInterval(() => {
+                timeLeft--;
+                totalTimeUsed++;
+                updateTimerDisplay();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    if (!answered) {
+                        submitAnswer(true);
+                    }
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            const display = document.getElementById('timer');
+            display.textContent = `⏱️ ${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            display.classList.remove('warning', 'danger');
+            if (timeLeft <= 15) {
+                display.classList.add('danger');
+            } else if (timeLeft <= 30) {
+                display.classList.add('warning');
+            }
+        }
+
+        // Select Option
+        function selectOption(index) {
+            if (answered) return;
+            
+            selectedAnswer = index;
+            document.querySelectorAll('.option').forEach((opt, idx) => {
+                opt.classList.toggle('selected', idx === index);
+            });
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        // Submit Answer
+        function submitAnswer(timedOut = false) {
+            if (answered) return;
+            answered = true;
+            clearInterval(timer);
+
+            const q = shuffledQuestions[currentQuestion];
+            const isCorrect = selectedAnswer === q.shuffledCorrect;
+            
+            // Track category scores
+            if (!categoryScores[q.category]) {
+                categoryScores[q.category] = { correct: 0, total: 0 };
+            }
+            categoryScores[q.category].total++;
+            
+            if (isCorrect) {
+                score++;
+                categoryScores[q.category].correct++;
+            } else {
+                // Track missed question for review (use current language)
+                const langContent = languageMode === 'english' ? q.english : q.spanish;
+                missedQuestions.push({
+                    question: langContent.question,
+                    category: q.category,
+                    categoryClass: q.categoryClass,
+                    options: langContent.options,
+                    correct: q.correct,
+                    explanation: q.explanation
+                });
+            }
+
+            // Show feedback
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, idx) => {
+                if (idx === q.shuffledCorrect) {
+                    opt.classList.add('correct');
+                } else if (idx === selectedAnswer && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+
+            const feedback = document.getElementById('feedback');
+            feedback.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+            feedback.style.display = 'block';
+            
+            document.getElementById('feedbackTitle').textContent = 
+                timedOut ? '⏰ Time\'s Up!' : (isCorrect ? '✅ Correct!' : '❌ Incorrect');
+            document.getElementById('feedbackExplanation').innerHTML = q.explanation;
+
+            document.getElementById('submitBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'inline-block';
+        }
+
+        // Next Question
+        function nextQuestion() {
+            currentQuestion++;
+            loadQuestion();
+        }
+
+        // Show Results
+        function showResults() {
+            document.getElementById('quizScreen').style.display = 'none';
+            document.getElementById('resultsScreen').style.display = 'block';
+
+            const percentage = Math.round((score / shuffledQuestions.length) * 100);
+            
+            document.getElementById('finalScore').textContent = percentage + '%';
+            document.getElementById('correctCount').textContent = score;
+            document.getElementById('incorrectCount').textContent = shuffledQuestions.length - score;
+            
+            const minutes = Math.floor(totalTimeUsed / 60);
+            const seconds = totalTimeUsed % 60;
+            document.getElementById('totalTime').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            // Score circle color
+            const scoreCircle = document.getElementById('scoreCircle');
+            scoreCircle.className = 'score-circle';
+            if (percentage >= 80) {
+                scoreCircle.classList.add('good');
+            } else if (percentage >= 60) {
+                scoreCircle.classList.add('okay');
+            } else {
+                scoreCircle.classList.add('needs-work');
+            }
+
+            // Category breakdown
+            const breakdown = document.getElementById('categoryBreakdown');
+            breakdown.innerHTML = '<h3>📊 Score by Topic</h3>';
+            
+            const needsReview = [];
+            
+            for (const [category, data] of Object.entries(categoryScores)) {
+                const catPercent = Math.round((data.correct / data.total) * 100);
+                let scoreClass = 'excellent';
+                if (catPercent < 60) {
+                    scoreClass = 'needs-practice';
+                    needsReview.push(category);
+                } else if (catPercent < 80) {
+                    scoreClass = 'good';
+                }
+                
+                breakdown.innerHTML += `
+                    <div class="category-row">
+                        <span class="category-name">${category}</span>
+                        <span class="category-score ${scoreClass}">${data.correct}/${data.total} (${catPercent}%)</span>
+                    </div>
+                `;
+            }
+
+            // Review recommendations
+            const reviewSection = document.getElementById('reviewSection');
+            const reviewList = document.getElementById('reviewList');
+            
+            if (needsReview.length > 0) {
+                reviewSection.style.display = 'block';
+                reviewList.innerHTML = '';
+                
+                const tips = {
+                    "Producers": "🌱 Remember: Producers MAKE their own food using sunlight (photosynthesis). Examples: plants, trees, algae!",
+                    "Consumers": "🦁 Consumers EAT other organisms. Know the 3 types: Herbivores (plants), Carnivores (meat), Omnivores (both)!",
+                    "Decomposers": "🍄 Decomposers break down dead matter and return nutrients to soil. Examples: fungi, bacteria, worms!",
+                    "Food Chains": "🔗 Food chains show energy flow. Producers → Consumers. Food WEBS show many connected chains!",
+                    "Ecosystem": "🌍 All living things need food, water, and shelter. Everything in an ecosystem is connected!"
+                };
+                
+                needsReview.forEach(cat => {
+                    reviewList.innerHTML += `<li>${tips[cat]}</li>`;
+                });
+            } else {
+                reviewSection.style.display = 'none';
+            }
+
+            // Display missed questions for review
+            displayMissedQuestions();
+        }
+
+        // Restart Quiz
+        function restartQuiz() {
+            document.getElementById('resultsScreen').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'block';
+        }
+
+        // Toggle missed questions display
+        function toggleMissedQuestions() {
+            const list = document.getElementById('missedQuestionsList');
+            const btn = document.querySelector('.review-toggle-btn');
+            list.classList.toggle('visible');
+            
+            if (list.classList.contains('visible')) {
+                btn.textContent = '🙈 Hide Missed Questions';
+            } else {
+                btn.textContent = '📖 Show Missed Questions';
+            }
+        }
+
+        // Populate missed questions in results
+        function displayMissedQuestions() {
+            const section = document.getElementById('missedQuestionsSection');
+            const list = document.getElementById('missedQuestionsList');
+            
+            if (missedQuestions.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+            
+            section.style.display = 'block';
+            list.innerHTML = '';
+            list.classList.remove('visible'); // Reset to hidden
+            document.querySelector('.review-toggle-btn').textContent = '📖 Show Missed Questions';
+            
+            missedQuestions.forEach((q, idx) => {
+                const correctAnswer = q.options[q.correct];
+                const card = document.createElement('div');
+                card.className = 'missed-question-card';
+                card.innerHTML = `
+                    <span class="category-badge ${q.categoryClass}">${q.category}</span>
+                    <div class="question-text">${q.question}</div>
+                    <div class="correct-answer">
+                        <strong>✅ Correct Answer:</strong><br>
+                        ${correctAnswer}
+                    </div>
+                    <div class="explanation">
+                        ${q.explanation}
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        // Translation toggle handler
+        document.getElementById('translationToggle').addEventListener('change', function() {
+            document.getElementById('questionCard').classList.toggle('show-translations', this.checked);
+        });
+    </script>
+</body>
+</html>

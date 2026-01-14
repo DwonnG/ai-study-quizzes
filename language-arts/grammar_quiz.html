@@ -1,0 +1,1758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📝 Q2 Grammar Quiz - Irregular Verbs, Homophones & More!</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 25px 20px;
+            background: linear-gradient(135deg, rgba(233,30,99,0.2), rgba(156,39,176,0.2));
+            border-radius: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #e91e63, #9c27b0, #673ab7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+        
+        .shuffle-notice {
+            background: linear-gradient(135deg, rgba(76,175,80,0.3), rgba(139,195,74,0.3));
+            border: 1px solid rgba(76,175,80,0.5);
+            border-radius: 10px;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        
+        .shuffle-notice span {
+            color: #8BC34A;
+            font-weight: bold;
+        }
+        
+        .score-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.12);
+            padding: 12px 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            font-size: 1em;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .score-bar span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .timer-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.08);
+            padding: 10px 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+        
+        .question-timer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        
+        .timer-circle {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            background: conic-gradient(#e91e63 var(--timer-progress, 100%), rgba(255,255,255,0.2) 0%);
+            position: relative;
+        }
+        
+        .timer-circle::before {
+            content: '';
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            background: #1a1a2e;
+            border-radius: 50%;
+        }
+        
+        .timer-circle span {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .timer-circle.warning {
+            background: conic-gradient(#ff9800 var(--timer-progress, 100%), rgba(255,255,255,0.2) 0%);
+        }
+        
+        .timer-circle.danger {
+            background: conic-gradient(#f44336 var(--timer-progress, 100%), rgba(255,255,255,0.2) 0%);
+            animation: pulse 0.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .timer-progress-bar {
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .timer-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e91e63, #9c27b0);
+            border-radius: 3px;
+            transition: width 1s linear, background 0.3s;
+            width: 100%;
+        }
+        
+        .timer-progress-fill.warning {
+            background: linear-gradient(90deg, #ff9800, #ffc107);
+        }
+        
+        .timer-progress-fill.danger {
+            background: linear-gradient(90deg, #f44336, #e91e63);
+        }
+        
+        .total-timer {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 1em;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #e91e63, #9c27b0);
+            border-radius: 8px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+        
+        .question-card {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            display: none;
+            animation: slideIn 0.4s ease;
+        }
+        
+        .question-card.active {
+            display: block;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .question-number {
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            display: inline-block;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+        
+        .question-number.verbs { background: linear-gradient(135deg, #e91e63, #c2185b); }
+        .question-number.homophones { background: linear-gradient(135deg, #9c27b0, #7b1fa2); }
+        .question-number.plurals { background: linear-gradient(135deg, #3f51b5, #303f9f); }
+        .question-number.quotations { background: linear-gradient(135deg, #009688, #00796b); }
+        .question-number.helping { background: linear-gradient(135deg, #ff5722, #e64a19); }
+        .question-number.linking { background: linear-gradient(135deg, #795548, #5d4037); }
+        
+        .question-text {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            color: #222;
+        }
+        
+        .question-text code {
+            background: #f5f5f5;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #c2185b;
+            font-size: 1em;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .option {
+            padding: 15px 18px;
+            background: #f5f5f5;
+            border: 3px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.05em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .option:hover:not(.disabled) {
+            background: #fce4ec;
+            border-color: #e91e63;
+            transform: translateX(5px);
+        }
+        
+        .option.correct {
+            background: #c8e6c9 !important;
+            border-color: #4CAF50 !important;
+        }
+        
+        .option.incorrect {
+            background: #ffcdd2 !important;
+            border-color: #f44336 !important;
+        }
+        
+        .option.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .option-letter {
+            width: 32px;
+            height: 32px;
+            background: #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+            font-size: 0.95em;
+        }
+        
+        .option.correct .option-letter {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .option.incorrect .option-letter {
+            background: #f44336;
+            color: white;
+        }
+        
+        .feedback {
+            margin-top: 18px;
+            padding: 18px;
+            border-radius: 12px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+            font-size: 1em;
+        }
+        
+        .feedback.show { display: block; }
+        .feedback.correct { background: linear-gradient(135deg, #c8e6c9, #a5d6a7); color: #1b5e20; }
+        .feedback.incorrect { background: linear-gradient(135deg, #ffcdd2, #ef9a9a); color: #b71c1c; }
+        .feedback.timeout { background: linear-gradient(135deg, #fff3e0, #ffe0b2); color: #e65100; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .btn {
+            padding: 14px 30px;
+            font-size: 1.05em;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        
+        .btn-next {
+            background: linear-gradient(135deg, #e91e63, #9c27b0);
+            color: white;
+            display: none;
+        }
+        
+        .btn-next.show { display: inline-block; }
+        
+        .btn-next:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(233, 30, 99, 0.4);
+        }
+        
+        .btn-restart {
+            background: linear-gradient(135deg, #673ab7, #512da8);
+            color: white;
+        }
+        
+        .btn-restart:hover { transform: scale(1.05); }
+        
+        /* START SCREEN */
+        .start-screen {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        .start-screen h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .start-screen p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .vocab-section {
+            margin: 25px 0;
+            text-align: left;
+        }
+        
+        .vocab-section h3 {
+            color: #e91e63;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.3em;
+        }
+        
+        .vocab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        
+        .vocab-card {
+            background: linear-gradient(135deg, #f5f5f5, #eeeeee);
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border: 2px solid transparent;
+            position: relative;
+            perspective: 1000px;
+        }
+        
+        .vocab-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        
+        .vocab-card .front,
+        .vocab-card .back {
+            backface-visibility: hidden;
+            transition: transform 0.5s;
+        }
+        
+        .vocab-card .front {
+            position: relative;
+        }
+        
+        .vocab-card .back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            transform: rotateY(180deg);
+            background: linear-gradient(135deg, #fce4ec, #f8bbd9);
+            border-radius: 10px;
+        }
+        
+        .vocab-card.flipped .front { transform: rotateY(180deg); }
+        .vocab-card.flipped .back { transform: rotateY(0deg); }
+        
+        .vocab-card .term {
+            font-weight: bold;
+            color: #333;
+            font-size: 1em;
+            margin-bottom: 5px;
+        }
+        
+        .vocab-card .tap-hint {
+            font-size: 0.75em;
+            color: #999;
+            margin-top: 5px;
+        }
+        
+        .vocab-card .definition {
+            font-size: 0.9em;
+            color: #555;
+            line-height: 1.4;
+        }
+        
+        .vocab-card .example {
+            font-size: 0.8em;
+            color: #7b1fa2;
+            font-style: italic;
+            margin-top: 8px;
+        }
+        
+        .vocab-card.verbs { border-color: #e91e63; }
+        .vocab-card.homophones { border-color: #9c27b0; }
+        .vocab-card.plurals { border-color: #3f51b5; }
+        .vocab-card.quotations { border-color: #009688; }
+        .vocab-card.helping { border-color: #ff5722; }
+        .vocab-card.linking { border-color: #795548; }
+        
+        .btn-start {
+            background: linear-gradient(135deg, #e91e63, #9c27b0);
+            color: white;
+            padding: 18px 50px;
+            font-size: 1.3em;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .btn-start:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(233, 30, 99, 0.4);
+        }
+        
+        .category-label {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.7em;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 8px;
+        }
+        
+        .category-label.verbs { background: linear-gradient(135deg, #e91e63, #c2185b); }
+        .category-label.homophones { background: linear-gradient(135deg, #9c27b0, #7b1fa2); }
+        .category-label.plurals { background: linear-gradient(135deg, #3f51b5, #303f9f); }
+        .category-label.quotations { background: linear-gradient(135deg, #009688, #00796b); }
+        .category-label.helping { background: linear-gradient(135deg, #ff5722, #e64a19); }
+        .category-label.linking { background: linear-gradient(135deg, #795548, #5d4037); }
+        
+        .quiz-content {
+            display: none;
+        }
+        
+        .quiz-content.active {
+            display: block;
+        }
+        
+        .results {
+            text-align: center;
+            display: none;
+        }
+        
+        .results.show { display: block; }
+        
+        .results-card {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        .final-score {
+            font-size: 3.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #e91e63, #9c27b0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .grade { font-size: 1.8em; margin: 15px 0; }
+        .emoji-result { font-size: 3.5em; margin: 15px 0; }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+        
+        .stat-box {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 10px;
+        }
+        
+        .stat-box .stat-value {
+            font-size: 1.6em;
+            font-weight: bold;
+            color: #e91e63;
+        }
+        
+        .stat-box .stat-label {
+            font-size: 0.85em;
+            color: #666;
+        }
+        
+        /* REVIEW SECTION */
+        .review-section {
+            margin: 25px 0;
+            text-align: left;
+        }
+        
+        .review-section h3 {
+            color: #f44336;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.1em;
+        }
+        
+        .review-section.perfect h3 {
+            color: #4CAF50;
+        }
+        
+        .review-topics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .review-topic {
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .review-topic.verbs { background: linear-gradient(135deg, #e91e63, #c2185b); }
+        .review-topic.homophones { background: linear-gradient(135deg, #9c27b0, #7b1fa2); }
+        .review-topic.plurals { background: linear-gradient(135deg, #3f51b5, #303f9f); }
+        .review-topic.quotations { background: linear-gradient(135deg, #009688, #00796b); }
+        .review-topic.helping { background: linear-gradient(135deg, #ff5722, #e64a19); }
+        .review-topic.linking { background: linear-gradient(135deg, #795548, #5d4037); }
+        
+        .review-topic .miss-count {
+            background: rgba(255,255,255,0.3);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.85em;
+        }
+        
+        .perfect-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #4CAF50, #8BC34A);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        
+        .category-breakdown {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 12px;
+        }
+        
+        .category-breakdown h4 {
+            margin-bottom: 12px;
+            color: #333;
+            font-size: 1em;
+        }
+        
+        .breakdown-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 8px;
+        }
+        
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 8px;
+            font-size: 0.85em;
+        }
+        
+        .breakdown-item .cat-name {
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .breakdown-item .cat-score {
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        
+        .breakdown-item .cat-score.perfect {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+        
+        .breakdown-item .cat-score.good {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        
+        .breakdown-item .cat-score.needs-work {
+            background: #ffcdd2;
+            color: #c62828;
+        }
+        
+        @media (max-width: 600px) {
+            .score-bar, .timer-bar { flex-direction: column; text-align: center; }
+            .stats-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 1.6em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📝 Q2 Grammar Quiz</h1>
+            <p class="subtitle">Irregular Verbs • Homophones • Plurals • Quotations • Helping & Linking Verbs</p>
+        </header>
+        
+        <!-- START SCREEN WITH VOCABULARY REVIEW -->
+        <div class="start-screen" id="start-screen">
+            <h2>📖 Review Vocabulary First!</h2>
+            <p>Tap each card to see the definition. Study these terms before you start!</p>
+            
+            <div class="vocab-section">
+                <h3>🎯 Grammar Terms to Know</h3>
+                <div class="vocab-grid">
+                    <div class="vocab-card verbs" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label verbs">VERBS</span>
+                                <div class="term">Irregular Verb</div>
+                                <div class="tap-hint">👆 tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">A verb that doesn't follow the normal -ed rule for past tense.</div>
+                            <div class="example">go → went (not "goed")</div>
+                        </div>
+                    </div>
+                    
+                    <div class="vocab-card verbs" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label verbs">VERBS</span>
+                                <div class="term">Past Tense</div>
+                                <div class="tap-hint">👆 tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">A verb form showing action that already happened.</div>
+                            <div class="example">Yesterday I walked. I saw. I ate.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="vocab-card verbs" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label verbs">VERBS</span>
+                                <div class="term">Past Participle</div>
+                                <div class="tap-hint">👆 tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">Verb form used with have/has/had. Often ends in -en or -ed.</div>
+                            <div class="example">I have seen. She has written.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="vocab-card homophones" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label homophones">HOMOPHONES</span>
+                                <div class="term">Homophone</div>
+                                <div class="tap-hint">👆 tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">Words that SOUND the same but have different meanings and spellings.</div>
+                            <div class="example">to/too/two, their/there/they're</div>
+                        </div>
+                    </div>
+                    
+                    <div class="vocab-card homophones" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label homophones">HOMOPHONES</span>
+                                <div class="term">to / too / two</div>
+                                <div class="tap-hint">👆 tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">
+                                <strong>to</strong> = direction (go TO the store)<br>
+                                <strong>too</strong> = also/excessive (me TOO!)<br>
+                                <strong>two</strong> = number 2
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="vocab-card homophones" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label homophones">HOMOPHONES</span>
+                                <div class="term">their / there / they're</div>
+                                <div class="tap-hint">👆 tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">
+                                <strong>their</strong> = belongs to them<br>
+                                <strong>there</strong> = a place<br>
+                                <strong>they're</strong> = they are
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="vocab-card plurals" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label plurals">PLURALS</span>
+                                <div class="term">Irregular Plural</div>
+                                <div class="tap-hint">👆 tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">A noun that doesn't follow the -s rule to make it plural.</div>
+                            <div class="example">foot→feet, child→children, mouse→mice</div>
+                        </div>
+                    </div>
+                    
+                    <div class="vocab-card plurals" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label plurals">PLURALS</span>
+                                <div class="term">No-Change Plurals</div>
+                                <div class="tap-hint">👆 tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">Some nouns stay the SAME whether singular or plural!</div>
+                            <div class="example">1 sheep → 2 sheep, 1 deer → 5 deer, 1 fish → 10 fish</div>
+                        </div>
+                    </div>
+                    
+                    <div class="vocab-card quotations" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label quotations">QUOTATIONS</span>
+                                <div class="term">Quotation Marks " "</div>
+                                <div class="tap-hint">👆 tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">Punctuation that shows someone's exact words. Goes around what is SAID.</div>
+                            <div class="example">"Hello," said Mom.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="vocab-card quotations" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label quotations">QUOTATIONS</span>
+                                <div class="term">Speaker Tag</div>
+                                <div class="tap-hint">👆 tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">Words that tell WHO is speaking. Can go at beginning, middle, or end.</div>
+                            <div class="example">said Mom, asked Jake, yelled the coach</div>
+                        </div>
+                    </div>
+                    
+                    <div class="vocab-card helping" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label helping">HELPING VERBS</span>
+                                <div class="term">Helping Verb</div>
+                                <div class="tap-hint">👆 tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">A verb that helps the MAIN verb show when/how the action happens.</div>
+                            <div class="example">can, will, should, must, might, may, could, would</div>
+                        </div>
+                    </div>
+                    
+                    <div class="vocab-card helping" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label helping">HELPING VERBS</span>
+                                <div class="term">Helper Meanings</div>
+                                <div class="tap-hint">👆 tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">
+                                <strong>can</strong> = able to<br>
+                                <strong>will</strong> = definitely (future)<br>
+                                <strong>might</strong> = maybe<br>
+                                <strong>must/should</strong> = need to
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="vocab-card linking" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label linking">LINKING VERBS</span>
+                                <div class="term">Linking Verb</div>
+                                <div class="tap-hint">👆 tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">A verb that connects (links) the subject to a word that describes or renames it. Like an = sign!</div>
+                            <div class="example">The soup IS hot. (soup = hot)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="vocab-card linking" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label linking">LINKING VERBS</span>
+                                <div class="term">Forms of "To Be"</div>
+                                <div class="tap-hint">👆 tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">The most common linking verbs! All forms of "be":</div>
+                            <div class="example">am, is, are, was, were, be, being, been</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-start" onclick="startQuiz()">🚀 Start Quiz!</button>
+        </div>
+        
+        <!-- QUIZ CONTENT (hidden until start) -->
+        <div class="quiz-content" id="quiz-content">
+        
+        <div class="shuffle-notice">
+            🔀 <span>Questions AND answers shuffle every time!</span><br>
+            ✅ <span>All 6 topics guaranteed:</span> Verbs • Homophones • Plurals • Quotation Marks • Helping Verbs • Linking Verbs
+        </div>
+        
+        <div class="score-bar">
+            <span>📊 Score: <strong id="current-score">0</strong></span>
+            <span>❓ Question: <strong id="question-num">1</strong> / <strong id="total-questions">18</strong></span>
+            <span>🔥 Streak: <strong id="streak">0</strong></span>
+        </div>
+        
+        <div class="timer-bar">
+            <div class="question-timer">
+                <div class="timer-circle" id="timer-circle">
+                    <span id="question-time">25</span>
+                </div>
+                <span>sec</span>
+            </div>
+            <div class="timer-progress-bar">
+                <div class="timer-progress-fill" id="timer-progress"></div>
+            </div>
+            <div class="total-timer">
+                <span>⏱️</span>
+                <strong id="total-time">0:00</strong>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container"></div>
+        
+        </div><!-- end quiz-content -->
+        
+        <div class="results" id="results">
+            <div class="results-card">
+                <div class="emoji-result" id="result-emoji">🎉</div>
+                <h2>Quiz Complete!</h2>
+                <div class="final-score" id="final-score">0%</div>
+                <div class="grade" id="grade"></div>
+                
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-value" id="stat-correct">0</div>
+                        <div class="stat-label">Correct</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="stat-time">0:00</div>
+                        <div class="stat-label">Time</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="stat-avg">0s</div>
+                        <div class="stat-label">Avg/Q</div>
+                    </div>
+                </div>
+                
+                <p id="result-message"></p>
+                
+                <!-- Review Section - Shows what to study -->
+                <div class="review-section" id="review-section"></div>
+                
+                <!-- Category Breakdown -->
+                <div class="category-breakdown" id="category-breakdown"></div>
+                
+                <button class="btn btn-restart" onclick="restartQuiz()">🔄 Try Again</button>
+                <button class="btn btn-restart" onclick="reviewVocab()" style="background: linear-gradient(135deg, #009688, #00796b); margin-left: 10px;">📖 Review Vocab</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const allQuestions = [
+            // ===== IRREGULAR VERBS - PAST TENSE =====
+            {
+                category: "Irregular Verbs",
+                categoryClass: "verbs",
+                question: "What is the PAST TENSE of <code>go</code>?",
+                options: ["goed", "went", "gone", "going"],
+                correctAnswer: "went",
+                explanation: "GO → WENT (not 'goed'!). Irregular verbs don't follow the -ed rule."
+            },
+            {
+                category: "Irregular Verbs",
+                categoryClass: "verbs",
+                question: "What is the PAST TENSE of <code>see</code>?",
+                options: ["seed", "seen", "saw", "seeing"],
+                correctAnswer: "saw",
+                explanation: "SEE → SAW (not 'seed'!). Yesterday: I SAW the bird."
+            },
+            {
+                category: "Irregular Verbs",
+                categoryClass: "verbs",
+                question: "What is the PAST TENSE of <code>eat</code>?",
+                options: ["eated", "ate", "eaten", "eating"],
+                correctAnswer: "ate",
+                explanation: "EAT → ATE. Yesterday: I ATE pizza."
+            },
+            {
+                category: "Irregular Verbs",
+                categoryClass: "verbs",
+                question: "What is the PAST TENSE of <code>come</code>?",
+                options: ["comed", "camed", "came", "coming"],
+                correctAnswer: "came",
+                explanation: "COME → CAME. Yesterday: They CAME inside."
+            },
+            {
+                category: "Irregular Verbs",
+                categoryClass: "verbs",
+                question: "What is the PAST TENSE of <code>have</code>?",
+                options: ["haved", "has", "had", "having"],
+                correctAnswer: "had",
+                explanation: "HAVE → HAD. Yesterday: She HAD a dog."
+            },
+            {
+                category: "Irregular Verbs",
+                categoryClass: "verbs",
+                question: "What is the PAST TENSE of <code>make</code>?",
+                options: ["maked", "made", "maken", "making"],
+                correctAnswer: "made",
+                explanation: "MAKE → MADE. Yesterday: He MADE a robot."
+            },
+            {
+                category: "Irregular Verbs",
+                categoryClass: "verbs",
+                question: "What is the PAST TENSE of <code>say</code>?",
+                options: ["sayed", "says", "said", "saying"],
+                correctAnswer: "said",
+                explanation: "SAY → SAID. Yesterday: We SAID hello."
+            },
+            {
+                category: "Irregular Verbs",
+                categoryClass: "verbs",
+                question: "Which sentence uses the WRONG past tense?",
+                options: ["I went to school.", "She goed to the store.", "They came home.", "He made dinner."],
+                correctAnswer: "She goed to the store.",
+                explanation: "'Goed' is WRONG! The correct past tense of GO is WENT."
+            },
+            // ===== PAST PARTICIPLE (HELPER WORDS) =====
+            {
+                category: "Irregular Verbs",
+                categoryClass: "verbs",
+                question: "Complete: I have _____ a fish. (see)",
+                options: ["saw", "seen", "seed", "seeing"],
+                correctAnswer: "seen",
+                explanation: "With 'have/has/had', use SEEN. I have SEEN a fish."
+            },
+            {
+                category: "Irregular Verbs",
+                categoryClass: "verbs",
+                question: "Complete: They had _____ home. (go)",
+                options: ["went", "goed", "gone", "going"],
+                correctAnswer: "gone",
+                explanation: "With 'have/has/had', use GONE. They had GONE home."
+            },
+            {
+                category: "Irregular Verbs",
+                categoryClass: "verbs",
+                question: "Complete: She has _____ her chores. (do)",
+                options: ["did", "done", "doed", "doing"],
+                correctAnswer: "done",
+                explanation: "With 'have/has/had', use DONE. She has DONE her chores."
+            },
+            {
+                category: "Irregular Verbs",
+                categoryClass: "verbs",
+                question: "Complete: He has _____ a story. (write)",
+                options: ["wrote", "writed", "written", "writing"],
+                correctAnswer: "written",
+                explanation: "With 'have/has/had', use WRITTEN. He has WRITTEN a story."
+            },
+            // ===== HOMOPHONES =====
+            {
+                category: "Homophones",
+                categoryClass: "homophones",
+                question: "Which word means 'also' or 'excessively'?",
+                options: ["to", "too", "two", "tow"],
+                correctAnswer: "too",
+                explanation: "TOO means 'also' or 'too much'. Example: I want to come TOO!"
+            },
+            {
+                category: "Homophones",
+                categoryClass: "homophones",
+                question: "Which word is a number?",
+                options: ["to", "too", "two", "tow"],
+                correctAnswer: "two",
+                explanation: "TWO is the number 2."
+            },
+            {
+                category: "Homophones",
+                categoryClass: "homophones",
+                question: "I'm going ___ the store.",
+                options: ["to", "too", "two", "tow"],
+                correctAnswer: "to",
+                explanation: "TO is used for direction/destination. Going TO the store."
+            },
+            {
+                category: "Homophones",
+                categoryClass: "homophones",
+                question: "_____ going to the park. (They are)",
+                options: ["Their", "There", "They're", "Theyre"],
+                correctAnswer: "They're",
+                explanation: "THEY'RE = They are. THEY'RE going to the park."
+            },
+            {
+                category: "Homophones",
+                categoryClass: "homophones",
+                question: "The book is over _____.",
+                options: ["their", "there", "they're", "thier"],
+                correctAnswer: "there",
+                explanation: "THERE = a place/location. The book is over THERE."
+            },
+            {
+                category: "Homophones",
+                categoryClass: "homophones",
+                question: "The students forgot _____ homework.",
+                options: ["their", "there", "they're", "thier"],
+                correctAnswer: "their",
+                explanation: "THEIR = possessive (belongs to them). THEIR homework."
+            },
+            {
+                category: "Homophones",
+                categoryClass: "homophones",
+                question: "Which sentence is CORRECT?",
+                options: ["Their going home.", "There going home.", "They're going home.", "Thier going home."],
+                correctAnswer: "They're going home.",
+                explanation: "THEY'RE = They are. They're (they are) going home is correct!"
+            },
+            {
+                category: "Homophones",
+                categoryClass: "homophones",
+                question: "I left my bag over _____.",
+                options: ["their", "there", "they're", "thier"],
+                correctAnswer: "there",
+                explanation: "THERE = a place. I left my bag over THERE (at that place)."
+            },
+            // ===== IRREGULAR PLURAL NOUNS =====
+            {
+                category: "Irregular Plurals",
+                categoryClass: "plurals",
+                question: "What is the plural of <code>foot</code>?",
+                options: ["foots", "feet", "footes", "feets"],
+                correctAnswer: "feet",
+                explanation: "FOOT → FEET (vowel change inside the word)"
+            },
+            {
+                category: "Irregular Plurals",
+                categoryClass: "plurals",
+                question: "What is the plural of <code>tooth</code>?",
+                options: ["tooths", "teeth", "toothes", "teeths"],
+                correctAnswer: "teeth",
+                explanation: "TOOTH → TEETH (vowel change inside the word)"
+            },
+            {
+                category: "Irregular Plurals",
+                categoryClass: "plurals",
+                question: "What is the plural of <code>goose</code>?",
+                options: ["gooses", "geese", "goosies", "geeses"],
+                correctAnswer: "geese",
+                explanation: "GOOSE → GEESE (vowel change inside the word)"
+            },
+            {
+                category: "Irregular Plurals",
+                categoryClass: "plurals",
+                question: "What is the plural of <code>man</code>?",
+                options: ["mans", "men", "mens", "manes"],
+                correctAnswer: "men",
+                explanation: "MAN → MEN (vowel change inside the word)"
+            },
+            {
+                category: "Irregular Plurals",
+                categoryClass: "plurals",
+                question: "What is the plural of <code>woman</code>?",
+                options: ["womans", "women", "womens", "womanes"],
+                correctAnswer: "women",
+                explanation: "WOMAN → WOMEN (vowel change inside the word)"
+            },
+            {
+                category: "Irregular Plurals",
+                categoryClass: "plurals",
+                question: "What is the plural of <code>child</code>?",
+                options: ["childs", "children", "childes", "childrens"],
+                correctAnswer: "children",
+                explanation: "CHILD → CHILDREN (ending change: adds -ren)"
+            },
+            {
+                category: "Irregular Plurals",
+                categoryClass: "plurals",
+                question: "What is the plural of <code>mouse</code>?",
+                options: ["mouses", "mice", "mousies", "mices"],
+                correctAnswer: "mice",
+                explanation: "MOUSE → MICE (ending change: -ouse becomes -ice)"
+            },
+            {
+                category: "Irregular Plurals",
+                categoryClass: "plurals",
+                question: "What is the plural of <code>sheep</code>?",
+                options: ["sheeps", "sheep", "sheepies", "sheepes"],
+                correctAnswer: "sheep",
+                explanation: "SHEEP → SHEEP (no change! Same word for one or many)"
+            },
+            {
+                category: "Irregular Plurals",
+                categoryClass: "plurals",
+                question: "What is the plural of <code>deer</code>?",
+                options: ["deers", "deer", "deeres", "deeries"],
+                correctAnswer: "deer",
+                explanation: "DEER → DEER (no change! Same word for one or many)"
+            },
+            {
+                category: "Irregular Plurals",
+                categoryClass: "plurals",
+                question: "What is the plural of <code>fish</code>?",
+                options: ["fishes", "fish", "fishies", "fishs"],
+                correctAnswer: "fish",
+                explanation: "FISH → FISH (no change! Same word for one or many)"
+            },
+            // ===== QUOTATION MARKS =====
+            {
+                category: "Quotation Marks",
+                categoryClass: "quotations",
+                question: "When the speaker tag is at the END, where do quotation marks go?",
+                options: ["After the speaker tag", "Before and after the quote", "Only at the beginning", "No quotation marks needed"],
+                correctAnswer: "Before and after the quote",
+                explanation: "\"You need to clean your room,\" said my mom. Quotation marks surround what is said!"
+            },
+            {
+                category: "Quotation Marks",
+                categoryClass: "quotations",
+                question: "Which is punctuated correctly?",
+                options: ["\"Let's go\" said Mom.", "\"Let's go,\" said Mom.", "Let's go, \"said Mom.\"", "\"Let's go said Mom.\""],
+                correctAnswer: "\"Let's go,\" said Mom.",
+                explanation: "When speaker is at the end: comma INSIDE the quotes, then said Mom."
+            },
+            {
+                category: "Quotation Marks",
+                categoryClass: "quotations",
+                question: "Which is punctuated correctly when the speaker is at the BEGINNING?",
+                options: ["Mom said \"Let's go.\"", "Mom said, \"Let's go.\"", "Mom, said \"Let's go.\"", "\"Mom said,\" Let's go."],
+                correctAnswer: "Mom said, \"Let's go.\"",
+                explanation: "When speaker is at the beginning: comma after the tag, then the quote with a capital letter."
+            },
+            {
+                category: "Quotation Marks",
+                categoryClass: "quotations",
+                question: "In the sentence: \"I want to play,\" said Jake, \"but it's raining.\" — Where is the speaker tag?",
+                options: ["At the beginning", "At the end", "In the middle", "There is no speaker tag"],
+                correctAnswer: "In the middle",
+                explanation: "The speaker tag 'said Jake' is in the MIDDLE, breaking up the quote into two parts."
+            },
+            {
+                category: "Quotation Marks",
+                categoryClass: "quotations",
+                question: "When the speaker tag is in the MIDDLE, what comes after the first part of the quote?",
+                options: ["A period", "A comma", "An exclamation mark", "Nothing"],
+                correctAnswer: "A comma",
+                explanation: "\"I want to play,\" said Jake, \"but it's raining.\" — Comma after 'play' and after 'Jake'."
+            },
+            // ===== HELPING VERBS =====
+            {
+                category: "Helping Verbs",
+                categoryClass: "helping",
+                question: "Which word is a helping verb in: 'You should exercise.'?",
+                options: ["You", "should", "exercise", "None"],
+                correctAnswer: "should",
+                explanation: "SHOULD is a helping verb. It helps the main verb 'exercise'."
+            },
+            {
+                category: "Helping Verbs",
+                categoryClass: "helping",
+                question: "What does the helping verb <code>can</code> mean?",
+                options: ["Definitely will", "Able to", "Must do", "In the past"],
+                correctAnswer: "Able to",
+                explanation: "CAN = able to do something. 'I CAN swim' means 'I am able to swim.'"
+            },
+            {
+                category: "Helping Verbs",
+                categoryClass: "helping",
+                question: "What does the helping verb <code>will</code> mean?",
+                options: ["Able to", "Possibly", "Definitely, in the future", "In the past"],
+                correctAnswer: "Definitely, in the future",
+                explanation: "WILL = definitely in the future. 'I WILL go' means 'I am definitely going (future).'"
+            },
+            {
+                category: "Helping Verbs",
+                categoryClass: "helping",
+                question: "What does the helping verb <code>might</code> mean?",
+                options: ["Definitely will", "Possibly, maybe", "Must do", "Able to"],
+                correctAnswer: "Possibly, maybe",
+                explanation: "MIGHT = possibly, maybe. 'I MIGHT go' means 'Maybe I will go.'"
+            },
+            {
+                category: "Helping Verbs",
+                categoryClass: "helping",
+                question: "What does the helping verb <code>must</code> mean?",
+                options: ["Maybe", "Able to", "Definitely need to", "Want to"],
+                correctAnswer: "Definitely need to",
+                explanation: "MUST = definitely need to. 'You MUST practice' means 'You definitely need to practice.'"
+            },
+            {
+                category: "Helping Verbs",
+                categoryClass: "helping",
+                question: "What does the helping verb <code>should</code> mean?",
+                options: ["Able to", "Expect to / Need to", "Definitely will", "In the past"],
+                correctAnswer: "Expect to / Need to",
+                explanation: "SHOULD = expect to or need to. 'You SHOULD study' means 'You need to study.'"
+            },
+            {
+                category: "Helping Verbs",
+                categoryClass: "helping",
+                question: "Which are common helping verbs?",
+                options: ["run, jump, play", "am, are, is, have, has", "happy, sad, tired", "quickly, slowly, fast"],
+                correctAnswer: "am, are, is, have, has",
+                explanation: "AM, ARE, IS, HAVE, HAS are common helping verbs that work with main verbs."
+            },
+            // ===== LINKING VERBS =====
+            {
+                category: "Linking Verbs",
+                categoryClass: "linking",
+                question: "A linking verb connects the subject to a word that:",
+                options: ["Shows action", "Describes or renames it", "Is a noun", "Is always a verb"],
+                correctAnswer: "Describes or renames it",
+                explanation: "Linking verbs connect the subject to a description or new name. Like an = sign!"
+            },
+            {
+                category: "Linking Verbs",
+                categoryClass: "linking",
+                question: "In 'The soup IS hot', what is the linking verb?",
+                options: ["The", "soup", "is", "hot"],
+                correctAnswer: "is",
+                explanation: "IS is the linking verb. It connects 'soup' to 'hot'. The soup = hot."
+            },
+            {
+                category: "Linking Verbs",
+                categoryClass: "linking",
+                question: "In 'You LOOK tired', what is the linking verb?",
+                options: ["You", "look", "tired", "None"],
+                correctAnswer: "look",
+                explanation: "LOOK is a linking verb here. It connects 'You' to 'tired'. You = tired."
+            },
+            {
+                category: "Linking Verbs",
+                categoryClass: "linking",
+                question: "Which are forms of 'to be' (linking verbs)?",
+                options: ["run, jump, swim", "is, am, are, was, were", "can, will, should", "happy, sad, hot"],
+                correctAnswer: "is, am, are, was, were",
+                explanation: "IS, AM, ARE, WAS, WERE are forms of 'to be' - the most common linking verbs."
+            },
+            {
+                category: "Linking Verbs",
+                categoryClass: "linking",
+                question: "Think of linking verbs like a(n) _____ sign.",
+                options: ["plus (+)", "minus (-)", "equals (=)", "multiply (×)"],
+                correctAnswer: "equals (=)",
+                explanation: "Linking verbs are like = signs! 'The soup IS hot' means 'The soup = hot'."
+            },
+            {
+                category: "Linking Verbs",
+                categoryClass: "linking",
+                question: "In 'My friend WAS the winner', what does WAS do?",
+                options: ["Shows action", "Connects subject to description", "Is a helping verb", "Is a noun"],
+                correctAnswer: "Connects subject to description",
+                explanation: "WAS links 'My friend' to 'the winner'. My friend = the winner. It renames the subject!"
+            }
+        ];
+
+        // Shuffle function
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function prepareQuestion(q) {
+            const shuffledOptions = shuffleArray([...q.options]);
+            return { ...q, options: shuffledOptions, correct: shuffledOptions.indexOf(q.correctAnswer) };
+        }
+
+        // BALANCED SELECTION - Guarantee all topics covered
+        const categoryQuotas = {
+            "Irregular Verbs": 5,      // 5 questions
+            "Homophones": 4,           // 4 questions
+            "Irregular Plurals": 4,    // 4 questions
+            "Quotation Marks": 2,      // 2 questions
+            "Helping Verbs": 2,        // 2 questions
+            "Linking Verbs": 2         // 2 questions
+        };
+        // Total: 19 questions
+
+        function selectBalancedQuestions() {
+            const selected = [];
+            const byCategory = {};
+            
+            allQuestions.forEach(q => {
+                if (!byCategory[q.category]) byCategory[q.category] = [];
+                byCategory[q.category].push(q);
+            });
+            
+            for (const [category, quota] of Object.entries(categoryQuotas)) {
+                const categoryQuestions = byCategory[category] || [];
+                const shuffled = shuffleArray(categoryQuestions);
+                selected.push(...shuffled.slice(0, quota));
+            }
+            
+            return shuffleArray(selected);
+        }
+
+        // Timer and quiz state
+        const QUESTION_TIME = 25;
+        let questionTimer = QUESTION_TIME;
+        let questionTimerInterval = null;
+        let totalTimeElapsed = 0;
+        let totalTimerInterval = null;
+        let currentQuestions = [];
+        let currentQuestion = 0;
+        let score = 0;
+        let streak = 0;
+        let answered = false;
+        
+        // Track performance by category
+        let categoryStats = {};
+        
+        function initCategoryStats() {
+            categoryStats = {
+                "Irregular Verbs": { correct: 0, total: 0, class: "verbs" },
+                "Homophones": { correct: 0, total: 0, class: "homophones" },
+                "Irregular Plurals": { correct: 0, total: 0, class: "plurals" },
+                "Quotation Marks": { correct: 0, total: 0, class: "quotations" },
+                "Helping Verbs": { correct: 0, total: 0, class: "helping" },
+                "Linking Verbs": { correct: 0, total: 0, class: "linking" }
+            };
+        }
+        
+        function recordAnswer(category, isCorrect) {
+            if (categoryStats[category]) {
+                categoryStats[category].total++;
+                if (isCorrect) categoryStats[category].correct++;
+            }
+        }
+
+        function initQuiz() {
+            initCategoryStats();
+            currentQuestions = selectBalancedQuestions().map(prepareQuestion);
+            document.getElementById('total-questions').textContent = currentQuestions.length;
+            startTotalTimer();
+            renderQuestion();
+        }
+
+        function startTotalTimer() {
+            totalTimeElapsed = 0;
+            totalTimerInterval = setInterval(() => {
+                totalTimeElapsed++;
+                const m = Math.floor(totalTimeElapsed / 60);
+                const s = totalTimeElapsed % 60;
+                document.getElementById('total-time').textContent = `${m}:${s.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function startQuestionTimer() {
+            questionTimer = QUESTION_TIME;
+            updateTimerDisplay();
+            questionTimerInterval = setInterval(() => {
+                questionTimer--;
+                updateTimerDisplay();
+                if (questionTimer <= 0) { clearInterval(questionTimerInterval); timeOut(); }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            document.getElementById('question-time').textContent = questionTimer;
+            const progress = (questionTimer / QUESTION_TIME) * 100;
+            document.getElementById('timer-progress').style.width = progress + '%';
+            document.getElementById('timer-circle').style.setProperty('--timer-progress', progress + '%');
+            
+            const circle = document.getElementById('timer-circle');
+            const bar = document.getElementById('timer-progress');
+            circle.classList.remove('warning', 'danger');
+            bar.classList.remove('warning', 'danger');
+            
+            if (questionTimer <= 5) { circle.classList.add('danger'); bar.classList.add('danger'); }
+            else if (questionTimer <= 10) { circle.classList.add('warning'); bar.classList.add('warning'); }
+        }
+
+        function stopQuestionTimer() {
+            if (questionTimerInterval) { clearInterval(questionTimerInterval); questionTimerInterval = null; }
+        }
+
+        function timeOut() {
+            if (answered) return;
+            answered = true;
+            const q = currentQuestions[currentQuestion];
+            recordAnswer(q.category, false); // Timeout counts as incorrect
+            document.querySelectorAll('.option').forEach((opt, i) => {
+                opt.classList.add('disabled');
+                if (i === q.correct) opt.classList.add('correct');
+            });
+            streak = 0;
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback show timeout';
+            feedback.innerHTML = `<strong>⏰ Time's Up!</strong> Answer: <strong>${q.correctAnswer}</strong>. ${q.explanation}`;
+            document.getElementById('next-btn').classList.add('show');
+            updateScore();
+        }
+
+        function renderQuestion() {
+            stopQuestionTimer();
+            const q = currentQuestions[currentQuestion];
+            document.getElementById('quiz-container').innerHTML = `
+                <div class="question-card active">
+                    <span class="question-number ${q.categoryClass}">📚 ${q.category}</span>
+                    <p class="question-text">${q.question}</p>
+                    <div class="options">
+                        ${q.options.map((opt, i) => `
+                            <div class="option" onclick="selectAnswer(${i})">
+                                <span class="option-letter">${String.fromCharCode(65 + i)}</span>
+                                <span>${opt}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback"></div>
+                    <button class="btn btn-next" id="next-btn" onclick="nextQuestion()">
+                        ${currentQuestion < currentQuestions.length - 1 ? 'Next →' : 'Results 🎯'}
+                    </button>
+                </div>
+            `;
+            answered = false;
+            updateProgress();
+            startQuestionTimer();
+        }
+
+        function selectAnswer(index) {
+            if (answered) return;
+            answered = true;
+            stopQuestionTimer();
+            const q = currentQuestions[currentQuestion];
+            document.querySelectorAll('.option').forEach((opt, i) => {
+                opt.classList.add('disabled');
+                if (i === q.correct) opt.classList.add('correct');
+                else if (i === index) opt.classList.add('incorrect');
+            });
+            
+            const feedback = document.getElementById('feedback');
+            const isCorrect = index === q.correct;
+            recordAnswer(q.category, isCorrect);
+            
+            if (isCorrect) {
+                score++; streak++;
+                const bonus = questionTimer >= 20 ? ' <span style="color:#4CAF50;font-weight:bold;">⚡ Fast!</span>' : '';
+                feedback.className = 'feedback show correct';
+                feedback.innerHTML = `<strong>✅ Correct!</strong>${bonus} ${q.explanation}`;
+            } else {
+                streak = 0;
+                feedback.className = 'feedback show incorrect';
+                feedback.innerHTML = `<strong>❌ Nope.</strong> Answer: <strong>${q.correctAnswer}</strong>. ${q.explanation}`;
+            }
+            document.getElementById('next-btn').classList.add('show');
+            updateScore();
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < currentQuestions.length) renderQuestion();
+            else showResults();
+        }
+
+        function updateScore() {
+            document.getElementById('current-score').textContent = score;
+            document.getElementById('streak').textContent = streak;
+        }
+
+        function updateProgress() {
+            document.getElementById('question-num').textContent = currentQuestion + 1;
+            document.getElementById('progress-bar').style.width = ((currentQuestion) / currentQuestions.length) * 100 + '%';
+        }
+
+        function showResults() {
+            stopQuestionTimer();
+            clearInterval(totalTimerInterval);
+            document.getElementById('quiz-container').innerHTML = '';
+            document.getElementById('results').classList.add('show');
+            
+            const pct = Math.round((score / currentQuestions.length) * 100);
+            document.getElementById('final-score').textContent = pct + '%';
+            document.getElementById('stat-correct').textContent = `${score}/${currentQuestions.length}`;
+            
+            const m = Math.floor(totalTimeElapsed / 60), s = totalTimeElapsed % 60;
+            document.getElementById('stat-time').textContent = `${m}:${s.toString().padStart(2, '0')}`;
+            document.getElementById('stat-avg').textContent = `${Math.round(totalTimeElapsed / currentQuestions.length)}s`;
+            
+            let emoji, grade, msg;
+            if (pct >= 90) { emoji = '🏆'; grade = 'A - Outstanding!'; msg = 'Grammar genius! 📝'; }
+            else if (pct >= 80) { emoji = '🌟'; grade = 'B - Great Job!'; msg = 'Excellent grammar skills!'; }
+            else if (pct >= 70) { emoji = '👍'; grade = 'C - Good Work!'; msg = 'Keep practicing those verbs!'; }
+            else if (pct >= 60) { emoji = '📚'; grade = 'D - Keep Studying!'; msg = 'Review the study guide!'; }
+            else { emoji = '💪'; grade = 'Keep Trying!'; msg = 'Practice makes perfect!'; }
+            
+            document.getElementById('result-emoji').textContent = emoji;
+            document.getElementById('grade').textContent = grade;
+            document.getElementById('result-message').textContent = msg;
+            document.getElementById('progress-bar').style.width = '100%';
+            
+            // Generate review recommendations
+            generateReviewSection();
+            generateCategoryBreakdown();
+        }
+        
+        function generateReviewSection() {
+            const reviewSection = document.getElementById('review-section');
+            const needsReview = [];
+            
+            for (const [category, stats] of Object.entries(categoryStats)) {
+                if (stats.total > 0) {
+                    const missed = stats.total - stats.correct;
+                    if (missed > 0) {
+                        needsReview.push({
+                            category: category,
+                            missed: missed,
+                            total: stats.total,
+                            cssClass: stats.class
+                        });
+                    }
+                }
+            }
+            
+            // Sort by most missed first
+            needsReview.sort((a, b) => b.missed - a.missed);
+            
+            if (needsReview.length === 0) {
+                reviewSection.className = 'review-section perfect';
+                reviewSection.innerHTML = `
+                    <h3>🎯 Topics to Review</h3>
+                    <div class="review-topics">
+                        <div class="perfect-badge">
+                            ⭐ Perfect! No topics need review! ⭐
+                        </div>
+                    </div>
+                `;
+            } else {
+                reviewSection.className = 'review-section';
+                reviewSection.innerHTML = `
+                    <h3>📚 Topics to Review</h3>
+                    <div class="review-topics">
+                        ${needsReview.map(item => `
+                            <div class="review-topic ${item.cssClass}">
+                                ${item.category}
+                                <span class="miss-count">${item.missed} missed</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+        }
+        
+        function generateCategoryBreakdown() {
+            const breakdownSection = document.getElementById('category-breakdown');
+            const items = [];
+            
+            for (const [category, stats] of Object.entries(categoryStats)) {
+                if (stats.total > 0) {
+                    const pct = Math.round((stats.correct / stats.total) * 100);
+                    let scoreClass = 'needs-work';
+                    if (pct === 100) scoreClass = 'perfect';
+                    else if (pct >= 50) scoreClass = 'good';
+                    
+                    items.push({
+                        category: category,
+                        correct: stats.correct,
+                        total: stats.total,
+                        pct: pct,
+                        scoreClass: scoreClass
+                    });
+                }
+            }
+            
+            breakdownSection.innerHTML = `
+                <h4>📊 Score by Category</h4>
+                <div class="breakdown-grid">
+                    ${items.map(item => `
+                        <div class="breakdown-item">
+                            <span class="cat-name">${item.category}</span>
+                            <span class="cat-score ${item.scoreClass}">${item.correct}/${item.total}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0; score = 0; streak = 0; answered = false; totalTimeElapsed = 0;
+            initCategoryStats();
+            document.getElementById('results').classList.remove('show');
+            updateScore();
+            initQuiz();
+        }
+
+        // Flashcard flip function
+        function flipCard(card) {
+            card.classList.toggle('flipped');
+        }
+        
+        // Start quiz function
+        function startQuiz() {
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('quiz-content').classList.add('active');
+            initQuiz();
+        }
+        
+        // Go back to vocab review
+        function reviewVocab() {
+            // Reset everything
+            currentQuestion = 0; score = 0; streak = 0; answered = false; totalTimeElapsed = 0;
+            initCategoryStats();
+            document.getElementById('results').classList.remove('show');
+            document.getElementById('quiz-content').classList.remove('active');
+            document.getElementById('start-screen').style.display = 'block';
+            document.getElementById('progress-bar').style.width = '0%';
+            updateScore();
+            
+            // Reset all flashcards to front
+            document.querySelectorAll('.vocab-card').forEach(card => {
+                card.classList.remove('flipped');
+            });
+        }
+        
+        // Don't auto-start - wait for user to click Start Quiz
+    </script>
+</body>
+</html>
+

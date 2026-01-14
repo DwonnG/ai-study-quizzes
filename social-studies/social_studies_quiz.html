@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🇺🇸 Social Studies Interactive Quiz - Government & Bill of Rights</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .shuffle-notice {
+            background: linear-gradient(135deg, rgba(76,175,80,0.3), rgba(139,195,74,0.3));
+            border: 1px solid rgba(76,175,80,0.5);
+            border-radius: 10px;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 0.95em;
+        }
+        
+        .shuffle-notice span {
+            color: #8BC34A;
+            font-weight: bold;
+        }
+        
+        .score-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.15);
+            padding: 15px 25px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .score-bar span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* TIMER STYLES */
+        .timer-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            padding: 12px 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            gap: 20px;
+        }
+        
+        .question-timer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .timer-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            background: conic-gradient(#4CAF50 var(--timer-progress, 100%), rgba(255,255,255,0.2) 0%);
+            position: relative;
+        }
+        
+        .timer-circle::before {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: #1a1a2e;
+            border-radius: 50%;
+        }
+        
+        .timer-circle span {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .timer-circle.warning {
+            background: conic-gradient(#ff9800 var(--timer-progress, 100%), rgba(255,255,255,0.2) 0%);
+        }
+        
+        .timer-circle.danger {
+            background: conic-gradient(#f44336 var(--timer-progress, 100%), rgba(255,255,255,0.2) 0%);
+            animation: pulse 0.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .total-timer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .timer-progress-bar {
+            flex: 1;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .timer-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            border-radius: 4px;
+            transition: width 1s linear, background 0.3s;
+            width: 100%;
+        }
+        
+        .timer-progress-fill.warning {
+            background: linear-gradient(90deg, #ff9800, #ffc107);
+        }
+        
+        .timer-progress-fill.danger {
+            background: linear-gradient(90deg, #f44336, #e91e63);
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+        
+        .question-card {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+        
+        .question-card.active {
+            display: block;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .question-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        
+        .question-text {
+            font-size: 1.3em;
+            margin-bottom: 25px;
+            line-height: 1.5;
+            color: #222;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            padding: 18px 20px;
+            background: #f5f5f5;
+            border: 3px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .option:hover:not(.disabled) {
+            background: #e3f2fd;
+            border-color: #2196F3;
+            transform: translateX(5px);
+        }
+        
+        .option.selected {
+            border-color: #2196F3;
+            background: #e3f2fd;
+        }
+        
+        .option.correct {
+            background: #c8e6c9 !important;
+            border-color: #4CAF50 !important;
+        }
+        
+        .option.incorrect {
+            background: #ffcdd2 !important;
+            border-color: #f44336 !important;
+        }
+        
+        .option.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .option-letter {
+            width: 35px;
+            height: 35px;
+            background: #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .option.correct .option-letter {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .option.incorrect .option-letter {
+            background: #f44336;
+            color: white;
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .feedback.show {
+            display: block;
+        }
+        
+        .feedback.correct {
+            background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+            color: #1b5e20;
+        }
+        
+        .feedback.incorrect {
+            background: linear-gradient(135deg, #ffcdd2, #ef9a9a);
+            color: #b71c1c;
+        }
+        
+        .feedback.timeout {
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+            color: #e65100;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .btn {
+            padding: 15px 35px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        
+        .btn-next {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: none;
+        }
+        
+        .btn-next.show {
+            display: inline-block;
+        }
+        
+        .btn-next:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-restart {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .btn-restart:hover {
+            transform: scale(1.05);
+        }
+        
+        .results {
+            text-align: center;
+            display: none;
+        }
+        
+        .results.show {
+            display: block;
+        }
+        
+        .results-card {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        .final-score {
+            font-size: 4em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .grade {
+            font-size: 2em;
+            margin: 20px 0;
+        }
+        
+        .emoji-result {
+            font-size: 4em;
+            margin: 20px 0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .stat-box {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 12px;
+        }
+        
+        .stat-box .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-box .stat-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .time-bonus {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 600px) {
+            .score-bar {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .timer-bar {
+                flex-direction: column;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🇺🇸 Government & Bill of Rights</h1>
+            <p class="subtitle">Interactive Study Quiz</p>
+        </header>
+        
+        <div class="shuffle-notice">
+            🔀 <span>Questions AND answers are shuffled each time!</span> No memorizing the order! 🧠<br>
+            ✅ <span>All 5 topics guaranteed</span> every quiz: Bill of Rights • Natural Rights • 3 Branches • Powers • Checks & Balances
+        </div>
+        
+        <div class="score-bar">
+            <span>📊 Score: <strong id="current-score">0</strong></span>
+            <span>❓ Question: <strong id="question-num">1</strong> / <strong id="total-questions">15</strong></span>
+            <span>⭐ Streak: <strong id="streak">0</strong></span>
+        </div>
+        
+        <!-- TIMER BAR -->
+        <div class="timer-bar">
+            <div class="question-timer">
+                <div class="timer-circle" id="timer-circle">
+                    <span id="question-time">30</span>
+                </div>
+                <span>seconds</span>
+            </div>
+            <div class="timer-progress-bar">
+                <div class="timer-progress-fill" id="timer-progress"></div>
+            </div>
+            <div class="total-timer">
+                <span>⏱️ Total:</span>
+                <strong id="total-time">0:00</strong>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Questions will be inserted here by JavaScript -->
+        </div>
+        
+        <div class="results" id="results">
+            <div class="results-card">
+                <div class="emoji-result" id="result-emoji">🎉</div>
+                <h2>Quiz Complete!</h2>
+                <div class="final-score" id="final-score">0%</div>
+                <div class="grade" id="grade"></div>
+                
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-value" id="stat-correct">0</div>
+                        <div class="stat-label">Correct</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="stat-time">0:00</div>
+                        <div class="stat-label">Total Time</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="stat-avg">0s</div>
+                        <div class="stat-label">Avg/Question</div>
+                    </div>
+                </div>
+                
+                <p id="result-message"></p>
+                <button class="btn btn-restart" onclick="restartQuiz()">🔄 Try Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // EXPANDED question bank with alternate wordings
+        const allQuestions = [
+            // BILL OF RIGHTS - Multiple versions of similar questions
+            {
+                category: "Bill of Rights",
+                question: "The Bill of Rights is made up of how many amendments to the U.S. Constitution?",
+                options: ["5 amendments", "10 amendments", "15 amendments", "20 amendments"],
+                correctAnswer: "10 amendments",
+                explanation: "The Bill of Rights consists of the FIRST TEN amendments to the U.S. Constitution!"
+            },
+            {
+                category: "Bill of Rights",
+                question: "How many amendments are in the Bill of Rights?",
+                options: ["8", "10", "12", "15"],
+                correctAnswer: "10",
+                explanation: "The Bill of Rights has exactly 10 amendments - the first ten added to the Constitution!"
+            },
+            {
+                category: "Bill of Rights",
+                question: "The first TEN amendments to the Constitution are called the:",
+                options: ["Declaration of Independence", "Bill of Rights", "Preamble", "Articles of Confederation"],
+                correctAnswer: "Bill of Rights",
+                explanation: "The Bill of Rights = the first 10 amendments to the Constitution!"
+            },
+            // 1ST AMENDMENT
+            {
+                category: "Bill of Rights",
+                question: "Which amendment protects Freedom of Speech, Religion, Press, Assembly, and Petition?",
+                options: ["2nd Amendment", "1st Amendment", "5th Amendment", "10th Amendment"],
+                correctAnswer: "1st Amendment",
+                explanation: "The 1st Amendment protects all five freedoms of expression!"
+            },
+            {
+                category: "Bill of Rights",
+                question: "The 1st Amendment protects how many freedoms?",
+                options: ["3 freedoms", "4 freedoms", "5 freedoms", "6 freedoms"],
+                correctAnswer: "5 freedoms",
+                explanation: "The 1st Amendment protects 5 freedoms: Religion, Speech, Press, Assembly, and Petition!"
+            },
+            {
+                category: "Bill of Rights",
+                question: "Freedom of Religion is protected by which amendment?",
+                options: ["1st Amendment", "2nd Amendment", "4th Amendment", "5th Amendment"],
+                correctAnswer: "1st Amendment",
+                explanation: "The 1st Amendment protects freedom of religion along with speech, press, assembly, and petition."
+            },
+            {
+                category: "Bill of Rights",
+                question: "If you want to speak your opinion freely, which amendment protects you?",
+                options: ["1st Amendment", "3rd Amendment", "5th Amendment", "8th Amendment"],
+                correctAnswer: "1st Amendment",
+                explanation: "The 1st Amendment protects your freedom of speech!"
+            },
+            // 2ND AMENDMENT
+            {
+                category: "Bill of Rights",
+                question: "The 2nd Amendment protects the right to:",
+                options: ["Free speech", "Bear arms (own weapons)", "A fair trial", "Vote"],
+                correctAnswer: "Bear arms (own weapons)",
+                explanation: "The 2nd Amendment protects the right to bear arms (own weapons)."
+            },
+            {
+                category: "Bill of Rights",
+                question: "Which amendment gives citizens the right to own weapons?",
+                options: ["1st Amendment", "2nd Amendment", "4th Amendment", "6th Amendment"],
+                correctAnswer: "2nd Amendment",
+                explanation: "The 2nd Amendment protects the right to bear arms (own guns/weapons)."
+            },
+            // 3RD AMENDMENT
+            {
+                category: "Bill of Rights",
+                question: "Which amendment protects you from soldiers being forced to stay in your home?",
+                options: ["1st Amendment", "2nd Amendment", "3rd Amendment", "4th Amendment"],
+                correctAnswer: "3rd Amendment",
+                explanation: "The 3rd Amendment prevents quartering (housing) of soldiers in private homes."
+            },
+            {
+                category: "Bill of Rights",
+                question: "The 3rd Amendment is about:",
+                options: ["Free speech", "Owning weapons", "Quartering of soldiers", "Unreasonable searches"],
+                correctAnswer: "Quartering of soldiers",
+                explanation: "The 3rd Amendment says soldiers can't be forced to live in your home!"
+            },
+            // 4TH AMENDMENT
+            {
+                category: "Bill of Rights",
+                question: "The 4th Amendment protects against unreasonable:",
+                options: ["Taxes", "Arrests and searches", "Speeches", "Assemblies"],
+                correctAnswer: "Arrests and searches",
+                explanation: "The 4th Amendment protects against unreasonable arrests and searches."
+            },
+            {
+                category: "Bill of Rights",
+                question: "Which amendment protects you from police searching your home without a good reason?",
+                options: ["2nd Amendment", "3rd Amendment", "4th Amendment", "5th Amendment"],
+                correctAnswer: "4th Amendment",
+                explanation: "The 4th Amendment protects against unreasonable searches and seizures."
+            },
+            // 5TH AMENDMENT
+            {
+                category: "Bill of Rights", 
+                question: "Which amendment says you cannot be forced to testify against yourself?",
+                options: ["4th Amendment", "5th Amendment", "6th Amendment", "8th Amendment"],
+                correctAnswer: "5th Amendment",
+                explanation: "The 5th Amendment protects the rights of persons accused of crimes, including the right to remain silent."
+            },
+            {
+                category: "Bill of Rights",
+                question: "The right to remain silent comes from which amendment?",
+                options: ["3rd Amendment", "4th Amendment", "5th Amendment", "7th Amendment"],
+                correctAnswer: "5th Amendment",
+                explanation: "The 5th Amendment gives you the right to remain silent and not testify against yourself."
+            },
+            // 6TH AMENDMENT
+            {
+                category: "Bill of Rights",
+                question: "The 6th Amendment gives people accused of crimes the right to:",
+                options: ["Own weapons", "A speedy and public trial", "Vote", "Freedom of speech"],
+                correctAnswer: "A speedy and public trial",
+                explanation: "The 6th Amendment protects the rights of persons on trial for crimes."
+            },
+            // 7TH AMENDMENT
+            {
+                category: "Bill of Rights",
+                question: "The 7th Amendment guarantees the right to a jury trial in:",
+                options: ["Criminal cases only", "Civil cases", "All cases", "No cases"],
+                correctAnswer: "Civil cases",
+                explanation: "The 7th Amendment guarantees jury trials in civil cases."
+            },
+            // 8TH AMENDMENT
+            {
+                category: "Bill of Rights",
+                question: "The 8th Amendment protects against:",
+                options: ["Unfair searches", "Cruel and unusual punishment", "Quartering soldiers", "Self-incrimination"],
+                correctAnswer: "Cruel and unusual punishment",
+                explanation: "The 8th Amendment limits bail and punishments, including cruel and unusual punishment."
+            },
+            {
+                category: "Bill of Rights",
+                question: "Which amendment says punishments cannot be cruel and unusual?",
+                options: ["5th Amendment", "6th Amendment", "7th Amendment", "8th Amendment"],
+                correctAnswer: "8th Amendment",
+                explanation: "The 8th Amendment protects against cruel and unusual punishment."
+            },
+            // 9TH AMENDMENT
+            {
+                category: "Bill of Rights",
+                question: "The 9th Amendment says that people have:",
+                options: ["No other rights", "Only rights listed in the Constitution", "Other rights not listed", "Rights only from states"],
+                correctAnswer: "Other rights not listed",
+                explanation: "The 9th Amendment says the people have rights beyond those listed in the Constitution."
+            },
+            // 10TH AMENDMENT
+            {
+                category: "Bill of Rights",
+                question: "The 10th Amendment says that powers not given to the federal government belong to:",
+                options: ["The President only", "The Supreme Court", "The states or the people", "Foreign countries"],
+                correctAnswer: "The states or the people",
+                explanation: "The 10th Amendment reserves powers to the states or the people."
+            },
+            {
+                category: "Bill of Rights",
+                question: "Which amendment reserves powers to the states?",
+                options: ["8th Amendment", "9th Amendment", "10th Amendment", "1st Amendment"],
+                correctAnswer: "10th Amendment",
+                explanation: "The 10th Amendment says powers not given to the federal government go to states or the people."
+            },
+            // NATURAL RIGHTS
+            {
+                category: "Declaration of Independence",
+                question: "According to the Declaration of Independence, what are our three Natural Rights?",
+                options: ["Food, shelter, clothing", "Life, liberty, pursuit of happiness", "Speech, press, religion", "Vote, work, travel"],
+                correctAnswer: "Life, liberty, pursuit of happiness",
+                explanation: "The Declaration states we have the right to Life, Liberty, and the Pursuit of Happiness!"
+            },
+            {
+                category: "Declaration of Independence",
+                question: "Life, Liberty, and the Pursuit of Happiness are called:",
+                options: ["Bill of Rights", "Natural Rights", "State Rights", "Federal Rights"],
+                correctAnswer: "Natural Rights",
+                explanation: "These three rights from the Declaration of Independence are called Natural Rights!"
+            },
+            {
+                category: "Declaration of Independence",
+                question: "Where do we find the Natural Rights of Life, Liberty, and Pursuit of Happiness?",
+                options: ["Bill of Rights", "Constitution", "Declaration of Independence", "Preamble"],
+                correctAnswer: "Declaration of Independence",
+                explanation: "The Natural Rights are stated in the Declaration of Independence!"
+            },
+            // THREE BRANCHES
+            {
+                category: "Branches of Government",
+                question: "Which branch of government MAKES the laws?",
+                options: ["Executive Branch", "Judicial Branch", "Legislative Branch", "Presidential Branch"],
+                correctAnswer: "Legislative Branch",
+                explanation: "The Legislative Branch (Congress - Senate and House of Representatives) MAKES the laws."
+            },
+            {
+                category: "Branches of Government",
+                question: "Congress is part of which branch?",
+                options: ["Executive Branch", "Judicial Branch", "Legislative Branch", "Federal Branch"],
+                correctAnswer: "Legislative Branch",
+                explanation: "Congress (Senate + House of Representatives) is the Legislative Branch that MAKES laws."
+            },
+            {
+                category: "Branches of Government",
+                question: "Which branch of government includes the President and Vice President?",
+                options: ["Legislative Branch", "Executive Branch", "Judicial Branch", "Congressional Branch"],
+                correctAnswer: "Executive Branch",
+                explanation: "The Executive Branch includes the President and Vice President who CARRY OUT the laws."
+            },
+            {
+                category: "Branches of Government",
+                question: "The President belongs to which branch of government?",
+                options: ["Legislative Branch", "Judicial Branch", "Executive Branch", "Supreme Court"],
+                correctAnswer: "Executive Branch",
+                explanation: "The President is the head of the Executive Branch, which CARRIES OUT laws."
+            },
+            {
+                category: "Branches of Government",
+                question: "The Supreme Court is part of which branch?",
+                options: ["Executive Branch", "Legislative Branch", "Judicial Branch", "Federal Branch"],
+                correctAnswer: "Judicial Branch",
+                explanation: "The Judicial Branch (Supreme Court and other courts) EVALUATES the laws."
+            },
+            {
+                category: "Branches of Government",
+                question: "Which branch EVALUATES (judges) the laws?",
+                options: ["Executive Branch", "Legislative Branch", "Judicial Branch", "Congressional Branch"],
+                correctAnswer: "Judicial Branch",
+                explanation: "The Judicial Branch (courts) evaluates whether laws follow the Constitution."
+            },
+            {
+                category: "Branches of Government",
+                question: "What does the Legislative Branch consist of?",
+                options: ["President and Cabinet", "Supreme Court", "Senate and House of Representatives", "Governors"],
+                correctAnswer: "Senate and House of Representatives",
+                explanation: "The Legislative Branch is Congress, made up of the Senate and House of Representatives."
+            },
+            {
+                category: "Branches of Government",
+                question: "Which branch CARRIES OUT the laws?",
+                options: ["Legislative Branch", "Executive Branch", "Judicial Branch", "State Branch"],
+                correctAnswer: "Executive Branch",
+                explanation: "The Executive Branch (President) carries out and enforces the laws."
+            },
+            {
+                category: "Branches of Government",
+                question: "How many branches of government are there?",
+                options: ["2", "3", "4", "5"],
+                correctAnswer: "3",
+                explanation: "There are 3 branches: Legislative (makes laws), Executive (carries out laws), Judicial (evaluates laws)."
+            },
+            // POWERS
+            {
+                category: "Government Powers",
+                question: "Which is a power of ONLY the Federal Government?",
+                options: ["Collect taxes", "Issue driver's licenses", "Print and coin money", "Make laws"],
+                correctAnswer: "Print and coin money",
+                explanation: "Only the Federal Government can print and coin money. States cannot make their own money!"
+            },
+            {
+                category: "Government Powers",
+                question: "Only the Federal Government can:",
+                options: ["Make laws", "Collect taxes", "Declare war", "Set school schedules"],
+                correctAnswer: "Declare war",
+                explanation: "Only the Federal Government has the power to declare war."
+            },
+            {
+                category: "Government Powers",
+                question: "Which is a SHARED power between federal and state governments?",
+                options: ["Declare war", "Issue driver's licenses", "Collect taxes", "Determine school days"],
+                correctAnswer: "Collect taxes",
+                explanation: "Both federal and state governments can collect taxes. This is a shared power."
+            },
+            {
+                category: "Government Powers",
+                question: "Which is a power of ONLY State Governments?",
+                options: ["Print money", "Declare war", "Issue driver's licenses", "Coin money"],
+                correctAnswer: "Issue driver's licenses",
+                explanation: "Only state governments can issue driver's licenses!"
+            },
+            {
+                category: "Government Powers",
+                question: "Who decides how many days you go to school?",
+                options: ["Federal Government", "State Government", "Supreme Court", "President"],
+                correctAnswer: "State Government",
+                explanation: "State governments determine school days - that's a state power!"
+            },
+            // CHECKS AND BALANCES
+            {
+                category: "Checks and Balances",
+                question: "The President can VETO (reject) a law. This is an example of:",
+                options: ["Making laws", "Checks and balances", "Judicial review", "State power"],
+                correctAnswer: "Checks and balances",
+                explanation: "The veto power is how the Executive Branch checks the Legislative Branch!"
+            },
+            {
+                category: "Checks and Balances",
+                question: "Congress can override a presidential veto. This is an example of:",
+                options: ["State power", "Checks and balances", "Natural rights", "Federal power"],
+                correctAnswer: "Checks and balances",
+                explanation: "Override power is how Congress checks the President - checks and balances!"
+            },
+            {
+                category: "Checks and Balances",
+                question: "The Supreme Court can declare laws unconstitutional. This power checks which branch?",
+                options: ["Only Executive", "Only Legislative", "Both Executive and Legislative", "State governments"],
+                correctAnswer: "Both Executive and Legislative",
+                explanation: "Judicial review lets courts check both Congress (laws) and the President (actions)."
+            }
+        ];
+
+        // Shuffle array function
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Function to shuffle options and track correct answer
+        function prepareQuestion(q) {
+            const shuffledOptions = shuffleArray([...q.options]);
+            const correctIndex = shuffledOptions.indexOf(q.correctAnswer);
+            return {
+                ...q,
+                options: shuffledOptions,
+                correct: correctIndex
+            };
+        }
+
+        // BALANCED SELECTION: Ensure all topics are covered!
+        // Define how many questions to pick from each category
+        const categoryQuotas = {
+            "Bill of Rights": 6,           // 6 questions about amendments
+            "Declaration of Independence": 2, // 2 about natural rights
+            "Branches of Government": 4,    // 4 about the 3 branches
+            "Government Powers": 2,         // 2 about federal/state powers
+            "Checks and Balances": 1        // 1 about checks and balances
+        };
+        // Total: 15 questions, guaranteed coverage of ALL topics!
+
+        function selectBalancedQuestions() {
+            const selected = [];
+            
+            // Group questions by category
+            const byCategory = {};
+            allQuestions.forEach(q => {
+                if (!byCategory[q.category]) {
+                    byCategory[q.category] = [];
+                }
+                byCategory[q.category].push(q);
+            });
+            
+            // Pick quota from each category
+            for (const [category, quota] of Object.entries(categoryQuotas)) {
+                const categoryQuestions = byCategory[category] || [];
+                const shuffled = shuffleArray(categoryQuestions);
+                const picked = shuffled.slice(0, quota);
+                selected.push(...picked);
+            }
+            
+            // Shuffle the final selection so topics are mixed up
+            return shuffleArray(selected);
+        }
+
+        // TIMER VARIABLES
+        const QUESTION_TIME = 30;
+        let questionTimer = QUESTION_TIME;
+        let questionTimerInterval = null;
+        let totalTimeElapsed = 0;
+        let totalTimerInterval = null;
+        
+        let currentQuestions = []; // The selected questions for this quiz
+        let currentQuestion = 0;
+        let score = 0;
+        let streak = 0;
+        let answered = false;
+
+        function initQuiz() {
+            // Select balanced questions from all categories
+            const balanced = selectBalancedQuestions();
+            currentQuestions = balanced.map(prepareQuestion);
+            
+            document.getElementById('total-questions').textContent = currentQuestions.length;
+            startTotalTimer();
+            renderQuestion();
+        }
+
+        function startTotalTimer() {
+            totalTimeElapsed = 0;
+            totalTimerInterval = setInterval(() => {
+                totalTimeElapsed++;
+                updateTotalTimeDisplay();
+            }, 1000);
+        }
+
+        function updateTotalTimeDisplay() {
+            const minutes = Math.floor(totalTimeElapsed / 60);
+            const seconds = totalTimeElapsed % 60;
+            document.getElementById('total-time').textContent = 
+                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function startQuestionTimer() {
+            questionTimer = QUESTION_TIME;
+            updateQuestionTimerDisplay();
+            
+            questionTimerInterval = setInterval(() => {
+                questionTimer--;
+                updateQuestionTimerDisplay();
+                
+                if (questionTimer <= 0) {
+                    clearInterval(questionTimerInterval);
+                    timeOut();
+                }
+            }, 1000);
+        }
+
+        function updateQuestionTimerDisplay() {
+            const timerElement = document.getElementById('question-time');
+            const timerCircle = document.getElementById('timer-circle');
+            const timerProgress = document.getElementById('timer-progress');
+            
+            timerElement.textContent = questionTimer;
+            
+            const progressPercent = (questionTimer / QUESTION_TIME) * 100;
+            timerProgress.style.width = progressPercent + '%';
+            timerCircle.style.setProperty('--timer-progress', progressPercent + '%');
+            
+            timerCircle.classList.remove('warning', 'danger');
+            timerProgress.classList.remove('warning', 'danger');
+            
+            if (questionTimer <= 5) {
+                timerCircle.classList.add('danger');
+                timerProgress.classList.add('danger');
+            } else if (questionTimer <= 10) {
+                timerCircle.classList.add('warning');
+                timerProgress.classList.add('warning');
+            }
+        }
+
+        function stopQuestionTimer() {
+            if (questionTimerInterval) {
+                clearInterval(questionTimerInterval);
+                questionTimerInterval = null;
+            }
+        }
+
+        function timeOut() {
+            if (answered) return;
+            answered = true;
+            
+            const q = currentQuestions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            const feedback = document.getElementById('feedback');
+            const nextBtn = document.getElementById('next-btn');
+            
+            options.forEach((opt, i) => {
+                opt.classList.add('disabled');
+                if (i === q.correct) {
+                    opt.classList.add('correct');
+                }
+            });
+            
+            streak = 0;
+            feedback.className = 'feedback show timeout';
+            feedback.innerHTML = `<strong>⏰ Time's Up!</strong> The correct answer was: <strong>${q.correctAnswer}</strong>. ${q.explanation}`;
+            
+            nextBtn.classList.add('show');
+            updateScore();
+        }
+
+        function renderQuestion() {
+            stopQuestionTimer();
+            
+            const container = document.getElementById('quiz-container');
+            const q = currentQuestions[currentQuestion];
+            
+            container.innerHTML = `
+                <div class="question-card active">
+                    <span class="question-number">📚 ${q.category}</span>
+                    <p class="question-text">${q.question}</p>
+                    <div class="options">
+                        ${q.options.map((opt, i) => `
+                            <div class="option" onclick="selectAnswer(${i})" data-index="${i}">
+                                <span class="option-letter">${String.fromCharCode(65 + i)}</span>
+                                <span>${opt}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback"></div>
+                    <button class="btn btn-next" id="next-btn" onclick="nextQuestion()">
+                        ${currentQuestion < currentQuestions.length - 1 ? 'Next Question →' : 'See Results 🎯'}
+                    </button>
+                </div>
+            `;
+            
+            answered = false;
+            updateProgress();
+            startQuestionTimer();
+        }
+
+        function selectAnswer(index) {
+            if (answered) return;
+            answered = true;
+            stopQuestionTimer();
+            
+            const q = currentQuestions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            const feedback = document.getElementById('feedback');
+            const nextBtn = document.getElementById('next-btn');
+            
+            options.forEach((opt, i) => {
+                opt.classList.add('disabled');
+                if (i === q.correct) {
+                    opt.classList.add('correct');
+                } else if (i === index) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            if (index === q.correct) {
+                score++;
+                streak++;
+                let bonusMsg = '';
+                if (questionTimer >= 25) {
+                    bonusMsg = ' <span class="time-bonus">⚡ Speed Bonus!</span>';
+                }
+                feedback.className = 'feedback show correct';
+                feedback.innerHTML = `<strong>✅ Correct!</strong>${bonusMsg} ${q.explanation}`;
+            } else {
+                streak = 0;
+                feedback.className = 'feedback show incorrect';
+                feedback.innerHTML = `<strong>❌ Not quite.</strong> The answer was: <strong>${q.correctAnswer}</strong>. ${q.explanation}`;
+            }
+            
+            nextBtn.classList.add('show');
+            updateScore();
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < currentQuestions.length) {
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function updateScore() {
+            document.getElementById('current-score').textContent = score;
+            document.getElementById('streak').textContent = streak;
+        }
+
+        function updateProgress() {
+            document.getElementById('question-num').textContent = currentQuestion + 1;
+            const progress = ((currentQuestion) / currentQuestions.length) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+        }
+
+        function showResults() {
+            stopQuestionTimer();
+            clearInterval(totalTimerInterval);
+            
+            document.getElementById('quiz-container').innerHTML = '';
+            document.getElementById('results').classList.add('show');
+            
+            const percentage = Math.round((score / currentQuestions.length) * 100);
+            document.getElementById('final-score').textContent = percentage + '%';
+            
+            document.getElementById('stat-correct').textContent = `${score}/${currentQuestions.length}`;
+            
+            const minutes = Math.floor(totalTimeElapsed / 60);
+            const seconds = totalTimeElapsed % 60;
+            document.getElementById('stat-time').textContent = 
+                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            const avgTime = Math.round(totalTimeElapsed / currentQuestions.length);
+            document.getElementById('stat-avg').textContent = `${avgTime}s`;
+            
+            let emoji, grade, message;
+            if (percentage >= 90) {
+                emoji = '🏆';
+                grade = 'A - Outstanding!';
+                message = 'You really know your government! Future president material! 🇺🇸';
+            } else if (percentage >= 80) {
+                emoji = '🌟';
+                grade = 'B - Great Job!';
+                message = 'Excellent work! You understand the Constitution well!';
+            } else if (percentage >= 70) {
+                emoji = '👍';
+                grade = 'C - Good Work!';
+                message = 'Nice effort! Review the Bill of Rights and branches a bit more.';
+            } else if (percentage >= 60) {
+                emoji = '📚';
+                grade = 'D - Keep Studying!';
+                message = 'You\'re getting there! Try reviewing the study guide again.';
+            } else {
+                emoji = '💪';
+                grade = 'Keep Trying!';
+                message = 'Don\'t give up! Study the material and try again!';
+            }
+            
+            document.getElementById('result-emoji').textContent = emoji;
+            document.getElementById('grade').textContent = grade;
+            document.getElementById('result-message').textContent = message;
+            document.getElementById('progress-bar').style.width = '100%';
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            streak = 0;
+            answered = false;
+            totalTimeElapsed = 0;
+            
+            document.getElementById('results').classList.remove('show');
+            updateScore();
+            initQuiz(); // This will re-shuffle everything!
+        }
+
+        // Start the quiz
+        initQuiz();
+    </script>
+</body>
+</html>

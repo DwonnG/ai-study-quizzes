@@ -1,0 +1,1790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 Daily Brain Boost - Words & Math</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.8rem;
+            text-align: center;
+            margin-bottom: 10px;
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+        }
+        
+        .subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        
+        /* Navigation Tabs */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 15px 30px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        .tab:hover {
+            transform: translateY(-3px);
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .tab.active {
+            background: white;
+            color: #764ba2;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 25px;
+            padding: 40px;
+            color: #333;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            display: none;
+        }
+        
+        .card.active {
+            display: block;
+            animation: slideIn 0.4s ease;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Word of the Day */
+        .word-display {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .word-main {
+            font-family: 'Fredoka One', cursive;
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .word-pronunciation {
+            font-size: 1.3rem;
+            color: #888;
+            font-style: italic;
+        }
+        
+        .word-type {
+            display: inline-block;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            margin: 15px 0;
+        }
+        
+        .word-definition {
+            font-size: 1.4rem;
+            line-height: 1.6;
+            color: #555;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .word-example {
+            font-size: 1.1rem;
+            color: #666;
+            font-style: italic;
+            padding: 15px 20px;
+            background: #fff8e1;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        
+        .word-example::before {
+            content: '"';
+            font-size: 2rem;
+            color: #f7931e;
+        }
+        
+        .word-example::after {
+            content: '"';
+            font-size: 2rem;
+            color: #f7931e;
+        }
+        
+        .word-tip {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 1rem;
+        }
+        
+        .word-tip strong {
+            color: #2e7d32;
+        }
+        
+        .word-nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        /* Multiplication Game */
+        .math-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .math-stats {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .stat {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+        }
+        
+        .stat-value {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2rem;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+        
+        .math-problem {
+            text-align: center;
+            margin: 40px 0;
+        }
+        
+        .problem-display {
+            font-family: 'Fredoka One', cursive;
+            font-size: 4rem;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .problem-display .operator {
+            color: #f5576c;
+            margin: 0 15px;
+        }
+        
+        .problem-display .equals {
+            color: #667eea;
+            margin: 0 15px;
+        }
+        
+        .answer-input {
+            font-family: 'Fredoka One', cursive;
+            font-size: 3rem;
+            width: 150px;
+            text-align: center;
+            border: 4px solid #ddd;
+            border-radius: 15px;
+            padding: 10px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .answer-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .answer-input.correct {
+            border-color: #4caf50;
+            background: #e8f5e9;
+        }
+        
+        .answer-input.incorrect {
+            border-color: #f44336;
+            background: #ffebee;
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .answer-options {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .answer-option {
+            padding: 20px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.8rem;
+            border: 3px solid #ddd;
+            border-radius: 15px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .answer-option:hover {
+            border-color: #667eea;
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .answer-option.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        
+        .answer-option.correct {
+            border-color: #4caf50;
+            background: #4caf50;
+            color: white;
+        }
+        
+        .answer-option.incorrect {
+            border-color: #f44336;
+            background: #f44336;
+            color: white;
+        }
+        
+        .feedback {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 15px;
+            display: none;
+        }
+        
+        .feedback.show {
+            display: block;
+            animation: pop 0.3s ease;
+        }
+        
+        @keyframes pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .feedback.correct {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .feedback.incorrect {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        /* Timer Bar */
+        .timer-container {
+            margin: 20px 0;
+        }
+        
+        .timer-bar {
+            height: 12px;
+            background: #eee;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .timer-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+            transition: width 0.1s linear;
+            border-radius: 6px;
+        }
+        
+        .timer-fill.warning {
+            background: linear-gradient(90deg, #ff9800, #ffc107);
+        }
+        
+        .timer-fill.danger {
+            background: linear-gradient(90deg, #f44336, #ff5722);
+        }
+        
+        /* Streak Display */
+        .streak-display {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.5rem;
+        }
+        
+        .streak-fire {
+            animation: fireGlow 0.5s infinite alternate;
+        }
+        
+        @keyframes fireGlow {
+            from { text-shadow: 0 0 10px #ff9800; }
+            to { text-shadow: 0 0 30px #ff5722, 0 0 50px #ff9800; }
+        }
+        
+        /* Mode Selection */
+        .mode-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .mode-card {
+            background: linear-gradient(135deg, #f8f9ff, #fff);
+            border: 3px solid #ddd;
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .mode-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+        }
+        
+        .mode-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .mode-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        
+        .mode-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.2rem;
+        }
+        
+        /* Tables Selection */
+        .tables-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .table-btn {
+            padding: 15px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.3rem;
+            border: 3px solid #ddd;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .table-btn:hover {
+            border-color: #667eea;
+        }
+        
+        .table-btn.selected {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 15px 35px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #4caf50, #8bc34a);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #eee;
+            color: #666;
+        }
+        
+        /* Progress Chart */
+        .progress-section {
+            margin-top: 30px;
+        }
+        
+        .progress-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .progress-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 5px;
+        }
+        
+        .progress-cell {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: transform 0.2s;
+        }
+        
+        .progress-cell:hover {
+            transform: scale(1.1);
+        }
+        
+        .progress-cell.mastered {
+            background: linear-gradient(135deg, #4caf50, #8bc34a);
+            color: white;
+        }
+        
+        .progress-cell.learning {
+            background: linear-gradient(135deg, #ff9800, #ffc107);
+            color: white;
+        }
+        
+        .progress-cell.needs-work {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .progress-cell.not-started {
+            background: #f5f5f5;
+            color: #999;
+        }
+        
+        /* Results */
+        .results-display {
+            text-align: center;
+        }
+        
+        .results-score {
+            font-family: 'Fredoka One', cursive;
+            font-size: 5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .results-message {
+            font-size: 1.5rem;
+            color: #666;
+            margin: 20px 0;
+        }
+        
+        .results-details {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+        }
+        
+        .results-stat {
+            text-align: center;
+        }
+        
+        .results-stat-value {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.5rem;
+            color: #333;
+        }
+        
+        .results-stat-label {
+            color: #888;
+        }
+        
+        /* Word Quiz */
+        .word-quiz-options {
+            display: grid;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .word-option {
+            padding: 20px;
+            font-size: 1.1rem;
+            border: 3px solid #ddd;
+            border-radius: 15px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+        
+        .word-option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .word-option.correct {
+            border-color: #4caf50;
+            background: #e8f5e9;
+        }
+        
+        .word-option.incorrect {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+        
+        /* Word List */
+        .word-list-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .word-list-item {
+            padding: 12px 15px;
+            background: linear-gradient(135deg, #f8f9ff, #fff);
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .word-list-item:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        .word-list-item.learned {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            border-color: #4caf50;
+        }
+        
+        /* Responsive */
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .word-main { font-size: 2.5rem; }
+            .problem-display { font-size: 2.5rem; }
+            .answer-input { font-size: 2rem; width: 100px; }
+            .tables-grid { grid-template-columns: repeat(4, 1fr); }
+            .answer-options { grid-template-columns: repeat(2, 1fr); }
+            .progress-grid { grid-template-columns: repeat(6, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 Daily Brain Boost</h1>
+        <p class="subtitle">Words + Math = Super Smart! 🌟</p>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('word')">📚 Word of the Day</button>
+            <button class="tab" onclick="showTab('wordquiz')">✍️ Word Quiz</button>
+            <button class="tab" onclick="showTab('math')">✖️ Multiplication</button>
+            <button class="tab" onclick="showTab('progress')">📊 My Progress</button>
+        </div>
+        
+        <!-- Word of the Day Card -->
+        <div class="card active" id="word-card">
+            <div class="word-display">
+                <div class="word-main" id="wotd-word">perseverance</div>
+                <div class="word-pronunciation" id="wotd-pronunciation">/ˌpər-sə-ˈvir-ən(t)s/</div>
+                <div class="word-type" id="wotd-type">noun</div>
+            </div>
+            
+            <div class="word-definition" id="wotd-definition">
+                Continuing to try to do something even when it is difficult.
+            </div>
+            
+            <div class="word-example" id="wotd-example">
+                Her perseverance paid off when she finally learned to ride a bike after many falls.
+            </div>
+            
+            <div class="word-tip" id="wotd-tip">
+                <strong>💡 Memory Tip:</strong> <span id="wotd-tip-text">Think of "per-severe" - going through severe challenges without giving up!</span>
+            </div>
+            
+            <div class="word-nav">
+                <button class="btn btn-secondary" onclick="previousWord()">← Previous</button>
+                <button class="btn btn-primary" onclick="nextWord()">Next Word →</button>
+            </div>
+        </div>
+        
+        <!-- Word Quiz Card -->
+        <div class="card" id="wordquiz-card">
+            <h2 style="text-align: center; margin-bottom: 20px;">📝 Word Quiz</h2>
+            
+            <div id="quiz-start">
+                <p style="text-align: center; font-size: 1.2rem; margin-bottom: 20px;">
+                    Test your vocabulary knowledge! Match words to their meanings.
+                </p>
+                <div style="text-align: center;">
+                    <button class="btn btn-primary" onclick="startWordQuiz()">Start Quiz 🚀</button>
+                </div>
+            </div>
+            
+            <div id="quiz-game" style="display: none;">
+                <div class="math-stats" style="justify-content: center; margin-bottom: 20px;">
+                    <div class="stat">
+                        <div class="stat-value" id="quiz-score">0</div>
+                        <div class="stat-label">Score</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="quiz-progress">1/10</div>
+                        <div class="stat-label">Question</div>
+                    </div>
+                </div>
+                
+                <div class="word-main" id="quiz-word" style="text-align: center; font-size: 2.5rem;">word</div>
+                
+                <p style="text-align: center; margin: 20px 0; font-size: 1.1rem; color: #666;">
+                    What does this word mean?
+                </p>
+                
+                <div class="word-quiz-options" id="quiz-options"></div>
+                
+                <div class="feedback" id="quiz-feedback"></div>
+            </div>
+            
+            <div id="quiz-results" style="display: none;">
+                <div class="results-display">
+                    <div class="results-score" id="quiz-final-score">80%</div>
+                    <div class="results-message" id="quiz-message">Great job!</div>
+                    <button class="btn btn-primary" onclick="startWordQuiz()">Try Again 🔄</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Math Card -->
+        <div class="card" id="math-card">
+            <div id="math-setup">
+                <h2 style="text-align: center; margin-bottom: 20px;">⚡ Speed Multiplication</h2>
+                
+                <p style="text-align: center; color: #666; margin-bottom: 20px;">
+                    Select which times tables to practice:
+                </p>
+                
+                <div class="tables-grid" id="tables-grid"></div>
+                
+                <div style="text-align: center; margin: 20px 0;">
+                    <button class="btn btn-secondary" onclick="selectAllTables()">Select All</button>
+                    <button class="btn btn-secondary" onclick="clearTables()">Clear</button>
+                </div>
+                
+                <h3 style="text-align: center; margin: 30px 0 15px;">Choose Mode:</h3>
+                
+                <div class="mode-grid">
+                    <div class="mode-card selected" data-mode="timed" onclick="selectMode('timed')">
+                        <div class="mode-icon">⏱️</div>
+                        <div class="mode-title">Timed (60s)</div>
+                        <p style="font-size: 0.9rem; color: #888;">Answer as many as you can!</p>
+                    </div>
+                    <div class="mode-card" data-mode="practice" onclick="selectMode('practice')">
+                        <div class="mode-icon">📝</div>
+                        <div class="mode-title">Practice (10 Qs)</div>
+                        <p style="font-size: 0.9rem; color: #888;">Take your time to learn</p>
+                    </div>
+                    <div class="mode-card" data-mode="challenge" onclick="selectMode('challenge')">
+                        <div class="mode-icon">🏆</div>
+                        <div class="mode-title">Challenge</div>
+                        <p style="font-size: 0.9rem; color: #888;">5 seconds per question!</p>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn btn-primary" onclick="startMath()">Start! 🚀</button>
+                </div>
+            </div>
+            
+            <div id="math-game" style="display: none;">
+                <div class="math-header">
+                    <div class="math-stats">
+                        <div class="stat">
+                            <div class="stat-value" id="math-score">0</div>
+                            <div class="stat-label">Correct</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="math-streak">0</div>
+                            <div class="stat-label">Streak</div>
+                        </div>
+                    </div>
+                    <div class="stat" id="time-stat">
+                        <div class="stat-value" id="math-time">60</div>
+                        <div class="stat-label">Seconds</div>
+                    </div>
+                </div>
+                
+                <div class="timer-container" id="timer-container">
+                    <div class="timer-bar">
+                        <div class="timer-fill" id="math-timer-fill"></div>
+                    </div>
+                </div>
+                
+                <div class="streak-display" id="streak-display"></div>
+                
+                <div class="math-problem">
+                    <div class="problem-display">
+                        <span id="num1">7</span>
+                        <span class="operator">×</span>
+                        <span id="num2">8</span>
+                        <span class="equals">=</span>
+                        <span id="answer-slot">?</span>
+                    </div>
+                    
+                    <div class="answer-options" id="answer-options"></div>
+                </div>
+                
+                <div class="feedback" id="math-feedback"></div>
+            </div>
+            
+            <div id="math-results" style="display: none;">
+                <div class="results-display">
+                    <div class="results-score" id="math-final-score">0</div>
+                    <div class="results-message" id="math-message">Great job!</div>
+                    
+                    <div class="results-details">
+                        <div class="results-stat">
+                            <div class="results-stat-value" id="results-correct">0</div>
+                            <div class="results-stat-label">Correct</div>
+                        </div>
+                        <div class="results-stat">
+                            <div class="results-stat-value" id="results-total">0</div>
+                            <div class="results-stat-label">Total</div>
+                        </div>
+                        <div class="results-stat">
+                            <div class="results-stat-value" id="results-streak">0</div>
+                            <div class="results-stat-label">Best Streak</div>
+                        </div>
+                    </div>
+                    
+                    <div id="trouble-facts" style="text-align: left; margin: 20px 0;"></div>
+                    
+                    <button class="btn btn-primary" onclick="resetMath()">Play Again 🔄</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Progress Card -->
+        <div class="card" id="progress-card">
+            <h2 style="text-align: center; margin-bottom: 20px;">📊 My Progress</h2>
+            
+            <div class="progress-section">
+                <div class="progress-title">📚 Words Learned: <span id="words-learned-count">0</span>/50</div>
+                <div class="word-list-grid" id="words-progress"></div>
+            </div>
+            
+            <div class="progress-section" style="margin-top: 40px;">
+                <div class="progress-title">✖️ Multiplication Mastery</div>
+                <p style="color: #888; margin-bottom: 15px;">
+                    🟢 Mastered (90%+) | 🟡 Learning (70-89%) | 🔴 Needs Work (&lt;70%) | ⬜ Not Started
+                </p>
+                <div class="progress-grid" id="math-progress"></div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn btn-secondary" onclick="resetProgress()">Reset All Progress</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ========== WORD DATA ==========
+        const vocabulary = [
+            {
+                word: "perseverance",
+                pronunciation: "/ˌpər-sə-ˈvir-ən(t)s/",
+                type: "noun",
+                definition: "Continuing to try to do something even when it is difficult.",
+                example: "Her perseverance paid off when she finally learned to ride a bike after many falls.",
+                tip: "Think of 'per-severe' - going through severe challenges without giving up!"
+            },
+            {
+                word: "magnificent",
+                pronunciation: "/mag-ˈni-fə-sənt/",
+                type: "adjective",
+                definition: "Very beautiful, impressive, or wonderful.",
+                example: "The fireworks display was absolutely magnificent!",
+                tip: "Think 'magnify' - something so good you want to make it bigger to see!"
+            },
+            {
+                word: "curious",
+                pronunciation: "/ˈkyu̇r-ē-əs/",
+                type: "adjective",
+                definition: "Wanting to learn or know more about something.",
+                example: "The curious cat explored every corner of the new house.",
+                tip: "Curious people ask lots of questions - like 'Curious George' the monkey!"
+            },
+            {
+                word: "determination",
+                pronunciation: "/di-ˌtər-mə-ˈnā-shən/",
+                type: "noun",
+                definition: "The quality of continuing to try even when things are hard.",
+                example: "With great determination, she practiced every day until she made the team.",
+                tip: "When you 'determine' to do something, nothing can stop you!"
+            },
+            {
+                word: "generous",
+                pronunciation: "/ˈjen-rəs/",
+                type: "adjective",
+                definition: "Willing to give and share with others.",
+                example: "My generous neighbor shared her garden vegetables with everyone on the street.",
+                tip: "A generous person has a big heart and loves to give!"
+            },
+            {
+                word: "enormous",
+                pronunciation: "/i-ˈnȯr-məs/",
+                type: "adjective",
+                definition: "Very, very big; huge.",
+                example: "The enormous elephant was taller than our house!",
+                tip: "E-NORM-ous - not normal size, WAY bigger!"
+            },
+            {
+                word: "patient",
+                pronunciation: "/ˈpā-shənt/",
+                type: "adjective",
+                definition: "Able to wait calmly without getting upset or angry.",
+                example: "She was patient with her little brother while teaching him to tie his shoes.",
+                tip: "Patients at the doctor wait - being patient means you can wait too!"
+            },
+            {
+                word: "extraordinary",
+                pronunciation: "/ik-ˈstrȯr-də-ˌner-ē/",
+                type: "adjective",
+                definition: "Very unusual or remarkable; beyond ordinary.",
+                example: "The gymnast's extraordinary skills amazed the whole audience.",
+                tip: "EXTRA + ordinary = more than just regular, something special!"
+            },
+            {
+                word: "confident",
+                pronunciation: "/ˈkän-fə-dənt/",
+                type: "adjective",
+                definition: "Believing in yourself and your abilities.",
+                example: "She felt confident before the spelling bee because she had studied hard.",
+                tip: "When you CONfide in yourself, you feel CONfident!"
+            },
+            {
+                word: "responsible",
+                pronunciation: "/ri-ˈspän-sə-bəl/",
+                type: "adjective",
+                definition: "Being trusted to do what is right and complete your tasks.",
+                example: "He was responsible enough to take care of the class pet over the weekend.",
+                tip: "You can 'respond' to challenges because you're responsible!"
+            },
+            {
+                word: "brilliant",
+                pronunciation: "/ˈbril-yənt/",
+                type: "adjective",
+                definition: "Very smart, clever, or shining brightly.",
+                example: "She had a brilliant idea for solving the puzzle.",
+                tip: "Brilliant things shine bright - like smart ideas that light up your brain!"
+            },
+            {
+                word: "ancient",
+                pronunciation: "/ˈān-chənt/",
+                type: "adjective",
+                definition: "Very, very old; from a long time ago.",
+                example: "We learned about ancient Egypt and the pyramids in history class.",
+                tip: "Ancient things are SO old they're from before your great-great-grandparents!"
+            },
+            {
+                word: "fortunate",
+                pronunciation: "/ˈfȯr-chə-nət/",
+                type: "adjective",
+                definition: "Having good luck; lucky.",
+                example: "We were fortunate that the rain stopped just before our picnic.",
+                tip: "Fortune = luck. Fortunate = lucky!"
+            },
+            {
+                word: "hesitate",
+                pronunciation: "/ˈhe-zə-ˌtāt/",
+                type: "verb",
+                definition: "To pause before doing something because you're unsure.",
+                example: "Don't hesitate to ask questions if you don't understand.",
+                tip: "When you hesitate, you HESitate... you wait and wonder!"
+            },
+            {
+                word: "miserable",
+                pronunciation: "/ˈmi-zə-rə-bəl/",
+                type: "adjective",
+                definition: "Very unhappy or uncomfortable.",
+                example: "The rainy day made the team miserable during their outdoor game.",
+                tip: "Miserable sounds like 'misery' - being really sad or uncomfortable."
+            },
+            {
+                word: "cooperate",
+                pronunciation: "/kō-ˈä-pə-ˌrāt/",
+                type: "verb",
+                definition: "To work together with others toward a common goal.",
+                example: "The students cooperated to build an amazing science fair project.",
+                tip: "CO = together, OPERATE = work. Work together!"
+            },
+            {
+                word: "accomplish",
+                pronunciation: "/ə-ˈkäm-plish/",
+                type: "verb",
+                definition: "To successfully complete or achieve something.",
+                example: "She accomplished her goal of reading 50 books this year!",
+                tip: "When you accomplish something, you can say 'I did it!'"
+            },
+            {
+                word: "peculiar",
+                pronunciation: "/pi-ˈkül-yər/",
+                type: "adjective",
+                definition: "Strange or unusual in an interesting way.",
+                example: "The peculiar bird had feathers of every color imaginable.",
+                tip: "Something peculiar makes you look twice because it's so unusual!"
+            },
+            {
+                word: "valuable",
+                pronunciation: "/ˈval-yə-bəl/",
+                type: "adjective",
+                definition: "Worth a lot of money or very important.",
+                example: "Her grandmother's ring was valuable, but the memories were even more precious.",
+                tip: "If something has VALUE, it's VALUABLE!"
+            },
+            {
+                word: "anxious",
+                pronunciation: "/ˈaŋ(k)-shəs/",
+                type: "adjective",
+                definition: "Worried or nervous about something that might happen.",
+                example: "She felt anxious before her first day at the new school.",
+                tip: "Anxious = when you have anxiety about something."
+            },
+            {
+                word: "flexible",
+                pronunciation: "/ˈflek-sə-bəl/",
+                type: "adjective",
+                definition: "Able to bend easily; or able to change and adapt.",
+                example: "Gymnasts need to be very flexible to do all those moves.",
+                tip: "You can FLEX and bend if you're flexible!"
+            },
+            {
+                word: "cautious",
+                pronunciation: "/ˈkȯ-shəs/",
+                type: "adjective",
+                definition: "Being careful to avoid danger or mistakes.",
+                example: "Be cautious when crossing the street - always look both ways.",
+                tip: "CAUTION signs tell you to be CAUTIOUS!"
+            },
+            {
+                word: "demonstrate",
+                pronunciation: "/ˈde-mən-ˌstrāt/",
+                type: "verb",
+                definition: "To show or explain how something works.",
+                example: "The teacher will demonstrate how to solve the math problem.",
+                tip: "A demonstration shows you how - demonstrating is showing!"
+            },
+            {
+                word: "concentrate",
+                pronunciation: "/ˈkän-sən-ˌtrāt/",
+                type: "verb",
+                definition: "To focus all your attention on something.",
+                example: "Please concentrate on your test and don't look around the room.",
+                tip: "Concentrate = CENTER your attention on one thing!"
+            },
+            {
+                word: "fragile",
+                pronunciation: "/ˈfra-jəl/",
+                type: "adjective",
+                definition: "Easy to break or damage; delicate.",
+                example: "Be careful with that fragile glass ornament!",
+                tip: "FRAG-ile things can break into FRAGments!"
+            },
+            {
+                word: "enormous",
+                pronunciation: "/i-ˈnȯr-məs/",
+                type: "adjective",
+                definition: "Extremely large in size or amount.",
+                example: "The enormous whale was longer than a school bus!",
+                tip: "ENORMOUS is bigger than big, bigger than huge!"
+            },
+            {
+                word: "exhausted",
+                pronunciation: "/ig-ˈzȯ-stəd/",
+                type: "adjective",
+                definition: "Extremely tired; having no energy left.",
+                example: "After running the marathon, she was completely exhausted.",
+                tip: "Your energy is ALL used up - totally exhausted!"
+            },
+            {
+                word: "miniature",
+                pronunciation: "/ˈmi-nē-ə-ˌchu̇r/",
+                type: "adjective",
+                definition: "Very small; a tiny version of something.",
+                example: "She collected miniature houses for her dollhouse village.",
+                tip: "MINI = small, so miniature = very small!"
+            },
+            {
+                word: "disguise",
+                pronunciation: "/dis-ˈgīz/",
+                type: "noun/verb",
+                definition: "Something worn to hide who you really are; to hide your true appearance.",
+                example: "The spy wore a disguise so no one would recognize her.",
+                tip: "A disguise dis-guises (hides) who you really are!"
+            },
+            {
+                word: "spectacular",
+                pronunciation: "/spek-ˈta-kyə-lər/",
+                type: "adjective",
+                definition: "Extremely impressive or amazing to look at.",
+                example: "The sunset over the ocean was absolutely spectacular!",
+                tip: "A spectacle is something amazing to see - spectacular is even better!"
+            },
+            {
+                word: "tremendous",
+                pronunciation: "/tri-ˈmen-dəs/",
+                type: "adjective",
+                definition: "Extremely large, great, or powerful.",
+                example: "There was a tremendous crash of thunder during the storm.",
+                tip: "Tremendous things make you TREMBLE because they're so big or powerful!"
+            },
+            {
+                word: "volunteer",
+                pronunciation: "/ˌvä-lən-ˈtir/",
+                type: "noun/verb",
+                definition: "A person who helps without being paid; to offer to help.",
+                example: "She decided to volunteer at the animal shelter every Saturday.",
+                tip: "Volunteers help because they WANT to, not because they have to!"
+            },
+            {
+                word: "accurate",
+                pronunciation: "/ˈa-kyə-rət/",
+                type: "adjective",
+                definition: "Correct and without any mistakes.",
+                example: "Make sure your math answers are accurate before turning in the test.",
+                tip: "Accurate = exact and right on target!"
+            },
+            {
+                word: "incredible",
+                pronunciation: "/in-ˈkre-də-bəl/",
+                type: "adjective",
+                definition: "Hard to believe; amazing.",
+                example: "The magician performed an incredible trick that amazed everyone.",
+                tip: "IN-credible = so amazing it's hard to believe (give CREDIT to)!"
+            },
+            {
+                word: "observe",
+                pronunciation: "/əb-ˈzərv/",
+                type: "verb",
+                definition: "To watch carefully and pay attention to details.",
+                example: "Scientists observe animals in the wild to learn about their behavior.",
+                tip: "When you OBSERVE, you watch closely like a detective!"
+            },
+            {
+                word: "gradually",
+                pronunciation: "/ˈgra-jə-wə-lē/",
+                type: "adverb",
+                definition: "Happening slowly over time.",
+                example: "The sky gradually changed from blue to orange as the sun set.",
+                tip: "Grade by grade, step by step - gradually means slowly!"
+            },
+            {
+                word: "enthusiastic",
+                pronunciation: "/in-ˌthü-zē-ˈa-stik/",
+                type: "adjective",
+                definition: "Showing lots of excitement and interest.",
+                example: "The enthusiastic fans cheered loudly for their team.",
+                tip: "When you have enthusiasm, you're ENTHUSIASTIC about it!"
+            },
+            {
+                word: "appreciate",
+                pronunciation: "/ə-ˈprē-shē-ˌāt/",
+                type: "verb",
+                definition: "To be thankful for something; to understand its value.",
+                example: "I really appreciate your help with my homework!",
+                tip: "When you appreciate something, you see its true value and say thanks!"
+            },
+            {
+                word: "independent",
+                pronunciation: "/ˌin-də-ˈpen-dənt/",
+                type: "adjective",
+                definition: "Able to do things on your own without help from others.",
+                example: "She became more independent when she learned to cook her own meals.",
+                tip: "Not DEPENDENT on others = INDEPENDENT!"
+            },
+            {
+                word: "precious",
+                pronunciation: "/ˈpre-shəs/",
+                type: "adjective",
+                definition: "Very valuable or important; worth a lot.",
+                example: "Her grandmother's locket was precious to her because of all the memories.",
+                tip: "Precious things have a special PRICE in our hearts!"
+            },
+            {
+                word: "identical",
+                pronunciation: "/ī-ˈden-ti-kəl/",
+                type: "adjective",
+                definition: "Exactly the same in every way.",
+                example: "The identical twins looked so alike that even their mom confused them!",
+                tip: "Identical = same IDENTITY, exactly alike!"
+            },
+            {
+                word: "experiment",
+                pronunciation: "/ik-ˈsper-ə-mənt/",
+                type: "noun/verb",
+                definition: "A test to discover something new or prove an idea.",
+                example: "The science experiment showed that plants need sunlight to grow.",
+                tip: "Scientists EXPERIMENT to find out if their ideas are right!"
+            },
+            {
+                word: "imaginary",
+                pronunciation: "/i-ˈma-jə-ˌner-ē/",
+                type: "adjective",
+                definition: "Not real; existing only in your mind or imagination.",
+                example: "Her imaginary friend helped her feel brave in new situations.",
+                tip: "Imaginary comes from IMAGINATION - it's in your mind!"
+            },
+            {
+                word: "investigate",
+                pronunciation: "/in-ˈves-tə-ˌgāt/",
+                type: "verb",
+                definition: "To look into something carefully to find out the truth.",
+                example: "The detective will investigate the mystery of the missing cookies.",
+                tip: "Investigators INVESTIGATE - they dig deep to find answers!"
+            },
+            {
+                word: "transform",
+                pronunciation: "/tran(t)s-ˈfȯrm/",
+                type: "verb",
+                definition: "To change completely into something different.",
+                example: "The caterpillar will transform into a beautiful butterfly.",
+                tip: "TRANS = change, FORM = shape. Transform = change shape/form!"
+            },
+            {
+                word: "mysterious",
+                pronunciation: "/mi-ˈstir-ē-əs/",
+                type: "adjective",
+                definition: "Strange and not easy to understand or explain.",
+                example: "The mysterious footprints led into the foggy forest.",
+                tip: "A MYSTERY is mysterious - full of secrets and unknowns!"
+            },
+            {
+                word: "consequence",
+                pronunciation: "/ˈkän-sə-ˌkwen(t)s/",
+                type: "noun",
+                definition: "The result of an action; what happens because of something.",
+                example: "The consequence of not studying was a poor grade on the test.",
+                tip: "What comes as a CONSEQUENCE follows your actions!"
+            },
+            {
+                word: "exaggerate",
+                pronunciation: "/ig-ˈza-jə-ˌrāt/",
+                type: "verb",
+                definition: "To make something seem bigger or more important than it really is.",
+                example: "He tends to exaggerate - the fish he caught wasn't THAT big!",
+                tip: "When you exaggerate, you stretch the truth EXTRA big!"
+            },
+            {
+                word: "reluctant",
+                pronunciation: "/ri-ˈlək-tənt/",
+                type: "adjective",
+                definition: "Not wanting to do something; hesitant.",
+                example: "She was reluctant to try the new food but ended up loving it.",
+                tip: "Reluctant = you're holding back, not quite ready to do it."
+            }
+        ];
+        
+        let currentWordIndex = 0;
+        let wordsLearned = JSON.parse(localStorage.getItem('wordsLearned') || '[]');
+        
+        // ========== MATH STATE ==========
+        let selectedTables = [2, 5, 10]; // Default selections
+        let mathMode = 'timed';
+        let mathScore = 0;
+        let mathStreak = 0;
+        let mathBestStreak = 0;
+        let mathTotal = 0;
+        let timeLeft = 60;
+        let mathTimer = null;
+        let currentProblem = null;
+        let troubleFacts = [];
+        let mathProgress = JSON.parse(localStorage.getItem('mathProgress') || '{}');
+        
+        // ========== WORD QUIZ STATE ==========
+        let quizScore = 0;
+        let quizCurrent = 0;
+        let quizQuestions = [];
+        
+        // ========== TAB NAVIGATION ==========
+        function showTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-card').classList.add('active');
+            
+            if (tabName === 'progress') updateProgressDisplay();
+        }
+        
+        // ========== WORD OF THE DAY ==========
+        function displayWord() {
+            const word = vocabulary[currentWordIndex];
+            document.getElementById('wotd-word').textContent = word.word;
+            document.getElementById('wotd-pronunciation').textContent = word.pronunciation;
+            document.getElementById('wotd-type').textContent = word.type;
+            document.getElementById('wotd-definition').textContent = word.definition;
+            document.getElementById('wotd-example').textContent = word.example;
+            document.getElementById('wotd-tip-text').textContent = word.tip;
+            
+            // Mark as learned
+            if (!wordsLearned.includes(word.word)) {
+                wordsLearned.push(word.word);
+                localStorage.setItem('wordsLearned', JSON.stringify(wordsLearned));
+            }
+        }
+        
+        function nextWord() {
+            currentWordIndex = (currentWordIndex + 1) % vocabulary.length;
+            displayWord();
+        }
+        
+        function previousWord() {
+            currentWordIndex = (currentWordIndex - 1 + vocabulary.length) % vocabulary.length;
+            displayWord();
+        }
+        
+        // ========== WORD QUIZ ==========
+        function startWordQuiz() {
+            document.getElementById('quiz-start').style.display = 'none';
+            document.getElementById('quiz-results').style.display = 'none';
+            document.getElementById('quiz-game').style.display = 'block';
+            
+            quizScore = 0;
+            quizCurrent = 0;
+            
+            // Pick 10 random words
+            quizQuestions = shuffleArray([...vocabulary]).slice(0, 10);
+            
+            showQuizQuestion();
+        }
+        
+        function showQuizQuestion() {
+            if (quizCurrent >= quizQuestions.length) {
+                endWordQuiz();
+                return;
+            }
+            
+            const q = quizQuestions[quizCurrent];
+            document.getElementById('quiz-word').textContent = q.word;
+            document.getElementById('quiz-score').textContent = quizScore;
+            document.getElementById('quiz-progress').textContent = `${quizCurrent + 1}/${quizQuestions.length}`;
+            document.getElementById('quiz-feedback').className = 'feedback';
+            
+            // Create wrong answers from other words
+            const wrongAnswers = vocabulary
+                .filter(w => w.word !== q.word)
+                .map(w => w.definition);
+            const shuffledWrong = shuffleArray(wrongAnswers).slice(0, 3);
+            
+            const options = shuffleArray([q.definition, ...shuffledWrong]);
+            
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = options.map((opt, i) => `
+                <div class="word-option" onclick="selectQuizAnswer(this, '${escapeHtml(opt)}', '${escapeHtml(q.definition)}')">${opt}</div>
+            `).join('');
+        }
+        
+        function escapeHtml(text) {
+            return text.replace(/'/g, "\\'").replace(/"/g, '\\"');
+        }
+        
+        function selectQuizAnswer(element, selected, correct) {
+            const options = document.querySelectorAll('.word-option');
+            options.forEach(o => o.style.pointerEvents = 'none');
+            
+            const feedback = document.getElementById('quiz-feedback');
+            
+            if (selected === correct) {
+                element.classList.add('correct');
+                quizScore++;
+                feedback.textContent = '✅ Correct! Great job!';
+                feedback.className = 'feedback show correct';
+            } else {
+                element.classList.add('incorrect');
+                options.forEach(o => {
+                    if (o.textContent === correct) o.classList.add('correct');
+                });
+                feedback.textContent = '❌ Not quite. The correct answer is highlighted.';
+                feedback.className = 'feedback show incorrect';
+            }
+            
+            setTimeout(() => {
+                quizCurrent++;
+                showQuizQuestion();
+            }, 2000);
+        }
+        
+        function endWordQuiz() {
+            document.getElementById('quiz-game').style.display = 'none';
+            document.getElementById('quiz-results').style.display = 'block';
+            
+            const pct = Math.round((quizScore / quizQuestions.length) * 100);
+            document.getElementById('quiz-final-score').textContent = pct + '%';
+            
+            let msg = '';
+            if (pct === 100) msg = '🏆 Perfect! You\'re a vocabulary champion!';
+            else if (pct >= 80) msg = '🌟 Excellent work! Keep it up!';
+            else if (pct >= 60) msg = '👍 Good job! Keep learning!';
+            else msg = '📚 Keep studying - you\'ll get there!';
+            
+            document.getElementById('quiz-message').textContent = msg;
+        }
+        
+        // ========== MATH GAME ==========
+        function initTablesGrid() {
+            const grid = document.getElementById('tables-grid');
+            grid.innerHTML = '';
+            
+            for (let i = 1; i <= 12; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'table-btn' + (selectedTables.includes(i) ? ' selected' : '');
+                btn.textContent = i;
+                btn.onclick = () => toggleTable(i, btn);
+                grid.appendChild(btn);
+            }
+        }
+        
+        function toggleTable(num, btn) {
+            if (selectedTables.includes(num)) {
+                selectedTables = selectedTables.filter(n => n !== num);
+                btn.classList.remove('selected');
+            } else {
+                selectedTables.push(num);
+                btn.classList.add('selected');
+            }
+        }
+        
+        function selectAllTables() {
+            selectedTables = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+            initTablesGrid();
+        }
+        
+        function clearTables() {
+            selectedTables = [];
+            initTablesGrid();
+        }
+        
+        function selectMode(mode) {
+            mathMode = mode;
+            document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
+            document.querySelector(`[data-mode="${mode}"]`).classList.add('selected');
+        }
+        
+        function startMath() {
+            if (selectedTables.length === 0) {
+                alert('Please select at least one times table!');
+                return;
+            }
+            
+            document.getElementById('math-setup').style.display = 'none';
+            document.getElementById('math-results').style.display = 'none';
+            document.getElementById('math-game').style.display = 'block';
+            
+            mathScore = 0;
+            mathStreak = 0;
+            mathBestStreak = 0;
+            mathTotal = 0;
+            troubleFacts = [];
+            
+            if (mathMode === 'timed') {
+                timeLeft = 60;
+                document.getElementById('time-stat').style.display = 'block';
+                document.getElementById('timer-container').style.display = 'block';
+                startTimer();
+            } else if (mathMode === 'challenge') {
+                timeLeft = 5;
+                document.getElementById('time-stat').style.display = 'block';
+                document.getElementById('timer-container').style.display = 'block';
+            } else {
+                document.getElementById('time-stat').style.display = 'none';
+                document.getElementById('timer-container').style.display = 'none';
+            }
+            
+            generateProblem();
+        }
+        
+        function startTimer() {
+            updateTimerDisplay();
+            mathTimer = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                
+                if (timeLeft <= 0) {
+                    endMath();
+                }
+            }, 1000);
+        }
+        
+        function startQuestionTimer() {
+            updateTimerDisplay();
+            mathTimer = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(mathTimer);
+                    handleWrongAnswer();
+                    setTimeout(() => {
+                        timeLeft = 5;
+                        generateProblem();
+                        startQuestionTimer();
+                    }, 1000);
+                }
+            }, 1000);
+        }
+        
+        function updateTimerDisplay() {
+            document.getElementById('math-time').textContent = timeLeft;
+            
+            const fill = document.getElementById('math-timer-fill');
+            const maxTime = mathMode === 'timed' ? 60 : 5;
+            const pct = (timeLeft / maxTime) * 100;
+            fill.style.width = pct + '%';
+            
+            fill.classList.remove('warning', 'danger');
+            if (pct <= 20) fill.classList.add('danger');
+            else if (pct <= 50) fill.classList.add('warning');
+        }
+        
+        function generateProblem() {
+            // Check if practice mode is done
+            if (mathMode === 'practice' && mathTotal >= 10) {
+                endMath();
+                return;
+            }
+            
+            const table = selectedTables[Math.floor(Math.random() * selectedTables.length)];
+            const num = Math.floor(Math.random() * 12) + 1;
+            
+            currentProblem = { a: table, b: num, answer: table * num };
+            
+            document.getElementById('num1').textContent = currentProblem.a;
+            document.getElementById('num2').textContent = currentProblem.b;
+            document.getElementById('answer-slot').textContent = '?';
+            
+            // Generate answer options
+            const correctAnswer = currentProblem.answer;
+            let options = [correctAnswer];
+            
+            // Generate plausible wrong answers
+            while (options.length < 4) {
+                let wrong;
+                const r = Math.random();
+                if (r < 0.3) wrong = correctAnswer + Math.floor(Math.random() * 10) - 5;
+                else if (r < 0.6) wrong = currentProblem.a * (currentProblem.b + (Math.random() < 0.5 ? 1 : -1));
+                else wrong = (currentProblem.a + (Math.random() < 0.5 ? 1 : -1)) * currentProblem.b;
+                
+                if (wrong > 0 && wrong !== correctAnswer && !options.includes(wrong)) {
+                    options.push(wrong);
+                }
+            }
+            
+            options = shuffleArray(options);
+            
+            const optionsContainer = document.getElementById('answer-options');
+            optionsContainer.innerHTML = options.map(opt => `
+                <button class="answer-option" onclick="checkMathAnswer(${opt}, this)">${opt}</button>
+            `).join('');
+            
+            document.getElementById('math-feedback').className = 'feedback';
+            
+            // Start per-question timer in challenge mode
+            if (mathMode === 'challenge') {
+                clearInterval(mathTimer);
+                timeLeft = 5;
+                startQuestionTimer();
+            }
+        }
+        
+        function checkMathAnswer(answer, element) {
+            mathTotal++;
+            const correct = answer === currentProblem.answer;
+            const feedback = document.getElementById('math-feedback');
+            
+            document.querySelectorAll('.answer-option').forEach(o => o.style.pointerEvents = 'none');
+            
+            if (correct) {
+                mathScore++;
+                mathStreak++;
+                if (mathStreak > mathBestStreak) mathBestStreak = mathStreak;
+                
+                element.classList.add('correct');
+                document.getElementById('answer-slot').textContent = answer;
+                
+                feedback.textContent = getPositiveFeedback();
+                feedback.className = 'feedback show correct';
+                
+                // Update progress
+                const key = `${currentProblem.a}x${currentProblem.b}`;
+                if (!mathProgress[key]) mathProgress[key] = { correct: 0, total: 0 };
+                mathProgress[key].correct++;
+                mathProgress[key].total++;
+                localStorage.setItem('mathProgress', JSON.stringify(mathProgress));
+            } else {
+                mathStreak = 0;
+                element.classList.add('incorrect');
+                
+                // Show correct answer
+                document.querySelectorAll('.answer-option').forEach(o => {
+                    if (parseInt(o.textContent) === currentProblem.answer) {
+                        o.classList.add('correct');
+                    }
+                });
+                
+                document.getElementById('answer-slot').textContent = currentProblem.answer;
+                feedback.textContent = `${currentProblem.a} × ${currentProblem.b} = ${currentProblem.answer}`;
+                feedback.className = 'feedback show incorrect';
+                
+                troubleFacts.push(`${currentProblem.a} × ${currentProblem.b}`);
+                
+                // Update progress
+                const key = `${currentProblem.a}x${currentProblem.b}`;
+                if (!mathProgress[key]) mathProgress[key] = { correct: 0, total: 0 };
+                mathProgress[key].total++;
+                localStorage.setItem('mathProgress', JSON.stringify(mathProgress));
+            }
+            
+            updateMathDisplay();
+            
+            setTimeout(() => {
+                generateProblem();
+            }, mathMode === 'challenge' ? 800 : 1200);
+        }
+        
+        function handleWrongAnswer() {
+            mathStreak = 0;
+            mathTotal++;
+            troubleFacts.push(`${currentProblem.a} × ${currentProblem.b}`);
+            
+            document.querySelectorAll('.answer-option').forEach(o => {
+                if (parseInt(o.textContent) === currentProblem.answer) {
+                    o.classList.add('correct');
+                }
+            });
+            
+            document.getElementById('answer-slot').textContent = currentProblem.answer;
+            document.getElementById('math-feedback').textContent = '⏰ Time\'s up! ' + currentProblem.a + ' × ' + currentProblem.b + ' = ' + currentProblem.answer;
+            document.getElementById('math-feedback').className = 'feedback show incorrect';
+            
+            updateMathDisplay();
+        }
+        
+        function updateMathDisplay() {
+            document.getElementById('math-score').textContent = mathScore;
+            document.getElementById('math-streak').textContent = mathStreak;
+            
+            const streakDisplay = document.getElementById('streak-display');
+            if (mathStreak >= 5) {
+                streakDisplay.innerHTML = '<span class="streak-fire">🔥 ON FIRE! ' + mathStreak + ' in a row! 🔥</span>';
+            } else if (mathStreak >= 3) {
+                streakDisplay.textContent = '⭐ Nice streak: ' + mathStreak;
+            } else {
+                streakDisplay.textContent = '';
+            }
+        }
+        
+        function getPositiveFeedback() {
+            const messages = [
+                '✅ Correct!', '🎯 Perfect!', '⭐ Excellent!', '💪 Great job!',
+                '🌟 Amazing!', '👏 Well done!', '🚀 You\'re on fire!', '💯 Nailed it!'
+            ];
+            if (mathStreak >= 5) return '🔥 ' + mathStreak + ' in a row! UNSTOPPABLE!';
+            if (mathStreak >= 3) return '⭐ ' + mathStreak + ' streak! Keep going!';
+            return messages[Math.floor(Math.random() * messages.length)];
+        }
+        
+        function endMath() {
+            clearInterval(mathTimer);
+            
+            document.getElementById('math-game').style.display = 'none';
+            document.getElementById('math-results').style.display = 'block';
+            
+            const pct = mathTotal > 0 ? Math.round((mathScore / mathTotal) * 100) : 0;
+            document.getElementById('math-final-score').textContent = pct + '%';
+            document.getElementById('results-correct').textContent = mathScore;
+            document.getElementById('results-total').textContent = mathTotal;
+            document.getElementById('results-streak').textContent = mathBestStreak;
+            
+            let msg = '';
+            if (pct === 100) msg = '🏆 PERFECT! You\'re a multiplication master!';
+            else if (pct >= 90) msg = '🌟 Outstanding! Almost perfect!';
+            else if (pct >= 80) msg = '⭐ Great work! You\'re getting it!';
+            else if (pct >= 70) msg = '👍 Good job! Keep practicing!';
+            else msg = '💪 Keep at it! Practice makes perfect!';
+            
+            document.getElementById('math-message').textContent = msg;
+            
+            // Show trouble facts
+            const troubleDiv = document.getElementById('trouble-facts');
+            if (troubleFacts.length > 0) {
+                const uniqueTrouble = [...new Set(troubleFacts)];
+                troubleDiv.innerHTML = `
+                    <h3 style="color: #f44336; margin-bottom: 10px;">📝 Facts to Practice:</h3>
+                    <p style="color: #666;">${uniqueTrouble.join(', ')}</p>
+                `;
+            } else {
+                troubleDiv.innerHTML = '<p style="color: #4caf50;">🎉 No mistakes! Keep up the great work!</p>';
+            }
+        }
+        
+        function resetMath() {
+            document.getElementById('math-results').style.display = 'none';
+            document.getElementById('math-setup').style.display = 'block';
+        }
+        
+        // ========== PROGRESS DISPLAY ==========
+        function updateProgressDisplay() {
+            // Words progress
+            document.getElementById('words-learned-count').textContent = wordsLearned.length;
+            
+            const wordsGrid = document.getElementById('words-progress');
+            wordsGrid.innerHTML = vocabulary.map(w => `
+                <div class="word-list-item ${wordsLearned.includes(w.word) ? 'learned' : ''}" 
+                     onclick="showWordFromList('${w.word}')">
+                    ${w.word}
+                </div>
+            `).join('');
+            
+            // Math progress grid
+            const mathGrid = document.getElementById('math-progress');
+            mathGrid.innerHTML = '';
+            
+            for (let i = 1; i <= 12; i++) {
+                for (let j = 1; j <= 12; j++) {
+                    const key = `${i}x${j}`;
+                    const data = mathProgress[key];
+                    
+                    let statusClass = 'not-started';
+                    if (data && data.total > 0) {
+                        const pct = (data.correct / data.total) * 100;
+                        if (pct >= 90) statusClass = 'mastered';
+                        else if (pct >= 70) statusClass = 'learning';
+                        else statusClass = 'needs-work';
+                    }
+                    
+                    const cell = document.createElement('div');
+                    cell.className = `progress-cell ${statusClass}`;
+                    cell.textContent = i * j;
+                    cell.title = `${i} × ${j} = ${i*j}`;
+                    mathGrid.appendChild(cell);
+                }
+            }
+        }
+        
+        function showWordFromList(word) {
+            const index = vocabulary.findIndex(w => w.word === word);
+            if (index !== -1) {
+                currentWordIndex = index;
+                displayWord();
+                showTab('word');
+                document.querySelectorAll('.tab')[0].click();
+            }
+        }
+        
+        function resetProgress() {
+            if (confirm('Are you sure you want to reset all progress? This cannot be undone!')) {
+                localStorage.removeItem('wordsLearned');
+                localStorage.removeItem('mathProgress');
+                wordsLearned = [];
+                mathProgress = {};
+                updateProgressDisplay();
+                alert('Progress has been reset!');
+            }
+        }
+        
+        // ========== UTILITIES ==========
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+        
+        // ========== INITIALIZE ==========
+        displayWord();
+        initTablesGrid();
+    </script>
+</body>
+</html>
+
