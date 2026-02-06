@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metric System Study Guide - English Translation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #5d6d7e;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        header h1 {
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        .bilingual {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .bilingual .spanish {
+            background: #e74c3c;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .bilingual .english {
+            background: #3498db;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #ecf0f1;
+        }
+
+        .section-icon {
+            font-size: 2.5rem;
+        }
+
+        .section-title h2 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+        }
+
+        .section-title .subtitle {
+            color: #95a5a6;
+            font-size: 0.95rem;
+        }
+
+        .vocab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .vocab-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .vocab-card .spanish-word {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .vocab-card .english-word {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .units-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .units-table th, .units-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .units-table th {
+            background: #3498db;
+            color: white;
+            font-weight: 600;
+        }
+
+        .units-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .units-table tr:hover {
+            background: #e8f4f8;
+        }
+
+        .conversion-box {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .conversion-box h3 {
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .conversion-formula {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .example-card {
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .example-card h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .example-card p {
+            color: #555;
+        }
+
+        .tools-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .tool-card {
+            text-align: center;
+            padding: 20px 15px;
+            background: #fff3cd;
+            border-radius: 12px;
+            border: 2px solid #ffc107;
+        }
+
+        .tool-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .tool-card .spanish {
+            font-size: 0.8rem;
+            color: #856404;
+        }
+
+        .tool-card .english {
+            font-weight: bold;
+            color: #856404;
+        }
+
+        .comparison-section {
+            background: #ffeaa7;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .comparison-section h3 {
+            color: #2d3436;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .comparison-examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .comparison-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .comparison-item .symbol {
+            font-size: 1.5rem;
+            color: #e17055;
+            font-weight: bold;
+        }
+
+        .slide-reference {
+            background: #dfe6e9;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .slide-reference h3 {
+            color: #2d3436;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slide-answer {
+            background: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .slide-answer .slide-num {
+            background: #6c5ce7;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+        }
+
+        .slide-answer .answer {
+            font-weight: bold;
+            color: #00b894;
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .tip-box h3 {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tip-box ul {
+            margin-left: 20px;
+        }
+
+        .tip-box li {
+            margin-bottom: 8px;
+        }
+
+        .print-btn {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 30px auto;
+            padding: 15px 30px;
+            background: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .print-btn:hover {
+            background: #27ae60;
+            transform: scale(1.02);
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 10px;
+            }
+            .print-btn {
+                display: none;
+            }
+            .section {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                page-break-inside: avoid;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 1.5rem;
+            }
+            .section {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📏 Metric System Measurements</h1>
+            <p>Study Guide for Digital Learning Day</p>
+            <div class="bilingual">
+                <span class="spanish">🇪🇸 Medidas sistema métrico de capacidad, longitud, y peso</span>
+                <span class="english">🇺🇸 Metric system measurements for capacity, length, and weight</span>
+            </div>
+        </header>
+
+        <!-- SECTION 1: LENGTH -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">📏</span>
+                <div class="section-title">
+                    <h2>Length (Longitud)</h2>
+                    <span class="subtitle">Slides 1-6 of the Digital Learning Guide</span>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 15px;">Key Vocabulary</h3>
+            <div class="vocab-grid">
+                <div class="vocab-card">
+                    <div class="spanish-word">longitud</div>
+                    <div class="english-word">Length</div>
+                </div>
+                <div class="vocab-card">
+                    <div class="spanish-word">medir</div>
+                    <div class="english-word">To Measure</div>
+                </div>
+                <div class="vocab-card">
+                    <div class="spanish-word">unidad</div>
+                    <div class="english-word">Unit</div>
+                </div>
+                <div class="vocab-card">
+                    <div class="spanish-word">más largo/más corto</div>
+                    <div class="english-word">Longer/Shorter</div>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 15px;">Units of Length</h3>
+            <table class="units-table">
+                <thead>
+                    <tr>
+                        <th>Unit (Spanish)</th>
+                        <th>Unit (English)</th>
+                        <th>Abbreviation</th>
+                        <th>Used For</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>milímetro</td>
+                        <td>millimeter</td>
+                        <td><strong>mm</strong></td>
+                        <td>Very tiny things (ant, grain of rice)</td>
+                    </tr>
+                    <tr>
+                        <td>centímetro</td>
+                        <td>centimeter</td>
+                        <td><strong>cm</strong></td>
+                        <td>Small things (pencil, finger width)</td>
+                    </tr>
+                    <tr>
+                        <td>metro</td>
+                        <td>meter</td>
+                        <td><strong>m</strong></td>
+                        <td>Medium things (door height, person)</td>
+                    </tr>
+                    <tr>
+                        <td>kilómetro</td>
+                        <td>kilometer</td>
+                        <td><strong>km</strong></td>
+                        <td>Long distances (between cities)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="conversion-box">
+                <h3>🔄 Length Conversions</h3>
+                <div class="conversion-formula">
+                    1 cm = 10 mm &nbsp;|&nbsp; 1 m = 100 cm &nbsp;|&nbsp; 1 km = 1,000 m
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 15px;">Measuring Tools (Herramientas de medición)</h3>
+            <div class="tools-section">
+                <div class="tool-card">
+                    <div class="icon">📏</div>
+                    <div class="spanish">regla</div>
+                    <div class="english">Ruler</div>
+                </div>
+                <div class="tool-card">
+                    <div class="icon">📐</div>
+                    <div class="spanish">cinta métrica</div>
+                    <div class="english">Tape Measure</div>
+                </div>
+                <div class="tool-card">
+                    <div class="icon">📍</div>
+                    <div class="spanish">metro</div>
+                    <div class="english">Meter Stick</div>
+                </div>
+            </div>
+
+            <div class="examples-grid">
+                <div class="example-card">
+                    <h4>📌 What unit for a pencil?</h4>
+                    <p><strong>Answer: cm (centimeters)</strong><br>
+                    Pencils are small objects, best measured in centimeters.</p>
+                </div>
+                <div class="example-card">
+                    <h4>📌 What unit for an ant?</h4>
+                    <p><strong>Answer: mm (millimeters)</strong><br>
+                    Ants are very tiny, use millimeters.</p>
+                </div>
+                <div class="example-card">
+                    <h4>📌 What unit for a classroom?</h4>
+                    <p><strong>Answer: m (meters)</strong><br>
+                    Rooms are measured in meters.</p>
+                </div>
+                <div class="example-card">
+                    <h4>📌 What unit for distance to school?</h4>
+                    <p><strong>Answer: km (kilometers)</strong><br>
+                    Long distances use kilometers.</p>
+                </div>
+            </div>
+
+            <div class="slide-reference">
+                <h3>📋 Slide Answers - Length Section</h3>
+                <div class="slide-answer">
+                    <span class="slide-num">Slide 2</span>
+                    <span>Tools: <span class="answer">Ruler (Regla) and Tape Measure (Cinta métrica)</span></span>
+                </div>
+                <div class="slide-answer">
+                    <span class="slide-num">Slide 3</span>
+                    <span>Match units to objects - use the chart above!</span>
+                </div>
+                <div class="slide-answer">
+                    <span class="slide-num">Slide 4</span>
+                    <span>1 meter = <span class="answer">100 centimeters</span>, 1 cm = <span class="answer">10 mm</span></span>
+                </div>
+                <div class="slide-answer">
+                    <span class="slide-num">Slides 5-6</span>
+                    <span>Conversions - multiply or divide using the formulas above</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: CAPACITY -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🧪</span>
+                <div class="section-title">
+                    <h2>Capacity (Capacidad)</h2>
+                    <span class="subtitle">Slides 7-11 of the Digital Learning Guide</span>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 15px;">Key Vocabulary</h3>
+            <div class="vocab-grid">
+                <div class="vocab-card">
+                    <div class="spanish-word">capacidad</div>
+                    <div class="english-word">Capacity</div>
+                </div>
+                <div class="vocab-card">
+                    <div class="spanish-word">líquido</div>
+                    <div class="english-word">Liquid</div>
+                </div>
+                <div class="vocab-card">
+                    <div class="spanish-word">contener</div>
+                    <div class="english-word">To Hold/Contain</div>
+                </div>
+                <div class="vocab-card">
+                    <div class="spanish-word">más/menos</div>
+                    <div class="english-word">More/Less</div>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 15px;">Units of Capacity</h3>
+            <table class="units-table">
+                <thead>
+                    <tr>
+                        <th>Unit (Spanish)</th>
+                        <th>Unit (English)</th>
+                        <th>Abbreviation</th>
+                        <th>Used For</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>mililitro</td>
+                        <td>milliliter</td>
+                        <td><strong>mL</strong></td>
+                        <td>Small amounts (medicine, eye drops)</td>
+                    </tr>
+                    <tr>
+                        <td>litro</td>
+                        <td>liter</td>
+                        <td><strong>L</strong></td>
+                        <td>Larger amounts (water bottle, milk)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="conversion-box">
+                <h3>🔄 Capacity Conversion</h3>
+                <div class="conversion-formula">
+                    1 Liter (L) = 1,000 milliliters (mL)
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 15px;">Measuring Tools</h3>
+            <div class="tools-section">
+                <div class="tool-card">
+                    <div class="icon">🧪</div>
+                    <div class="spanish">probeta</div>
+                    <div class="english">Graduated Cylinder</div>
+                </div>
+                <div class="tool-card">
+                    <div class="icon">🥛</div>
+                    <div class="spanish">taza de medir</div>
+                    <div class="english">Measuring Cup</div>
+                </div>
+                <div class="tool-card">
+                    <div class="icon">🥄</div>
+                    <div class="spanish">cucharas de medir</div>
+                    <div class="english">Measuring Spoons</div>
+                </div>
+            </div>
+
+            <div class="examples-grid">
+                <div class="example-card">
+                    <h4>🥤 What unit for a water bottle?</h4>
+                    <p><strong>Answer: L (liters)</strong><br>
+                    Water bottles typically hold 1-2 liters.</p>
+                </div>
+                <div class="example-card">
+                    <h4>💊 What unit for medicine dose?</h4>
+                    <p><strong>Answer: mL (milliliters)</strong><br>
+                    Medicine is measured in small milliliters.</p>
+                </div>
+                <div class="example-card">
+                    <h4>🏊 What unit for a pool?</h4>
+                    <p><strong>Answer: L (liters)</strong><br>
+                    Pools hold thousands of liters.</p>
+                </div>
+                <div class="example-card">
+                    <h4>🥄 What unit for a spoonful?</h4>
+                    <p><strong>Answer: mL (milliliters)</strong><br>
+                    A teaspoon is about 5 mL.</p>
+                </div>
+            </div>
+
+            <div class="comparison-section">
+                <h3>⚖️ Comparing Capacities</h3>
+                <p style="text-align: center; margin-bottom: 15px;">Use &lt; (less than), = (equal), or &gt; (greater than)</p>
+                <div class="comparison-examples">
+                    <div class="comparison-item">
+                        <div>500 mL <span class="symbol">&lt;</span> 1 L</div>
+                        <small>(because 1 L = 1000 mL)</small>
+                    </div>
+                    <div class="comparison-item">
+                        <div>2,000 mL <span class="symbol">=</span> 2 L</div>
+                        <small>(2 × 1000 = 2000)</small>
+                    </div>
+                    <div class="comparison-item">
+                        <div>3 L <span class="symbol">&gt;</span> 2,500 mL</div>
+                        <small>(3 L = 3000 mL)</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide-reference">
+                <h3>📋 Slide Answers - Capacity Section</h3>
+                <div class="slide-answer">
+                    <span class="slide-num">Slide 7-8</span>
+                    <span>Match items to mL or L - see examples above!</span>
+                </div>
+                <div class="slide-answer">
+                    <span class="slide-num">Slide 9</span>
+                    <span>Conversions: multiply L × 1000 to get mL</span>
+                </div>
+                <div class="slide-answer">
+                    <span class="slide-num">Slide 10-11</span>
+                    <span>Compare using &lt;, =, &gt; (convert to same unit first!)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 3: WEIGHT -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">⚖️</span>
+                <div class="section-title">
+                    <h2>Weight/Mass (Peso/Masa)</h2>
+                    <span class="subtitle">Slides 12-19 of the Digital Learning Guide</span>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 15px;">Key Vocabulary</h3>
+            <div class="vocab-grid">
+                <div class="vocab-card">
+                    <div class="spanish-word">peso / masa</div>
+                    <div class="english-word">Weight / Mass</div>
+                </div>
+                <div class="vocab-card">
+                    <div class="spanish-word">pesar</div>
+                    <div class="english-word">To Weigh</div>
+                </div>
+                <div class="vocab-card">
+                    <div class="spanish-word">liviano/pesado</div>
+                    <div class="english-word">Light/Heavy</div>
+                </div>
+                <div class="vocab-card">
+                    <div class="spanish-word">balanza</div>
+                    <div class="english-word">Scale</div>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 15px;">Units of Weight</h3>
+            <table class="units-table">
+                <thead>
+                    <tr>
+                        <th>Unit (Spanish)</th>
+                        <th>Unit (English)</th>
+                        <th>Abbreviation</th>
+                        <th>Used For</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>gramo</td>
+                        <td>gram</td>
+                        <td><strong>g</strong></td>
+                        <td>Light things (paper clip, grape)</td>
+                    </tr>
+                    <tr>
+                        <td>kilogramo</td>
+                        <td>kilogram</td>
+                        <td><strong>kg</strong></td>
+                        <td>Heavy things (person, backpack)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="conversion-box">
+                <h3>🔄 Weight Conversion</h3>
+                <div class="conversion-formula">
+                    1 kilogram (kg) = 1,000 grams (g)
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 15px;">Measuring Tools</h3>
+            <div class="tools-section">
+                <div class="tool-card">
+                    <div class="icon">⚖️</div>
+                    <div class="spanish">balanza</div>
+                    <div class="english">Balance Scale</div>
+                </div>
+                <div class="tool-card">
+                    <div class="icon">🔢</div>
+                    <div class="spanish">báscula digital</div>
+                    <div class="english">Digital Scale</div>
+                </div>
+                <div class="tool-card">
+                    <div class="icon">🏋️</div>
+                    <div class="spanish">báscula de baño</div>
+                    <div class="english">Bathroom Scale</div>
+                </div>
+            </div>
+
+            <div class="examples-grid">
+                <div class="example-card">
+                    <h4>📎 What unit for a paper clip?</h4>
+                    <p><strong>Answer: g (grams)</strong><br>
+                    A paper clip weighs about 1 gram.</p>
+                </div>
+                <div class="example-card">
+                    <h4>🍎 What unit for an apple?</h4>
+                    <p><strong>Answer: g (grams)</strong><br>
+                    An apple weighs about 150-200 grams.</p>
+                </div>
+                <div class="example-card">
+                    <h4>🎒 What unit for a backpack?</h4>
+                    <p><strong>Answer: kg (kilograms)</strong><br>
+                    A full backpack might weigh 3-5 kg.</p>
+                </div>
+                <div class="example-card">
+                    <h4>🐕 What unit for a dog?</h4>
+                    <p><strong>Answer: kg (kilograms)</strong><br>
+                    Dogs are measured in kilograms.</p>
+                </div>
+            </div>
+
+            <div class="slide-reference">
+                <h3>📋 Slide Answers - Weight Section</h3>
+                <div class="slide-answer">
+                    <span class="slide-num">Slide 12-13</span>
+                    <span>Match items to g or kg - light = g, heavy = kg</span>
+                </div>
+                <div class="slide-answer">
+                    <span class="slide-num">Slide 14-15</span>
+                    <span>Conversions examples:</span>
+                </div>
+                <div class="slide-answer">
+                    <span style="margin-left: 20px;">• 1 kg 100 g = <span class="answer">1,100 g</span></span>
+                </div>
+                <div class="slide-answer">
+                    <span style="margin-left: 20px;">• 8 kg = <span class="answer">8,000 g</span></span>
+                </div>
+                <div class="slide-answer">
+                    <span style="margin-left: 20px;">• 5 kg = <span class="answer">5,000 g</span></span>
+                </div>
+                <div class="slide-answer">
+                    <span class="slide-num">Slide 16-17</span>
+                    <span>Compare using &lt;, =, &gt; (convert to same unit first!)</span>
+                </div>
+                <div class="slide-answer">
+                    <span class="slide-num">Slide 18-19</span>
+                    <span>Word problems - identify what you're measuring and choose the right unit</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- TIPS SECTION -->
+        <div class="section">
+            <div class="tip-box">
+                <h3>💡 Memory Tips (Trucos para recordar)</h3>
+                <ul>
+                    <li><strong>Kilo = 1,000</strong> - A kilogram is 1,000 grams, a kilometer is 1,000 meters</li>
+                    <li><strong>Centi = 100</strong> - There are 100 centimeters in 1 meter</li>
+                    <li><strong>Milli = 1,000 tiny parts</strong> - 1,000 millimeters in a meter, 1,000 mL in a liter</li>
+                    <li><strong>Think about what you're measuring:</strong>
+                        <ul style="margin-top: 10px;">
+                            <li>Can you hold it in your hand? → Use smaller units (g, cm, mL)</li>
+                            <li>Is it bigger than you? → Use larger units (kg, m, L)</li>
+                            <li>Is it a distance you'd drive? → Use km</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="tip-box" style="background: linear-gradient(135deg, #fdcb6e, #e17055);">
+                <h3>🔄 Conversion Cheat Sheet</h3>
+                <ul>
+                    <li><strong>To go from BIGGER to SMALLER unit:</strong> MULTIPLY by 10, 100, or 1,000</li>
+                    <li><strong>To go from SMALLER to BIGGER unit:</strong> DIVIDE by 10, 100, or 1,000</li>
+                    <li><strong>Example:</strong> 3 kg → g = 3 × 1,000 = 3,000 g ✓</li>
+                    <li><strong>Example:</strong> 500 mL → L = 500 ÷ 1,000 = 0.5 L ✓</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- QUICK REFERENCE -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">📚</span>
+                <div class="section-title">
+                    <h2>Quick Reference Chart</h2>
+                    <span class="subtitle">All conversions in one place</span>
+                </div>
+            </div>
+
+            <table class="units-table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Small Unit</th>
+                        <th>Large Unit</th>
+                        <th>Conversion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Length</strong></td>
+                        <td>mm → cm</td>
+                        <td>cm → mm</td>
+                        <td>10 mm = 1 cm</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Length</strong></td>
+                        <td>cm → m</td>
+                        <td>m → cm</td>
+                        <td>100 cm = 1 m</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Length</strong></td>
+                        <td>m → km</td>
+                        <td>km → m</td>
+                        <td>1,000 m = 1 km</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Capacity</strong></td>
+                        <td>mL → L</td>
+                        <td>L → mL</td>
+                        <td>1,000 mL = 1 L</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Weight</strong></td>
+                        <td>g → kg</td>
+                        <td>kg → g</td>
+                        <td>1,000 g = 1 kg</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <button class="print-btn" onclick="window.print()">🖨️ Print This Guide</button>
+    </div>
+</body>
+</html>

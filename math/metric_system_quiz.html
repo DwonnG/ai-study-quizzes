@@ -1,0 +1,2446 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Métrico: Capacidad, Longitud y Peso - Quiz Interactivo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #4a3966;
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Floating icons decoration */
+        .floating-icon {
+            position: fixed;
+            font-size: 2.5rem;
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-icon:nth-child(even) {
+            animation: floatReverse 8s ease-in-out infinite;
+        }
+
+        .floating-icon.icon-1 { top: 10%; left: 5%; animation-delay: 0s; }
+        .floating-icon.icon-2 { top: 20%; right: 8%; animation-delay: 1s; }
+        .floating-icon.icon-3 { top: 60%; left: 3%; animation-delay: 2s; }
+        .floating-icon.icon-4 { top: 75%; right: 5%; animation-delay: 3s; }
+        .floating-icon.icon-5 { top: 40%; right: 3%; animation-delay: 4s; }
+        .floating-icon.icon-6 { bottom: 15%; left: 8%; animation-delay: 5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        @keyframes floatReverse {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(20px) rotate(-5deg); }
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            padding: 15px 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .timer {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .timer.warning { color: #ff9800; }
+        .timer.danger { color: #f44336; animation: pulse 0.5s infinite; }
+
+        .question-timer {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #4CAF50;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+
+        .question-timer.warning { 
+            color: #ff9800; 
+            background: rgba(255, 152, 0, 0.2);
+        }
+        
+        .question-timer.danger { 
+            color: #f44336; 
+            background: rgba(244, 67, 54, 0.2);
+            animation: pulse 0.5s infinite; 
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .progress, .score {
+            font-size: 1.1rem;
+        }
+
+        .score {
+            color: #4CAF50;
+        }
+
+        /* Question Card */
+        .question-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            color: #333;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #9b59b6, #bb8fce);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .category-badge.capacidad {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .category-badge.peso {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .question-number {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            color: #2c3e50;
+        }
+
+        /* Options */
+        .options {
+            display: grid;
+            gap: 12px;
+        }
+
+        .option {
+            background: #f8f9fa;
+            border: 3px solid #e9ecef;
+            border-radius: 12px;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .option:hover {
+            background: #f3e5f5;
+            border-color: #9b59b6;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            background: #f3e5f5;
+            border-color: #9b59b6;
+            box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.2);
+        }
+
+        .option.correct {
+            background: #e8f5e9;
+            border-color: #4CAF50;
+            animation: correctPulse 0.5s ease;
+        }
+
+        .option.incorrect {
+            background: #ffebee;
+            border-color: #f44336;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .option-letter {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #9b59b6, #bb8fce);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        /* Comparison Interactive */
+        .comparison-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .comparison-value {
+            background: linear-gradient(135deg, #8e44ad, #9b59b6);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .comparison-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .comparison-btn {
+            width: 60px;
+            height: 60px;
+            border: 3px solid #ddd;
+            border-radius: 12px;
+            background: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .comparison-btn:hover {
+            border-color: #9b59b6;
+            background: #f3e5f5;
+        }
+
+        .comparison-btn.selected {
+            border-color: #9b59b6;
+            background: #f3e5f5;
+            box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.2);
+        }
+
+        .comparison-btn.correct {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+        }
+
+        .comparison-btn.incorrect {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        /* Fill in blank */
+        .fill-blank-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            font-size: 1.4rem;
+        }
+
+        .fill-blank-input {
+            width: 100px;
+            padding: 12px;
+            font-size: 1.3rem;
+            border: 3px solid #ddd;
+            border-radius: 10px;
+            text-align: center;
+            background: white;
+        }
+
+        .fill-blank-input:focus {
+            outline: none;
+            border-color: #9b59b6;
+            box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.2);
+        }
+
+        .fill-blank-input.correct {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+        }
+
+        .fill-blank-input.incorrect {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        .unit-label {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        /* Conversion visual */
+        .conversion-visual {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .conversion-arrow {
+            font-size: 2rem;
+            color: #9b59b6;
+            margin: 10px 0;
+        }
+
+        .conversion-formula {
+            font-size: 1.2rem;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #9b59b6, #6c3483);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(155, 89, 182, 0.4);
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        /* Feedback */
+        .feedback {
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: linear-gradient(135deg, #a8e6cf, #88d8b0);
+            color: #2e7d32;
+        }
+
+        .feedback.incorrect {
+            background: linear-gradient(135deg, #ffcdd2, #ef9a9a);
+            color: #c62828;
+        }
+
+        .feedback h3 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* Start Screen */
+        .start-screen {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .start-screen h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .topic-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .topic-card {
+            background: rgba(255,255,255,0.15);
+            border-radius: 15px;
+            padding: 25px;
+            transition: transform 0.3s ease;
+        }
+
+        .topic-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .topic-card .icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .topic-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .topic-card p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        /* Results Screen */
+        .results-screen {
+            text-align: center;
+            display: none;
+        }
+
+        .results-score {
+            font-size: 5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #9b59b6, #d2b4de);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 20px 0;
+        }
+
+        .results-message {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+        }
+
+        .category-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .category-result-card {
+            background: rgba(255,255,255,0.15);
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .category-result-card h4 {
+            margin-bottom: 10px;
+        }
+
+        .category-result-card .score {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        /* Reference card */
+        .reference-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            color: #333;
+        }
+
+        .reference-card h3 {
+            color: #8e44ad;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .reference-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .reference-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .reference-section h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .reference-section ul {
+            list-style: none;
+            padding-left: 10px;
+        }
+
+        .reference-section li {
+            padding: 5px 0;
+            color: #555;
+        }
+
+        /* Flashcards Grid */
+        .flashcard-section {
+            margin: 30px 0;
+        }
+
+        .flashcard-section h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .flashcard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            perspective: 1000px;
+        }
+
+        .flashcard-container {
+            perspective: 1000px;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 180px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .flashcard-front {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+        }
+
+        .flashcard-back {
+            background: #f8f9fa;
+            color: #2c3e50;
+            transform: rotateY(180deg);
+            overflow-y: auto;
+        }
+
+        .flashcard-icon {
+            font-size: 1.8rem;
+            margin-bottom: 6px;
+        }
+
+        .flashcard-title {
+            font-size: 0.95rem;
+            font-weight: bold;
+            margin-bottom: 4px;
+            text-align: center;
+        }
+
+        .flashcard-hint {
+            font-size: 0.7rem;
+            opacity: 0.8;
+            margin-top: 6px;
+        }
+
+        .flashcard-back .flashcard-content {
+            text-align: center;
+            font-size: 0.75rem;
+            line-height: 1.4;
+        }
+
+        .flashcard-back .flashcard-content strong {
+            color: #8e44ad;
+        }
+
+        .flashcard-back .flashcard-content ul {
+            text-align: left;
+            list-style: none;
+            padding: 0;
+            margin: 4px 0;
+        }
+
+        .flashcard-back .flashcard-content li {
+            padding: 2px 0;
+            border-bottom: 1px dashed #ddd;
+            font-size: 0.7rem;
+        }
+
+        .flashcard-back .flashcard-content li:last-child {
+            border-bottom: none;
+        }
+
+        .flashcard:hover {
+            transform: scale(1.02);
+        }
+
+        .flashcard.flipped:hover {
+            transform: rotateY(180deg) scale(1.02);
+        }
+
+        /* Missed questions review */
+        .missed-questions {
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .missed-questions h3 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .missed-question-item {
+            background: rgba(255,255,255,0.95);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .missed-question-item .question {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .missed-question-item .your-answer {
+            color: #f44336;
+            margin-bottom: 5px;
+        }
+
+        .missed-question-item .correct-answer {
+            color: #4CAF50;
+        }
+
+        /* Hover Translation Tooltips */
+        .translatable {
+            position: relative;
+            display: inline;
+            border-bottom: 1px dotted #999;
+            cursor: help;
+        }
+
+        .translatable .translation {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            z-index: 100;
+            margin-bottom: 5px;
+        }
+
+        .translatable .translation::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #333;
+        }
+
+        .translatable:hover .translation {
+            display: block;
+        }
+
+        /* Language Toggle */
+        .lang-btn {
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border: 3px solid rgba(255,255,255,0.5);
+            border-radius: 25px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .lang-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: white;
+        }
+
+        .lang-btn.active {
+            background: rgba(255,255,255,0.95);
+            color: #8e44ad;
+            border-color: white;
+        }
+
+        /* Hidden */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.5rem; }
+            .question-text { font-size: 1.2rem; }
+            .option { padding: 14px 16px; font-size: 1rem; }
+            .comparison-value { padding: 10px 15px; font-size: 1.1rem; min-width: 90px; }
+            .comparison-btn { width: 50px; height: 50px; font-size: 1.5rem; }
+            .fill-blank-container { font-size: 1.1rem; }
+            .fill-blank-input { width: 80px; font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Icons -->
+    <div class="floating-icon icon-1">📏</div>
+    <div class="floating-icon icon-2">⚖️</div>
+    <div class="floating-icon icon-3">🧪</div>
+    <div class="floating-icon icon-4">📐</div>
+    <div class="floating-icon icon-5">🥛</div>
+    <div class="floating-icon icon-6">🎒</div>
+
+    <div class="container">
+        <!-- Start Screen -->
+        <div id="startScreen" class="start-screen">
+            <h1>📏 <span id="titleText">Sistema Métrico</span> 📏</h1>
+            <p class="subtitle" id="subtitleText">Capacidad, Longitud y Peso</p>
+            
+            <!-- Language Toggle -->
+            <div class="language-toggle" style="margin: 20px 0;">
+                <p style="margin-bottom: 10px; font-size: 1.1rem;" id="langPrompt">Selecciona el idioma / Select language:</p>
+                <div style="display: flex; justify-content: center; gap: 15px;">
+                    <button class="lang-btn active" id="btnSpanish" onclick="setLanguage('es')">🇪🇸 Español</button>
+                    <button class="lang-btn" id="btnEnglish" onclick="setLanguage('en')">🇺🇸 English</button>
+                </div>
+            </div>
+            
+            <div class="topic-cards">
+                <div class="topic-card">
+                    <div class="icon">📏</div>
+                    <h3 id="lengthTitle">Longitud</h3>
+                    <p>mm, cm, m, km</p>
+                </div>
+                <div class="topic-card">
+                    <div class="icon">🧪</div>
+                    <h3 id="capacityTitle">Capacidad</h3>
+                    <p>ml, L</p>
+                </div>
+                <div class="topic-card">
+                    <div class="icon">⚖️</div>
+                    <h3 id="weightTitle">Peso</h3>
+                    <p>g, kg</p>
+                </div>
+            </div>
+
+            <div class="reference-card">
+                <h3 id="refTitle">📚 Conversiones Importantes</h3>
+                <div class="reference-grid">
+                    <div class="reference-section">
+                        <h4>📏 <span id="refLength">Longitud</span></h4>
+                        <ul>
+                            <li>1 km = 1,000 m</li>
+                            <li>1 m = 100 cm</li>
+                            <li>1 cm = 10 mm</li>
+                        </ul>
+                    </div>
+                    <div class="reference-section">
+                        <h4>🧪 <span id="refCapacity">Capacidad</span></h4>
+                        <ul>
+                            <li>1 L = 1,000 ml</li>
+                        </ul>
+                    </div>
+                    <div class="reference-section">
+                        <h4>⚖️ <span id="refWeight">Peso</span></h4>
+                        <ul>
+                            <li>1 kg = 1,000 g</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flashcards Section -->
+            <div class="flashcard-section">
+                <h3 id="flashcardTitle">🎴 Tarjetas de Estudio - ¡Haz clic para voltear!</h3>
+                
+                <div class="flashcard-grid" id="flashcardGrid">
+                    <!-- Flashcards load dynamically -->
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="startQuiz()" id="startBtn">¡Comenzar Quiz! 🚀</button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quizScreen" class="hidden">
+            <h1>📏 Sistema Métrico 📏</h1>
+            
+            <div class="stats-bar">
+                <div class="timer" id="timer">⏱️ 0:00</div>
+                <div class="question-timer" id="questionTimer">⏳ 1:00</div>
+                <div class="progress" id="progress">Pregunta 1 de 18</div>
+                <div class="score" id="currentScore">✓ 0 correctas</div>
+            </div>
+
+            <div class="question-card" id="questionCard">
+                <!-- Question content loads here -->
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" id="submitBtn" onclick="submitAnswer()" disabled>Verificar Respuesta</button>
+                <button class="btn btn-primary hidden" id="nextBtn" onclick="nextQuestion()">Siguiente →</button>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="results-screen">
+            <h1>🎉 ¡Quiz Completado! 🎉</h1>
+            <div class="results-score" id="finalScore">0%</div>
+            <div class="results-message" id="resultsMessage"></div>
+
+            <div class="category-results" id="categoryResults">
+                <!-- Category scores load here -->
+            </div>
+
+            <div class="missed-questions" id="missedQuestions">
+                <!-- Missed questions load here -->
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="restartQuiz()">🔄 Intentar de Nuevo</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Quiz state
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timer = 0;
+        let questionTimer = 60; // 60 seconds per question
+        let timerInterval = null;
+        let questionTimerInterval = null;
+        let selectedAnswer = null;
+        let comparisonAnswer = null;
+        let fillBlankAnswer = null;
+        let currentLanguage = 'es'; // 'es' for Spanish, 'en' for English
+        let categoryScores = {
+            'Longitud': { correct: 0, total: 0 },
+            'Capacidad': { correct: 0, total: 0 },
+            'Peso': { correct: 0, total: 0 }
+        };
+        let missedQuestions = [];
+        
+        // Flashcard data (bilingual)
+        const flashcards = [
+            {
+                icon: '📏',
+                title: { es: 'Longitud', en: 'Length' },
+                hint: { es: 'Toca para ver más', en: 'Tap to see more' },
+                back: {
+                    es: `<strong>Mide qué tan largo o alto es algo</strong>
+                        <ul>
+                            <li>📐 <strong>mm</strong> - grosor de una moneda</li>
+                            <li>📏 <strong>cm</strong> - largo de un clip</li>
+                            <li>🚶 <strong>m</strong> - altura de una puerta</li>
+                            <li>🚗 <strong>km</strong> - distancia entre ciudades</li>
+                        </ul>`,
+                    en: `<strong>Measures how long or tall something is</strong>
+                        <ul>
+                            <li>📐 <strong>mm</strong> - thickness of a coin</li>
+                            <li>📏 <strong>cm</strong> - length of a paper clip</li>
+                            <li>🚶 <strong>m</strong> - height of a door</li>
+                            <li>🚗 <strong>km</strong> - distance between cities</li>
+                        </ul>`
+                }
+            },
+            {
+                icon: '🔄',
+                title: { es: 'Conversiones de Longitud', en: 'Length Conversions' },
+                hint: { es: 'Toca para ver más', en: 'Tap to see more' },
+                back: {
+                    es: `<strong>¡Recuerda estos números!</strong>
+                        <ul>
+                            <li>1 km = <strong>1,000</strong> m</li>
+                            <li>1 m = <strong>100</strong> cm</li>
+                            <li>1 cm = <strong>10</strong> mm</li>
+                        </ul>
+                        <p style="margin-top:10px">💡 Para convertir a una unidad más pequeña, <strong>multiplica</strong></p>`,
+                    en: `<strong>Remember these numbers!</strong>
+                        <ul>
+                            <li>1 km = <strong>1,000</strong> m</li>
+                            <li>1 m = <strong>100</strong> cm</li>
+                            <li>1 cm = <strong>10</strong> mm</li>
+                        </ul>
+                        <p style="margin-top:10px">💡 To convert to a smaller unit, <strong>multiply</strong></p>`
+                }
+            },
+            {
+                icon: '🧪',
+                title: { es: 'Capacidad', en: 'Capacity' },
+                hint: { es: 'Toca para ver más', en: 'Tap to see more' },
+                back: {
+                    es: `<strong>Mide cuánto líquido cabe</strong>
+                        <ul>
+                            <li>💧 <strong>ml</strong> - cucharada de medicina</li>
+                            <li>🥛 <strong>L</strong> - botella de agua grande</li>
+                        </ul>
+                        <p style="margin-top:10px"><strong>1 L = 1,000 ml</strong></p>`,
+                    en: `<strong>Measures how much liquid fits</strong>
+                        <ul>
+                            <li>💧 <strong>ml</strong> - spoonful of medicine</li>
+                            <li>🥛 <strong>L</strong> - large water bottle</li>
+                        </ul>
+                        <p style="margin-top:10px"><strong>1 L = 1,000 ml</strong></p>`
+                }
+            },
+            {
+                icon: '⚖️',
+                title: { es: 'Peso', en: 'Weight' },
+                hint: { es: 'Toca para ver más', en: 'Tap to see more' },
+                back: {
+                    es: `<strong>Mide qué tan pesado es algo</strong>
+                        <ul>
+                            <li>🪶 <strong>g</strong> - peso de una pluma</li>
+                            <li>🎒 <strong>kg</strong> - peso de una mochila</li>
+                        </ul>
+                        <p style="margin-top:10px"><strong>1 kg = 1,000 g</strong></p>`,
+                    en: `<strong>Measures how heavy something is</strong>
+                        <ul>
+                            <li>🪶 <strong>g</strong> - weight of a feather</li>
+                            <li>🎒 <strong>kg</strong> - weight of a backpack</li>
+                        </ul>
+                        <p style="margin-top:10px"><strong>1 kg = 1,000 g</strong></p>`
+                }
+            },
+            {
+                icon: '📐',
+                title: { es: 'Herramientas de Longitud', en: 'Length Tools' },
+                hint: { es: 'Toca para ver más', en: 'Tap to see more' },
+                back: {
+                    es: `<strong>¿Qué usamos para medir longitud?</strong>
+                        <ul>
+                            <li>📏 <strong>Regla</strong> - cosas pequeñas (cm, mm)</li>
+                            <li>📐 <strong>Metro</strong> - cosas medianas (m)</li>
+                            <li>🔧 <strong>Cinta métrica</strong> - cosas largas</li>
+                            <li>🚗 <strong>Odómetro</strong> - distancias largas (km)</li>
+                        </ul>`,
+                    en: `<strong>What do we use to measure length?</strong>
+                        <ul>
+                            <li>📏 <strong>Ruler</strong> - small things (cm, mm)</li>
+                            <li>📐 <strong>Meter stick</strong> - medium things (m)</li>
+                            <li>🔧 <strong>Tape measure</strong> - long things</li>
+                            <li>🚗 <strong>Odometer</strong> - long distances (km)</li>
+                        </ul>`
+                }
+            },
+            {
+                icon: '🧪',
+                title: { es: 'Herramientas de Capacidad', en: 'Capacity Tools' },
+                hint: { es: 'Toca para ver más', en: 'Tap to see more' },
+                back: {
+                    es: `<strong>¿Qué usamos para medir líquidos?</strong>
+                        <ul>
+                            <li>🥄 <strong>Cuchara medidora</strong> - cantidades pequeñas (ml)</li>
+                            <li>🥛 <strong>Taza medidora</strong> - cocinar</li>
+                            <li>🧪 <strong>Probeta graduada</strong> - ciencia (ml, L)</li>
+                            <li>🫙 <strong>Jarra medidora</strong> - cantidades grandes</li>
+                        </ul>`,
+                    en: `<strong>What do we use to measure liquids?</strong>
+                        <ul>
+                            <li>🥄 <strong>Measuring spoon</strong> - small amounts (ml)</li>
+                            <li>🥛 <strong>Measuring cup</strong> - cooking</li>
+                            <li>🧪 <strong>Graduated cylinder</strong> - science (ml, L)</li>
+                            <li>🫙 <strong>Measuring pitcher</strong> - large amounts</li>
+                        </ul>`
+                }
+            },
+            {
+                icon: '⚖️',
+                title: { es: 'Herramientas de Peso', en: 'Weight Tools' },
+                hint: { es: 'Toca para ver más', en: 'Tap to see more' },
+                back: {
+                    es: `<strong>¿Qué usamos para medir peso?</strong>
+                        <ul>
+                            <li>⚖️ <strong>Balanza</strong> - comparar objetos</li>
+                            <li>🔢 <strong>Báscula digital</strong> - peso exacto</li>
+                            <li>🏋️ <strong>Báscula de baño</strong> - personas</li>
+                            <li>🍎 <strong>Báscula de cocina</strong> - ingredientes</li>
+                        </ul>`,
+                    en: `<strong>What do we use to measure weight?</strong>
+                        <ul>
+                            <li>⚖️ <strong>Balance scale</strong> - compare objects</li>
+                            <li>🔢 <strong>Digital scale</strong> - exact weight</li>
+                            <li>🏋️ <strong>Bathroom scale</strong> - people</li>
+                            <li>🍎 <strong>Kitchen scale</strong> - ingredients</li>
+                        </ul>`
+                }
+            },
+            {
+                icon: '💡',
+                title: { es: 'Trucos para Recordar', en: 'Memory Tricks' },
+                hint: { es: 'Toca para ver más', en: 'Tap to see more' },
+                back: {
+                    es: `<strong>¡Consejos útiles!</strong>
+                        <ul>
+                            <li>🔢 <strong>Kilo</strong> siempre = 1,000</li>
+                            <li>📏 <strong>Centi</strong> = 1/100 (cien)</li>
+                            <li>📐 <strong>Mili</strong> = 1/1,000 (mil)</li>
+                        </ul>
+                        <p style="margin-top:10px">💡 Unidad grande → pequeña = <strong>×</strong><br>
+                        💡 Unidad pequeña → grande = <strong>÷</strong></p>`,
+                    en: `<strong>Helpful tips!</strong>
+                        <ul>
+                            <li>🔢 <strong>Kilo</strong> always = 1,000</li>
+                            <li>📏 <strong>Centi</strong> = 1/100 (hundred)</li>
+                            <li>📐 <strong>Milli</strong> = 1/1,000 (thousand)</li>
+                        </ul>
+                        <p style="margin-top:10px">💡 Large unit → small = <strong>×</strong><br>
+                        💡 Small unit → large = <strong>÷</strong></p>`
+                }
+            }
+        ];
+
+        // UI Text translations
+        const uiText = {
+            es: {
+                title: 'Sistema Métrico',
+                subtitle: 'Capacidad, Longitud y Peso',
+                length: 'Longitud',
+                capacity: 'Capacidad',
+                weight: 'Peso',
+                refTitle: '📚 Conversiones Importantes',
+                startBtn: '¡Comenzar Quiz! 🚀',
+                question: 'Pregunta',
+                of: 'de',
+                correct: 'correctas',
+                verify: 'Verificar Respuesta',
+                next: 'Siguiente →',
+                completed: '🎉 ¡Quiz Completado! 🎉',
+                tryAgain: '🔄 Intentar de Nuevo',
+                reviewTitle: '📝 Preguntas para Repasar',
+                yourAnswer: 'Tu respuesta',
+                correctAnswer: 'Respuesta correcta',
+                excellent: '🌟 ¡Excelente! ¡Eres un experto en el sistema métrico!',
+                veryGood: '👍 ¡Muy bien! Sigue practicando.',
+                good: '📚 Buen intento. Repasa las conversiones.',
+                keepTrying: '💪 No te rindas. Practica más con las conversiones.',
+                correctFeedback: '✅ ¡Correcto!',
+                incorrectFeedback: '❌ Incorrecto',
+                compare: 'Compara las dos medidas:',
+                timeUp: '⏰ ¡Tiempo agotado!',
+                noAnswer: '(Sin respuesta - tiempo agotado)',
+                flashcardTitle: '🎴 Tarjetas de Estudio - ¡Haz clic para voltear!',
+                prev: '← Anterior',
+                nextCard: 'Siguiente →'
+            },
+            en: {
+                title: 'Metric System',
+                subtitle: 'Capacity, Length and Weight',
+                length: 'Length',
+                capacity: 'Capacity',
+                weight: 'Weight',
+                refTitle: '📚 Important Conversions',
+                startBtn: 'Start Quiz! 🚀',
+                question: 'Question',
+                of: 'of',
+                correct: 'correct',
+                verify: 'Check Answer',
+                next: 'Next →',
+                completed: '🎉 Quiz Completed! 🎉',
+                tryAgain: '🔄 Try Again',
+                reviewTitle: '📝 Questions to Review',
+                yourAnswer: 'Your answer',
+                correctAnswer: 'Correct answer',
+                excellent: '🌟 Excellent! You are a metric system expert!',
+                veryGood: '👍 Very good! Keep practicing.',
+                good: '📚 Good try. Review the conversions.',
+                keepTrying: '💪 Don\'t give up. Practice more with conversions.',
+                correctFeedback: '✅ Correct!',
+                incorrectFeedback: '❌ Incorrect',
+                compare: 'Compare the two measurements:',
+                timeUp: '⏰ Time\'s up!',
+                noAnswer: '(No answer - time ran out)',
+                flashcardTitle: '🎴 Study Cards - Click to flip!',
+                prev: '← Previous',
+                nextCard: 'Next →'
+            }
+        };
+
+        // Flashcard functions
+        function initFlashcards() {
+            renderAllFlashcards();
+        }
+
+        function renderAllFlashcards() {
+            const grid = document.getElementById('flashcardGrid');
+            const t = uiText[currentLanguage];
+            
+            // Update section title
+            document.getElementById('flashcardTitle').textContent = t.flashcardTitle;
+            
+            // Render all flashcards
+            grid.innerHTML = flashcards.map((card, i) => `
+                <div class="flashcard-container">
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-face flashcard-front">
+                            <div class="flashcard-icon">${card.icon}</div>
+                            <div class="flashcard-title">${card.title[currentLanguage]}</div>
+                            <div class="flashcard-hint">${card.hint[currentLanguage]}</div>
+                        </div>
+                        <div class="flashcard-face flashcard-back">
+                            <div class="flashcard-content">${card.back[currentLanguage]}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function flipCard(element) {
+            element.classList.toggle('flipped');
+        }
+
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            
+            // Update button styles
+            document.getElementById('btnSpanish').classList.toggle('active', lang === 'es');
+            document.getElementById('btnEnglish').classList.toggle('active', lang === 'en');
+            
+            // Update UI text
+            const t = uiText[lang];
+            document.getElementById('titleText').textContent = t.title;
+            document.getElementById('subtitleText').textContent = t.subtitle;
+            document.getElementById('lengthTitle').textContent = t.length;
+            document.getElementById('capacityTitle').textContent = t.capacity;
+            document.getElementById('weightTitle').textContent = t.weight;
+            document.getElementById('refTitle').textContent = t.refTitle;
+            document.getElementById('refLength').textContent = t.length;
+            document.getElementById('refCapacity').textContent = t.capacity;
+            document.getElementById('refWeight').textContent = t.weight;
+            document.getElementById('startBtn').textContent = t.startBtn;
+            
+            // Update flashcards
+            renderAllFlashcards();
+        }
+
+        // Spanish to English translations for hover tooltips
+        const spanishTranslations = {
+            'el largo': 'the length',
+            'el ancho': 'the width',
+            'la distancia': 'the distance',
+            'la altura': 'the height',
+            'la longitud': 'the length',
+            'el espesor': 'the thickness',
+            'un viaje': 'a trip',
+            'libro': 'book',
+            'lápiz': 'pencil',
+            'ciudades': 'cities',
+            'puerta': 'door',
+            'hormiga': 'ant',
+            'árbol': 'tree',
+            'dedo': 'finger',
+            'carretera': 'highway',
+            'clip': 'paper clip',
+            'edificio': 'building',
+            'cuchara': 'spoon',
+            'moneda': 'coin',
+            'carro': 'car',
+            'campo de fútbol': 'soccer field',
+            'botella de agua': 'water bottle',
+            'piscina': 'swimming pool',
+            'cucharada de medicina': 'spoonful of medicine',
+            'tanque de gasolina': 'gas tank',
+            'vaso de jugo': 'glass of juice',
+            'olla grande de sopa': 'large pot of soup',
+            'gotero': 'eyedropper',
+            'bañera': 'bathtub',
+            'lata de refresco': 'soda can',
+            'galón de leche': 'gallon of milk',
+            'manzana': 'apple',
+            'pluma': 'feather',
+            'persona': 'person',
+            'sandía': 'watermelon',
+            'mochila': 'backpack',
+            'huevo': 'egg',
+            'perro': 'dog',
+            'bolsa de arroz': 'bag of rice',
+            'bolsa de harina': 'bag of flour',
+            'jarra': 'pitcher',
+            'limonada': 'lemonade',
+            'cinta': 'ribbon',
+            'Convierte': 'Convert',
+            'cuántos': 'how many',
+            'Compara': 'Compare',
+            'medidas': 'measurements',
+            'usarías': 'would you use',
+            'medir': 'to measure',
+            'peso': 'weight',
+            'quedan': 'are left',
+            'usan': 'are used',
+            'sirven': 'are served',
+            'tiene': 'has',
+            'pesa': 'weighs',
+            'usa': 'uses',
+            'camina': 'walks',
+            'escuela': 'school',
+            'parque': 'park',
+            'total': 'total',
+            'gramos': 'grams'
+        };
+
+        // Function to add translation tooltips to Spanish text
+        function addTranslationTooltips(text) {
+            if (currentLanguage !== 'es') return text;
+            
+            let result = text;
+            // Sort by length descending to match longer phrases first
+            const sortedKeys = Object.keys(spanishTranslations).sort((a, b) => b.length - a.length);
+            
+            for (const spanish of sortedKeys) {
+                const english = spanishTranslations[spanish];
+                const regex = new RegExp(`\\b${spanish}\\b`, 'gi');
+                result = result.replace(regex, (match) => 
+                    `<span class="translatable">${match}<span class="translation">${english}</span></span>`
+                );
+            }
+            return result;
+        }
+
+        // ==================== QUESTION GENERATORS ====================
+
+        // Helper functions
+        function shuffle(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function randomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function randomChoice(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        // ===== LONGITUD (LENGTH) GENERATORS =====
+
+        function generateLengthUnitQuestion() {
+            const items = [
+                { es: 'el largo de un libro', en: 'the length of a book', unit: 'cm', options: ['mm', 'cm', 'm', 'km'] },
+                { es: 'el ancho de un lápiz', en: 'the width of a pencil', unit: 'mm', options: ['mm', 'cm', 'm', 'km'] },
+                { es: 'la distancia entre dos ciudades', en: 'the distance between two cities', unit: 'km', options: ['mm', 'cm', 'm', 'km'] },
+                { es: 'la altura de una puerta', en: 'the height of a door', unit: 'm', options: ['mm', 'cm', 'm', 'km'] },
+                { es: 'el largo de una hormiga', en: 'the length of an ant', unit: 'mm', options: ['mm', 'cm', 'm', 'km'] },
+                { es: 'la altura de un árbol', en: 'the height of a tree', unit: 'm', options: ['mm', 'cm', 'm', 'km'] },
+                { es: 'el ancho de tu dedo', en: 'the width of your finger', unit: 'cm', options: ['mm', 'cm', 'm', 'km'] },
+                { es: 'la longitud de una carretera', en: 'the length of a highway', unit: 'km', options: ['mm', 'cm', 'm', 'km'] },
+                { es: 'el largo de un clip', en: 'the length of a paper clip', unit: 'mm', options: ['mm', 'cm', 'm', 'km'] },
+                { es: 'la altura de un edificio', en: 'the height of a building', unit: 'm', options: ['mm', 'cm', 'm', 'km'] },
+                { es: 'el largo de una cuchara', en: 'the length of a spoon', unit: 'cm', options: ['mm', 'cm', 'm', 'km'] },
+                { es: 'el espesor de una moneda', en: 'the thickness of a coin', unit: 'mm', options: ['mm', 'cm', 'm', 'km'] },
+                { es: 'un viaje en carro', en: 'a car trip', unit: 'km', options: ['mm', 'cm', 'm', 'km'] },
+                { es: 'la longitud de un campo de fútbol', en: 'the length of a soccer field', unit: 'm', options: ['mm', 'cm', 'm', 'km'] }
+            ];
+            
+            const selected = randomChoice(items);
+            const shuffledOptions = shuffle(selected.options);
+            const correctIndex = shuffledOptions.indexOf(selected.unit);
+            
+            return {
+                category: 'Longitud',
+                type: 'multiple-choice',
+                question: {
+                    es: `¿Qué unidad usarías para medir ${selected.es}?`,
+                    en: `What unit would you use to measure ${selected.en}?`
+                },
+                options: shuffledOptions,
+                correct: correctIndex,
+                explanation: {
+                    es: `Para medir ${selected.es}, usamos ${selected.unit}.`,
+                    en: `To measure ${selected.en}, we use ${selected.unit}.`
+                }
+            };
+        }
+
+        function generateLengthConversionQuestion() {
+            const conversions = [
+                { from: 'm', to: 'cm', multiplier: 100 },
+                { from: 'cm', to: 'mm', multiplier: 10 },
+                { from: 'km', to: 'm', multiplier: 1000 }
+            ];
+            
+            const conv = randomChoice(conversions);
+            const value = conv.from === 'km' ? randomInt(1, 5) : randomInt(1, 10);
+            const answer = value * conv.multiplier;
+            
+            const wrongAnswers = [
+                answer + randomInt(10, 50),
+                answer - randomInt(10, 50),
+                value * (conv.multiplier === 10 ? 100 : 10)
+            ].filter(w => w > 0 && w !== answer);
+            
+            const options = shuffle([answer, ...wrongAnswers.slice(0, 3)]).map(n => `${n} ${conv.to}`);
+            const correctIndex = options.indexOf(`${answer} ${conv.to}`);
+            
+            return {
+                category: 'Longitud',
+                type: 'multiple-choice',
+                question: {
+                    es: `Convierte: ${value} ${conv.from} = ¿cuántos ${conv.to}?`,
+                    en: `Convert: ${value} ${conv.from} = how many ${conv.to}?`
+                },
+                options: options,
+                correct: correctIndex,
+                explanation: {
+                    es: `${value} ${conv.from} = ${answer} ${conv.to} (1 ${conv.from} = ${conv.multiplier} ${conv.to})`,
+                    en: `${value} ${conv.from} = ${answer} ${conv.to} (1 ${conv.from} = ${conv.multiplier} ${conv.to})`
+                }
+            };
+        }
+
+        function generateLengthComparisonQuestion() {
+            const pairs = [
+                { val1: randomInt(50, 200), unit1: 'cm', val2: randomInt(1, 3), unit2: 'm' },
+                { val1: randomInt(1, 5), unit1: 'km', val2: randomInt(500, 2000), unit2: 'm' },
+                { val1: randomInt(10, 50), unit1: 'mm', val2: randomInt(2, 6), unit2: 'cm' }
+            ];
+            
+            const pair = randomChoice(pairs);
+            
+            // Convert to common unit (smallest)
+            let val1InSmallest, val2InSmallest;
+            if (pair.unit1 === 'cm' && pair.unit2 === 'm') {
+                val1InSmallest = pair.val1;
+                val2InSmallest = pair.val2 * 100;
+            } else if (pair.unit1 === 'km' && pair.unit2 === 'm') {
+                val1InSmallest = pair.val1 * 1000;
+                val2InSmallest = pair.val2;
+            } else if (pair.unit1 === 'mm' && pair.unit2 === 'cm') {
+                val1InSmallest = pair.val1;
+                val2InSmallest = pair.val2 * 10;
+            }
+            
+            let correctAnswer;
+            if (val1InSmallest < val2InSmallest) correctAnswer = '<';
+            else if (val1InSmallest > val2InSmallest) correctAnswer = '>';
+            else correctAnswer = '=';
+            
+            return {
+                category: 'Longitud',
+                type: 'comparison',
+                question: {
+                    es: 'Compara las dos medidas:',
+                    en: 'Compare the two measurements:'
+                },
+                value1: `${pair.val1} ${pair.unit1}`,
+                value2: `${pair.val2} ${pair.unit2}`,
+                correct: correctAnswer,
+                explanation: {
+                    es: `${pair.val1} ${pair.unit1} ${correctAnswer} ${pair.val2} ${pair.unit2}`,
+                    en: `${pair.val1} ${pair.unit1} ${correctAnswer} ${pair.val2} ${pair.unit2}`
+                }
+            };
+        }
+
+        function generateLengthFillBlankQuestion() {
+            const templates = [
+                { question: '1 m = ___ cm', answer: 100, unit: 'cm' },
+                { question: '1 km = ___ m', answer: 1000, unit: 'm' },
+                { question: '1 cm = ___ mm', answer: 10, unit: 'mm' }
+            ];
+            
+            const template = randomChoice(templates);
+            
+            return {
+                category: 'Longitud',
+                type: 'fill-blank',
+                question: {
+                    es: template.question,
+                    en: template.question
+                },
+                answer: template.answer,
+                unit: template.unit,
+                explanation: {
+                    es: `${template.question.replace('___', template.answer)}`,
+                    en: `${template.question.replace('___', template.answer)}`
+                }
+            };
+        }
+
+        // ===== CAPACIDAD (CAPACITY) GENERATORS =====
+
+        function generateCapacityUnitQuestion() {
+            const items = [
+                { es: 'una botella de agua', en: 'a water bottle', unit: 'ml', options: ['ml', 'L'] },
+                { es: 'una piscina', en: 'a swimming pool', unit: 'L', options: ['ml', 'L'] },
+                { es: 'una cucharada de medicina', en: 'a spoonful of medicine', unit: 'ml', options: ['ml', 'L'] },
+                { es: 'un tanque de gasolina', en: 'a gas tank', unit: 'L', options: ['ml', 'L'] },
+                { es: 'un vaso de jugo', en: 'a glass of juice', unit: 'ml', options: ['ml', 'L'] },
+                { es: 'una olla grande de sopa', en: 'a large pot of soup', unit: 'L', options: ['ml', 'L'] },
+                { es: 'un gotero', en: 'an eyedropper', unit: 'ml', options: ['ml', 'L'] },
+                { es: 'una bañera', en: 'a bathtub', unit: 'L', options: ['ml', 'L'] },
+                { es: 'una lata de refresco', en: 'a soda can', unit: 'ml', options: ['ml', 'L'] },
+                { es: 'un galón de leche', en: 'a gallon of milk', unit: 'L', options: ['ml', 'L'] }
+            ];
+            
+            const selected = randomChoice(items);
+            const shuffledOptions = shuffle(selected.options);
+            const correctIndex = shuffledOptions.indexOf(selected.unit);
+            
+            return {
+                category: 'Capacidad',
+                type: 'multiple-choice',
+                question: {
+                    es: `¿Qué unidad usarías para medir ${selected.es}?`,
+                    en: `What unit would you use to measure ${selected.en}?`
+                },
+                options: shuffledOptions,
+                correct: correctIndex,
+                explanation: {
+                    es: `Para medir ${selected.es}, usamos ${selected.unit}.`,
+                    en: `To measure ${selected.en}, we use ${selected.unit}.`
+                }
+            };
+        }
+
+        function generateCapacityConversionQuestion() {
+            const value = randomInt(1, 10);
+            const answer = value * 1000;
+            
+            const wrongAnswers = [
+                answer + randomInt(100, 500),
+                answer - randomInt(100, 500),
+                value * 100
+            ].filter(w => w > 0 && w !== answer);
+            
+            const options = shuffle([answer, ...wrongAnswers.slice(0, 3)]).map(n => `${n} ml`);
+            const correctIndex = options.indexOf(`${answer} ml`);
+            
+            return {
+                category: 'Capacidad',
+                type: 'multiple-choice',
+                question: {
+                    es: `Convierte: ${value} L = ¿cuántos ml?`,
+                    en: `Convert: ${value} L = how many ml?`
+                },
+                options: options,
+                correct: correctIndex,
+                explanation: {
+                    es: `${value} L = ${answer} ml (1 L = 1,000 ml)`,
+                    en: `${value} L = ${answer} ml (1 L = 1,000 ml)`
+                }
+            };
+        }
+
+        function generateCapacityComparisonQuestion() {
+            const val1 = randomInt(1, 5);
+            const val2 = randomInt(500, 3000);
+            
+            const val1InMl = val1 * 1000;
+            
+            let correctAnswer;
+            if (val1InMl < val2) correctAnswer = '<';
+            else if (val1InMl > val2) correctAnswer = '>';
+            else correctAnswer = '=';
+            
+            return {
+                category: 'Capacidad',
+                type: 'comparison',
+                question: {
+                    es: 'Compara las dos medidas:',
+                    en: 'Compare the two measurements:'
+                },
+                value1: `${val1} L`,
+                value2: `${val2} ml`,
+                correct: correctAnswer,
+                explanation: {
+                    es: `${val1} L = ${val1InMl} ml, entonces ${val1} L ${correctAnswer} ${val2} ml`,
+                    en: `${val1} L = ${val1InMl} ml, so ${val1} L ${correctAnswer} ${val2} ml`
+                }
+            };
+        }
+
+        function generateCapacityFillBlankQuestion() {
+            return {
+                category: 'Capacidad',
+                type: 'fill-blank',
+                question: {
+                    es: '1 L = ___ ml',
+                    en: '1 L = ___ ml'
+                },
+                answer: 1000,
+                unit: 'ml',
+                explanation: {
+                    es: '1 L = 1,000 ml',
+                    en: '1 L = 1,000 ml'
+                }
+            };
+        }
+
+        // ===== PESO (WEIGHT) GENERATORS =====
+
+        function generateWeightUnitQuestion() {
+            const items = [
+                { es: 'una manzana', en: 'an apple', unit: 'g', options: ['g', 'kg'] },
+                { es: 'un carro', en: 'a car', unit: 'kg', options: ['g', 'kg'] },
+                { es: 'una pluma', en: 'a feather', unit: 'g', options: ['g', 'kg'] },
+                { es: 'una persona', en: 'a person', unit: 'kg', options: ['g', 'kg'] },
+                { es: 'un clip', en: 'a paper clip', unit: 'g', options: ['g', 'kg'] },
+                { es: 'una sandía', en: 'a watermelon', unit: 'kg', options: ['g', 'kg'] },
+                { es: 'una moneda', en: 'a coin', unit: 'g', options: ['g', 'kg'] },
+                { es: 'una mochila llena de libros', en: 'a backpack full of books', unit: 'kg', options: ['g', 'kg'] },
+                { es: 'un huevo', en: 'an egg', unit: 'g', options: ['g', 'kg'] },
+                { es: 'un perro grande', en: 'a large dog', unit: 'kg', options: ['g', 'kg'] },
+                { es: 'un lápiz', en: 'a pencil', unit: 'g', options: ['g', 'kg'] },
+                { es: 'una bolsa de arroz', en: 'a bag of rice', unit: 'kg', options: ['g', 'kg'] }
+            ];
+            
+            const selected = randomChoice(items);
+            const shuffledOptions = shuffle(selected.options);
+            const correctIndex = shuffledOptions.indexOf(selected.unit);
+            
+            return {
+                category: 'Peso',
+                type: 'multiple-choice',
+                question: {
+                    es: `¿Qué unidad usarías para medir el peso de ${selected.es}?`,
+                    en: `What unit would you use to measure the weight of ${selected.en}?`
+                },
+                options: shuffledOptions,
+                correct: correctIndex,
+                explanation: {
+                    es: `Para medir el peso de ${selected.es}, usamos ${selected.unit}.`,
+                    en: `To measure the weight of ${selected.en}, we use ${selected.unit}.`
+                }
+            };
+        }
+
+        function generateWeightConversionQuestion() {
+            const value = randomInt(1, 10);
+            const answer = value * 1000;
+            
+            const wrongAnswers = [
+                answer + randomInt(100, 500),
+                answer - randomInt(100, 500),
+                value * 100
+            ].filter(w => w > 0 && w !== answer);
+            
+            const options = shuffle([answer, ...wrongAnswers.slice(0, 3)]).map(n => `${n} g`);
+            const correctIndex = options.indexOf(`${answer} g`);
+            
+            return {
+                category: 'Peso',
+                type: 'multiple-choice',
+                question: {
+                    es: `Convierte: ${value} kg = ¿cuántos g?`,
+                    en: `Convert: ${value} kg = how many g?`
+                },
+                options: options,
+                correct: correctIndex,
+                explanation: {
+                    es: `${value} kg = ${answer} g (1 kg = 1,000 g)`,
+                    en: `${value} kg = ${answer} g (1 kg = 1,000 g)`
+                }
+            };
+        }
+
+        function generateWeightComparisonQuestion() {
+            const val1 = randomInt(1, 8);
+            const val2 = randomInt(500, 5000);
+            
+            const val1InG = val1 * 1000;
+            
+            let correctAnswer;
+            if (val1InG < val2) correctAnswer = '<';
+            else if (val1InG > val2) correctAnswer = '>';
+            else correctAnswer = '=';
+            
+            return {
+                category: 'Peso',
+                type: 'comparison',
+                question: {
+                    es: 'Compara las dos medidas:',
+                    en: 'Compare the two measurements:'
+                },
+                value1: `${val1} kg`,
+                value2: `${val2} g`,
+                correct: correctAnswer,
+                explanation: {
+                    es: `${val1} kg = ${val1InG} g, entonces ${val1} kg ${correctAnswer} ${val2} g`,
+                    en: `${val1} kg = ${val1InG} g, so ${val1} kg ${correctAnswer} ${val2} g`
+                }
+            };
+        }
+
+        function generateWeightFillBlankQuestion() {
+            return {
+                category: 'Peso',
+                type: 'fill-blank',
+                question: {
+                    es: '1 kg = ___ g',
+                    en: '1 kg = ___ g'
+                },
+                answer: 1000,
+                unit: 'g',
+                explanation: {
+                    es: '1 kg = 1,000 g',
+                    en: '1 kg = 1,000 g'
+                }
+            };
+        }
+
+        // Word problem generators
+        function generateLengthWordProblem() {
+            const ribbonM = randomInt(2, 5);
+            const ribbonCm = ribbonM * 100;
+            const usedCm = randomInt(50, ribbonCm - 50);
+            const remaining = ribbonCm - usedCm;
+            
+            const wrongAnswers = [
+                remaining + randomInt(10, 100),
+                remaining - randomInt(10, 50),
+                remaining * 2
+            ].filter(w => w > 0 && w !== remaining);
+            
+            const options = shuffle([remaining, ...wrongAnswers.slice(0, 3)]).map(n => `${n} cm`);
+            const correctIndex = options.indexOf(`${remaining} cm`);
+            
+            return {
+                category: 'Longitud',
+                type: 'multiple-choice',
+                question: {
+                    es: `María tiene una cinta de ${ribbonM} m. Si usa ${usedCm} cm, ¿cuántos cm le quedan?`,
+                    en: `Maria has a ribbon that is ${ribbonM} m long. If she uses ${usedCm} cm, how many cm are left?`
+                },
+                options: options,
+                correct: correctIndex,
+                explanation: {
+                    es: `${ribbonM} m = ${ribbonCm} cm. ${ribbonCm} - ${usedCm} = ${remaining} cm`,
+                    en: `${ribbonM} m = ${ribbonCm} cm. ${ribbonCm} - ${usedCm} = ${remaining} cm`
+                }
+            };
+        }
+
+        function generateCapacityWordProblem() {
+            const liters = randomInt(2, 5);
+            const mlUsed = randomInt(500, liters * 500);
+            const totalMl = liters * 1000;
+            const remaining = totalMl - mlUsed;
+            
+            const wrongAnswers = [
+                remaining + randomInt(100, 500),
+                remaining - randomInt(100, 300),
+                remaining + 1000
+            ].filter(w => w > 0 && w !== remaining);
+            
+            const options = shuffle([remaining, ...wrongAnswers.slice(0, 3)]).map(n => `${n} ml`);
+            const correctIndex = options.indexOf(`${remaining} ml`);
+            
+            return {
+                category: 'Capacidad',
+                type: 'multiple-choice',
+                question: {
+                    es: `Una jarra tiene ${liters} L de limonada. Si se sirven ${mlUsed} ml, ¿cuántos ml quedan?`,
+                    en: `A pitcher has ${liters} L of lemonade. If ${mlUsed} ml are served, how many ml are left?`
+                },
+                options: options,
+                correct: correctIndex,
+                explanation: {
+                    es: `${liters} L = ${totalMl} ml. ${totalMl} - ${mlUsed} = ${remaining} ml`,
+                    en: `${liters} L = ${totalMl} ml. ${totalMl} - ${mlUsed} = ${remaining} ml`
+                }
+            };
+        }
+
+        function generateWeightWordProblem() {
+            const kg = randomInt(2, 5);
+            const gUsed = randomInt(500, kg * 500);
+            const totalG = kg * 1000;
+            const remaining = totalG - gUsed;
+            
+            const wrongAnswers = [
+                remaining + randomInt(100, 500),
+                remaining - randomInt(100, 300),
+                remaining + 1000
+            ].filter(w => w > 0 && w !== remaining);
+            
+            const options = shuffle([remaining, ...wrongAnswers.slice(0, 3)]).map(n => `${n} g`);
+            const correctIndex = options.indexOf(`${remaining} g`);
+            
+            return {
+                category: 'Peso',
+                type: 'multiple-choice',
+                question: {
+                    es: `Una bolsa de harina pesa ${kg} kg. Si se usan ${gUsed} g, ¿cuántos gramos quedan?`,
+                    en: `A bag of flour weighs ${kg} kg. If ${gUsed} g are used, how many grams are left?`
+                },
+                options: options,
+                correct: correctIndex,
+                explanation: {
+                    es: `${kg} kg = ${totalG} g. ${totalG} - ${gUsed} = ${remaining} g`,
+                    en: `${kg} kg = ${totalG} g. ${totalG} - ${gUsed} = ${remaining} g`
+                }
+            };
+        }
+
+        // ===== MEASURING TOOLS QUESTIONS =====
+
+        function generateLengthToolQuestion() {
+            const scenarios = [
+                { 
+                    es: 'el largo de un lápiz', 
+                    en: 'the length of a pencil', 
+                    tool: { es: 'Regla', en: 'Ruler' },
+                    options: [
+                        { es: 'Regla', en: 'Ruler' },
+                        { es: 'Cinta métrica', en: 'Tape measure' },
+                        { es: 'Odómetro', en: 'Odometer' },
+                        { es: 'Báscula', en: 'Scale' }
+                    ]
+                },
+                { 
+                    es: 'la distancia de un viaje en carro', 
+                    en: 'the distance of a car trip', 
+                    tool: { es: 'Odómetro', en: 'Odometer' },
+                    options: [
+                        { es: 'Regla', en: 'Ruler' },
+                        { es: 'Metro', en: 'Meter stick' },
+                        { es: 'Odómetro', en: 'Odometer' },
+                        { es: 'Cinta métrica', en: 'Tape measure' }
+                    ]
+                },
+                { 
+                    es: 'la altura de una habitación', 
+                    en: 'the height of a room', 
+                    tool: { es: 'Cinta métrica', en: 'Tape measure' },
+                    options: [
+                        { es: 'Regla', en: 'Ruler' },
+                        { es: 'Cinta métrica', en: 'Tape measure' },
+                        { es: 'Odómetro', en: 'Odometer' },
+                        { es: 'Probeta', en: 'Graduated cylinder' }
+                    ]
+                },
+                { 
+                    es: 'el ancho de tu escritorio', 
+                    en: 'the width of your desk', 
+                    tool: { es: 'Metro', en: 'Meter stick' },
+                    options: [
+                        { es: 'Metro', en: 'Meter stick' },
+                        { es: 'Odómetro', en: 'Odometer' },
+                        { es: 'Báscula', en: 'Scale' },
+                        { es: 'Taza de medir', en: 'Measuring cup' }
+                    ]
+                }
+            ];
+            
+            const scenario = randomChoice(scenarios);
+            const shuffledOptions = shuffle(scenario.options);
+            const correctIndex = shuffledOptions.findIndex(opt => 
+                opt.es === scenario.tool.es
+            );
+            
+            return {
+                category: 'Longitud',
+                type: 'multiple-choice',
+                question: {
+                    es: `¿Qué herramienta usarías para medir ${scenario.es}?`,
+                    en: `What tool would you use to measure ${scenario.en}?`
+                },
+                options: shuffledOptions.map(opt => currentLanguage === 'es' ? opt.es : opt.en),
+                correct: correctIndex,
+                explanation: {
+                    es: `Para medir ${scenario.es}, usamos ${scenario.tool.es}.`,
+                    en: `To measure ${scenario.en}, we use a ${scenario.tool.en.toLowerCase()}.`
+                }
+            };
+        }
+
+        function generateCapacityToolQuestion() {
+            const scenarios = [
+                { 
+                    es: 'la cantidad de medicina líquida', 
+                    en: 'the amount of liquid medicine', 
+                    tool: { es: 'Cuchara de medir', en: 'Measuring spoon' },
+                    options: [
+                        { es: 'Cuchara de medir', en: 'Measuring spoon' },
+                        { es: 'Taza de medir', en: 'Measuring cup' },
+                        { es: 'Probeta', en: 'Graduated cylinder' },
+                        { es: 'Báscula', en: 'Scale' }
+                    ]
+                },
+                { 
+                    es: 'los ingredientes líquidos para cocinar', 
+                    en: 'liquid ingredients for cooking', 
+                    tool: { es: 'Taza de medir', en: 'Measuring cup' },
+                    options: [
+                        { es: 'Regla', en: 'Ruler' },
+                        { es: 'Taza de medir', en: 'Measuring cup' },
+                        { es: 'Báscula', en: 'Scale' },
+                        { es: 'Cinta métrica', en: 'Tape measure' }
+                    ]
+                },
+                { 
+                    es: 'un líquido en un experimento de ciencias', 
+                    en: 'a liquid in a science experiment', 
+                    tool: { es: 'Probeta graduada', en: 'Graduated cylinder' },
+                    options: [
+                        { es: 'Taza de medir', en: 'Measuring cup' },
+                        { es: 'Probeta graduada', en: 'Graduated cylinder' },
+                        { es: 'Cuchara de medir', en: 'Measuring spoon' },
+                        { es: 'Jarra', en: 'Pitcher' }
+                    ]
+                }
+            ];
+            
+            const scenario = randomChoice(scenarios);
+            const shuffledOptions = shuffle(scenario.options);
+            const correctIndex = shuffledOptions.findIndex(opt => 
+                opt.es === scenario.tool.es
+            );
+            
+            return {
+                category: 'Capacidad',
+                type: 'multiple-choice',
+                question: {
+                    es: `¿Qué herramienta usarías para medir ${scenario.es}?`,
+                    en: `What tool would you use to measure ${scenario.en}?`
+                },
+                options: shuffledOptions.map(opt => currentLanguage === 'es' ? opt.es : opt.en),
+                correct: correctIndex,
+                explanation: {
+                    es: `Para medir ${scenario.es}, usamos ${scenario.tool.es}.`,
+                    en: `To measure ${scenario.en}, we use a ${scenario.tool.en.toLowerCase()}.`
+                }
+            };
+        }
+
+        function generateWeightToolQuestion() {
+            const scenarios = [
+                { 
+                    es: 'el peso de ingredientes para una receta', 
+                    en: 'the weight of ingredients for a recipe', 
+                    tool: { es: 'Báscula de cocina', en: 'Kitchen scale' },
+                    options: [
+                        { es: 'Báscula de cocina', en: 'Kitchen scale' },
+                        { es: 'Báscula de baño', en: 'Bathroom scale' },
+                        { es: 'Balanza', en: 'Balance scale' },
+                        { es: 'Regla', en: 'Ruler' }
+                    ]
+                },
+                { 
+                    es: 'el peso de una persona', 
+                    en: 'the weight of a person', 
+                    tool: { es: 'Báscula de baño', en: 'Bathroom scale' },
+                    options: [
+                        { es: 'Báscula de cocina', en: 'Kitchen scale' },
+                        { es: 'Báscula de baño', en: 'Bathroom scale' },
+                        { es: 'Cinta métrica', en: 'Tape measure' },
+                        { es: 'Probeta', en: 'Graduated cylinder' }
+                    ]
+                },
+                { 
+                    es: 'comparar el peso de dos objetos', 
+                    en: 'comparing the weight of two objects', 
+                    tool: { es: 'Balanza', en: 'Balance scale' },
+                    options: [
+                        { es: 'Báscula digital', en: 'Digital scale' },
+                        { es: 'Balanza', en: 'Balance scale' },
+                        { es: 'Taza de medir', en: 'Measuring cup' },
+                        { es: 'Metro', en: 'Meter stick' }
+                    ]
+                },
+                { 
+                    es: 'el peso exacto de una carta', 
+                    en: 'the exact weight of a letter', 
+                    tool: { es: 'Báscula digital', en: 'Digital scale' },
+                    options: [
+                        { es: 'Báscula de baño', en: 'Bathroom scale' },
+                        { es: 'Báscula digital', en: 'Digital scale' },
+                        { es: 'Balanza', en: 'Balance scale' },
+                        { es: 'Regla', en: 'Ruler' }
+                    ]
+                }
+            ];
+            
+            const scenario = randomChoice(scenarios);
+            const shuffledOptions = shuffle(scenario.options);
+            const correctIndex = shuffledOptions.findIndex(opt => 
+                opt.es === scenario.tool.es
+            );
+            
+            return {
+                category: 'Peso',
+                type: 'multiple-choice',
+                question: {
+                    es: `¿Qué herramienta usarías para medir ${scenario.es}?`,
+                    en: `What tool would you use to measure ${scenario.en}?`
+                },
+                options: shuffledOptions.map(opt => currentLanguage === 'es' ? opt.es : opt.en),
+                correct: correctIndex,
+                explanation: {
+                    es: `Para medir ${scenario.es}, usamos ${scenario.tool.es}.`,
+                    en: `To measure ${scenario.en}, we use a ${scenario.tool.en.toLowerCase()}.`
+                }
+            };
+        }
+
+        // Generate all questions
+        function generateAllQuestions() {
+            const generators = [
+                // Longitud
+                generateLengthUnitQuestion,
+                generateLengthConversionQuestion,
+                generateLengthComparisonQuestion,
+                generateLengthFillBlankQuestion,
+                generateLengthWordProblem,
+                generateLengthToolQuestion,
+                // Capacidad
+                generateCapacityUnitQuestion,
+                generateCapacityConversionQuestion,
+                generateCapacityComparisonQuestion,
+                generateCapacityFillBlankQuestion,
+                generateCapacityWordProblem,
+                generateCapacityToolQuestion,
+                // Peso
+                generateWeightUnitQuestion,
+                generateWeightConversionQuestion,
+                generateWeightComparisonQuestion,
+                generateWeightFillBlankQuestion,
+                generateWeightWordProblem,
+                generateWeightToolQuestion
+            ];
+            
+            questions = shuffle(generators).map(gen => gen());
+        }
+
+        // ==================== QUIZ LOGIC ====================
+
+        function startQuiz() {
+            generateAllQuestions();
+            currentQuestionIndex = 0;
+            score = 0;
+            timer = 0;
+            selectedAnswer = null;
+            comparisonAnswer = null;
+            fillBlankAnswer = null;
+            missedQuestions = [];
+            categoryScores = {
+                'Longitud': { correct: 0, total: 0 },
+                'Capacidad': { correct: 0, total: 0 },
+                'Peso': { correct: 0, total: 0 }
+            };
+            
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('quizScreen').classList.remove('hidden');
+            document.getElementById('resultsScreen').classList.add('hidden');
+            
+            startTimer();
+            loadQuestion();
+        }
+
+        function startTimer() {
+            // Overall quiz timer (counts up)
+            timerInterval = setInterval(() => {
+                timer++;
+                const minutes = Math.floor(timer / 60);
+                const seconds = timer % 60;
+                document.getElementById('timer').textContent = 
+                    `⏱️ ${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function startQuestionTimer() {
+            questionTimer = 60; // Reset to 60 seconds
+            updateQuestionTimerDisplay();
+            
+            // Clear any existing question timer
+            if (questionTimerInterval) {
+                clearInterval(questionTimerInterval);
+            }
+            
+            questionTimerInterval = setInterval(() => {
+                questionTimer--;
+                updateQuestionTimerDisplay();
+                
+                if (questionTimer <= 0) {
+                    clearInterval(questionTimerInterval);
+                    handleTimeUp();
+                }
+            }, 1000);
+        }
+
+        function updateQuestionTimerDisplay() {
+            const timerEl = document.getElementById('questionTimer');
+            const minutes = Math.floor(questionTimer / 60);
+            const seconds = questionTimer % 60;
+            timerEl.textContent = `⏳ ${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Update styling based on time remaining
+            timerEl.classList.remove('warning', 'danger');
+            if (questionTimer <= 10) {
+                timerEl.classList.add('danger');
+            } else if (questionTimer <= 20) {
+                timerEl.classList.add('warning');
+            }
+        }
+
+        function handleTimeUp() {
+            // Time's up - auto-submit with no answer (counts as wrong)
+            const q = questions[currentQuestionIndex];
+            const t = uiText[currentLanguage];
+            const questionText = typeof q.question === 'object' ? q.question[currentLanguage] : q.question;
+            const explanationText = typeof q.explanation === 'object' ? q.explanation[currentLanguage] : q.explanation;
+            
+            // Mark as incorrect
+            categoryScores[q.category].total++;
+            missedQuestions.push({
+                question: questionText,
+                yourAnswer: t.noAnswer,
+                correctAnswer: q.type === 'multiple-choice' ? q.options[q.correct] : q.correct,
+                explanation: explanationText
+            });
+            
+            // Show correct answer
+            if (q.type === 'multiple-choice') {
+                const options = document.querySelectorAll('.option');
+                options.forEach((opt, i) => {
+                    opt.onclick = null;
+                    if (i === q.correct) {
+                        opt.classList.add('correct');
+                    }
+                });
+            } else if (q.type === 'comparison') {
+                const buttons = document.querySelectorAll('.comparison-btn');
+                buttons.forEach(btn => {
+                    btn.onclick = null;
+                    if (btn.textContent.trim() === q.correct || 
+                        (btn.textContent.includes('<') && q.correct === '<') ||
+                        (btn.textContent.includes('>') && q.correct === '>')) {
+                        btn.classList.add('correct');
+                    }
+                });
+            } else if (q.type === 'fill-blank') {
+                const input = document.getElementById('fillInput');
+                if (input) {
+                    input.disabled = true;
+                    input.classList.add('incorrect');
+                    input.value = q.answer;
+                }
+            }
+            
+            // Show feedback
+            const feedback = document.getElementById('feedback');
+            feedback.style.display = 'block';
+            feedback.className = 'feedback incorrect';
+            feedback.innerHTML = `
+                <h3>${t.timeUp}</h3>
+                <p>${explanationText}</p>
+            `;
+            
+            document.getElementById('submitBtn').classList.add('hidden');
+            document.getElementById('nextBtn').classList.remove('hidden');
+        }
+
+        function loadQuestion() {
+            const q = questions[currentQuestionIndex];
+            selectedAnswer = null;
+            comparisonAnswer = null;
+            fillBlankAnswer = null;
+            
+            // Start the question timer
+            startQuestionTimer();
+            
+            const t = uiText[currentLanguage];
+            let questionText = typeof q.question === 'object' ? q.question[currentLanguage] : q.question;
+            // Add translation tooltips for Spanish mode
+            questionText = addTranslationTooltips(questionText);
+            
+            const categoryName = currentLanguage === 'en' ? 
+                (q.category === 'Longitud' ? 'Length' : q.category === 'Capacidad' ? 'Capacity' : 'Weight') : 
+                q.category;
+            
+            document.getElementById('progress').textContent = 
+                `${t.question} ${currentQuestionIndex + 1} ${t.of} ${questions.length}`;
+            document.getElementById('currentScore').textContent = `✓ ${score} ${t.correct}`;
+            
+            const card = document.getElementById('questionCard');
+            let badgeClass = q.category.toLowerCase();
+            
+            let html = `
+                <span class="category-badge ${badgeClass}">${getCategoryIcon(q.category)} ${categoryName}</span>
+                <div class="question-number">${t.question} ${currentQuestionIndex + 1}</div>
+                <div class="question-text">${questionText}</div>
+            `;
+            
+            if (q.type === 'multiple-choice') {
+                html += '<div class="options">';
+                const letters = ['A', 'B', 'C', 'D'];
+                q.options.forEach((opt, i) => {
+                    html += `
+                        <div class="option" onclick="selectOption(${i})" data-index="${i}">
+                            <span class="option-letter">${letters[i]}</span>
+                            <span>${opt}</span>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            } else if (q.type === 'comparison') {
+                html += `
+                    <div class="comparison-container">
+                        <div class="comparison-value">${q.value1}</div>
+                        <div class="comparison-buttons">
+                            <button class="comparison-btn" onclick="selectComparison('<')">&lt;</button>
+                            <button class="comparison-btn" onclick="selectComparison('=')">=</button>
+                            <button class="comparison-btn" onclick="selectComparison('>')">&gt;</button>
+                        </div>
+                        <div class="comparison-value">${q.value2}</div>
+                    </div>
+                `;
+            } else if (q.type === 'fill-blank') {
+                const parts = questionText.split('___');
+                html += `
+                    <div class="fill-blank-container">
+                        <span>${parts[0]}</span>
+                        <input type="number" class="fill-blank-input" id="fillInput" 
+                               oninput="updateFillBlank()" placeholder="?">
+                        <span class="unit-label">${q.unit}</span>
+                    </div>
+                `;
+            }
+            
+            html += '<div class="feedback" id="feedback"></div>';
+            
+            card.innerHTML = html;
+            
+            document.getElementById('submitBtn').textContent = t.verify;
+            document.getElementById('submitBtn').classList.remove('hidden');
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('nextBtn').textContent = t.next;
+            document.getElementById('nextBtn').classList.add('hidden');
+        }
+
+        function getCategoryIcon(category) {
+            const icons = {
+                'Longitud': '📏',
+                'Capacidad': '🧪',
+                'Peso': '⚖️'
+            };
+            return icons[category] || '📊';
+        }
+
+        function selectOption(index) {
+            const options = document.querySelectorAll('.option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            options[index].classList.add('selected');
+            selectedAnswer = index;
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        function selectComparison(value) {
+            const buttons = document.querySelectorAll('.comparison-btn');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            event.target.classList.add('selected');
+            comparisonAnswer = value;
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        function updateFillBlank() {
+            const input = document.getElementById('fillInput');
+            fillBlankAnswer = input.value ? parseInt(input.value) : null;
+            document.getElementById('submitBtn').disabled = fillBlankAnswer === null;
+        }
+
+        function submitAnswer() {
+            // Stop the question timer
+            if (questionTimerInterval) {
+                clearInterval(questionTimerInterval);
+            }
+            
+            const q = questions[currentQuestionIndex];
+            const t = uiText[currentLanguage];
+            let isCorrect = false;
+            let userAnswer = '';
+            
+            if (q.type === 'multiple-choice') {
+                isCorrect = selectedAnswer === q.correct;
+                userAnswer = q.options[selectedAnswer];
+                
+                const options = document.querySelectorAll('.option');
+                options.forEach((opt, i) => {
+                    opt.onclick = null;
+                    if (i === q.correct) {
+                        opt.classList.add('correct');
+                    } else if (i === selectedAnswer && !isCorrect) {
+                        opt.classList.add('incorrect');
+                    }
+                });
+            } else if (q.type === 'comparison') {
+                isCorrect = comparisonAnswer === q.correct;
+                userAnswer = comparisonAnswer;
+                
+                const buttons = document.querySelectorAll('.comparison-btn');
+                buttons.forEach(btn => {
+                    btn.onclick = null;
+                    if (btn.textContent.trim() === q.correct || 
+                        (btn.textContent.includes('<') && q.correct === '<') ||
+                        (btn.textContent.includes('>') && q.correct === '>')) {
+                        btn.classList.add('correct');
+                    } else if (btn.classList.contains('selected') && !isCorrect) {
+                        btn.classList.add('incorrect');
+                    }
+                });
+            } else if (q.type === 'fill-blank') {
+                isCorrect = fillBlankAnswer === q.answer;
+                userAnswer = fillBlankAnswer;
+                
+                const input = document.getElementById('fillInput');
+                input.disabled = true;
+                if (isCorrect) {
+                    input.classList.add('correct');
+                } else {
+                    input.classList.add('incorrect');
+                }
+            }
+            
+            // Update scores
+            const questionText = typeof q.question === 'object' ? q.question[currentLanguage] : q.question;
+            const explanationText = typeof q.explanation === 'object' ? q.explanation[currentLanguage] : q.explanation;
+            
+            categoryScores[q.category].total++;
+            if (isCorrect) {
+                score++;
+                categoryScores[q.category].correct++;
+            } else {
+                missedQuestions.push({
+                    question: questionText,
+                    yourAnswer: userAnswer,
+                    correctAnswer: q.type === 'multiple-choice' ? q.options[q.correct] : q.correct,
+                    explanation: explanationText
+                });
+            }
+            
+            // Show feedback
+            const feedback = document.getElementById('feedback');
+            feedback.style.display = 'block';
+            feedback.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedback.innerHTML = `
+                <h3>${isCorrect ? t.correctFeedback : t.incorrectFeedback}</h3>
+                <p>${explanationText}</p>
+            `;
+            
+            document.getElementById('submitBtn').classList.add('hidden');
+            document.getElementById('nextBtn').classList.remove('hidden');
+            document.getElementById('currentScore').textContent = `✓ ${score} ${t.correct}`;
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex >= questions.length) {
+                showResults();
+            } else {
+                loadQuestion();
+            }
+        }
+
+        function showResults() {
+            clearInterval(timerInterval);
+            if (questionTimerInterval) {
+                clearInterval(questionTimerInterval);
+            }
+            const t = uiText[currentLanguage];
+            
+            // Hide both start and quiz screens, show results
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('resultsScreen').classList.remove('hidden');
+            document.getElementById('resultsScreen').style.display = 'block';
+            
+            // Update results screen header
+            document.querySelector('#resultsScreen h1').textContent = t.completed;
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            document.getElementById('finalScore').textContent = `${percentage}%`;
+            
+            let message = '';
+            if (percentage >= 90) {
+                message = t.excellent;
+            } else if (percentage >= 70) {
+                message = t.veryGood;
+            } else if (percentage >= 50) {
+                message = t.good;
+            } else {
+                message = t.keepTrying;
+            }
+            document.getElementById('resultsMessage').textContent = message;
+            
+            // Category results
+            let categoryHTML = '';
+            for (const [cat, data] of Object.entries(categoryScores)) {
+                const catPercent = data.total > 0 ? Math.round((data.correct / data.total) * 100) : 0;
+                const catName = currentLanguage === 'en' ? 
+                    (cat === 'Longitud' ? 'Length' : cat === 'Capacidad' ? 'Capacity' : 'Weight') : 
+                    cat;
+                categoryHTML += `
+                    <div class="category-result-card">
+                        <h4>${getCategoryIcon(cat)} ${catName}</h4>
+                        <div class="score">${data.correct}/${data.total}</div>
+                        <div>${catPercent}%</div>
+                    </div>
+                `;
+            }
+            document.getElementById('categoryResults').innerHTML = categoryHTML;
+            
+            // Update try again button
+            document.querySelector('#resultsScreen .btn-primary').textContent = t.tryAgain;
+            
+            // Missed questions
+            if (missedQuestions.length > 0) {
+                let missedHTML = `<h3>${t.reviewTitle}</h3>`;
+                missedQuestions.forEach((mq, i) => {
+                    missedHTML += `
+                        <div class="missed-question-item">
+                            <div class="question">${i + 1}. ${mq.question}</div>
+                            <div class="your-answer">${t.yourAnswer}: ${mq.yourAnswer}</div>
+                            <div class="correct-answer">${t.correctAnswer}: ${mq.correctAnswer}</div>
+                            <div style="margin-top: 8px; color: #666; font-size: 0.9rem;">${mq.explanation}</div>
+                        </div>
+                    `;
+                });
+                document.getElementById('missedQuestions').innerHTML = missedHTML;
+            } else {
+                document.getElementById('missedQuestions').innerHTML = '';
+            }
+        }
+
+        function restartQuiz() {
+            // Reset all quiz state
+            questions = [];
+            currentQuestionIndex = 0;
+            score = 0;
+            timer = 0;
+            questionTimer = 60;
+            selectedAnswer = null;
+            comparisonAnswer = null;
+            fillBlankAnswer = null;
+            categoryScores = {
+                'Longitud': { correct: 0, total: 0 },
+                'Capacidad': { correct: 0, total: 0 },
+                'Peso': { correct: 0, total: 0 }
+            };
+            missedQuestions = [];
+            
+            // Reset UI
+            document.getElementById('resultsScreen').style.display = 'none';
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+        }
+
+        // Initialize flashcards on page load
+        document.addEventListener('DOMContentLoaded', initFlashcards);
+    </script>
+</body>
+</html>
