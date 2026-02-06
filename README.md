@@ -21,6 +21,7 @@ Try them now - no download needed!
 ### 📐 Math
 - 🔢 [Fractions Quiz (Unit 4a)](https://dwonng.github.io/ai-study-quizzes/math/fractions_quiz.html) - Spanish immersion math
 - 🔢 [Fractions & Decimals (Unit 4b)](https://dwonng.github.io/ai-study-quizzes/math/fractions_decimals_4b_quiz.html) - Ordering, comparing, converting
+- 📏 [Metric System Measurements](https://dwonng.github.io/ai-study-quizzes/math/metric_system_quiz.html) - Length Conversions, capacity, measuring tools
 
 ### 🔬 Science
 - 💡 [Sound & Light Quiz](https://dwonng.github.io/ai-study-quizzes/science/science_sound_light_quiz.html) - Spanish immersion science
