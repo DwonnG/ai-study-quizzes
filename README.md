@@ -25,12 +25,14 @@ Try them now - no download needed!
 ### 🔬 Science
 - 💡 [Sound & Light Quiz](https://dwonng.github.io/ai-study-quizzes/science/science_sound_light_quiz.html) - Spanish immersion science
 - 🌿 [Ecosystems Quiz](https://dwonng.github.io/ai-study-quizzes/science/ecosystems_quiz.html) - Producers, consumers, decomposers
+- ⚡ [Force & Motion Quiz](https://dwonng.github.io/ai-study-quizzes/science/force_motion_quiz.html) - Newton's Laws, simple machines, friction
 
 ### 📚 Language Arts
 - 📝 [Grammar Quiz](https://dwonng.github.io/ai-study-quizzes/language-arts/grammar_quiz.html) - Irregular verbs, homophones, plurals
 
 ### 🏛️ Social Studies
 - 🏛️ [Social Studies Quiz](https://dwonng.github.io/ai-study-quizzes/social-studies/social_studies_quiz.html) - Bill of Rights, 3 Branches
+- 🗺️ [Westward Expansion Quiz](https://dwonng.github.io/ai-study-quizzes/social-studies/westward_expansion_quiz.html) - Interactive map labeling, Louisiana Purchase, War of 1812
 
 ### 🎮 Games
 - 🧠 [Daily Brain Boost](https://dwonng.github.io/ai-study-quizzes/games/daily_brain_boost.html) - Multiplication + Vocabulary

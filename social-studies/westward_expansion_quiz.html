@@ -1,0 +1,1739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Westward Expansion Quiz (1801-1861)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .hidden { display: none !important; }
+
+        .quiz-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 750px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+        }
+
+        .exam-date {
+            background: #e74c3c;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        /* Flashcard Styles */
+        .flashcard-section {
+            margin-bottom: 25px;
+        }
+
+        .flashcard-section h3 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .flashcard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px;
+        }
+
+        .flashcard {
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .flashcard:hover .flashcard-inner {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 90px;
+            transition: transform 0.6s, box-shadow 0.3s;
+            transform-style: preserve-3d;
+            border-radius: 8px;
+        }
+
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.7rem;
+            line-height: 1.3;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .flashcard-front {
+            background: #ffffff;
+            color: #1a1a1a;
+            font-weight: bold;
+            border: 2px solid #333;
+        }
+
+        .flashcard-back {
+            background: linear-gradient(135deg, #e8edff, #f0f4ff);
+            color: #1a1a1a;
+            transform: rotateY(180deg);
+            border: 2px solid #667eea;
+        }
+
+        /* Quiz Styles */
+        .progress {
+            background: #ecf0f1;
+            border-radius: 10px;
+            height: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.4s;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .timer-container {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .timer {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .timer.warning { color: #e74c3c; animation: pulse 0.5s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
+
+        .question {
+            font-size: 1.15rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            padding: 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #e8edff, #f0f4ff);
+        }
+
+        .option.correct {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+        }
+
+        .option.incorrect {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-submit:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+
+        .btn-restart {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            color: white;
+            font-size: 0.9rem;
+            padding: 12px 25px;
+        }
+
+        .restart-separator {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px dashed #ccc;
+        }
+
+        .restart-separator hr {
+            display: none;
+        }
+
+        .restart-separator p {
+            color: #7f8c8d;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+
+        .feedback {
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+
+        .feedback.correct {
+            background: #e8f5e9;
+            border: 2px solid #4CAF50;
+        }
+
+        .feedback.incorrect {
+            background: #ffebee;
+            border: 2px solid #f44336;
+        }
+
+        .feedback h3 { margin-bottom: 8px; }
+        .feedback.correct h3 { color: #2e7d32; }
+        .feedback.incorrect h3 { color: #c62828; }
+
+        /* Results */
+        .results-container {
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            color: white;
+        }
+
+        .score-circle .score { font-size: 2.5rem; font-weight: bold; }
+        .score-circle .label { font-size: 0.9rem; opacity: 0.9; }
+
+        .review-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .review-section h3 {
+            color: #e74c3c;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .review-progress {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .review-question {
+            font-size: 1.05rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .review-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .review-option {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .review-option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .review-option.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .review-option.correct {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+        }
+
+        .review-option.incorrect {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        .review-option.reveal-correct {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+            animation: glow 0.5s ease-in-out;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px #4CAF50; }
+            50% { box-shadow: 0 0 20px #4CAF50; }
+        }
+
+        .review-feedback {
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .review-feedback.correct {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .review-feedback.incorrect {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .review-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .review-btn-check {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .review-btn-next {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+
+        .review-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .review-score {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .review-score h4 {
+            color: #27ae60;
+            margin-bottom: 10px;
+        }
+
+        .review-score p {
+            color: #7f8c8d;
+        }
+
+        /* Map Practice Styles */
+        .map-container {
+            text-align: center;
+        }
+
+        .map-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 550px;
+            margin: 0 auto 20px;
+            background: #fff;
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            padding: 10px;
+            overflow: visible;
+        }
+
+        .map-title {
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            padding: 5px;
+            background: #f5f5dc;
+            border-radius: 5px;
+        }
+
+        .us-map {
+            width: 100%;
+            height: auto;
+        }
+
+        .us-map-img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .map-hotspot {
+            position: absolute;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(255, 215, 0, 0.85);
+            border: 3px solid #FF6B00;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.95rem;
+            color: #333;
+            transition: all 0.3s;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            overflow: visible;
+        }
+
+        .map-hotspot:hover {
+            background: rgba(255, 165, 0, 1);
+            transform: translate(-50%, -50%) scale(1.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+
+        .map-hotspot.placed {
+            background: #ffffff;
+            border: 3px solid #333;
+            border-style: solid;
+        }
+
+        .map-hotspot.placed:hover {
+            transform: translate(-50%, -50%) scale(1.15);
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        .map-hotspot.placed:hover::after {
+            content: '✕';
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #e74c3c;
+            color: white;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .map-hotspot.correct {
+            background: #e8f5e9;
+            border-color: #4CAF50;
+        }
+
+        .map-hotspot.incorrect {
+            background: #ffebee;
+            border-color: #f44336;
+        }
+
+        .pointer-line {
+            position: absolute;
+            pointer-events: none;
+            background: #FF6B00;
+            z-index: 5;
+            border-radius: 2px;
+        }
+
+        .map-labels-bank {
+            background: #f0f4ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .map-labels-bank p {
+            margin-bottom: 10px;
+            color: #4a5568;
+        }
+
+        .label-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .label-chip {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            user-select: none;
+        }
+
+        .label-chip:hover {
+            transform: scale(1.05);
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.4);
+        }
+
+        .label-chip.selected {
+            background: linear-gradient(135deg, #2e7d32, #4CAF50);
+            box-shadow: 0 0 10px #4CAF50;
+        }
+
+        .label-chip.used {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .label-chip.dragging {
+            opacity: 0.5;
+            transform: scale(1.1);
+        }
+
+        .map-hotspot.drag-over {
+            background: rgba(76, 175, 80, 0.7);
+            transform: translate(-50%, -50%) scale(1.25);
+            border-color: #2E7D32;
+            border-style: solid;
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.8);
+        }
+
+        .map-progress {
+            margin-bottom: 15px;
+            color: #7f8c8d;
+        }
+
+        .map-feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .map-feedback.success {
+            background: #e8f5e9;
+            border: 2px solid #4CAF50;
+            color: #2e7d32;
+        }
+
+        .map-feedback.partial {
+            background: #fff3e0;
+            border: 2px solid #ff9800;
+            color: #e65100;
+        }
+
+        @media (max-width: 500px) {
+            .quiz-container { padding: 20px; }
+            .header h1 { font-size: 1.3rem; }
+            .question { font-size: 1rem; }
+            .flashcard-grid { grid-template-columns: repeat(2, 1fr); }
+            .flashcard-inner { height: 80px; }
+            .map-hotspot { width: 28px; height: 28px; font-size: 0.7rem; }
+            .label-chip { font-size: 0.65rem; padding: 6px 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <!-- Start Screen -->
+        <div id="startScreen">
+            <div class="header">
+                <h1>🦅 Westward Expansion</h1>
+                <p>The Growth of America (1801-1861)</p>
+                <div class="exam-date">📅 Test: Wednesday, Feb 25</div>
+            </div>
+
+            <div class="flashcard-section">
+                <h3>📚 Study Cards - Click to flip!</h3>
+                <div class="flashcard-grid" id="flashcardGrid"></div>
+            </div>
+
+            <button class="btn btn-submit" onclick="startMapPractice()" style="margin-bottom: 10px;">
+                🗺️ Practice Map Labeling
+            </button>
+            <button class="btn btn-submit" onclick="startQuiz()">
+                🚀 Start Quiz
+            </button>
+        </div>
+
+        <!-- Map Practice Screen -->
+        <div id="mapScreen" class="hidden">
+            <div class="header">
+                <h1>🗺️ Label the Map!</h1>
+                <p>Click on each location to place the correct label</p>
+            </div>
+            
+            <div class="map-container">
+                <div class="map-wrapper" id="mapWrapper">
+                    <div class="map-title">Growth of the United States to 1853</div>
+                    <!-- Physical Landform Map of US -->
+                    <img src="us_landforms_map.png" 
+                         alt="US Landforms Map" 
+                         class="us-map-img"/>
+                    
+                    <!-- Clickable hotspots - positioned DIRECTLY on each feature -->
+                    <div class="map-hotspot" data-location="A" style="left: 85%; top: 35%;"></div><!-- Washington D.C. - on east coast town -->
+                    <div class="map-hotspot" data-location="B" style="left: 78%; top: 25%;"></div><!-- Erie Canal - NY area near lakes -->
+                    <div class="map-hotspot" data-location="C" style="left: 25%; top: 45%;"></div><!-- Continental Divide - on mountain ridge -->
+                    <div class="map-hotspot" data-location="D" style="left: 45%; top: 50%;"></div><!-- Great Plains - tan flat center area -->
+                    <div class="map-hotspot" data-location="E" style="left: 55%; top: 88%;"></div><!-- Gulf of Mexico - bottom water -->
+                    <div class="map-hotspot" data-location="F" style="left: 68%; top: 22%;"></div><!-- Great Lakes - on the blue lakes -->
+                    <div class="map-hotspot" data-location="G" style="left: 82%; top: 55%;"></div><!-- Atlantic Coastal Plain - green coast -->
+                    <div class="map-hotspot" data-location="H" style="left: 58%; top: 45%;"></div><!-- Mississippi River - on the blue river -->
+                    <div class="map-hotspot" data-location="I" style="left: 18%; top: 30%;"></div><!-- Rocky Mountains - on snow-capped mountains -->
+                </div>
+                
+                <div class="map-labels-bank" id="labelsBank">
+                    <p><strong>Drag or click labels to place them:</strong></p>
+                    <div class="label-chips">
+                        <span class="label-chip" data-label="A">A - Washington D.C.</span>
+                        <span class="label-chip" data-label="B">B - Erie Canal</span>
+                        <span class="label-chip" data-label="C">C - Continental Divide</span>
+                        <span class="label-chip" data-label="D">D - Great Plains</span>
+                        <span class="label-chip" data-label="E">E - Gulf of Mexico</span>
+                        <span class="label-chip" data-label="F">F - Great Lakes</span>
+                        <span class="label-chip" data-label="G">G - Atlantic Coastal Plain</span>
+                        <span class="label-chip" data-label="H">H - Mississippi River</span>
+                        <span class="label-chip" data-label="I">I - Rocky Mountains</span>
+                    </div>
+                </div>
+                
+                <div class="map-progress">
+                    <span id="mapProgressText">0 of 9 placed</span>
+                </div>
+                
+                <button class="btn btn-submit" id="checkMapBtn" onclick="checkMapLabels()" disabled>
+                    ✓ Check My Answers
+                </button>
+                <button class="btn btn-next hidden" id="mapResultBtn" onclick="backToStart()">
+                    ← Back to Study
+                </button>
+            </div>
+            
+            <div class="map-feedback hidden" id="mapFeedback"></div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quizScreen" class="hidden">
+            <div class="progress">
+                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+            </div>
+            <div class="progress-text" id="progressText">Question 1 of 25</div>
+
+            <div class="timer-container">
+                <div class="timer" id="timer">1:00</div>
+            </div>
+
+            <div class="category-badge" id="categoryBadge">Category</div>
+            <div class="question" id="questionText">Question text here</div>
+            <div class="options" id="optionsContainer"></div>
+
+            <button class="btn btn-submit" id="submitBtn" onclick="submitAnswer()" disabled>
+                Submit Answer
+            </button>
+            <button class="btn btn-next hidden" id="nextBtn" onclick="nextQuestion()">
+                Next Question →
+            </button>
+
+            <div class="feedback hidden" id="feedback">
+                <h3 id="feedbackTitle"></h3>
+                <p id="feedbackText"></p>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="hidden">
+            <div class="results-container">
+                <h2>🎉 Quiz Complete!</h2>
+                <div class="score-circle">
+                    <span class="score" id="finalScore">0%</span>
+                    <span class="label">Correct</span>
+                </div>
+                <p id="scoreMessage"></p>
+
+                <div class="review-section hidden" id="reviewSection">
+                    <h3>📝 Let's Practice the Missed Questions!</h3>
+                    <div class="review-progress" id="reviewProgress">Question 1 of 3</div>
+                    <div class="review-question" id="reviewQuestion"></div>
+                    <div class="review-options" id="reviewOptions"></div>
+                    <div class="review-feedback hidden" id="reviewFeedback"></div>
+                    <button class="review-btn review-btn-check" id="reviewCheckBtn" onclick="checkReviewAnswer()" disabled>Check Answer</button>
+                    <button class="review-btn review-btn-next hidden" id="reviewNextBtn" onclick="nextReviewQuestion()">Next Question →</button>
+                    <div class="review-score hidden" id="reviewScore">
+                        <h4>🎉 Review Complete!</h4>
+                        <p id="reviewScoreText"></p>
+                    </div>
+                </div>
+
+                <div class="restart-separator">
+                    <hr>
+                    <p>Done reviewing? Start a new quiz:</p>
+                </div>
+                <button class="btn btn-restart" onclick="restartQuiz()">
+                    🔄 Try Again
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Quiz state
+        let questions = [];
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedOption = null;
+        let missedQuestions = [];
+        let timerInterval = null;
+        let timeLeft = 60;
+
+        // Review state
+        let reviewQuestions = [];
+        let currentReviewQuestion = 0;
+        let reviewScore = 0;
+        let selectedReviewOption = null;
+
+        // Map state
+        let selectedLabel = null;
+        let placedLabels = {};
+        let mapInQuizMode = false;
+
+        // Flashcards
+        const flashcards = [
+            { front: 'Louisiana Purchase', back: 'Jefferson bought Louisiana from France - doubled U.S. size!' },
+            { front: 'Lewis & Clark', back: 'Explored the west, made maps of mountains, rivers, trails' },
+            { front: 'Sacagawea', back: 'Shoshone Indian guide & translator for Lewis & Clark' },
+            { front: 'War of 1812', back: 'Fight with Britain over trade & impressment - no winner' },
+            { front: 'Francis Scott Key', back: 'Wrote "The Star-Spangled Banner" (national anthem)' },
+            { front: 'Trail of Tears', back: 'Cherokee forced to walk 800+ miles to Oklahoma - many died' },
+            { front: 'The Alamo', back: 'Texans lost battle but inspired "Remember the Alamo!"' },
+            { front: 'Oregon Trail', back: 'Most traveled trail west by pioneers in covered wagons' },
+            { front: 'California Gold Rush', back: '1849 - "Forty-Niners" rushed to find gold' },
+            { front: 'Erie Canal', back: 'Connected Great Lakes to Atlantic Ocean' },
+            { front: 'Telegraph', back: 'Samuel Morse - sent messages using Morse Code' },
+            { front: 'Cotton Gin', back: 'Eli Whitney - removed seeds from cotton' },
+            { front: 'Impressment', back: 'British captured American sailors & forced them to work' },
+            { front: 'Continental Divide', back: 'Mountain ridge separating rivers flowing east vs west' },
+            { front: 'Battle of Little Bighorn', back: '"Custer\'s Last Stand" - Sitting Bull & Crazy Horse won' },
+            { front: 'Opportunity Cost', back: 'What you give up when you make a choice' },
+            { front: 'Railroad', back: 'Linked eastern cities - fast, cheap travel & shipping' },
+            { front: 'Locomotive', back: 'Steam engine for trains - faster than steamboats' },
+            { front: 'Great Plains', back: 'Flat grasslands in middle of America' },
+            { front: 'Mississippi River', back: 'Flows north→south - steamboats carried goods' },
+            { front: 'Atlantic Coastal Plain', back: 'Flat land along east coast (Atlantic Ocean)' },
+            { front: 'Gulf of Mexico', back: 'Water south of TX, LA, FL' },
+            { front: 'Barrier', back: 'Something that blocks or makes travel hard (mountains)' },
+            { front: 'Gateway', back: 'Something that helps travel (rivers, canals)' },
+            { front: 'Benefits', back: 'Good things you get from a choice' },
+            { front: 'Costs', back: 'What you give up or pay for something' },
+        ];
+
+        // Question bank
+        const questionBank = [
+            // Louisiana Purchase & Exploration
+            {
+                category: 'Louisiana Purchase',
+                question: 'Who bought the Louisiana Territory from France?',
+                options: ['George Washington', 'Thomas Jefferson', 'Abraham Lincoln', 'Andrew Jackson'],
+                correct: 1,
+                explanation: 'Thomas Jefferson bought the Louisiana Territory from France, more than doubling the size of the U.S.'
+            },
+            {
+                category: 'Louisiana Purchase',
+                question: 'What happened to the size of the United States after the Louisiana Purchase?',
+                options: ['It stayed the same', 'It tripled', 'It more than doubled', 'It got smaller'],
+                correct: 2,
+                explanation: 'The Louisiana Purchase more than doubled the size of the United States.'
+            },
+            {
+                category: 'Exploration',
+                question: 'Who did Jefferson send to explore the lands in the west?',
+                options: ['Lewis and Clark', 'Washington and Adams', 'Sitting Bull and Crazy Horse', 'Morse and Whitney'],
+                correct: 0,
+                explanation: 'Jefferson sent Lewis and Clark to explore the western lands and make maps.'
+            },
+            {
+                category: 'Exploration',
+                question: 'What did Lewis and Clark make during their expedition?',
+                options: ['New laws', 'Maps of mountains, rivers, and trails', 'New weapons', 'Gold coins'],
+                correct: 1,
+                explanation: 'Lewis and Clark made maps showing mountains, rivers, and trails leading west.'
+            },
+            {
+                category: 'Key People',
+                question: 'Who was Sacagawea?',
+                options: ['A French queen', 'A Shoshone Indian guide and translator', 'A British soldier', 'The first female president'],
+                correct: 1,
+                explanation: 'Sacagawea was a Shoshone Indian who helped Lewis and Clark as a guide and translator.'
+            },
+            // War of 1812
+            {
+                category: 'War of 1812',
+                question: 'What is "impressment"?',
+                options: ['Making art prints', 'Capturing sailors and forcing them to work', 'Printing newspapers', 'Teaching in schools'],
+                correct: 1,
+                explanation: 'Impressment was when the British captured American sailors and forced them to work in the British Navy.'
+            },
+            {
+                category: 'War of 1812',
+                question: 'What did the British burn during the War of 1812?',
+                options: ['The Statue of Liberty', 'The White House and Capitol', 'The Golden Gate Bridge', 'Mount Rushmore'],
+                correct: 1,
+                explanation: 'The British burned much of Washington, D.C., including the White House and the Capitol.'
+            },
+            {
+                category: 'War of 1812',
+                question: 'How did the War of 1812 end?',
+                options: ['America won everything', 'Britain won everything', 'No one won, neither gained new lands', 'France won'],
+                correct: 2,
+                explanation: 'The War of 1812 ended with no one winning and neither country gaining new lands.'
+            },
+            {
+                category: 'Key People',
+                question: 'Who wrote "The Star-Spangled Banner"?',
+                options: ['George Washington', 'Francis Scott Key', 'Abraham Lincoln', 'Samuel Morse'],
+                correct: 1,
+                explanation: 'Francis Scott Key wrote a poem called "The Star-Spangled Banner" which became our national anthem.'
+            },
+            // Indian Removal & Trail of Tears
+            {
+                category: 'Trail of Tears',
+                question: 'Which president signed the Indian Removal Act?',
+                options: ['Thomas Jefferson', 'George Washington', 'Andrew Jackson', 'Abraham Lincoln'],
+                correct: 2,
+                explanation: 'President Andrew Jackson signed the Indian Removal Act, forcing Native Americans to move west.'
+            },
+            {
+                category: 'Trail of Tears',
+                question: 'How far did the Cherokee have to walk on the Trail of Tears?',
+                options: ['10 miles', '100 miles', 'Over 800 miles', '5 miles'],
+                correct: 2,
+                explanation: 'The Cherokee had to walk over 800 miles to Oklahoma, and many died along the way.'
+            },
+            {
+                category: 'Trail of Tears',
+                question: 'Where were Native Americans forced to move to?',
+                options: ['California', 'What is now Oklahoma', 'Canada', 'Mexico'],
+                correct: 1,
+                explanation: 'Native Americans were forced to move to what is now Oklahoma.'
+            },
+            // Texas & The Alamo
+            {
+                category: 'The Alamo',
+                question: 'Who were the Texans fighting against at the Alamo?',
+                options: ['Britain', 'France', 'Mexico', 'Spain'],
+                correct: 2,
+                explanation: 'Texans fought against Mexico and declared independence for Texas.'
+            },
+            {
+                category: 'The Alamo',
+                question: 'What was the famous battle cry after the Alamo?',
+                options: ['"Go West!"', '"Remember the Alamo!"', '"Freedom!"', '"Victory!"'],
+                correct: 1,
+                explanation: 'Though Texans lost the battle, their courage inspired the cry "Remember the Alamo!"'
+            },
+            {
+                category: 'The Alamo',
+                question: 'Did the Texans win or lose the battle at the Alamo?',
+                options: ['They won', 'They lost', 'It was a tie', 'They surrendered'],
+                correct: 1,
+                explanation: 'The Texans lost the battle at the Alamo, but Texas later won its independence.'
+            },
+            // Oregon Trail & Westward Movement
+            {
+                category: 'Oregon Trail',
+                question: 'What was the Oregon Trail?',
+                options: ['A hiking path today', 'The most traveled trail west by pioneers', 'A railroad', 'A river'],
+                correct: 1,
+                explanation: 'The Oregon Trail was the most traveled trail west by pioneers in covered wagons.'
+            },
+            {
+                category: 'Oregon Trail',
+                question: 'Why did many people travel west on the Oregon Trail?',
+                options: ['To find new opportunities to farm', 'To visit family', 'To escape winter', 'To go swimming'],
+                correct: 0,
+                explanation: 'Many people were looking for new opportunities to farm out west.'
+            },
+            // Battle of Little Bighorn
+            {
+                category: 'Battle of Little Bighorn',
+                question: 'What is another name for the Battle of Little Bighorn?',
+                options: ['"The Big Fight"', '"Custer\'s Last Stand"', '"The Western War"', '"The Final Battle"'],
+                correct: 1,
+                explanation: 'The Battle of Little Bighorn is also known as "Custer\'s Last Stand."'
+            },
+            {
+                category: 'Battle of Little Bighorn',
+                question: 'Which Native American chiefs led their people to victory at Little Bighorn?',
+                options: ['Sacagawea and Pocahontas', 'Sitting Bull and Crazy Horse', 'Lewis and Clark', 'Washington and Jefferson'],
+                correct: 1,
+                explanation: 'Chiefs Sitting Bull and Crazy Horse led the American Indians to defeat General Custer.'
+            },
+            // California Gold Rush
+            {
+                category: 'Gold Rush',
+                question: 'In what year did the California Gold Rush begin?',
+                options: ['1776', '1812', '1849', '1900'],
+                correct: 2,
+                explanation: 'The California Gold Rush began in 1849.'
+            },
+            {
+                category: 'Gold Rush',
+                question: 'What were people who rushed to California for gold called?',
+                options: ['Gold-Getters', 'Forty-Niners', 'Lucky Ones', 'Treasure Hunters'],
+                correct: 1,
+                explanation: 'People who rushed to California in 1849 were called "Forty-Niners."'
+            },
+            {
+                category: 'Gold Rush',
+                question: 'What did most people who went to California for gold end up doing?',
+                options: ['All became rich', 'Running ranches and farms', 'Going back home', 'Becoming presidents'],
+                correct: 1,
+                explanation: 'Few found gold, but many ended up staying and running ranches and farms, causing California to grow.'
+            },
+            // Inventions
+            {
+                category: 'Inventions',
+                question: 'What did the Erie Canal connect?',
+                options: ['Pacific Ocean to Atlantic Ocean', 'Great Lakes to Atlantic Ocean', 'Mississippi River to Gulf of Mexico', 'Two cities'],
+                correct: 1,
+                explanation: 'The Erie Canal was a human-made waterway connecting the Great Lakes to the Atlantic Ocean.'
+            },
+            {
+                category: 'Inventions',
+                question: 'Who invented the telegraph?',
+                options: ['Eli Whitney', 'Thomas Edison', 'Samuel Morse', 'Benjamin Franklin'],
+                correct: 2,
+                explanation: 'Samuel Morse invented the telegraph to send messages using Morse Code.'
+            },
+            {
+                category: 'Inventions',
+                question: 'What did Eli Whitney\'s cotton gin do?',
+                options: ['Made cotton candy', 'Removed seeds from cotton', 'Planted cotton', 'Colored cotton'],
+                correct: 1,
+                explanation: 'Eli Whitney\'s cotton gin was invented to remove seeds from cotton.'
+            },
+            {
+                category: 'Inventions',
+                question: 'What was the main form of travel on large rivers?',
+                options: ['Airplane', 'Car', 'Steamboat', 'Bicycle'],
+                correct: 2,
+                explanation: 'The steamboat was the main form of travel on large rivers for transporting people and goods.'
+            },
+            // Geography
+            {
+                category: 'Geography',
+                question: 'What are the Rocky Mountains?',
+                options: ['A desert', 'A river', 'A mountain range in the west', 'An island'],
+                correct: 2,
+                explanation: 'The Rocky Mountains are a major mountain range in the western United States.'
+            },
+            {
+                category: 'Geography',
+                question: 'What is the Continental Divide?',
+                options: ['A type of bridge', 'Ridge separating rivers flowing east vs west', 'A famous building', 'A treaty'],
+                correct: 1,
+                explanation: 'The Continental Divide is a mountain ridge that separates rivers flowing east from those flowing west.'
+            },
+            // Economics
+            {
+                category: 'Economics',
+                question: 'What is "opportunity cost"?',
+                options: ['Free money', 'What you give up when you make a choice', 'A type of job', 'Paying for school'],
+                correct: 1,
+                explanation: 'Opportunity cost is what you give up when you make a choice.'
+            },
+            {
+                category: 'Economics',
+                question: 'When more people want something than is available, what happens to the price?',
+                options: ['Price goes down', 'Price goes up', 'Price stays the same', 'Price disappears'],
+                correct: 1,
+                explanation: 'When demand is high and supply is low, prices go up. This is supply and demand.'
+            },
+            // NEW - Railroad & Locomotive
+            {
+                category: 'Inventions',
+                question: 'What did railroad tracks do for cities in the eastern U.S.?',
+                options: ['Made them smaller', 'Linked them together for fast, cheap travel', 'Destroyed them', 'Made them islands'],
+                correct: 1,
+                explanation: 'Railroad tracks linked cities in the eastern U.S., making travel fast and cheap and easy to ship goods.'
+            },
+            {
+                category: 'Inventions',
+                question: 'What were locomotives?',
+                options: ['Types of boats', 'Steam engines used in railroad engines', 'Flying machines', 'Types of horses'],
+                correct: 1,
+                explanation: 'Locomotives were steam engines used in railroad engines. They made travel faster and cheaper than steamboats.'
+            },
+            // NEW - Geography: Great Plains
+            {
+                category: 'Geography',
+                question: 'What are the Great Plains?',
+                options: ['Mountains in the east', 'Large flat grasslands in the middle of America', 'Islands in the ocean', 'Forests in California'],
+                correct: 1,
+                explanation: 'The Great Plains are large, flat grasslands in the middle of America. Pioneers crossed them going west.'
+            },
+            {
+                category: 'Geography',
+                question: 'Were the Great Plains a barrier or gateway to westward expansion?',
+                options: ['Barrier - hard to cross', 'Gateway - easy path west', 'Neither', 'Both - flat but long journey'],
+                correct: 3,
+                explanation: 'The Great Plains were both - flat and open (gateway) but very long to cross with few trees or water (barrier).'
+            },
+            // NEW - Geography: Gulf of Mexico
+            {
+                category: 'Geography',
+                question: 'Where is the Gulf of Mexico located?',
+                options: ['North of Canada', 'South of Texas and Louisiana', 'East of New York', 'West of California'],
+                correct: 1,
+                explanation: 'The Gulf of Mexico is a large body of water south of Texas, Louisiana, Mississippi, Alabama, and Florida.'
+            },
+            // NEW - Geography: Atlantic Coastal Plain
+            {
+                category: 'Geography',
+                question: 'What is the Atlantic Coastal Plain?',
+                options: ['Mountains along the Pacific', 'Flat land along the Atlantic Ocean coast', 'A desert in Arizona', 'An island'],
+                correct: 1,
+                explanation: 'The Atlantic Coastal Plain is flat, low land along the east coast of America near the Atlantic Ocean.'
+            },
+            // NEW - Geography: Mississippi River
+            {
+                category: 'Geography',
+                question: 'Why was the Mississippi River important for westward expansion?',
+                options: ['It was a barrier blocking travel', 'It was used to transport goods and people by steamboat', 'It was too small to use', 'It only flowed east'],
+                correct: 1,
+                explanation: 'The Mississippi River was a major transportation route. Steamboats carried goods and people up and down the river.'
+            },
+            {
+                category: 'Geography',
+                question: 'Which direction does the Mississippi River flow?',
+                options: ['East to west', 'West to east', 'North to south', 'South to north'],
+                correct: 2,
+                explanation: 'The Mississippi River flows from north to south, from Minnesota down to the Gulf of Mexico.'
+            },
+            // War of 1812 - Additional Causes
+            {
+                category: 'War of 1812',
+                question: 'Why was the U.S. unable to trade freely before the War of 1812?',
+                options: ['No ships available', 'The U.S. wouldn\'t choose a side between France and Britain', 'Trade was illegal', 'The ocean was too dangerous'],
+                correct: 1,
+                explanation: 'The U.S. couldn\'t trade freely because they wouldn\'t choose a side between France and Britain, who were at war.'
+            },
+            {
+                category: 'War of 1812',
+                question: 'What did the British give to American Indians to use against Americans?',
+                options: ['Money', 'Land', 'Weapons', 'Food'],
+                correct: 2,
+                explanation: 'The British gave weapons to American Indians to use against Americans. This was one cause of the War of 1812.'
+            },
+            {
+                category: 'War of 1812',
+                question: 'Which of these was NOT a cause of the War of 1812?',
+                options: ['Impressment of sailors', 'British giving weapons to American Indians', 'U.S. not choosing sides in European war', 'The California Gold Rush'],
+                correct: 3,
+                explanation: 'The California Gold Rush happened in 1849, long after the War of 1812. The other three were all causes of the war.'
+            },
+            // Battle of Little Bighorn - Aftermath
+            {
+                category: 'Battle of Little Bighorn',
+                question: 'What happened to Sitting Bull and Crazy Horse after the Battle of Little Bighorn?',
+                options: ['They became U.S. presidents', 'They were later defeated and their people forced onto reservations', 'They moved to Canada forever', 'Nothing happened to them'],
+                correct: 1,
+                explanation: 'Although they won at Little Bighorn, both chiefs were later defeated and their people were forced onto reservations.'
+            },
+            {
+                category: 'Battle of Little Bighorn',
+                question: 'Why were U.S. soldiers sent west to fight American Indians?',
+                options: ['To find gold', 'To force them onto reservations', 'To learn their language', 'To trade with them'],
+                correct: 1,
+                explanation: 'Soldiers were sent to the west to force American Indians onto reservations so settlers could take their land.'
+            },
+            // Economic Concepts - Benefits & Costs
+            {
+                category: 'Economics',
+                question: 'What are "benefits" in economics?',
+                options: ['Things that cost money', 'The good things you get from a choice', 'Taxes you pay', 'Problems you face'],
+                correct: 1,
+                explanation: 'Benefits are the good things or advantages you get from making a choice.'
+            },
+            {
+                category: 'Economics',
+                question: 'What are "costs" in economics?',
+                options: ['Only money you spend', 'What you give up or pay for something', 'Free things', 'Things you find'],
+                correct: 1,
+                explanation: 'Costs are what you give up or pay when you make a choice - this can be money, time, or other things.'
+            },
+            {
+                category: 'Economics',
+                question: 'A pioneer family decides to travel the Oregon Trail. The BENEFIT might be:',
+                options: ['Leaving their friends behind', 'New farmland out west', 'A dangerous journey', 'Spending all their money'],
+                correct: 1,
+                explanation: 'The benefit (good thing) of going west was getting new farmland. The costs were danger, leaving friends, spending money.'
+            },
+            // Barriers vs Gateways
+            {
+                category: 'Geography',
+                question: 'The Rocky Mountains were considered a _____ to westward expansion.',
+                options: ['Gateway - easy to cross', 'Barrier - hard to cross', 'River', 'City'],
+                correct: 1,
+                explanation: 'The Rocky Mountains were a barrier (obstacle) because they were difficult and dangerous to cross.'
+            },
+            {
+                category: 'Geography',
+                question: 'Rivers like the Mississippi were considered _____ to expansion.',
+                options: ['Barriers only', 'Gateways - helped move people and goods', 'Walls', 'Problems'],
+                correct: 1,
+                explanation: 'Rivers were gateways because steamboats could transport people and goods along them easily.'
+            },
+            {
+                category: 'Geography',
+                question: 'The Erie Canal was a _____ because it:',
+                options: ['Barrier - blocked ships', 'Gateway - connected Great Lakes to Atlantic Ocean', 'Mountain - hard to climb', 'Desert - no water'],
+                correct: 1,
+                explanation: 'The Erie Canal was a gateway because it connected the Great Lakes to the Atlantic Ocean, making trade and travel easier.'
+            },
+            {
+                category: 'Geography',
+                question: 'Which physical feature was a BARRIER to westward expansion?',
+                options: ['Mississippi River', 'Erie Canal', 'Rocky Mountains', 'Atlantic Ocean ports'],
+                correct: 2,
+                explanation: 'The Rocky Mountains were a barrier because they were difficult to cross. Rivers and canals were gateways that helped travel.'
+            }
+        ];
+
+        function shuffle(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function renderFlashcards() {
+            const grid = document.getElementById('flashcardGrid');
+            grid.innerHTML = flashcards.map(card => `
+                <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">${card.front}</div>
+                        <div class="flashcard-back">${card.back}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function startQuiz() {
+            questions = shuffle(questionBank).slice(0, 25);
+            currentQuestion = 0;
+            score = 0;
+            missedQuestions = [];
+            
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('quizScreen').classList.remove('hidden');
+            
+            renderQuestion();
+            startTimer();
+        }
+
+        function startTimer() {
+            timeLeft = 60;
+            updateTimerDisplay();
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    autoSubmit();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const timer = document.getElementById('timer');
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            timer.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+            timer.classList.toggle('warning', timeLeft <= 10);
+        }
+
+        function autoSubmit() {
+            if (selectedOption === null) selectedOption = -1;
+            submitAnswer();
+        }
+
+        function renderQuestion() {
+            const q = questions[currentQuestion];
+            
+            document.getElementById('progressBar').style.width = ((currentQuestion + 1) / questions.length * 100) + '%';
+            document.getElementById('progressText').textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+            document.getElementById('categoryBadge').textContent = q.category;
+            document.getElementById('questionText').textContent = q.question;
+            
+            const shuffledOptions = q.options.map((opt, i) => ({ text: opt, originalIndex: i }));
+            shuffle(shuffledOptions);
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = shuffledOptions.map((opt, i) => `
+                <div class="option" data-original="${opt.originalIndex}" onclick="selectOption(${i}, ${opt.originalIndex})">${opt.text}</div>
+            `).join('');
+            
+            selectedOption = null;
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').classList.remove('hidden');
+            document.getElementById('nextBtn').classList.add('hidden');
+            document.getElementById('feedback').classList.add('hidden');
+        }
+
+        function selectOption(displayIndex, originalIndex) {
+            const options = document.querySelectorAll('.option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            options[displayIndex].classList.add('selected');
+            selectedOption = originalIndex;
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        function submitAnswer() {
+            clearInterval(timerInterval);
+            
+            const q = questions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            const isCorrect = selectedOption === q.correct;
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                const origIdx = parseInt(opt.dataset.original);
+                if (origIdx === q.correct) opt.classList.add('correct');
+                if (origIdx === selectedOption && !isCorrect) opt.classList.add('incorrect');
+            });
+            
+            if (isCorrect) {
+                score++;
+            } else {
+                missedQuestions.push({
+                    question: q.question,
+                    yourAnswer: selectedOption >= 0 ? q.options[selectedOption] : 'No answer',
+                    correctAnswer: q.options[q.correct],
+                    explanation: q.explanation
+                });
+            }
+            
+            const feedback = document.getElementById('feedback');
+            feedback.classList.remove('hidden', 'correct', 'incorrect');
+            feedback.classList.add(isCorrect ? 'correct' : 'incorrect');
+            document.getElementById('feedbackTitle').textContent = isCorrect ? '✅ Correct!' : '❌ Incorrect';
+            document.getElementById('feedbackText').textContent = q.explanation;
+            
+            document.getElementById('submitBtn').classList.add('hidden');
+            document.getElementById('nextBtn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion >= questions.length) {
+                // Show map labeling as final question
+                showMapQuestion();
+            } else {
+                renderQuestion();
+                startTimer();
+            }
+        }
+
+        function showMapQuestion() {
+            mapInQuizMode = true;
+            clearInterval(timerInterval);
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('mapScreen').classList.remove('hidden');
+            
+            // Update header for quiz context
+            document.querySelector('#mapScreen .header h1').textContent = '🗺️ Final Question: Label the Map!';
+            document.querySelector('#mapScreen .header p').textContent = 'Place all 9 labels correctly to earn bonus points!';
+            
+            resetMapPractice();
+            setupMapListeners();
+        }
+
+        function showResults() {
+            clearInterval(timerInterval);
+            
+            document.getElementById('mapScreen').classList.add('hidden');
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('resultsScreen').classList.remove('hidden');
+            document.getElementById('resultsScreen').style.display = 'block';
+            
+            // Calculate total including map (25 questions + 9 map labels = 34 total points)
+            const totalPossible = questions.length + 9;
+            const percentage = Math.round((score / totalPossible) * 100);
+            document.getElementById('finalScore').textContent = percentage + '%';
+            
+            const messages = percentage >= 80 ? 'Excellent work!' : percentage >= 60 ? 'Good effort!' : 'Keep studying!';
+            document.getElementById('scoreMessage').textContent = `${messages} (${score}/${totalPossible} points)`;
+            
+            const reviewSection = document.getElementById('reviewSection');
+            
+            if (missedQuestions.length > 0) {
+                reviewSection.classList.remove('hidden');
+                startReviewMode();
+            } else {
+                reviewSection.classList.add('hidden');
+            }
+        }
+
+        function startReviewMode() {
+            reviewQuestions = [...missedQuestions];
+            currentReviewQuestion = 0;
+            reviewScore = 0;
+            selectedReviewOption = null;
+            
+            document.getElementById('reviewScore').classList.add('hidden');
+            document.getElementById('reviewProgress').classList.remove('hidden');
+            document.getElementById('reviewQuestion').classList.remove('hidden');
+            document.getElementById('reviewOptions').classList.remove('hidden');
+            document.getElementById('reviewCheckBtn').classList.remove('hidden');
+            
+            renderReviewQuestion();
+        }
+
+        function renderReviewQuestion() {
+            const q = reviewQuestions[currentReviewQuestion];
+            
+            document.getElementById('reviewProgress').textContent = 
+                `Question ${currentReviewQuestion + 1} of ${reviewQuestions.length}`;
+            document.getElementById('reviewQuestion').textContent = q.question;
+            
+            // Create shuffled options
+            let allOptions = [q.correctAnswer];
+            // Add some wrong options based on the original question
+            const originalQ = questionBank.find(qb => qb.question === q.question);
+            if (originalQ) {
+                originalQ.options.forEach(opt => {
+                    if (opt !== q.correctAnswer && allOptions.length < 4) {
+                        allOptions.push(opt);
+                    }
+                });
+            }
+            // Properly shuffle the options
+            allOptions = shuffle(allOptions);
+            
+            const optionsContainer = document.getElementById('reviewOptions');
+            optionsContainer.innerHTML = allOptions.map((opt, i) => `
+                <div class="review-option" data-correct="${opt === q.correctAnswer}" onclick="selectReviewOption(${i})">${opt}</div>
+            `).join('');
+            
+            selectedReviewOption = null;
+            document.getElementById('reviewCheckBtn').disabled = true;
+            document.getElementById('reviewCheckBtn').classList.remove('hidden');
+            document.getElementById('reviewNextBtn').classList.add('hidden');
+            document.getElementById('reviewFeedback').classList.add('hidden');
+        }
+
+        function selectReviewOption(index) {
+            const options = document.querySelectorAll('.review-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            options[index].classList.add('selected');
+            selectedReviewOption = index;
+            document.getElementById('reviewCheckBtn').disabled = false;
+        }
+
+        function checkReviewAnswer() {
+            const options = document.querySelectorAll('.review-option');
+            const selectedOpt = options[selectedReviewOption];
+            const isCorrect = selectedOpt.dataset.correct === 'true';
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt.dataset.correct === 'true') {
+                    opt.classList.add('reveal-correct');
+                }
+            });
+            
+            if (isCorrect) {
+                selectedOpt.classList.add('correct');
+                reviewScore++;
+            } else {
+                selectedOpt.classList.add('incorrect');
+            }
+            
+            const feedback = document.getElementById('reviewFeedback');
+            feedback.classList.remove('hidden', 'correct', 'incorrect');
+            feedback.classList.add(isCorrect ? 'correct' : 'incorrect');
+            feedback.textContent = isCorrect ? '✅ Great job! You got it!' : '❌ Not quite. The correct answer is highlighted.';
+            
+            document.getElementById('reviewCheckBtn').classList.add('hidden');
+            document.getElementById('reviewNextBtn').classList.remove('hidden');
+            document.getElementById('reviewNextBtn').textContent = 
+                currentReviewQuestion < reviewQuestions.length - 1 ? 'Next Question →' : 'See Results';
+        }
+
+        function nextReviewQuestion() {
+            currentReviewQuestion++;
+            if (currentReviewQuestion >= reviewQuestions.length) {
+                showReviewResults();
+            } else {
+                renderReviewQuestion();
+            }
+        }
+
+        function showReviewResults() {
+            document.getElementById('reviewProgress').classList.add('hidden');
+            document.getElementById('reviewQuestion').classList.add('hidden');
+            document.getElementById('reviewOptions').classList.add('hidden');
+            document.getElementById('reviewFeedback').classList.add('hidden');
+            document.getElementById('reviewCheckBtn').classList.add('hidden');
+            document.getElementById('reviewNextBtn').classList.add('hidden');
+            
+            const scoreDiv = document.getElementById('reviewScore');
+            scoreDiv.classList.remove('hidden');
+            
+            const percentage = Math.round((reviewScore / reviewQuestions.length) * 100);
+            document.getElementById('reviewScoreText').textContent = 
+                `You got ${reviewScore} out of ${reviewQuestions.length} correct (${percentage}%) on the review!`;
+        }
+
+        function restartQuiz() {
+            document.getElementById('resultsScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+        }
+
+        // Map Practice Functions
+        function startMapPractice() {
+            mapInQuizMode = false;
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('mapScreen').classList.remove('hidden');
+            
+            // Reset header for practice mode
+            document.querySelector('#mapScreen .header h1').textContent = '🗺️ Label the Map!';
+            document.querySelector('#mapScreen .header p').textContent = 'Click on each location to place the correct label';
+            
+            resetMapPractice();
+            setupMapListeners();
+        }
+
+        function resetMapPractice() {
+            selectedLabel = null;
+            placedLabels = {};
+            
+            document.querySelectorAll('.map-hotspot').forEach(spot => {
+                spot.textContent = '';
+                spot.classList.remove('placed', 'correct', 'incorrect');
+            });
+            
+            document.querySelectorAll('.label-chip').forEach(chip => {
+                chip.classList.remove('selected', 'used');
+            });
+            
+            document.getElementById('checkMapBtn').disabled = true;
+            document.getElementById('checkMapBtn').classList.remove('hidden');
+            document.getElementById('mapResultBtn').classList.add('hidden');
+            document.getElementById('mapFeedback').classList.add('hidden');
+            updateMapProgress();
+        }
+
+        function setupMapListeners() {
+            let touchedLabel = null;
+            
+            // Label chip click handlers AND drag handlers
+            document.querySelectorAll('.label-chip').forEach(chip => {
+                // Make draggable (desktop)
+                chip.draggable = true;
+                
+                chip.ondragstart = function(e) {
+                    if (this.classList.contains('used')) {
+                        e.preventDefault();
+                        return;
+                    }
+                    e.dataTransfer.setData('text/plain', this.dataset.label);
+                    this.classList.add('dragging');
+                };
+                
+                chip.ondragend = function() {
+                    this.classList.remove('dragging');
+                };
+                
+                // Touch support for iPad/mobile
+                chip.ontouchstart = function(e) {
+                    if (this.classList.contains('used')) return;
+                    document.querySelectorAll('.label-chip').forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedLabel = this.dataset.label;
+                    touchedLabel = this.dataset.label;
+                };
+                
+                // Keep click functionality as fallback
+                chip.onclick = function() {
+                    if (this.classList.contains('used')) return;
+                    
+                    document.querySelectorAll('.label-chip').forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedLabel = this.dataset.label;
+                };
+            });
+
+            // Hotspot drop handlers AND click handlers
+            document.querySelectorAll('.map-hotspot').forEach(spot => {
+                spot.ondragover = function(e) {
+                    e.preventDefault();
+                    this.classList.add('drag-over');
+                };
+                
+                spot.ondragleave = function() {
+                    this.classList.remove('drag-over');
+                };
+                
+                spot.ondrop = function(e) {
+                    e.preventDefault();
+                    this.classList.remove('drag-over');
+                    
+                    const droppedLabel = e.dataTransfer.getData('text/plain');
+                    if (!droppedLabel) return;
+                    
+                    placeLabel(this, droppedLabel);
+                };
+                
+                // Touch support for iPad/mobile
+                spot.ontouchend = function(e) {
+                    if (selectedLabel) {
+                        e.preventDefault();
+                        placeLabel(this, selectedLabel);
+                        selectedLabel = null;
+                    }
+                };
+                
+                // Click functionality - place label OR remove existing
+                spot.onclick = function() {
+                    // If spot has a label and no new label selected, remove it
+                    if (this.textContent && !selectedLabel) {
+                        removeLabel(this);
+                        return;
+                    }
+                    
+                    if (!selectedLabel) {
+                        alert('Tap a label below first, then tap here! Or tap a placed label to remove it.');
+                        return;
+                    }
+                    
+                    placeLabel(this, selectedLabel);
+                    selectedLabel = null;
+                };
+            });
+        }
+        
+        function removeLabel(spot) {
+            const oldLabel = spot.textContent;
+            if (!oldLabel) return;
+            
+            // Return label to bank
+            const chip = document.querySelector(`.label-chip[data-label="${oldLabel}"]`);
+            if (chip) chip.classList.remove('used');
+            
+            // Clear the spot
+            spot.textContent = '';
+            spot.classList.remove('placed', 'correct', 'incorrect');
+            delete placedLabels[spot.dataset.location];
+            
+            updateMapProgress();
+        }
+        
+        function placeLabel(spot, label) {
+            // If this spot already has a label, return it to the bank
+            if (spot.textContent) {
+                removeLabel(spot);
+            }
+            
+            // Place the label
+            spot.textContent = label;
+            spot.classList.add('placed');
+            placedLabels[spot.dataset.location] = label;
+            
+            // Instant feedback - check if correct
+            const expectedLabel = spot.dataset.location;
+            if (label === expectedLabel) {
+                spot.classList.add('correct');
+                spot.classList.remove('incorrect');
+            } else {
+                spot.classList.add('incorrect');
+                spot.classList.remove('correct');
+            }
+            
+            // Mark the label as used
+            document.querySelector(`.label-chip[data-label="${label}"]`).classList.add('used');
+            document.querySelectorAll('.label-chip').forEach(c => c.classList.remove('selected'));
+            
+            updateMapProgress();
+        }
+
+        function updateMapProgress() {
+            const placed = Object.keys(placedLabels).length;
+            document.getElementById('mapProgressText').textContent = `${placed} of 9 placed`;
+            document.getElementById('checkMapBtn').disabled = placed < 9;
+        }
+
+        function checkMapLabels() {
+            let correct = 0;
+            
+            document.querySelectorAll('.map-hotspot').forEach(spot => {
+                const expectedLabel = spot.dataset.location;
+                const placedLabel = spot.textContent;
+                
+                if (placedLabel === expectedLabel) {
+                    spot.classList.add('correct');
+                    correct++;
+                } else {
+                    spot.classList.add('incorrect');
+                }
+            });
+            
+            // Add map score to quiz score if in quiz mode
+            if (mapInQuizMode) {
+                score += correct; // Add each correct label as a point
+            }
+            
+            const feedback = document.getElementById('mapFeedback');
+            feedback.classList.remove('hidden');
+            
+            if (correct === 9) {
+                feedback.className = 'map-feedback success';
+                feedback.innerHTML = '<h3>🎉 Perfect! All 9 correct!</h3><p>You know your map!</p>';
+            } else {
+                feedback.className = 'map-feedback partial';
+                feedback.innerHTML = `<h3>You got ${correct} out of 9 correct</h3><p>Green = correct, Red = incorrect. The letter shows what YOU placed.</p>`;
+            }
+            
+            document.getElementById('checkMapBtn').classList.add('hidden');
+            document.getElementById('mapResultBtn').classList.remove('hidden');
+            document.getElementById('mapResultBtn').textContent = mapInQuizMode ? 'See Final Results →' : '← Back to Study';
+        }
+
+        function backToStart() {
+            document.getElementById('mapScreen').classList.add('hidden');
+            if (mapInQuizMode) {
+                // Update total questions to include map labels
+                questions.mapBonus = 9; // Track that we had map questions
+                showResults();
+            } else {
+                document.getElementById('startScreen').classList.remove('hidden');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', renderFlashcards);
+    </script>
+</body>
+</html>
