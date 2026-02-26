@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Angles Test Helper - Unit 5 (English Translation)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f4f8 0%, #d4e9ed 50%, #e0f0f5 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #2c3e50;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2rem;
+            color: #2980b9;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #5d6d7e;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+        }
+
+        /* Vocabulary Section */
+        .vocab-section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border: 2px solid #3498db;
+        }
+
+        .vocab-section h2 {
+            color: #2980b9;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .vocab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .vocab-item {
+            background: #f8fbfc;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+
+        .vocab-item .spanish {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+
+        .vocab-item .english {
+            color: #27ae60;
+        }
+
+        /* Key Concepts */
+        .concepts-section {
+            background: #fff9e6;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border: 2px solid #f39c12;
+        }
+
+        .concepts-section h2 {
+            color: #d68910;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .concept-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .concept-item {
+            background: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border-left: 4px solid #f39c12;
+        }
+
+        .concept-item strong {
+            color: #d68910;
+        }
+
+        /* Question Cards */
+        .question-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border: 1px solid #d4e9ed;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .question-number {
+            background: #2980b9;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .points {
+            background: #27ae60;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .question-parts {
+            background: #f8fbfc;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .question-parts p {
+            margin-bottom: 8px;
+            padding-left: 15px;
+            border-left: 3px solid #3498db;
+        }
+
+        .question-parts p:last-child {
+            margin-bottom: 0;
+        }
+
+        .options-list {
+            background: #f8fbfc;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .options-list p {
+            margin-bottom: 5px;
+            padding: 5px 10px;
+        }
+
+        /* Help Button */
+        .help-btn {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .help-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4);
+        }
+
+        .help-btn.active {
+            background: linear-gradient(135deg, #8e44ad, #7d3c98);
+        }
+
+        /* Help Content */
+        .help-content {
+            display: none;
+            background: linear-gradient(135deg, #f5eef8, #ebdef0);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 15px;
+            border: 2px solid #9b59b6;
+        }
+
+        .help-content.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .help-content h4 {
+            color: #8e44ad;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+
+        .help-content ol, .help-content ul {
+            margin-left: 20px;
+            margin-bottom: 12px;
+        }
+
+        .help-content li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .help-content .formula {
+            background: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            color: #8e44ad;
+            display: inline-block;
+            margin: 10px 0;
+            border: 2px solid #9b59b6;
+        }
+
+        .help-content .tip {
+            background: #d5f5e3;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border-left: 4px solid #27ae60;
+            margin-top: 10px;
+        }
+
+        .help-content .tip strong {
+            color: #27ae60;
+        }
+
+        /* Angle Types Reference */
+        .angle-types {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .angle-type {
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+        }
+
+        .angle-type .icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .angle-type .name {
+            font-weight: bold;
+            color: #2980b9;
+        }
+
+        .angle-type .range {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+            }
+            .help-btn {
+                display: none;
+            }
+            .help-content {
+                display: block !important;
+                border: 1px solid #ccc;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .vocab-grid {
+                grid-template-columns: 1fr;
+            }
+            .angle-types {
+                grid-template-columns: 1fr;
+            }
+            .question-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Angles Test Helper</h1>
+        <p class="subtitle">4th Grade Unit 5 - English Translation with Hints</p>
+
+        <!-- Vocabulary Section -->
+        <div class="vocab-section">
+            <h2>Key Vocabulary (Spanish → English)</h2>
+            <div class="vocab-grid">
+                <div class="vocab-item">
+                    <span class="spanish">ángulo</span> → <span class="english">angle</span>
+                </div>
+                <div class="vocab-item">
+                    <span class="spanish">grado(s)</span> → <span class="english">degree(s)</span>
+                </div>
+                <div class="vocab-item">
+                    <span class="spanish">ángulo recto</span> → <span class="english">right angle (90°)</span>
+                </div>
+                <div class="vocab-item">
+                    <span class="spanish">ángulo agudo</span> → <span class="english">acute angle (&lt;90°)</span>
+                </div>
+                <div class="vocab-item">
+                    <span class="spanish">ángulo obtuso</span> → <span class="english">obtuse angle (&gt;90°)</span>
+                </div>
+                <div class="vocab-item">
+                    <span class="spanish">círculo</span> → <span class="english">circle</span>
+                </div>
+                <div class="vocab-item">
+                    <span class="spanish">fracción</span> → <span class="english">fraction</span>
+                </div>
+                <div class="vocab-item">
+                    <span class="spanish">medida</span> → <span class="english">measure</span>
+                </div>
+                <div class="vocab-item">
+                    <span class="spanish">transportador</span> → <span class="english">protractor</span>
+                </div>
+                <div class="vocab-item">
+                    <span class="spanish">dibuja</span> → <span class="english">draw</span>
+                </div>
+                <div class="vocab-item">
+                    <span class="spanish">etiqueta</span> → <span class="english">label</span>
+                </div>
+                <div class="vocab-item">
+                    <span class="spanish">porción</span> → <span class="english">portion/slice</span>
+                </div>
+                <div class="vocab-item">
+                    <span class="spanish">reloj</span> → <span class="english">clock</span>
+                </div>
+                <div class="vocab-item">
+                    <span class="spanish">manecillas</span> → <span class="english">clock hands</span>
+                </div>
+                <div class="vocab-item">
+                    <span class="spanish">justifica</span> → <span class="english">justify/explain</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Concepts -->
+        <div class="concepts-section">
+            <h2>Key Concepts to Remember</h2>
+            <div class="concept-list">
+                <div class="concept-item">
+                    <strong>A full circle = 360°</strong> — This is the most important number for this test!
+                </div>
+                <div class="concept-item">
+                    <strong>Acute angle:</strong> Less than 90° (sharp, small)
+                </div>
+                <div class="concept-item">
+                    <strong>Right angle:</strong> Exactly 90° (makes an "L" shape)
+                </div>
+                <div class="concept-item">
+                    <strong>Obtuse angle:</strong> More than 90° but less than 180° (wide, open)
+                </div>
+                <div class="concept-item">
+                    <strong>To find one slice:</strong> 360° ÷ number of equal pieces
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 1 -->
+        <div class="question-card">
+            <div class="question-header">
+                <span class="question-number">Question 1</span>
+                <span class="points">6 Points</span>
+            </div>
+            <div class="question-text">
+                <strong>Use the image to answer the following questions.</strong>
+                <br><br>
+                Look at the geometric figure shown (rectangle with diagonal lines creating triangles inside).
+            </div>
+            <div class="question-parts">
+                <p><strong>Part A:</strong> Label the RIGHT angles in the image with the letter "R".</p>
+                <p><strong>Part B:</strong> Label the ACUTE angles in the image with the letter "A".</p>
+                <p><strong>Part C:</strong> Label the OBTUSE angles in the image with the letter "O".</p>
+            </div>
+            <button class="help-btn" onclick="toggleHelp(this)">
+                💡 How to Solve
+            </button>
+            <div class="help-content">
+                <h4>Step-by-Step Approach:</h4>
+                <ol>
+                    <li><strong>Find Right Angles (R):</strong> Look for corners that make a perfect "L" shape (90°). The corners of the rectangle are right angles!</li>
+                    <li><strong>Find Acute Angles (A):</strong> Look for angles that are smaller/sharper than a right angle. The pointy angles where the diagonal lines meet are acute.</li>
+                    <li><strong>Find Obtuse Angles (O):</strong> Look for angles that are wider/more open than a right angle. Some angles where diagonals cross may be obtuse.</li>
+                </ol>
+                <div class="tip">
+                    <strong>Tip:</strong> Use the corner of a piece of paper as a reference for a right angle. If the angle is smaller, it's acute. If it's bigger, it's obtuse.
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="question-card">
+            <div class="question-header">
+                <span class="question-number">Question 2</span>
+                <span class="points">6 Points</span>
+            </div>
+            <div class="question-text">
+                <strong>Draw an example of a right angle, an acute angle, and an obtuse angle.</strong>
+                <br><br>
+                Label each angle as right, acute, or obtuse.
+            </div>
+            <button class="help-btn" onclick="toggleHelp(this)">
+                💡 How to Solve
+            </button>
+            <div class="help-content">
+                <h4>What to Draw:</h4>
+                <div class="angle-types">
+                    <div class="angle-type">
+                        <div class="icon">📐</div>
+                        <div class="name">Right Angle</div>
+                        <div class="range">Exactly 90°</div>
+                        <p>Draw an "L" shape</p>
+                    </div>
+                    <div class="angle-type">
+                        <div class="icon">📏</div>
+                        <div class="name">Acute Angle</div>
+                        <div class="range">Less than 90°</div>
+                        <p>Draw a sharp, narrow angle</p>
+                    </div>
+                    <div class="angle-type">
+                        <div class="icon">📖</div>
+                        <div class="name">Obtuse Angle</div>
+                        <div class="range">90° to 180°</div>
+                        <p>Draw a wide, open angle</p>
+                    </div>
+                </div>
+                <div class="tip">
+                    <strong>Tip:</strong> Don't forget to write the label next to each angle you draw!
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="question-card">
+            <div class="question-header">
+                <span class="question-number">Question 3</span>
+                <span class="points">1 Point</span>
+            </div>
+            <div class="question-text">
+                <strong>Which figure has 2 acute angles and 1 right angle?</strong>
+                <br><br>
+                Look at the four shapes shown: A (parallelogram), B (irregular quadrilateral), C (trapezoid), D (rectangle/square).
+            </div>
+            <button class="help-btn" onclick="toggleHelp(this)">
+                💡 How to Solve
+            </button>
+            <div class="help-content">
+                <h4>Step-by-Step Approach:</h4>
+                <ol>
+                    <li>Count the angles in each shape</li>
+                    <li>Identify which angles are acute (less than 90°)</li>
+                    <li>Identify which angle is exactly 90° (right angle)</li>
+                    <li>Find the shape with exactly 2 acute + 1 right angle</li>
+                </ol>
+                <div class="tip">
+                    <strong>Tip:</strong> A right triangle has exactly 1 right angle and 2 acute angles! Look for a triangle shape or a shape that contains these angles.
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="question-card">
+            <div class="question-header">
+                <span class="question-number">Question 4</span>
+                <span class="points">2 Points</span>
+            </div>
+            <div class="question-text">
+                <strong>Draw an obtuse angle. Measure it and write how many degrees it measures.</strong>
+                <br><br>
+                Write your answer on the line labeled "Grados:" (Degrees:)
+            </div>
+            <button class="help-btn" onclick="toggleHelp(this)">
+                💡 How to Solve
+            </button>
+            <div class="help-content">
+                <h4>Step-by-Step Approach:</h4>
+                <ol>
+                    <li><strong>Draw:</strong> Make an angle that is wider/more open than a right angle (bigger than 90°)</li>
+                    <li><strong>Measure:</strong> Use the protractor shown in the image
+                        <ul>
+                            <li>Place the center of the protractor at the vertex (corner) of your angle</li>
+                            <li>Line up one ray with 0°</li>
+                            <li>Read where the other ray crosses the protractor</li>
+                        </ul>
+                    </li>
+                    <li><strong>Write:</strong> Your answer should be a number between 91° and 179°</li>
+                </ol>
+                <div class="tip">
+                    <strong>Tip:</strong> An obtuse angle must be MORE than 90° but LESS than 180°. Examples: 100°, 120°, 150°
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 5 -->
+        <div class="question-card">
+            <div class="question-header">
+                <span class="question-number">Question 5</span>
+                <span class="points">1 Point</span>
+            </div>
+            <div class="question-text">
+                <strong>Angle POQ is shown below. What would be the degree measure of the rest of the circle?</strong>
+                <br><br>
+                The angle POQ shown measures 85°.
+            </div>
+            <button class="help-btn" onclick="toggleHelp(this)">
+                💡 How to Solve
+            </button>
+            <div class="help-content">
+                <h4>Step-by-Step Approach:</h4>
+                <ol>
+                    <li>Remember: A full circle = 360°</li>
+                    <li>The angle POQ takes up 85° of the circle</li>
+                    <li>Subtract to find the rest: 360° - 85° = ?</li>
+                </ol>
+                <div class="formula">360° - 85° = 275°</div>
+                <div class="tip">
+                    <strong>Answer:</strong> The rest of the circle is <strong>275°</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 6 -->
+        <div class="question-card">
+            <div class="question-header">
+                <span class="question-number">Question 6</span>
+                <span class="points">1 Point</span>
+            </div>
+            <div class="question-text">
+                <strong>What fraction of a circle is 1 degree?</strong>
+            </div>
+            <div class="options-list">
+                <p>A. 1/360</p>
+                <p>B. 1/100</p>
+                <p>C. 1/90</p>
+                <p>D. 1/1</p>
+            </div>
+            <button class="help-btn" onclick="toggleHelp(this)">
+                💡 How to Solve
+            </button>
+            <div class="help-content">
+                <h4>Think About It:</h4>
+                <ol>
+                    <li>A full circle has 360 degrees total</li>
+                    <li>If the whole circle is 360°, then 1° is ONE part out of 360 parts</li>
+                    <li>As a fraction: 1 out of 360 = 1/360</li>
+                </ol>
+                <div class="formula">1 degree = 1/360 of a circle</div>
+                <div class="tip">
+                    <strong>Answer:</strong> A. 1/360
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 7 -->
+        <div class="question-card">
+            <div class="question-header">
+                <span class="question-number">Question 7</span>
+                <span class="points">2 Points</span>
+            </div>
+            <div class="question-text">
+                <strong>Use the protractor to answer the following question.</strong>
+                <br><br>
+                The protractor shows points F, G, and H. Point G is at the center.
+            </div>
+            <div class="question-parts">
+                <p><strong>Question:</strong> What is the measure of angle FGH?</p>
+                <p><strong>Question:</strong> What type of angle is it?</p>
+            </div>
+            <button class="help-btn" onclick="toggleHelp(this)">
+                💡 How to Solve
+            </button>
+            <div class="help-content">
+                <h4>How to Read a Protractor:</h4>
+                <ol>
+                    <li><strong>Find the vertex:</strong> G is at the center of the protractor</li>
+                    <li><strong>Find where F is:</strong> Look at which number F lines up with on the protractor</li>
+                    <li><strong>Find where H is:</strong> Look at which number H lines up with</li>
+                    <li><strong>Calculate:</strong> The angle measure is the difference between these two numbers (or read directly if one ray is at 0°)</li>
+                    <li><strong>Classify:</strong> 
+                        <ul>
+                            <li>If less than 90° → Acute (agudo)</li>
+                            <li>If exactly 90° → Right (recto)</li>
+                            <li>If more than 90° → Obtuse (obtuso)</li>
+                        </ul>
+                    </li>
+                </ol>
+                <div class="tip">
+                    <strong>Tip:</strong> Look carefully at the protractor image in your test. Read where each point is located and subtract to find the angle.
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 8 -->
+        <div class="question-card">
+            <div class="question-header">
+                <span class="question-number">Question 8</span>
+                <span class="points">5 Points</span>
+            </div>
+            <div class="question-text">
+                <strong>Samira's mom bought a circular cake as shown.</strong>
+                <br><br>
+                The cake will be divided equally among 8 people. Divide the circle into 8 equal portions.
+            </div>
+            <div class="question-parts">
+                <p><strong>Part A:</strong> What will be the angle measure of ONE portion of cake? Justify your answer.</p>
+                <p><strong>Part B:</strong> What will be the angle measure of 3 CONSECUTIVE portions of cake? Justify your answer.</p>
+            </div>
+            <button class="help-btn" onclick="toggleHelp(this)">
+                💡 How to Solve
+            </button>
+            <div class="help-content">
+                <h4>Part A - One Slice:</h4>
+                <ol>
+                    <li>A full circle = 360°</li>
+                    <li>Divide equally into 8 portions</li>
+                    <li>Each portion = 360° ÷ 8</li>
+                </ol>
+                <div class="formula">360° ÷ 8 = 45°</div>
+                <p><strong>Answer Part A:</strong> Each portion is <strong>45°</strong></p>
+                <p><strong>Justification:</strong> "A circle has 360 degrees. 360 ÷ 8 = 45, so each portion is 45 degrees."</p>
+                
+                <h4 style="margin-top: 20px;">Part B - Three Slices:</h4>
+                <ol>
+                    <li>We know one slice = 45°</li>
+                    <li>Three consecutive slices = 3 × 45°</li>
+                </ol>
+                <div class="formula">3 × 45° = 135°</div>
+                <p><strong>Answer Part B:</strong> Three portions = <strong>135°</strong></p>
+                <p><strong>Justification:</strong> "Each portion is 45 degrees. 3 × 45 = 135, so three portions is 135 degrees."</p>
+            </div>
+        </div>
+
+        <!-- Question 9 -->
+        <div class="question-card">
+            <div class="question-header">
+                <span class="question-number">Question 9</span>
+                <span class="points">2 Points</span>
+            </div>
+            <div class="question-text">
+                <strong>Use the clock to answer the following questions.</strong>
+                <br><br>
+                The clock shows 3:00 (hour hand on 3, minute hand on 12).
+            </div>
+            <div class="question-parts">
+                <p><strong>Part A:</strong> What angle measure in degrees do the clock hands represent?</p>
+                <p><strong>Part B:</strong> What fraction of the circle do the clock hands represent?</p>
+            </div>
+            <button class="help-btn" onclick="toggleHelp(this)">
+                💡 How to Solve
+            </button>
+            <div class="help-content">
+                <h4>Part A - Degrees:</h4>
+                <ol>
+                    <li>A clock is a circle with 12 hours</li>
+                    <li>Full circle = 360°</li>
+                    <li>Each hour = 360° ÷ 12 = 30°</li>
+                    <li>From 12 to 3 = 3 hours</li>
+                    <li>Angle = 3 × 30° = 90°</li>
+                </ol>
+                <div class="formula">3 hours × 30° per hour = 90°</div>
+                <p><strong>Answer Part A:</strong> The clock hands form a <strong>90°</strong> angle (right angle)</p>
+                
+                <h4 style="margin-top: 20px;">Part B - Fraction:</h4>
+                <ol>
+                    <li>The angle is 90° out of 360°</li>
+                    <li>As a fraction: 90/360</li>
+                    <li>Simplify: 90/360 = 1/4</li>
+                </ol>
+                <div class="formula">90° ÷ 360° = 1/4</div>
+                <p><strong>Answer Part B:</strong> The clock hands represent <strong>1/4</strong> (one quarter) of the circle</p>
+                <div class="tip">
+                    <strong>Another way to think about it:</strong> From 12 to 3 is 3 hours out of 12 total hours. 3/12 = 1/4
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 10 -->
+        <div class="question-card">
+            <div class="question-header">
+                <span class="question-number">Question 10</span>
+                <span class="points">2 Points</span>
+            </div>
+            <div class="question-text">
+                <strong>A circular pizza is cut into 5 equal portions as shown.</strong>
+                <br><br>
+                What equations can be used to determine the angle measure of one pizza slice? <strong>Select TWO answer choices.</strong>
+            </div>
+            <div class="options-list">
+                <p>A. 5 ÷ 360 = m</p>
+                <p>B. 180 ÷ 5 = m</p>
+                <p>C. 360 ÷ 5 = m</p>
+                <p>D. m × 5 = 180</p>
+                <p>E. 5 × m = 360</p>
+                <p>F. 360 × 5 = m</p>
+            </div>
+            <button class="help-btn" onclick="toggleHelp(this)">
+                💡 How to Solve
+            </button>
+            <div class="help-content">
+                <h4>Think About It:</h4>
+                <ol>
+                    <li>We want to find the angle (m) of ONE slice</li>
+                    <li>Full circle = 360° (not 180°!)</li>
+                    <li>There are 5 equal slices</li>
+                    <li>So: 360° ÷ 5 = one slice</li>
+                </ol>
+                
+                <h4>Check Each Option:</h4>
+                <ul>
+                    <li><strong>A. 5 ÷ 360 = m</strong> ❌ This is backwards (would give a tiny number)</li>
+                    <li><strong>B. 180 ÷ 5 = m</strong> ❌ Uses 180 instead of 360</li>
+                    <li><strong>C. 360 ÷ 5 = m</strong> ✅ Correct! This gives us 72°</li>
+                    <li><strong>D. m × 5 = 180</strong> ❌ Uses 180 instead of 360</li>
+                    <li><strong>E. 5 × m = 360</strong> ✅ Correct! Same as C, just rearranged (m = 72°)</li>
+                    <li><strong>F. 360 × 5 = m</strong> ❌ This multiplies instead of divides (would give 1800)</li>
+                </ul>
+                
+                <div class="formula">360 ÷ 5 = 72° per slice</div>
+                
+                <div class="tip">
+                    <strong>Answers:</strong> C and E<br>
+                    Both equations give you m = 72°
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
+            <h3 style="color: #27ae60; margin-bottom: 10px;">Good luck on your test!</h3>
+            <p style="color: #7f8c8d;">Remember: A full circle is always 360°</p>
+        </div>
+    </div>
+
+    <script>
+        function toggleHelp(button) {
+            const helpContent = button.nextElementSibling;
+            const isShowing = helpContent.classList.contains('show');
+            
+            // Toggle the content
+            helpContent.classList.toggle('show');
+            
+            // Update button state
+            button.classList.toggle('active');
+            
+            // Update button text
+            if (isShowing) {
+                button.innerHTML = '💡 How to Solve';
+            } else {
+                button.innerHTML = '✖️ Hide Solution';
+            }
+        }
+    </script>
+</body>
+</html>

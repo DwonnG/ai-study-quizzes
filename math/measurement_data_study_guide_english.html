@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 4c Study Guide - Measurement & Data Reasoning (English)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #4a3966;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        header h1 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        .exam-date {
+            background: #e74c3c;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #ecf0f1;
+        }
+
+        .section-icon {
+            font-size: 2.5rem;
+        }
+
+        .section-title h2 {
+            color: #2c3e50;
+            font-size: 1.4rem;
+        }
+
+        .section-title .subtitle {
+            color: #95a5a6;
+            font-size: 0.9rem;
+        }
+
+        .problem-box {
+            background: #f8f9fa;
+            border-left: 4px solid #9b59b6;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .problem-box h3 {
+            color: #9b59b6;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .problem-box .spanish {
+            color: #e74c3c;
+            font-style: italic;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #ffeaea;
+            border-radius: 8px;
+        }
+
+        .problem-box .english {
+            color: #2c3e50;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+
+        .solution-box {
+            background: #e8f5e9;
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .solution-box h4 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+
+        .step {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 8px 0;
+            border-left: 3px solid #4CAF50;
+        }
+
+        .answer {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .tip-box h3 {
+            margin-bottom: 10px;
+        }
+
+        .conversion-card {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .conversion-card h4 {
+            color: #856404;
+        }
+
+        .points {
+            background: #9b59b6;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            float: right;
+        }
+
+        .print-btn {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 30px auto;
+            padding: 15px 30px;
+            background: #9b59b6;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .print-btn:hover {
+            background: #8e44ad;
+            transform: scale(1.02);
+        }
+
+        @media print {
+            body { background: white; padding: 10px; }
+            .print-btn { display: none; }
+            .section { box-shadow: none; border: 1px solid #ddd; page-break-inside: avoid; }
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.4rem; }
+            .section { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Unit 4c: Measurement & Data Reasoning</h1>
+            <p>Study Guide with English Translations & Solutions</p>
+            <div class="exam-date">📅 Exam: Friday, February 20</div>
+        </header>
+
+        <!-- KEY CONVERSIONS -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🔑</span>
+                <div class="section-title">
+                    <h2>Key Conversions to Remember</h2>
+                    <span class="subtitle">Memorize these!</span>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <div class="conversion-card">
+                    <h4>📏 Length</h4>
+                    <p><strong>1 km = 1,000 m</strong></p>
+                </div>
+                <div class="conversion-card">
+                    <h4>⚖️ Weight</h4>
+                    <p><strong>1 kg = 1,000 g</strong></p>
+                </div>
+                <div class="conversion-card">
+                    <h4>⏰ Time</h4>
+                    <p><strong>1 hour = 60 minutes</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROBLEM 1 -->
+        <div class="section">
+            <div class="problem-box">
+                <h3>📝 Problem 1 <span class="points">3 points</span></h3>
+                <div class="spanish">
+                    Sofía y Antonia corren en el equipo de atletismo. Durante el fin de semana, Sofía corrió 4 kilómetros, y Antonia corrió 8,000 metros. ¿Cuántos metros más corrió Antonia en comparación con Sofía?
+                </div>
+                <div class="english">
+                    <strong>English:</strong> Sofia and Antonia run on the track team. Over the weekend, Sofia ran 4 kilometers, and Antonia ran 8,000 meters. How many more meters did Antonia run compared to Sofia?
+                </div>
+                
+                <div class="solution-box">
+                    <h4>✅ Solution:</h4>
+                    <div class="step"><strong>Step 1:</strong> Convert Sofia's distance to meters<br>
+                        4 km × 1,000 = <strong>4,000 m</strong></div>
+                    <div class="step"><strong>Step 2:</strong> Subtract to find the difference<br>
+                        8,000 m - 4,000 m = <strong>4,000 m</strong></div>
+                    <div class="answer">Answer: 4,000 meters</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROBLEM 2 -->
+        <div class="section">
+            <div class="problem-box">
+                <h3>📝 Problem 2 <span class="points">3 points</span></h3>
+                <div class="spanish">
+                    La familia de MJ se muda a una nueva casa. MJ está empacando 9 tazas en una caja. Cada taza pesa 675 gramos. La caja tiene capacidad para 6 kilogramos. ¿Podrá la caja contener todas las tazas?
+                </div>
+                <div class="english">
+                    <strong>English:</strong> MJ's family is moving to a new house. MJ is packing 9 cups in a box. Each cup weighs 675 grams. The box can hold 6 kilograms. Can the box hold all the cups?
+                </div>
+                
+                <div class="solution-box">
+                    <h4>✅ Solution:</h4>
+                    <div class="step"><strong>Step 1:</strong> Find total weight of cups<br>
+                        9 cups × 675 g = <strong>6,075 g</strong></div>
+                    <div class="step"><strong>Step 2:</strong> Convert box capacity to grams<br>
+                        6 kg × 1,000 = <strong>6,000 g</strong></div>
+                    <div class="step"><strong>Step 3:</strong> Compare<br>
+                        6,075 g > 6,000 g (cups are heavier than box limit!)</div>
+                    <div class="answer">Answer: NO - The cups weigh 75g too much!</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROBLEM 3 -->
+        <div class="section">
+            <div class="problem-box">
+                <h3>📝 Problem 3 <span class="points">3 points</span></h3>
+                <div class="spanish">
+                    El maletero del coche de Susie tiene una capacidad máxima de 8,719 gramos. Los comestibles que lleva en el maletero pesan 6 kilogramos. ¿Cuántos gramos más caben en el maletero?
+                </div>
+                <div class="english">
+                    <strong>English:</strong> Susie's car trunk has a maximum capacity of 8,719 grams. The groceries in the trunk weigh 6 kilograms. How many more grams can fit in the trunk?
+                </div>
+                
+                <div class="solution-box">
+                    <h4>✅ Solution:</h4>
+                    <div class="step"><strong>Step 1:</strong> Convert groceries to grams<br>
+                        6 kg × 1,000 = <strong>6,000 g</strong></div>
+                    <div class="step"><strong>Step 2:</strong> Subtract from max capacity<br>
+                        8,719 g - 6,000 g = <strong>2,719 g</strong></div>
+                    <div class="answer">Answer: 2,719 grams</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROBLEM 4 -->
+        <div class="section">
+            <div class="problem-box">
+                <h3>📝 Problem 4 <span class="points">1 point</span></h3>
+                <div class="spanish">
+                    Michele preguntó a sus compañeros cuántas horas leían durante el fin de semana. El diagrama lineal muestra el tiempo que dedicaron a leer. ¿Cuál es la diferencia entre el momento en que hubo más estudiantes y el momento en que hubo menos estudiantes?
+                </div>
+                <div class="english">
+                    <strong>English:</strong> Michele asked her classmates how many hours they read over the weekend. The line plot shows the time they spent reading. What is the difference between when there were the most students and when there were the fewest students?
+                </div>
+                
+                <div class="tip-box">
+                    <h3>💡 How to Read Line Plots:</h3>
+                    <ul>
+                        <li>Each X represents one student</li>
+                        <li>Find the value with MOST X's (most students)</li>
+                        <li>Find the value with FEWEST X's (fewest students)</li>
+                        <li>Subtract: Most - Fewest = Difference</li>
+                    </ul>
+                </div>
+                
+                <p><strong>Answer choices:</strong> A) 1/4 hours, B) 3/4 hours, C) 1 1/4 hours, D) 2 hours</p>
+                <p><em>(Need to see the actual line plot to solve)</em></p>
+            </div>
+        </div>
+
+        <!-- PROBLEM 5 -->
+        <div class="section">
+            <div class="problem-box">
+                <h3>📝 Problem 5 <span class="points">2 points</span></h3>
+                <div class="spanish">
+                    El jueves, Deangelo practica voleibol para 2 1/4 horas y luego jugó fútbol 38 minutos. Si empieza a practicar voleibol a las 2:45pm, ¿a qué hora terminará Deangelo de practicar voleibol y fútbol?
+                </div>
+                <div class="english">
+                    <strong>English:</strong> On Thursday, Deangelo practices volleyball for 2 1/4 hours and then plays soccer for 38 minutes. If he starts volleyball practice at 2:45pm, what time will Deangelo finish volleyball and soccer?
+                </div>
+                
+                <div class="solution-box">
+                    <h4>✅ Solution:</h4>
+                    <div class="step"><strong>Step 1:</strong> Convert 2 1/4 hours to minutes<br>
+                        2 hours = 120 min, 1/4 hour = 15 min<br>
+                        Total: <strong>135 minutes</strong></div>
+                    <div class="step"><strong>Step 2:</strong> Add soccer time<br>
+                        135 min + 38 min = <strong>173 minutes</strong></div>
+                    <div class="step"><strong>Step 3:</strong> Convert back to hours and minutes<br>
+                        173 ÷ 60 = 2 hours 53 minutes</div>
+                    <div class="step"><strong>Step 4:</strong> Add to start time<br>
+                        2:45pm + 2 hours = 4:45pm<br>
+                        4:45pm + 53 minutes = <strong>5:38pm</strong></div>
+                    <div class="answer">Answer: 5:38 PM</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROBLEM 6 -->
+        <div class="section">
+            <div class="problem-box">
+                <h3>📝 Problem 6 <span class="points">1 point</span></h3>
+                <div class="spanish">
+                    ¿Cuál es la masa más probable de 4 clips?
+                </div>
+                <div class="english">
+                    <strong>English:</strong> What is the most likely mass of 4 paper clips?
+                </div>
+                
+                <p><strong>Choices:</strong></p>
+                <ul>
+                    <li>A. 4 grams</li>
+                    <li>B. 4 kilograms</li>
+                    <li>C. 40 grams</li>
+                    <li>D. 40 kilograms</li>
+                </ul>
+                
+                <div class="solution-box">
+                    <h4>✅ Solution:</h4>
+                    <div class="step"><strong>Think:</strong> 1 paper clip ≈ 1 gram<br>
+                        4 paper clips ≈ 4 grams<br>
+                        (4 kg would be as heavy as a cat! 40 kg would be as heavy as a child!)</div>
+                    <div class="answer">Answer: A. 4 grams</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROBLEM 7 -->
+        <div class="section">
+            <div class="problem-box">
+                <h3>📝 Problem 7 <span class="points">2 points</span></h3>
+                <div class="spanish">
+                    Erinna necesita estar en la cena a las 6:30 p.m. Tardará 41 minutos en prepararse y 1 hora y 30 minutos en conducir hasta la cena. ¿A qué hora debería empezar a prepararse Erinna?
+                </div>
+                <div class="english">
+                    <strong>English:</strong> Erinna needs to be at dinner at 6:30 PM. It will take 41 minutes to get ready and 1 hour 30 minutes to drive to dinner. What time should Erinna start getting ready?
+                </div>
+                
+                <div class="solution-box">
+                    <h4>✅ Solution: (Work BACKWARDS!)</h4>
+                    <div class="step"><strong>Step 1:</strong> Add up total time needed<br>
+                        41 min + 1 hr 30 min = <strong>2 hours 11 minutes</strong></div>
+                    <div class="step"><strong>Step 2:</strong> Subtract from arrival time<br>
+                        6:30 PM - 2 hours = 4:30 PM<br>
+                        4:30 PM - 11 minutes = <strong>4:19 PM</strong></div>
+                    <div class="answer">Answer: 4:19 PM</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROBLEM 8 -->
+        <div class="section">
+            <div class="problem-box">
+                <h3>📝 Problem 8 <span class="points">1 point</span></h3>
+                <div class="spanish">
+                    Steven mide la distancia que puede saltar. Anota las distancias de cada salto en la tabla. ¿Qué gráfico lineal muestra los datos mostrados correctamente?
+                </div>
+                <div class="english">
+                    <strong>English:</strong> Steven measures the distance he can jump. He records the distance of each jump in the table. Which line plot shows the data correctly?
+                </div>
+                
+                <div class="tip-box">
+                    <h3>💡 How to Match Data to Line Plot:</h3>
+                    <ul>
+                        <li>Count how many times each value appears in the table</li>
+                        <li>That number = how many X's should be above that value on the line plot</li>
+                        <li>Check each answer choice to find the match!</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROBLEM 9 -->
+        <div class="section">
+            <div class="problem-box">
+                <h3>📝 Problem 9 <span class="points">4 points</span></h3>
+                <div class="spanish">
+                    Los alumnos de cuarto grado recolectaron dulces para compartir el Día de San Valentín.<br>
+                    Parte A: Saca una conclusión sobre los datos del gráfico.<br>
+                    Parte B: Determine cuántos chocolates y ositos de goma más se recolectaron que paletas y gomitas combinadas.
+                </div>
+                <div class="english">
+                    <strong>English:</strong> Fourth graders collected candy to share on Valentine's Day.<br>
+                    <strong>Part A:</strong> Draw a conclusion about the data from the graph. Use math data from the graph to support your reasoning.<br>
+                    <strong>Part B:</strong> Using the bar graph, determine how many more chocolates and gummy bears were collected than lollipops and gummies combined.
+                </div>
+                
+                <div class="tip-box">
+                    <h3>💡 Tips for Bar Graph Questions:</h3>
+                    <ul>
+                        <li><strong>Part A:</strong> Make a statement like "The most popular candy was ___ because it had the tallest bar at ___"</li>
+                        <li><strong>Part B:</strong> Add chocolates + gummy bears, then add lollipops + gummies, then subtract</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROBLEM 10 -->
+        <div class="section">
+            <div class="problem-box">
+                <h3>📝 Problem 10 <span class="points">9 points</span></h3>
+                <div class="spanish">
+                    Los estudiantes de una clase de arte estaban midiendo cintas de diferentes tamaños.<br>
+                    Parte A: Mida la longitud de cada cinta con una precisión de 1/2, 1/4 y 1/8 de pulgada.<br>
+                    Parte B: Cree un diagrama de líneas utilizando las medidas.<br>
+                    Parte C: Si los estudiantes solo quieren usar las cintas que miden más de 3 pulgadas, ¿cuántas cintas usarán?
+                </div>
+                <div class="english">
+                    <strong>English:</strong> Students in an art class were measuring ribbons of different sizes.<br>
+                    <strong>Part A:</strong> Measure the length of each ribbon to the nearest 1/2, 1/4, and 1/8 inch. Record each measurement.<br>
+                    <strong>Part B:</strong> Create a line plot using the ribbon measurements.<br>
+                    <strong>Part C:</strong> If students only want to use ribbons measuring more than 3 inches, how many ribbons will they use?
+                </div>
+                
+                <div class="tip-box">
+                    <h3>💡 Measuring to Fractions:</h3>
+                    <ul>
+                        <li><strong>1/2 inch:</strong> The middle mark between whole inches</li>
+                        <li><strong>1/4 inch:</strong> Marks that divide the inch into 4 equal parts</li>
+                        <li><strong>1/8 inch:</strong> The smallest marks on a ruler (8 per inch)</li>
+                        <li>Count the marks carefully from the start of the ribbon!</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- SUMMARY TIPS -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🎯</span>
+                <div class="section-title">
+                    <h2>Test-Taking Tips</h2>
+                </div>
+            </div>
+            
+            <div class="tip-box" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                <h3>🔄 Conversion Problems:</h3>
+                <ul>
+                    <li>Always convert to the SAME unit before comparing or calculating</li>
+                    <li>km → m: multiply by 1,000</li>
+                    <li>kg → g: multiply by 1,000</li>
+                </ul>
+            </div>
+            
+            <div class="tip-box" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+                <h3>⏰ Time Problems:</h3>
+                <ul>
+                    <li>For "what time will it end?" → ADD time to start</li>
+                    <li>For "what time should I start?" → SUBTRACT (work backwards)</li>
+                    <li>Convert hours to minutes when adding: 1 hour = 60 min</li>
+                </ul>
+            </div>
+            
+            <div class="tip-box" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">
+                <h3>📊 Graph Problems:</h3>
+                <ul>
+                    <li>Read labels carefully!</li>
+                    <li>Count X's on line plots</li>
+                    <li>Use numbers from the graph in your answer</li>
+                </ul>
+            </div>
+        </div>
+
+        <button class="print-btn" onclick="window.print()">🖨️ Print This Guide</button>
+    </div>
+</body>
+</html>

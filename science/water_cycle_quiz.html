@@ -1,0 +1,2831 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💧 El Ciclo del Agua - Quiz Interactivo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0c3547 0%, #1a5276 50%, #21618c 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3), 0 0 60px rgba(52, 152, 219, 0.1);
+            border: 1px solid rgba(52, 152, 219, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2980b9;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        /* Language Toggle */
+        .language-toggle {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .toggle-btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: transform 0.2s;
+        }
+
+        .toggle-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Flashcard Section */
+        .flashcard-section {
+            margin-bottom: 30px;
+        }
+
+        .flashcard-section h2 {
+            text-align: center;
+            color: #2980b9;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .flashcard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .flashcard {
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            border-radius: 10px;
+        }
+
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.75rem;
+            line-height: 1.3;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .flashcard-front {
+            background: linear-gradient(135deg, #ffffff, #ebf5fb);
+            color: #2980b9;
+            font-weight: bold;
+            border: 2px solid #3498db;
+        }
+
+        .flashcard-back {
+            background: linear-gradient(135deg, #d4e6f1, #ebf5fb);
+            color: #333;
+            transform: rotateY(180deg);
+            border: 2px solid #3498db;
+        }
+
+        /* Hover translation */
+        .translatable {
+            position: relative;
+            border-bottom: 2px dashed #3498db;
+            cursor: help;
+            color: #2980b9;
+            font-weight: 600;
+            padding: 0 2px;
+            background: rgba(52, 152, 219, 0.1);
+            border-radius: 3px;
+        }
+
+        .translatable:hover {
+            background: rgba(52, 152, 219, 0.2);
+        }
+
+        .translatable:hover::after {
+            content: "English: " attr(data-en);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #2c3e50, #1a252f);
+            color: #f1c40f;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            white-space: nowrap;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border: 2px solid #f1c40f;
+        }
+
+        .translatable:hover::before {
+            content: "";
+            position: absolute;
+            bottom: calc(100% + 2px);
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #f1c40f;
+            z-index: 1001;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            height: 100%;
+            transition: width 0.3s;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Question */
+        .category {
+            display: inline-block;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+        }
+
+        .question {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        /* Options */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .option:hover {
+            border-color: #3498db;
+            background: #ebf5fb;
+        }
+
+        .option.selected {
+            border-color: #3498db;
+            background: linear-gradient(135deg, #d4e6f1, #ebf5fb);
+        }
+
+        .option.correct {
+            border-color: #27ae60;
+            background: #e8f8f0;
+        }
+
+        .option.incorrect {
+            border-color: #e74c3c;
+            background: #fde8e8;
+        }
+
+        /* Buttons */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        /* Feedback */
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .feedback.correct {
+            background: #e8f8f0;
+            border: 2px solid #27ae60;
+            color: #27ae60;
+        }
+
+        .feedback.incorrect {
+            background: #fde8e8;
+            border: 2px solid #e74c3c;
+            color: #e74c3c;
+        }
+
+        /* Results */
+        .results {
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            color: white;
+            box-shadow: 0 0 30px rgba(52, 152, 219, 0.4);
+        }
+
+        .score-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .results-message {
+            font-size: 1.2rem;
+            margin: 20px 0;
+            color: #666;
+        }
+
+        /* Review Section */
+        .review-section {
+            background: linear-gradient(135deg, #ebf5fb, #d4e6f1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+            border: 2px solid #3498db;
+        }
+
+        .review-section h3 {
+            color: #2980b9;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .review-progress {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .review-question {
+            font-size: 1.05rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .review-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .review-option {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .review-option:hover {
+            border-color: #3498db;
+            background: #d4e6f1;
+        }
+
+        .review-option.selected {
+            border-color: #3498db;
+            background: #d4e6f1;
+        }
+
+        .review-option.correct {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+        }
+
+        .review-option.incorrect {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        .review-option.reveal-correct {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+            animation: glow 0.5s ease-in-out;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px #4CAF50; }
+            50% { box-shadow: 0 0 20px #4CAF50; }
+        }
+
+        .review-feedback {
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .review-feedback.correct {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .review-feedback.incorrect {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .review-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .review-btn-check {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .review-btn-next {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+
+        .review-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .review-score {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .review-score h4 {
+            color: #27ae60;
+            margin-bottom: 10px;
+        }
+
+        .review-score p {
+            color: #7f8c8d;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Restart separator */
+        .restart-separator {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px dashed #ccc;
+        }
+
+        .restart-separator p {
+            color: #7f8c8d;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        /* Drag and Drop Diagram Section */
+        .diagram-section {
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .diagram-section h3 {
+            color: #2980b9;
+            margin-bottom: 10px;
+        }
+
+        .diagram-instructions {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .drag-drop-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .draggable-labels {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            min-height: 60px;
+            border: 2px dashed #dee2e6;
+        }
+
+        .draggable-label {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border-radius: 25px;
+            cursor: grab;
+            font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .draggable-label:hover {
+            transform: scale(1.08) rotate(-1deg);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .draggable-label.dragging {
+            opacity: 0.6;
+            cursor: grabbing;
+            transform: scale(1.1) rotate(2deg);
+        }
+
+        .draggable-label.placed {
+            display: none;
+        }
+
+        /* Main diagram container - 3D isometric style */
+        .water-cycle-diagram {
+            border-radius: 15px;
+            position: relative;
+            height: 420px;
+            overflow: visible;
+            background: linear-gradient(180deg, #e8f4fc 0%, #d4eaf7 100%);
+            border: 3px solid #bdc3c7;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        /* 3D Platform base */
+        .diagram-platform {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            height: 75%;
+        }
+
+        /* Isometric ground slice */
+        .ground-slice {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: linear-gradient(180deg, 
+                #7cb342 0%,
+                #689f38 15%,
+                #558b2f 30%,
+                #8d6e63 30%,
+                #6d4c41 50%,
+                #5d4037 70%,
+                #4e342e 100%);
+            clip-path: polygon(5% 35%, 50% 20%, 95% 35%, 95% 100%, 5% 100%);
+            border-radius: 0 0 10px 10px;
+        }
+
+        /* Underground water layer */
+        .underground-water {
+            position: absolute;
+            bottom: 5%;
+            left: 10%;
+            right: 10%;
+            height: 18%;
+            background: linear-gradient(90deg, 
+                transparent 0%,
+                rgba(41, 182, 246, 0.4) 10%,
+                rgba(41, 182, 246, 0.6) 50%,
+                rgba(41, 182, 246, 0.4) 90%,
+                transparent 100%);
+            clip-path: polygon(0% 50%, 100% 30%, 100% 100%, 0% 100%);
+        }
+
+        /* Underground flow arrows */
+        .underground-arrow {
+            position: absolute;
+            bottom: 12%;
+            font-size: 1.8rem;
+            color: #0288d1;
+            opacity: 0.8;
+            animation: flow-right 2s linear infinite;
+        }
+
+        .underground-arrow:nth-child(1) { left: 25%; animation-delay: 0s; }
+        .underground-arrow:nth-child(2) { left: 45%; animation-delay: 0.5s; }
+        .underground-arrow:nth-child(3) { left: 65%; animation-delay: 1s; }
+
+        @keyframes flow-right {
+            0% { transform: translateX(-10px); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateX(20px); opacity: 0; }
+        }
+
+        /* Sky area */
+        .diagram-sky {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 45%;
+            background: transparent;
+        }
+
+        .drop-zone {
+            position: absolute;
+            width: 130px;
+            height: 45px;
+            background: rgba(255,255,255,0.95);
+            border: 3px dashed #7f8c8d;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #7f8c8d;
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 20;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .drop-zone.drag-over {
+            border-color: #3498db;
+            background: rgba(52, 152, 219, 0.2);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .drop-zone.correct {
+            border: 3px solid #27ae60;
+            background: rgba(39, 174, 96, 0.2);
+            animation: pulse-correct 0.5s ease;
+        }
+
+        .drop-zone.incorrect {
+            border: 3px solid #e74c3c;
+            background: rgba(231, 76, 60, 0.2);
+            animation: shake 0.5s;
+        }
+
+        .drop-zone.filled {
+            border-style: solid;
+            font-size: 0.75rem;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+
+        @keyframes pulse-correct {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); box-shadow: 0 0 25px rgba(39, 174, 96, 0.5); }
+            100% { transform: scale(1); }
+        }
+
+        /* Drop zones positioned near their visual elements */
+        /* A: Evaporation - near the rising arrows from ocean */
+        .drop-zone-a { 
+            right: 5%;
+            top: 42%;
+        }
+        
+        /* B: Condensation - directly over the white cloud */
+        .drop-zone-b { 
+            left: 28%;
+            top: 3%;
+        }
+        
+        /* C: Precipitation - directly over the falling rain */
+        .drop-zone-c { 
+            left: 18%;
+            top: 32%;
+        }
+        
+        /* D: Accumulation - near the underground water flow */
+        .drop-zone-d { 
+            left: 35%;
+            bottom: 3%;
+        }
+
+        .diagram-element {
+            position: absolute;
+            z-index: 5;
+        }
+
+        /* Sun with glow */
+        .sun {
+            top: 8%;
+            right: 18%;
+            width: 55px;
+            height: 55px;
+            background: radial-gradient(circle at 35% 35%, #fff9c4, #ffeb3b 40%, #ffc107 80%);
+            border-radius: 50%;
+            box-shadow: 0 0 40px rgba(255, 193, 7, 0.6), 0 0 80px rgba(255, 193, 7, 0.3);
+            z-index: 6;
+        }
+
+        /* Clouds - multiple for depth */
+        .cloud {
+            background: linear-gradient(180deg, #ffffff 0%, #eceff1 70%, #cfd8dc 100%);
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .cloud-1 {
+            top: 5%;
+            left: 30%;
+            width: 90px;
+            height: 40px;
+        }
+
+        .cloud-1::before {
+            content: '';
+            position: absolute;
+            top: -18px;
+            left: 15px;
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(180deg, #ffffff, #f5f5f5);
+            border-radius: 50%;
+        }
+
+        .cloud-1::after {
+            content: '';
+            position: absolute;
+            top: -12px;
+            right: 18px;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(180deg, #ffffff, #f5f5f5);
+            border-radius: 50%;
+        }
+
+        .cloud-2 {
+            top: 12%;
+            left: 18%;
+            width: 70px;
+            height: 32px;
+            opacity: 0.9;
+        }
+
+        .cloud-2::before {
+            content: '';
+            position: absolute;
+            top: -14px;
+            left: 12px;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(180deg, #ffffff, #f5f5f5);
+            border-radius: 50%;
+        }
+
+        /* Rain cloud (darker) */
+        .rain-cloud {
+            top: 18%;
+            left: 22%;
+            width: 80px;
+            height: 35px;
+            background: linear-gradient(180deg, #b0bec5 0%, #90a4ae 50%, #78909c 100%);
+            border-radius: 40px;
+            z-index: 7;
+        }
+
+        .rain-cloud::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: 15px;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(180deg, #b0bec5, #90a4ae);
+            border-radius: 50%;
+        }
+
+        .rain-cloud::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            right: 15px;
+            width: 25px;
+            height: 25px;
+            background: linear-gradient(180deg, #b0bec5, #90a4ae);
+            border-radius: 50%;
+        }
+
+        /* Rain drops */
+        .rain-drops {
+            top: 28%;
+            left: 24%;
+            width: 60px;
+            height: 80px;
+            pointer-events: none;
+            z-index: 8;
+        }
+
+        .rain-drop {
+            position: absolute;
+            width: 3px;
+            height: 15px;
+            background: linear-gradient(180deg, transparent, #4fc3f7 30%, #29b6f6);
+            border-radius: 0 0 50% 50%;
+            animation: rain-fall 0.8s infinite linear;
+        }
+
+        .rain-drop:nth-child(1) { left: 15%; animation-delay: 0s; }
+        .rain-drop:nth-child(2) { left: 35%; animation-delay: 0.15s; }
+        .rain-drop:nth-child(3) { left: 55%; animation-delay: 0.3s; }
+        .rain-drop:nth-child(4) { left: 75%; animation-delay: 0.1s; }
+        .rain-drop:nth-child(5) { left: 25%; animation-delay: 0.4s; }
+        .rain-drop:nth-child(6) { left: 65%; animation-delay: 0.25s; }
+
+        @keyframes rain-fall {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(60px); opacity: 0; }
+        }
+
+        /* Mountain with snow cap */
+        .mountain {
+            bottom: 32%;
+            left: 12%;
+            width: 0;
+            height: 0;
+            border-left: 70px solid transparent;
+            border-right: 70px solid transparent;
+            border-bottom: 120px solid #78909c;
+            z-index: 4;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .mountain::after {
+            content: '';
+            position: absolute;
+            top: -45px;
+            left: -35px;
+            width: 0;
+            height: 0;
+            border-left: 35px solid transparent;
+            border-right: 35px solid transparent;
+            border-bottom: 55px solid #eceff1;
+        }
+
+        /* Second mountain */
+        .mountain-2 {
+            bottom: 32%;
+            left: 28%;
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 85px solid #8d9fa6;
+            z-index: 3;
+        }
+
+        .mountain-2::after {
+            content: '';
+            position: absolute;
+            top: -30px;
+            left: -25px;
+            width: 0;
+            height: 0;
+            border-left: 25px solid transparent;
+            border-right: 25px solid transparent;
+            border-bottom: 38px solid #eceff1;
+        }
+
+        /* Green hills */
+        .hill {
+            position: absolute;
+            border-radius: 50% 50% 0 0;
+            z-index: 4;
+        }
+
+        .hill-1 {
+            bottom: 28%;
+            left: 40%;
+            width: 120px;
+            height: 50px;
+            background: linear-gradient(180deg, #8bc34a, #7cb342);
+        }
+
+        .hill-2 {
+            bottom: 28%;
+            right: 25%;
+            width: 100px;
+            height: 40px;
+            background: linear-gradient(180deg, #9ccc65, #8bc34a);
+        }
+
+        /* Trees on hills */
+        .tree {
+            position: absolute;
+            z-index: 5;
+        }
+
+        .tree::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 12px;
+            background: #5d4037;
+        }
+
+        .tree::after {
+            content: '';
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 18px solid #2e7d32;
+        }
+
+        .tree-1 { bottom: 42%; left: 45%; }
+        .tree-2 { bottom: 40%; left: 52%; }
+        .tree-3 { bottom: 38%; right: 32%; }
+        .tree-4 { bottom: 36%; right: 38%; }
+
+        /* Ocean/Sea */
+        .ocean {
+            right: 8%;
+            bottom: 28%;
+            width: 150px;
+            height: 60px;
+            background: linear-gradient(180deg, #4fc3f7 0%, #29b6f6 40%, #039be5 100%);
+            border-radius: 50%;
+            box-shadow: inset 0 -8px 15px rgba(0,0,0,0.1), inset 0 5px 10px rgba(255,255,255,0.3);
+            z-index: 4;
+        }
+
+        .ocean::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 15%;
+            width: 70%;
+            height: 6px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            border-radius: 50%;
+            animation: wave 2s ease-in-out infinite;
+        }
+
+        @keyframes wave {
+            0%, 100% { transform: translateX(-3px); }
+            50% { transform: translateX(3px); }
+        }
+
+        /* Evaporation wavy arrows */
+        .evaporation-arrows {
+            position: absolute;
+            right: 18%;
+            bottom: 50%;
+            width: 50px;
+            height: 70px;
+            z-index: 6;
+        }
+
+        .evap-wave {
+            position: absolute;
+            width: 3px;
+            height: 40px;
+            background: linear-gradient(180deg, transparent, rgba(100, 181, 246, 0.8));
+            animation: evap-rise 2s infinite ease-out;
+        }
+
+        .evap-wave::after {
+            content: '↑';
+            position: absolute;
+            top: -15px;
+            left: -5px;
+            font-size: 0.9rem;
+            color: #1976d2;
+        }
+
+        .evap-wave:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .evap-wave:nth-child(2) { left: 35%; animation-delay: 0.4s; }
+        .evap-wave:nth-child(3) { left: 60%; animation-delay: 0.8s; }
+        .evap-wave:nth-child(4) { left: 85%; animation-delay: 0.2s; }
+
+        @keyframes evap-rise {
+            0% { transform: translateY(0) scaleY(0.5); opacity: 0; }
+            30% { opacity: 0.8; }
+            100% { transform: translateY(-50px) scaleY(1); opacity: 0; }
+        }
+
+        /* River flowing */
+        .river {
+            position: absolute;
+            bottom: 32%;
+            left: 38%;
+            width: 35%;
+            height: 8px;
+            background: linear-gradient(90deg, #4fc3f7, #29b6f6, #039be5);
+            border-radius: 4px;
+            z-index: 4;
+        }
+
+        .river::before {
+            content: '→';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            color: #0288d1;
+            font-size: 1.2rem;
+            animation: flow-arrow 1.5s infinite;
+        }
+
+        @keyframes flow-arrow {
+            0%, 100% { transform: translateX(-5px); opacity: 0.5; }
+            50% { transform: translateX(5px); opacity: 1; }
+        }
+
+        /* Cycle flow arrows */
+        .cycle-arrow {
+            position: absolute;
+            font-size: 2rem;
+            color: #0288d1;
+            z-index: 10;
+            opacity: 0.7;
+        }
+
+        .arrow-evap-to-cloud {
+            right: 30%;
+            top: 25%;
+            transform: rotate(-45deg);
+            animation: pulse-arrow 2s infinite;
+        }
+
+        .arrow-cloud-to-rain {
+            left: 38%;
+            top: 15%;
+            transform: rotate(180deg);
+        }
+
+        @keyframes pulse-arrow {
+            0%, 100% { opacity: 0.5; transform: rotate(-45deg) scale(1); }
+            50% { opacity: 1; transform: rotate(-45deg) scale(1.1); }
+        }
+
+        .check-diagram-btn {
+            margin-top: 15px;
+            padding: 14px 35px;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .check-diagram-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        .check-diagram-btn:disabled {
+            background: linear-gradient(135deg, #bdc3c7, #95a5a6);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .diagram-feedback {
+            margin-top: 15px;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .diagram-feedback.correct {
+            background: linear-gradient(135deg, #e8f8f0, #d5f5e3);
+            color: #27ae60;
+            border: 2px solid #27ae60;
+            animation: success-pop 0.5s ease;
+        }
+
+        .diagram-feedback.incorrect {
+            background: linear-gradient(135deg, #fde8e8, #fadbd8);
+            color: #e74c3c;
+            border: 2px solid #e74c3c;
+        }
+
+        @keyframes success-pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .reset-diagram-btn {
+            margin-top: 12px;
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .reset-diagram-btn:hover {
+            background: linear-gradient(135deg, #7f8c8d, #6c7a7d);
+            transform: translateY(-1px);
+        }
+
+        /* Thermometer Styles */
+        .thermometer-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            margin: 15px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+        }
+
+        .thermometer {
+            position: relative;
+            width: 40px;
+            height: 180px;
+            background: #fff;
+            border: 3px solid #666;
+            border-radius: 20px 20px 0 0;
+            margin-right: 15px;
+        }
+
+        .thermometer-bulb {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+            background: #e74c3c;
+            border: 3px solid #666;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .thermometer-tube {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            background: #e74c3c;
+            border-radius: 8px 8px 0 0;
+            transition: height 0.3s;
+        }
+
+        .thermometer-scale {
+            position: absolute;
+            right: -60px;
+            top: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .thermometer-scale-left {
+            position: absolute;
+            left: -45px;
+            top: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #2980b9;
+        }
+
+        .scale-mark {
+            display: flex;
+            align-items: center;
+        }
+
+        .scale-mark::before {
+            content: '';
+            width: 8px;
+            height: 2px;
+            background: #666;
+            margin-right: 5px;
+        }
+
+        .thermometer-label {
+            text-align: center;
+            margin-top: 35px;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .temp-indicator {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f1c40f;
+            color: #333;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .freeze-line {
+            position: absolute;
+            left: -10px;
+            right: -10px;
+            height: 2px;
+            background: #3498db;
+        }
+
+        .boil-line {
+            position: absolute;
+            left: -10px;
+            right: -10px;
+            height: 2px;
+            background: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <!-- Start Screen -->
+            <div id="startScreen">
+                <h1>💧 El Ciclo del Agua</h1>
+                <p class="subtitle">The Water Cycle - Interactive Quiz</p>
+
+                <div class="language-toggle">
+                    <button class="toggle-btn" onclick="toggleLanguage()">
+                        🌐 <span id="langText">Show English</span>
+                    </button>
+                </div>
+
+                <div class="flashcard-section">
+                    <h2>📚 Vocabulario / Vocabulary</h2>
+                    <p style="text-align: center; color: #666; margin-bottom: 15px; font-size: 0.85rem;">
+                        (Haz clic para voltear / Click to flip)
+                    </p>
+                    <div class="flashcard-grid" id="flashcardGrid"></div>
+                </div>
+
+                <div class="diagram-section">
+                    <h3>🔄 El Ciclo del Agua / The Water Cycle</h3>
+                    <p class="diagram-instructions">Arrastra cada etapa al lugar correcto / Drag each stage to the correct spot</p>
+                    
+                    <div class="drag-drop-container">
+                        <div class="draggable-labels" id="labelsContainer">
+                            <div class="draggable-label" draggable="true" data-stage="evaporacion">Evaporación</div>
+                            <div class="draggable-label" draggable="true" data-stage="condensacion">Condensación</div>
+                            <div class="draggable-label" draggable="true" data-stage="precipitacion">Precipitación</div>
+                            <div class="draggable-label" draggable="true" data-stage="acumulacion">Acumulación</div>
+                        </div>
+                        
+                        <div class="water-cycle-diagram">
+                            <!-- 3D Ground platform with underground -->
+                            <div class="diagram-platform">
+                                <div class="ground-slice"></div>
+                                <div class="underground-water"></div>
+                                <div class="underground-arrow">→</div>
+                                <div class="underground-arrow">→</div>
+                                <div class="underground-arrow">→</div>
+                            </div>
+                            
+                            <!-- Sun -->
+                            <div class="diagram-element sun"></div>
+                            
+                            <!-- Clouds -->
+                            <div class="diagram-element cloud cloud-1"></div>
+                            <div class="diagram-element cloud cloud-2"></div>
+                            <div class="diagram-element rain-cloud"></div>
+                            
+                            <!-- Rain drops -->
+                            <div class="diagram-element rain-drops">
+                                <div class="rain-drop"></div>
+                                <div class="rain-drop"></div>
+                                <div class="rain-drop"></div>
+                                <div class="rain-drop"></div>
+                                <div class="rain-drop"></div>
+                                <div class="rain-drop"></div>
+                            </div>
+                            
+                            <!-- Mountains -->
+                            <div class="diagram-element mountain"></div>
+                            <div class="diagram-element mountain-2"></div>
+                            
+                            <!-- Hills -->
+                            <div class="diagram-element hill hill-1"></div>
+                            <div class="diagram-element hill hill-2"></div>
+                            
+                            <!-- Trees -->
+                            <div class="diagram-element tree tree-1"></div>
+                            <div class="diagram-element tree tree-2"></div>
+                            <div class="diagram-element tree tree-3"></div>
+                            <div class="diagram-element tree tree-4"></div>
+                            
+                            <!-- Ocean with evaporation -->
+                            <div class="diagram-element ocean"></div>
+                            <div class="evaporation-arrows">
+                                <div class="evap-wave"></div>
+                                <div class="evap-wave"></div>
+                                <div class="evap-wave"></div>
+                                <div class="evap-wave"></div>
+                            </div>
+                            
+                            <!-- River -->
+                            <div class="river"></div>
+                            
+                            <!-- Cycle flow arrows -->
+                            <div class="cycle-arrow arrow-evap-to-cloud">↗</div>
+                            <div class="cycle-arrow arrow-cloud-to-rain">←</div>
+                            
+                            <!-- Drop zones positioned around diagram -->
+                            <div class="drop-zone drop-zone-a" data-correct="evaporacion">A</div>
+                            <div class="drop-zone drop-zone-b" data-correct="condensacion">B</div>
+                            <div class="drop-zone drop-zone-c" data-correct="precipitacion">C</div>
+                            <div class="drop-zone drop-zone-d" data-correct="acumulacion">D</div>
+                        </div>
+                        
+                        <button class="check-diagram-btn" id="checkDiagramBtn" onclick="checkDiagram()" disabled>
+                            Verificar / Check Answers
+                        </button>
+                        <div class="diagram-feedback hidden" id="diagramFeedback"></div>
+                        <button class="reset-diagram-btn hidden" id="resetDiagramBtn" onclick="resetDiagram()">
+                            🔄 Intentar de Nuevo / Try Again
+                        </button>
+                    </div>
+                    
+                    <div style="margin-top: 15px; padding: 12px 15px; background: #f5f5f5; border-radius: 8px; font-size: 0.85rem; color: #666; text-align: left;">
+                        <strong>💡 Pistas / Hints:</strong>
+                        <ul style="margin: 8px 0 0 20px; padding: 0;">
+                            <li><b>A</b> = Flechas subiendo del agua / Arrows rising from water</li>
+                            <li><b>B</b> = Cerca del sol y nubes / Near sun and clouds</li>
+                            <li><b>C</b> = Donde cae la lluvia / Where rain falls</li>
+                            <li><b>D</b> = Flechas bajo tierra / Underground arrows</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="startQuiz()">
+                    🚀 Comenzar Quiz / Start Quiz
+                </button>
+            </div>
+
+            <!-- Quiz Screen -->
+            <div id="quizScreen" class="hidden">
+                <div class="language-toggle" style="margin-bottom: 15px;">
+                    <button class="toggle-btn" onclick="toggleLanguage()">
+                        🌐 <span id="langTextQuiz">Show English</span>
+                    </button>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                
+                <div class="stats">
+                    <span id="questionNum">Pregunta 1 de 12</span>
+                    <span id="scoreDisplay">Puntos: 0</span>
+                </div>
+
+                <div class="category" id="category"></div>
+                <div class="question" id="questionText"></div>
+                <div class="options" id="optionsContainer"></div>
+
+                <button class="btn btn-primary" id="submitBtn" onclick="submitAnswer()" disabled>
+                    Enviar Respuesta / Submit
+                </button>
+                <button class="btn btn-success hidden" id="nextBtn" onclick="nextQuestion()">
+                    Siguiente → / Next →
+                </button>
+
+                <div class="feedback hidden" id="feedback"></div>
+            </div>
+
+            <!-- Results Screen -->
+            <div id="resultsScreen" class="hidden">
+                <div class="results">
+                    <div class="language-toggle" style="margin-bottom: 15px;">
+                        <button class="toggle-btn" onclick="toggleLanguage()">
+                            🌐 <span id="langTextResults">Show English</span>
+                        </button>
+                    </div>
+                    
+                    <h1>🎉 ¡Quiz Completado!</h1>
+                    <div class="score-circle">
+                        <span class="score-number" id="finalScore">0%</span>
+                        <span class="score-label">Correctas</span>
+                    </div>
+                    <p class="results-message" id="resultsMessage"></p>
+
+                    <div class="review-section hidden" id="reviewSection">
+                        <h3 id="reviewHeader">📝 ¡Practiquemos las preguntas que fallaste!</h3>
+                        <div class="review-progress" id="reviewProgress">Pregunta 1 de 3</div>
+                        <div class="review-question" id="reviewQuestion"></div>
+                        <div class="review-options" id="reviewOptions"></div>
+                        <div class="review-feedback hidden" id="reviewFeedback"></div>
+                        <button class="review-btn review-btn-check" id="reviewCheckBtn" onclick="checkReviewAnswer()" disabled>Verificar / Check</button>
+                        <button class="review-btn review-btn-next hidden" id="reviewNextBtn" onclick="nextReviewQuestion()">Siguiente → / Next →</button>
+                        <div class="review-score hidden" id="reviewScore">
+                            <h4 id="reviewCompleteHeader">🎉 ¡Repaso Completado!</h4>
+                            <p id="reviewScoreText"></p>
+                        </div>
+                    </div>
+
+                    <div class="restart-separator">
+                        <p>¿Listo para otro intento? / Ready for another try?</p>
+                    </div>
+                    <button class="btn btn-secondary" onclick="restartQuiz()">
+                        🔄 Intentar de Nuevo / Try Again
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Vocabulary flashcards
+        const flashcards = [
+            { spanish: "Ciclo del Agua", english: "Water Cycle" },
+            { spanish: "Evaporación", english: "Evaporation" },
+            { spanish: "Condensación", english: "Condensation" },
+            { spanish: "Precipitación", english: "Precipitation" },
+            { spanish: "Acumulación", english: "Accumulation" },
+            { spanish: "Estado Líquido", english: "Liquid State" },
+            { spanish: "Estado Gaseoso", english: "Gas State" },
+            { spanish: "Estado Sólido", english: "Solid State" },
+            { spanish: "Vapor de Agua", english: "Water Vapor" },
+            { spanish: "Nubes", english: "Clouds" },
+            { spanish: "Lluvia", english: "Rain" },
+            { spanish: "Nieve", english: "Snow" },
+            { spanish: "Granizo", english: "Hail" },
+            { spanish: "Océano", english: "Ocean" },
+            { spanish: "Lago", english: "Lake" },
+            { spanish: "Río", english: "River" },
+            { spanish: "Sol", english: "Sun" },
+            { spanish: "Calor", english: "Heat" },
+            { spanish: "Frío", english: "Cold" },
+            { spanish: "La Materia", english: "Matter" },
+            { spanish: "Punto de Congelación", english: "Freezing Point" },
+            { spanish: "Punto de Ebullición", english: "Boiling Point" },
+            { spanish: "0°C / 32°F", english: "Freezing Point of Water" },
+            { spanish: "100°C / 212°F", english: "Boiling Point of Water" },
+            { spanish: "Termómetro", english: "Thermometer" }
+        ];
+
+        // Question bank
+        const questionBank = [
+            // Evaporation
+            {
+                category: "Evaporación / Evaporation",
+                question: "¿Qué es la <span class='translatable' data-en='evaporation'>evaporación</span>?",
+                questionEn: "What is evaporation?",
+                options: [
+                    "Cuando el agua cae de las nubes",
+                    "Cuando el agua líquida se convierte en vapor de agua (gas)",
+                    "Cuando el vapor de agua se convierte en nubes",
+                    "Cuando el agua se acumula en lagos"
+                ],
+                optionsEn: [
+                    "When water falls from clouds",
+                    "When liquid water turns into water vapor (gas)",
+                    "When water vapor turns into clouds",
+                    "When water collects in lakes"
+                ],
+                correct: 1,
+                explanation: "La evaporación es cuando el agua líquida se calienta y se convierte en vapor de agua (gas) que sube al aire.",
+                explanationEn: "Evaporation is when liquid water heats up and turns into water vapor (gas) that rises into the air."
+            },
+            {
+                category: "Evaporación / Evaporation",
+                question: "¿Qué necesita el agua para <span class='translatable' data-en='evaporate'>evaporarse</span>?",
+                questionEn: "What does water need to evaporate?",
+                options: [
+                    "Frío",
+                    "Calor del sol",
+                    "Viento fuerte",
+                    "Nubes"
+                ],
+                optionsEn: [
+                    "Cold",
+                    "Heat from the sun",
+                    "Strong wind",
+                    "Clouds"
+                ],
+                correct: 1,
+                explanation: "El calor del sol calienta el agua y la convierte en vapor de agua que sube al cielo.",
+                explanationEn: "Heat from the sun warms up water and turns it into water vapor that rises to the sky."
+            },
+            {
+                category: "Evaporación / Evaporation",
+                question: "¿De dónde se <span class='translatable' data-en='evaporates'>evapora</span> el <span class='translatable' data-en='water'>agua</span>?",
+                questionEn: "Where does water evaporate from?",
+                options: [
+                    "Solo de los océanos",
+                    "Solo de los ríos",
+                    "De océanos, lagos, ríos y charcos",
+                    "Solo de las nubes"
+                ],
+                optionsEn: [
+                    "Only from oceans",
+                    "Only from rivers",
+                    "From oceans, lakes, rivers, and puddles",
+                    "Only from clouds"
+                ],
+                correct: 2,
+                explanation: "El agua se evapora de cualquier lugar donde hay agua líquida: océanos, lagos, ríos, charcos, y hasta de las plantas.",
+                explanationEn: "Water evaporates from anywhere there is liquid water: oceans, lakes, rivers, puddles, and even from plants."
+            },
+            // Condensation
+            {
+                category: "Condensación / Condensation",
+                question: "¿Qué es la <span class='translatable' data-en='condensation'>condensación</span>?",
+                questionEn: "What is condensation?",
+                options: [
+                    "Cuando el agua se calienta",
+                    "Cuando el vapor de agua se enfría y forma gotitas de agua (nubes)",
+                    "Cuando llueve",
+                    "Cuando el agua se evapora"
+                ],
+                optionsEn: [
+                    "When water heats up",
+                    "When water vapor cools and forms water droplets (clouds)",
+                    "When it rains",
+                    "When water evaporates"
+                ],
+                correct: 1,
+                explanation: "La condensación es cuando el vapor de agua se enfría en el aire y se convierte en pequeñas gotitas de agua que forman las nubes.",
+                explanationEn: "Condensation is when water vapor cools in the air and turns into tiny water droplets that form clouds."
+            },
+            {
+                category: "Condensación / Condensation",
+                question: "¿Cómo se forman las <span class='translatable' data-en='clouds'>nubes</span>?",
+                questionEn: "How are clouds formed?",
+                options: [
+                    "El sol las crea",
+                    "El vapor de agua se enfría y se junta en gotitas",
+                    "La lluvia las hace",
+                    "El viento las empuja del espacio"
+                ],
+                optionsEn: [
+                    "The sun creates them",
+                    "Water vapor cools and joins together in droplets",
+                    "Rain makes them",
+                    "Wind pushes them from space"
+                ],
+                correct: 1,
+                explanation: "Las nubes se forman cuando el vapor de agua sube, se enfría, y las moléculas de agua se juntan en pequeñas gotitas.",
+                explanationEn: "Clouds form when water vapor rises, cools down, and the water molecules join together into tiny droplets."
+            },
+            {
+                category: "Condensación / Condensation",
+                question: "¿Dónde ocurre la <span class='translatable' data-en='condensation'>condensación</span> en el <span class='translatable' data-en='water cycle'>ciclo del agua</span>?",
+                questionEn: "Where does condensation happen in the water cycle?",
+                options: [
+                    "En el océano",
+                    "En el suelo",
+                    "En el cielo (atmósfera)",
+                    "En los ríos"
+                ],
+                optionsEn: [
+                    "In the ocean",
+                    "On the ground",
+                    "In the sky (atmosphere)",
+                    "In the rivers"
+                ],
+                correct: 2,
+                explanation: "La condensación ocurre arriba en el cielo donde el aire es más frío y el vapor se convierte en nubes.",
+                explanationEn: "Condensation happens up in the sky where the air is cooler and vapor turns into clouds."
+            },
+            // Precipitation
+            {
+                category: "Precipitación / Precipitation",
+                question: "¿Qué es la <span class='translatable' data-en='precipitation'>precipitación</span>?",
+                questionEn: "What is precipitation?",
+                options: [
+                    "Agua que sube al cielo",
+                    "Agua que cae de las nubes (lluvia, nieve, granizo)",
+                    "Agua que se evapora",
+                    "Agua en los lagos"
+                ],
+                optionsEn: [
+                    "Water that goes up to the sky",
+                    "Water that falls from clouds (rain, snow, hail)",
+                    "Water that evaporates",
+                    "Water in lakes"
+                ],
+                correct: 1,
+                explanation: "La precipitación es cuando el agua cae de las nubes. Puede ser lluvia, nieve, o granizo.",
+                explanationEn: "Precipitation is when water falls from clouds. It can be rain, snow, or hail."
+            },
+            {
+                category: "Precipitación / Precipitation",
+                question: "¿Cuáles son ejemplos de <span class='translatable' data-en='precipitation'>precipitación</span>?",
+                questionEn: "What are examples of precipitation?",
+                options: [
+                    "Vapor y nubes",
+                    "Lluvia, nieve y granizo",
+                    "Océanos y lagos",
+                    "Sol y calor"
+                ],
+                optionsEn: [
+                    "Vapor and clouds",
+                    "Rain, snow, and hail",
+                    "Oceans and lakes",
+                    "Sun and heat"
+                ],
+                correct: 1,
+                explanation: "La lluvia, la nieve y el granizo son todas formas de precipitación - agua que cae del cielo.",
+                explanationEn: "Rain, snow, and hail are all forms of precipitation - water that falls from the sky."
+            },
+            {
+                category: "Precipitación / Precipitation",
+                question: "¿Por qué cae la <span class='translatable' data-en='rain'>lluvia</span> de las <span class='translatable' data-en='clouds'>nubes</span>?",
+                questionEn: "Why does rain fall from clouds?",
+                options: [
+                    "Porque el sol la empuja",
+                    "Porque las gotitas se hacen muy grandes y pesadas",
+                    "Porque el viento las baja",
+                    "Porque la tierra las atrae con imanes"
+                ],
+                optionsEn: [
+                    "Because the sun pushes it",
+                    "Because the droplets get too big and heavy",
+                    "Because the wind brings them down",
+                    "Because Earth pulls them with magnets"
+                ],
+                correct: 1,
+                explanation: "Cuando las gotitas de agua en las nubes se juntan y se hacen muy grandes y pesadas, caen como lluvia.",
+                explanationEn: "When water droplets in clouds join together and become too big and heavy, they fall as rain."
+            },
+            // Accumulation
+            {
+                category: "Acumulación / Accumulation",
+                question: "¿Qué es la <span class='translatable' data-en='accumulation'>acumulación</span>?",
+                questionEn: "What is accumulation?",
+                options: [
+                    "Cuando el agua se evapora",
+                    "Cuando el agua se junta en océanos, lagos y ríos",
+                    "Cuando llueve",
+                    "Cuando se forman nubes"
+                ],
+                optionsEn: [
+                    "When water evaporates",
+                    "When water collects in oceans, lakes, and rivers",
+                    "When it rains",
+                    "When clouds form"
+                ],
+                correct: 1,
+                explanation: "La acumulación es cuando el agua que cae se junta y se almacena en océanos, lagos, ríos, y bajo la tierra.",
+                explanationEn: "Accumulation is when falling water collects and is stored in oceans, lakes, rivers, and underground."
+            },
+            {
+                category: "Acumulación / Accumulation",
+                question: "¿Dónde se <span class='translatable' data-en='accumulates'>acumula</span> el <span class='translatable' data-en='water'>agua</span> después de <span class='translatable' data-en='raining'>llover</span>?",
+                questionEn: "Where does water accumulate after it rains?",
+                options: [
+                    "Solo en el cielo",
+                    "En océanos, lagos, ríos y bajo tierra",
+                    "Solo en las nubes",
+                    "Solo en las plantas"
+                ],
+                optionsEn: [
+                    "Only in the sky",
+                    "In oceans, lakes, rivers, and underground",
+                    "Only in clouds",
+                    "Only in plants"
+                ],
+                correct: 1,
+                explanation: "El agua se acumula en muchos lugares: océanos, lagos, ríos, arroyos, y también bajo la tierra.",
+                explanationEn: "Water accumulates in many places: oceans, lakes, rivers, streams, and also underground."
+            },
+            // States of Matter
+            {
+                category: "Estados de la Materia / States of Matter",
+                question: "¿Cuáles son los tres <span class='translatable' data-en='states'>estados</span> del <span class='translatable' data-en='water'>agua</span>?",
+                questionEn: "What are the three states of water?",
+                options: [
+                    "Caliente, tibio, frío",
+                    "Líquido, sólido, gas",
+                    "Océano, nube, lluvia",
+                    "Grande, mediano, pequeño"
+                ],
+                optionsEn: [
+                    "Hot, warm, cold",
+                    "Liquid, solid, gas",
+                    "Ocean, cloud, rain",
+                    "Big, medium, small"
+                ],
+                correct: 1,
+                explanation: "El agua existe en tres estados: líquido (agua), sólido (hielo), y gas (vapor de agua).",
+                explanationEn: "Water exists in three states: liquid (water), solid (ice), and gas (water vapor)."
+            },
+            {
+                category: "Estados de la Materia / States of Matter",
+                question: "¿En qué estado está el agua cuando es <span class='translatable' data-en='ice'>hielo</span>?",
+                questionEn: "What state is water in when it's ice?",
+                options: [
+                    "Líquido",
+                    "Gas",
+                    "Sólido",
+                    "Vapor"
+                ],
+                optionsEn: [
+                    "Liquid",
+                    "Gas",
+                    "Solid",
+                    "Vapor"
+                ],
+                correct: 2,
+                explanation: "El hielo es agua en estado sólido. Cuando el agua se enfría mucho, se congela y se vuelve sólida.",
+                explanationEn: "Ice is water in its solid state. When water gets very cold, it freezes and becomes solid."
+            },
+            {
+                category: "Estados de la Materia / States of Matter",
+                question: "¿En qué estado está el <span class='translatable' data-en='water vapor'>vapor de agua</span>?",
+                questionEn: "What state is water vapor in?",
+                options: [
+                    "Líquido",
+                    "Sólido",
+                    "Gas",
+                    "Nube"
+                ],
+                optionsEn: [
+                    "Liquid",
+                    "Solid",
+                    "Gas",
+                    "Cloud"
+                ],
+                correct: 2,
+                explanation: "El vapor de agua es agua en estado gaseoso. No lo podemos ver porque es invisible.",
+                explanationEn: "Water vapor is water in its gas state. We can't see it because it's invisible."
+            },
+            {
+                category: "Estados de la Materia / States of Matter",
+                question: "¿Qué <span class='translatable' data-en='state'>estado</span> del <span class='translatable' data-en='water'>agua</span> podemos ver en un <span class='translatable' data-en='glass'>vaso</span>?",
+                questionEn: "What state of water can we see in a glass?",
+                options: [
+                    "Gas",
+                    "Sólido",
+                    "Líquido",
+                    "Vapor"
+                ],
+                optionsEn: [
+                    "Gas",
+                    "Solid",
+                    "Liquid",
+                    "Vapor"
+                ],
+                correct: 2,
+                explanation: "El agua que bebemos y vemos en un vaso está en estado líquido.",
+                explanationEn: "The water we drink and see in a glass is in its liquid state."
+            },
+            // Freezing and Boiling Points
+            {
+                category: "Temperatura / Temperature",
+                question: "¿A qué temperatura se <span class='translatable' data-en='freezes'>congela</span> el agua?",
+                questionEn: "At what temperature does water freeze?",
+                options: [
+                    "0°C / 32°F",
+                    "100°C / 212°F",
+                    "50°C / 122°F",
+                    "25°C / 77°F"
+                ],
+                optionsEn: [
+                    "0°C / 32°F",
+                    "100°C / 212°F",
+                    "50°C / 122°F",
+                    "25°C / 77°F"
+                ],
+                correct: 0,
+                explanation: "El agua se congela a 0°C (32°F). A esta temperatura, el agua líquida se convierte en hielo (sólido).",
+                explanationEn: "Water freezes at 0°C (32°F). At this temperature, liquid water turns into ice (solid)."
+            },
+            {
+                category: "Temperatura / Temperature",
+                question: "¿A qué temperatura <span class='translatable' data-en='boils'>hierve</span> el agua?",
+                questionEn: "At what temperature does water boil?",
+                options: [
+                    "0°C / 32°F",
+                    "50°C / 122°F",
+                    "100°C / 212°F",
+                    "200°C / 392°F"
+                ],
+                optionsEn: [
+                    "0°C / 32°F",
+                    "50°C / 122°F",
+                    "100°C / 212°F",
+                    "200°C / 392°F"
+                ],
+                correct: 2,
+                explanation: "El agua hierve a 100°C (212°F). A esta temperatura, el agua líquida se convierte en vapor (gas).",
+                explanationEn: "Water boils at 100°C (212°F). At this temperature, liquid water turns into vapor (gas)."
+            },
+            {
+                category: "Temperatura / Temperature",
+                question: "Un <span class='translatable' data-en='thermometer'>termómetro</span> muestra 25°C. ¿El agua se congelará o hervirá?",
+                questionEn: "A thermometer shows 25°C. Will the water freeze or boil?",
+                options: [
+                    "Se congelará",
+                    "Hervirá",
+                    "Ninguno - se quedará líquida",
+                    "Ambos"
+                ],
+                optionsEn: [
+                    "It will freeze",
+                    "It will boil",
+                    "Neither - it will stay liquid",
+                    "Both"
+                ],
+                correct: 2,
+                explanation: "A 25°C, el agua está entre el punto de congelación (0°C) y el punto de ebullición (100°C), así que se queda líquida.",
+                explanationEn: "At 25°C, water is between the freezing point (0°C) and boiling point (100°C), so it stays liquid."
+            },
+            {
+                category: "Temperatura / Temperature",
+                question: "Un termómetro muestra -5°C. ¿Qué pasará con el agua?",
+                questionEn: "A thermometer shows -5°C. What will happen to the water?",
+                options: [
+                    "Se quedará líquida",
+                    "Se congelará (se hará hielo)",
+                    "Hervirá",
+                    "Se evaporará"
+                ],
+                optionsEn: [
+                    "It will stay liquid",
+                    "It will freeze (turn to ice)",
+                    "It will boil",
+                    "It will evaporate"
+                ],
+                correct: 1,
+                explanation: "-5°C está por debajo del punto de congelación (0°C), así que el agua se convertirá en hielo.",
+                explanationEn: "-5°C is below the freezing point (0°C), so water will turn into ice."
+            },
+            {
+                category: "Temperatura / Temperature",
+                question: "Un termómetro muestra 105°C. ¿Qué pasará con el agua?",
+                questionEn: "A thermometer shows 105°C. What will happen to the water?",
+                options: [
+                    "Se congelará",
+                    "Se quedará líquida",
+                    "Hervirá y se convertirá en vapor",
+                    "Nada"
+                ],
+                optionsEn: [
+                    "It will freeze",
+                    "It will stay liquid",
+                    "It will boil and turn to vapor",
+                    "Nothing"
+                ],
+                correct: 2,
+                explanation: "105°C está por encima del punto de ebullición (100°C), así que el agua hervirá y se convertirá en vapor.",
+                explanationEn: "105°C is above the boiling point (100°C), so water will boil and turn into vapor."
+            },
+            {
+                category: "Temperatura / Temperature",
+                question: "¿Cuál es el <span class='translatable' data-en='freezing point'>punto de congelación</span> del agua en grados Fahrenheit?",
+                questionEn: "What is the freezing point of water in degrees Fahrenheit?",
+                options: [
+                    "0°F",
+                    "32°F",
+                    "100°F",
+                    "212°F"
+                ],
+                optionsEn: [
+                    "0°F",
+                    "32°F",
+                    "100°F",
+                    "212°F"
+                ],
+                correct: 1,
+                explanation: "El punto de congelación del agua es 32°F (que es igual a 0°C).",
+                explanationEn: "The freezing point of water is 32°F (which equals 0°C)."
+            },
+            {
+                category: "Temperatura / Temperature",
+                question: "¿Cuál es el <span class='translatable' data-en='boiling point'>punto de ebullición</span> del agua en grados Fahrenheit?",
+                questionEn: "What is the boiling point of water in degrees Fahrenheit?",
+                options: [
+                    "32°F",
+                    "100°F",
+                    "180°F",
+                    "212°F"
+                ],
+                optionsEn: [
+                    "32°F",
+                    "100°F",
+                    "180°F",
+                    "212°F"
+                ],
+                correct: 3,
+                explanation: "El punto de ebullición del agua es 212°F (que es igual a 100°C).",
+                explanationEn: "The boiling point of water is 212°F (which equals 100°C)."
+            },
+            {
+                category: "Temperatura / Temperature",
+                question: "Si un termómetro muestra 40°F, ¿el agua estará congelada o líquida?",
+                questionEn: "If a thermometer shows 40°F, will the water be frozen or liquid?",
+                options: [
+                    "Congelada (hielo)",
+                    "Líquida",
+                    "Vapor",
+                    "No se puede saber"
+                ],
+                optionsEn: [
+                    "Frozen (ice)",
+                    "Liquid",
+                    "Vapor",
+                    "Cannot tell"
+                ],
+                correct: 1,
+                explanation: "40°F está por encima del punto de congelación (32°F), así que el agua estará líquida.",
+                explanationEn: "40°F is above the freezing point (32°F), so the water will be liquid."
+            },
+            // Visual Thermometer Questions
+            {
+                category: "Leer Termómetro / Read Thermometer",
+                question: "Mira el termómetro. ¿Qué temperatura muestra?<div class='thermometer-container'><div class='thermometer'><div class='thermometer-tube' style='height: 45%;'></div><div class='thermometer-bulb'></div><div class='thermometer-scale'><span>100°C</span><span>75°C</span><span>50°C</span><span>25°C</span><span>0°C</span></div></div></div>",
+                questionEn: "Look at the thermometer. What temperature does it show?<div class='thermometer-container'><div class='thermometer'><div class='thermometer-tube' style='height: 45%;'></div><div class='thermometer-bulb'></div><div class='thermometer-scale'><span>100°C</span><span>75°C</span><span>50°C</span><span>25°C</span><span>0°C</span></div></div></div>",
+                options: [
+                    "0°C",
+                    "25°C",
+                    "50°C",
+                    "100°C"
+                ],
+                optionsEn: [
+                    "0°C",
+                    "25°C",
+                    "50°C",
+                    "100°C"
+                ],
+                correct: 1,
+                explanation: "El mercurio está aproximadamente a la marca de 25°C.",
+                explanationEn: "The mercury is approximately at the 25°C mark."
+            },
+            {
+                category: "Leer Termómetro / Read Thermometer",
+                question: "Mira el termómetro. ¿El agua se congelará a esta temperatura?<div class='thermometer-container'><div class='thermometer'><div class='thermometer-tube' style='height: 70%;'></div><div class='thermometer-bulb'></div><div class='thermometer-scale'><span>100°C</span><span>75°C</span><span>50°C</span><span>25°C</span><span>0°C</span></div></div></div>",
+                questionEn: "Look at the thermometer. Will water freeze at this temperature?<div class='thermometer-container'><div class='thermometer'><div class='thermometer-tube' style='height: 70%;'></div><div class='thermometer-bulb'></div><div class='thermometer-scale'><span>100°C</span><span>75°C</span><span>50°C</span><span>25°C</span><span>0°C</span></div></div></div>",
+                options: [
+                    "Sí, se congelará",
+                    "No, está muy caliente para congelarse",
+                    "No se puede saber",
+                    "Sí, hervirá"
+                ],
+                optionsEn: [
+                    "Yes, it will freeze",
+                    "No, it's too warm to freeze",
+                    "Cannot tell",
+                    "Yes, it will boil"
+                ],
+                correct: 1,
+                explanation: "El termómetro muestra aproximadamente 50°C. El agua se congela a 0°C, así que 50°C es demasiado caliente para congelarse.",
+                explanationEn: "The thermometer shows approximately 50°C. Water freezes at 0°C, so 50°C is too warm to freeze."
+            },
+            {
+                category: "Leer Termómetro / Read Thermometer",
+                question: "Mira el termómetro. ¿El agua hervirá a esta temperatura?<div class='thermometer-container'><div class='thermometer'><div class='thermometer-tube' style='height: 95%;'></div><div class='thermometer-bulb'></div><div class='thermometer-scale'><span>100°C</span><span>75°C</span><span>50°C</span><span>25°C</span><span>0°C</span></div></div></div>",
+                questionEn: "Look at the thermometer. Will water boil at this temperature?<div class='thermometer-container'><div class='thermometer'><div class='thermometer-tube' style='height: 95%;'></div><div class='thermometer-bulb'></div><div class='thermometer-scale'><span>100°C</span><span>75°C</span><span>50°C</span><span>25°C</span><span>0°C</span></div></div></div>",
+                options: [
+                    "No, está muy fría",
+                    "No, está tibia",
+                    "Sí, hervirá",
+                    "Se congelará"
+                ],
+                optionsEn: [
+                    "No, it's too cold",
+                    "No, it's warm",
+                    "Yes, it will boil",
+                    "It will freeze"
+                ],
+                correct: 2,
+                explanation: "El termómetro muestra aproximadamente 100°C. El agua hierve a 100°C, ¡así que sí hervirá!",
+                explanationEn: "The thermometer shows approximately 100°C. Water boils at 100°C, so yes it will boil!"
+            },
+            {
+                category: "Leer Termómetro / Read Thermometer",
+                question: "Mira el termómetro. ¿En qué estado estará el agua?<div class='thermometer-container'><div class='thermometer'><div class='thermometer-tube' style='height: 5%;'></div><div class='thermometer-bulb'></div><div class='thermometer-scale'><span>100°C</span><span>75°C</span><span>50°C</span><span>25°C</span><span>0°C</span></div></div></div>",
+                questionEn: "Look at the thermometer. What state will water be in?<div class='thermometer-container'><div class='thermometer'><div class='thermometer-tube' style='height: 5%;'></div><div class='thermometer-bulb'></div><div class='thermometer-scale'><span>100°C</span><span>75°C</span><span>50°C</span><span>25°C</span><span>0°C</span></div></div></div>",
+                options: [
+                    "Líquido (agua)",
+                    "Sólido (hielo)",
+                    "Gas (vapor)",
+                    "Cualquier estado"
+                ],
+                optionsEn: [
+                    "Liquid (water)",
+                    "Solid (ice)",
+                    "Gas (vapor)",
+                    "Any state"
+                ],
+                correct: 1,
+                explanation: "El termómetro muestra aproximadamente 0°C o menos. A esta temperatura, el agua se congela y se convierte en hielo (sólido).",
+                explanationEn: "The thermometer shows approximately 0°C or below. At this temperature, water freezes and becomes ice (solid)."
+            },
+            {
+                category: "Leer Termómetro / Read Thermometer",
+                question: "Mira el termómetro (en Fahrenheit). ¿Qué temperatura muestra?<div class='thermometer-container'><div class='thermometer'><div class='thermometer-tube' style='height: 30%;'></div><div class='thermometer-bulb'></div><div class='thermometer-scale'><span>212°F</span><span>150°F</span><span>100°F</span><span>50°F</span><span>32°F</span></div></div></div>",
+                questionEn: "Look at the thermometer (in Fahrenheit). What temperature does it show?<div class='thermometer-container'><div class='thermometer'><div class='thermometer-tube' style='height: 30%;'></div><div class='thermometer-bulb'></div><div class='thermometer-scale'><span>212°F</span><span>150°F</span><span>100°F</span><span>50°F</span><span>32°F</span></div></div></div>",
+                options: [
+                    "32°F",
+                    "50°F",
+                    "100°F",
+                    "212°F"
+                ],
+                optionsEn: [
+                    "32°F",
+                    "50°F",
+                    "100°F",
+                    "212°F"
+                ],
+                correct: 1,
+                explanation: "El mercurio está aproximadamente a la marca de 50°F.",
+                explanationEn: "The mercury is approximately at the 50°F mark."
+            },
+            {
+                category: "Leer Termómetro / Read Thermometer",
+                question: "Mira el termómetro (Fahrenheit). ¿El agua estará congelada o líquida?<div class='thermometer-container'><div class='thermometer'><div class='thermometer-tube' style='height: 15%;'></div><div class='thermometer-bulb'></div><div class='thermometer-scale'><span>212°F</span><span>150°F</span><span>100°F</span><span>50°F</span><span>32°F</span></div></div></div>",
+                questionEn: "Look at the thermometer (Fahrenheit). Will water be frozen or liquid?<div class='thermometer-container'><div class='thermometer'><div class='thermometer-tube' style='height: 15%;'></div><div class='thermometer-bulb'></div><div class='thermometer-scale'><span>212°F</span><span>150°F</span><span>100°F</span><span>50°F</span><span>32°F</span></div></div></div>",
+                options: [
+                    "Congelada (hielo)",
+                    "Líquida",
+                    "Hirviendo",
+                    "No se puede saber"
+                ],
+                optionsEn: [
+                    "Frozen (ice)",
+                    "Liquid",
+                    "Boiling",
+                    "Cannot tell"
+                ],
+                correct: 0,
+                explanation: "El termómetro muestra aproximadamente 32°F o menos. El punto de congelación es 32°F, así que el agua estará congelada.",
+                explanationEn: "The thermometer shows approximately 32°F or below. The freezing point is 32°F, so water will be frozen."
+            },
+            // Water Cycle Order
+            {
+                category: "El Ciclo / The Cycle",
+                question: "¿Cuál es el <span class='translatable' data-en='correct order'>orden correcto</span> del <span class='translatable' data-en='water cycle'>ciclo del agua</span>?",
+                questionEn: "What is the correct order of the water cycle?",
+                options: [
+                    "Precipitación → Evaporación → Condensación → Acumulación",
+                    "Evaporación → Condensación → Precipitación → Acumulación",
+                    "Condensación → Acumulación → Evaporación → Precipitación",
+                    "Acumulación → Precipitación → Evaporación → Condensación"
+                ],
+                optionsEn: [
+                    "Precipitation → Evaporation → Condensation → Accumulation",
+                    "Evaporation → Condensation → Precipitation → Accumulation",
+                    "Condensation → Accumulation → Evaporation → Precipitation",
+                    "Accumulation → Precipitation → Evaporation → Condensation"
+                ],
+                correct: 1,
+                explanation: "El ciclo del agua sigue este orden: el agua se evapora, el vapor se condensa en nubes, cae como precipitación, y se acumula.",
+                explanationEn: "The water cycle follows this order: water evaporates, vapor condenses into clouds, falls as precipitation, and accumulates."
+            },
+            {
+                category: "El Ciclo / The Cycle",
+                question: "¿Por qué se llama '<span class='translatable' data-en='cycle'>ciclo</span>' del <span class='translatable' data-en='water'>agua</span>?",
+                questionEn: "Why is it called the water 'cycle'?",
+                options: [
+                    "Porque solo pasa una vez",
+                    "Porque el agua se pierde",
+                    "Porque es un proceso que se repite una y otra vez",
+                    "Porque el agua viaja en círculos en el cielo"
+                ],
+                optionsEn: [
+                    "Because it only happens once",
+                    "Because water is lost",
+                    "Because it's a process that repeats over and over",
+                    "Because water travels in circles in the sky"
+                ],
+                correct: 2,
+                explanation: "Se llama ciclo porque el agua pasa por las mismas etapas una y otra vez, nunca se acaba.",
+                explanationEn: "It's called a cycle because water goes through the same stages over and over, it never ends."
+            },
+            {
+                category: "El Ciclo / The Cycle",
+                question: "¿Cuántas <span class='translatable' data-en='stages'>etapas</span> tiene el <span class='translatable' data-en='water cycle'>ciclo del agua</span>?",
+                questionEn: "How many stages does the water cycle have?",
+                options: [
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                ],
+                optionsEn: [
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                ],
+                correct: 2,
+                explanation: "El ciclo del agua tiene 4 etapas: evaporación, condensación, precipitación, y acumulación.",
+                explanationEn: "The water cycle has 4 stages: evaporation, condensation, precipitation, and accumulation."
+            },
+            // Real World
+            {
+                category: "Mundo Real / Real World",
+                question: "¿Qué ves cuando el <span class='translatable' data-en='bathroom mirror'>espejo del baño</span> se <span class='translatable' data-en='fogs up'>empaña</span> después de una <span class='translatable' data-en='hot shower'>ducha caliente</span>?",
+                questionEn: "What do you see when the bathroom mirror fogs up after a hot shower?",
+                options: [
+                    "Evaporación",
+                    "Condensación",
+                    "Precipitación",
+                    "Acumulación"
+                ],
+                optionsEn: [
+                    "Evaporation",
+                    "Condensation",
+                    "Precipitation",
+                    "Accumulation"
+                ],
+                correct: 1,
+                explanation: "El espejo empañado es condensación - el vapor de agua caliente se enfría al tocar el espejo frío y forma gotitas.",
+                explanationEn: "The foggy mirror is condensation - hot water vapor cools when it touches the cold mirror and forms droplets."
+            },
+            {
+                category: "Mundo Real / Real World",
+                question: "Cuando los <span class='translatable' data-en='puddles'>charcos</span> <span class='translatable' data-en='disappear'>desaparecen</span> en un <span class='translatable' data-en='sunny day'>día soleado</span>, ¿qué está pasando?",
+                questionEn: "When puddles disappear on a sunny day, what's happening?",
+                options: [
+                    "Condensación",
+                    "Precipitación",
+                    "Evaporación",
+                    "Acumulación"
+                ],
+                optionsEn: [
+                    "Condensation",
+                    "Precipitation",
+                    "Evaporation",
+                    "Accumulation"
+                ],
+                correct: 2,
+                explanation: "Los charcos desaparecen porque el agua se evapora - el sol calienta el agua y la convierte en vapor invisible.",
+                explanationEn: "Puddles disappear because the water evaporates - the sun heats the water and turns it into invisible vapor."
+            },
+            {
+                category: "Mundo Real / Real World",
+                question: "¿Por qué las <span class='translatable' data-en='water drops'>gotas de agua</span> aparecen afuera de un <span class='translatable' data-en='cold glass'>vaso frío</span>?",
+                questionEn: "Why do water drops appear on the outside of a cold glass?",
+                options: [
+                    "El vaso está roto",
+                    "El agua sale del vaso",
+                    "El vapor de agua del aire se condensa en el vaso frío",
+                    "Es magia"
+                ],
+                optionsEn: [
+                    "The glass is broken",
+                    "Water is leaking from the glass",
+                    "Water vapor from the air condenses on the cold glass",
+                    "It's magic"
+                ],
+                correct: 2,
+                explanation: "El vapor de agua en el aire se enfría al tocar el vaso frío y se convierte en gotitas de agua líquida.",
+                explanationEn: "Water vapor in the air cools when it touches the cold glass and turns into liquid water droplets."
+            }
+        ];
+
+        let currentLanguage = 'spanish';
+        let questions = [];
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedOption = null;
+        let missedQuestions = [];
+
+        // Review state
+        let reviewQuestions = [];
+        let currentReviewQuestion = 0;
+        let reviewScore = 0;
+        let selectedReviewOption = null;
+
+        // Initialize flashcards
+        function renderFlashcards() {
+            const grid = document.getElementById('flashcardGrid');
+            grid.innerHTML = flashcards.map((card, i) => `
+                <div class="flashcard" onclick="flipCard(this)">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">${card.spanish}</div>
+                        <div class="flashcard-back">${card.english}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function flipCard(card) {
+            card.classList.toggle('flipped');
+        }
+
+        function toggleLanguage() {
+            currentLanguage = currentLanguage === 'spanish' ? 'english' : 'spanish';
+            const langLabel = currentLanguage === 'spanish' ? 'Show English' : 'Mostrar Español';
+            document.getElementById('langText').textContent = langLabel;
+            if (document.getElementById('langTextQuiz')) {
+                document.getElementById('langTextQuiz').textContent = langLabel;
+            }
+            if (document.getElementById('langTextResults')) {
+                document.getElementById('langTextResults').textContent = langLabel;
+            }
+            
+            if (!document.getElementById('quizScreen').classList.contains('hidden')) {
+                updateQuestionLanguage();
+            }
+            
+            if (!document.getElementById('resultsScreen').classList.contains('hidden')) {
+                updateResultsLanguage();
+            }
+        }
+        
+        function updateQuestionLanguage() {
+            const q = questions[currentQuestion];
+            document.getElementById('questionText').innerHTML = 
+                currentLanguage === 'spanish' ? q.question : q.questionEn;
+            
+            const options = currentLanguage === 'spanish' ? q.options : q.optionsEn;
+            const optionElements = document.querySelectorAll('.option');
+            optionElements.forEach((opt, i) => {
+                opt.innerHTML = options[i];
+            });
+            
+            const questionLabel = currentLanguage === 'spanish' ? 'Pregunta' : 'Question';
+            const ofLabel = currentLanguage === 'spanish' ? 'de' : 'of';
+            document.getElementById('questionNum').textContent = 
+                `${questionLabel} ${currentQuestion + 1} ${ofLabel} ${questions.length}`;
+            
+            const pointsLabel = currentLanguage === 'spanish' ? 'Puntos' : 'Points';
+            document.getElementById('scoreDisplay').textContent = `${pointsLabel}: ${score}`;
+            
+            document.getElementById('submitBtn').textContent = 
+                currentLanguage === 'spanish' ? 'Enviar Respuesta / Submit' : 'Submit Answer';
+            document.getElementById('nextBtn').textContent = 
+                currentLanguage === 'spanish' ? 'Siguiente → / Next →' : 'Next →';
+        }
+
+        function shuffle(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function startQuiz() {
+            questions = shuffle(questionBank).slice(0, 12);
+            currentQuestion = 0;
+            score = 0;
+            missedQuestions = [];
+            
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('quizScreen').classList.remove('hidden');
+            
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = questions[currentQuestion];
+            
+            document.getElementById('progressFill').style.width = 
+                `${((currentQuestion) / questions.length) * 100}%`;
+            const questionLabel = currentLanguage === 'spanish' ? 'Pregunta' : 'Question';
+            const ofLabel = currentLanguage === 'spanish' ? 'de' : 'of';
+            document.getElementById('questionNum').textContent = 
+                `${questionLabel} ${currentQuestion + 1} ${ofLabel} ${questions.length}`;
+            const pointsLabel = currentLanguage === 'spanish' ? 'Puntos' : 'Points';
+            document.getElementById('scoreDisplay').textContent = `${pointsLabel}: ${score}`;
+            document.getElementById('category').textContent = q.category;
+            
+            document.getElementById('questionText').innerHTML = 
+                currentLanguage === 'spanish' ? q.question : q.questionEn;
+            
+            const options = currentLanguage === 'spanish' ? q.options : q.optionsEn;
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = options.map((opt, i) => `
+                <div class="option" data-index="${i}" onclick="selectOption(this, ${i})">
+                    ${opt}
+                </div>
+            `).join('');
+            
+            selectedOption = null;
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').classList.remove('hidden');
+            document.getElementById('nextBtn').classList.add('hidden');
+            document.getElementById('feedback').classList.add('hidden');
+        }
+
+        function selectOption(element, index) {
+            document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedOption = index;
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        function submitAnswer() {
+            const q = questions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            
+            options.forEach((opt, i) => {
+                opt.style.pointerEvents = 'none';
+                if (i === q.correct) {
+                    opt.classList.add('correct');
+                } else if (i === selectedOption && selectedOption !== q.correct) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            const feedback = document.getElementById('feedback');
+            feedback.classList.remove('hidden', 'correct', 'incorrect');
+            
+            const explanation = currentLanguage === 'spanish' ? q.explanation : (q.explanationEn || q.explanation);
+            
+            if (selectedOption === q.correct) {
+                score++;
+                feedback.classList.add('correct');
+                const correctMsg = currentLanguage === 'spanish' ? '✅ ¡Correcto!' : '✅ Correct!';
+                feedback.innerHTML = `<strong>${correctMsg}</strong><br>${explanation}`;
+            } else {
+                feedback.classList.add('incorrect');
+                const correctAnswer = currentLanguage === 'spanish' ? 
+                    q.options[q.correct] : q.optionsEn[q.correct];
+                const incorrectMsg = currentLanguage === 'spanish' ? '❌ Incorrecto' : '❌ Incorrect';
+                const answerLabel = currentLanguage === 'spanish' ? 'La respuesta correcta es' : 'The correct answer is';
+                feedback.innerHTML = `<strong>${incorrectMsg}</strong><br>
+                    ${answerLabel}: <strong>${correctAnswer}</strong><br>
+                    ${explanation}`;
+                missedQuestions.push({
+                    question: currentLanguage === 'spanish' ? q.question : q.questionEn,
+                    correctAnswer: correctAnswer,
+                    originalQuestion: q
+                });
+            }
+            
+            const pointsLbl = currentLanguage === 'spanish' ? 'Puntos' : 'Points';
+            document.getElementById('scoreDisplay').textContent = `${pointsLbl}: ${score}`;
+            document.getElementById('submitBtn').classList.add('hidden');
+            document.getElementById('nextBtn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion >= questions.length) {
+                showResults();
+            } else {
+                renderQuestion();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('resultsScreen').classList.remove('hidden');
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            document.getElementById('finalScore').textContent = `${percentage}%`;
+            
+            updateResultsLanguage();
+            
+            const reviewSection = document.getElementById('reviewSection');
+            
+            if (missedQuestions.length > 0) {
+                reviewSection.classList.remove('hidden');
+                startReviewMode();
+            } else {
+                reviewSection.classList.add('hidden');
+            }
+        }
+        
+        function updateResultsLanguage() {
+            const percentage = Math.round((score / questions.length) * 100);
+            
+            document.querySelector('#resultsScreen .results > h1').textContent = 
+                currentLanguage === 'spanish' ? '🎉 ¡Quiz Completado!' : '🎉 Quiz Complete!';
+            document.querySelector('.score-label').textContent = 
+                currentLanguage === 'spanish' ? 'Correctas' : 'Correct';
+            
+            let message = '';
+            if (currentLanguage === 'spanish') {
+                if (percentage >= 90) message = '🌟 ¡Excelente! ¡Eres un experto en el ciclo del agua!';
+                else if (percentage >= 70) message = '👍 ¡Muy bien! ¡Entiendes bien el ciclo del agua!';
+                else if (percentage >= 50) message = '📚 ¡Sigue practicando! Repasa las 4 etapas del ciclo.';
+                else message = '💪 ¡No te rindas! Estudia las tarjetas e intenta de nuevo.';
+            } else {
+                if (percentage >= 90) message = '🌟 Excellent! You\'re a water cycle expert!';
+                else if (percentage >= 70) message = '👍 Great job! You understand the water cycle well!';
+                else if (percentage >= 50) message = '📚 Keep practicing! Review the 4 stages of the cycle.';
+                else message = '💪 Don\'t give up! Study the flashcards and try again!';
+            }
+            
+            document.getElementById('resultsMessage').textContent = message;
+            
+            document.querySelector('.restart-separator p').textContent = 
+                currentLanguage === 'spanish' ? '¿Listo para otro intento?' : 'Ready for another try?';
+            
+            document.querySelector('.btn-secondary').textContent = 
+                currentLanguage === 'spanish' ? '🔄 Intentar de Nuevo' : '🔄 Try Again';
+            
+            if (document.getElementById('reviewHeader')) {
+                document.getElementById('reviewHeader').textContent = 
+                    currentLanguage === 'spanish' ? '📝 ¡Practiquemos las preguntas que fallaste!' : '📝 Let\'s Practice the Missed Questions!';
+            }
+            
+            if (document.getElementById('reviewCompleteHeader')) {
+                document.getElementById('reviewCompleteHeader').textContent = 
+                    currentLanguage === 'spanish' ? '🎉 ¡Repaso Completado!' : '🎉 Review Complete!';
+            }
+        }
+
+        // Review Mode Functions
+        function startReviewMode() {
+            reviewQuestions = [...missedQuestions];
+            currentReviewQuestion = 0;
+            reviewScore = 0;
+            selectedReviewOption = null;
+            
+            document.getElementById('reviewScore').classList.add('hidden');
+            document.getElementById('reviewProgress').classList.remove('hidden');
+            document.getElementById('reviewQuestion').classList.remove('hidden');
+            document.getElementById('reviewOptions').classList.remove('hidden');
+            document.getElementById('reviewCheckBtn').classList.remove('hidden');
+            
+            document.getElementById('reviewHeader').textContent = 
+                currentLanguage === 'spanish' ? '📝 ¡Practiquemos las preguntas que fallaste!' : '📝 Let\'s Practice the Missed Questions!';
+            
+            renderReviewQuestion();
+        }
+
+        function renderReviewQuestion() {
+            const q = reviewQuestions[currentReviewQuestion];
+            const originalQ = q.originalQuestion;
+            
+            const progressLabel = currentLanguage === 'spanish' ? 
+                `Pregunta ${currentReviewQuestion + 1} de ${reviewQuestions.length}` :
+                `Question ${currentReviewQuestion + 1} of ${reviewQuestions.length}`;
+            document.getElementById('reviewProgress').textContent = progressLabel;
+            
+            const questionText = currentLanguage === 'spanish' ? originalQ.question : originalQ.questionEn;
+            document.getElementById('reviewQuestion').innerHTML = questionText;
+            
+            const opts = currentLanguage === 'spanish' ? originalQ.options : originalQ.optionsEn;
+            const correctAnswer = opts[originalQ.correct];
+            
+            let allOptions = shuffle([...opts]);
+            
+            const optionsContainer = document.getElementById('reviewOptions');
+            optionsContainer.innerHTML = allOptions.map((opt, i) => `
+                <div class="review-option" data-correct="${opt === correctAnswer}" onclick="selectReviewOption(${i})">${opt}</div>
+            `).join('');
+            
+            selectedReviewOption = null;
+            document.getElementById('reviewCheckBtn').disabled = true;
+            document.getElementById('reviewCheckBtn').classList.remove('hidden');
+            document.getElementById('reviewCheckBtn').textContent = 
+                currentLanguage === 'spanish' ? 'Verificar / Check' : 'Check Answer';
+            document.getElementById('reviewNextBtn').classList.add('hidden');
+            document.getElementById('reviewFeedback').classList.add('hidden');
+        }
+
+        function selectReviewOption(index) {
+            const options = document.querySelectorAll('.review-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            options[index].classList.add('selected');
+            selectedReviewOption = index;
+            document.getElementById('reviewCheckBtn').disabled = false;
+        }
+
+        function checkReviewAnswer() {
+            const options = document.querySelectorAll('.review-option');
+            const selectedOpt = options[selectedReviewOption];
+            const isCorrect = selectedOpt.dataset.correct === 'true';
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt.dataset.correct === 'true') {
+                    opt.classList.add('reveal-correct');
+                }
+            });
+            
+            if (isCorrect) {
+                selectedOpt.classList.add('correct');
+                reviewScore++;
+            } else {
+                selectedOpt.classList.add('incorrect');
+            }
+            
+            const feedback = document.getElementById('reviewFeedback');
+            feedback.classList.remove('hidden', 'correct', 'incorrect');
+            feedback.classList.add(isCorrect ? 'correct' : 'incorrect');
+            
+            if (currentLanguage === 'spanish') {
+                feedback.textContent = isCorrect ? '✅ ¡Muy bien! ¡Lo lograste!' : '❌ No exactamente. La respuesta correcta está resaltada.';
+            } else {
+                feedback.textContent = isCorrect ? '✅ Great job! You got it!' : '❌ Not quite. The correct answer is highlighted.';
+            }
+            
+            document.getElementById('reviewCheckBtn').classList.add('hidden');
+            document.getElementById('reviewNextBtn').classList.remove('hidden');
+            
+            const nextBtnText = currentReviewQuestion < reviewQuestions.length - 1 
+                ? (currentLanguage === 'spanish' ? 'Siguiente → / Next →' : 'Next Question →')
+                : (currentLanguage === 'spanish' ? 'Ver Resultados' : 'See Results');
+            document.getElementById('reviewNextBtn').textContent = nextBtnText;
+        }
+
+        function nextReviewQuestion() {
+            currentReviewQuestion++;
+            if (currentReviewQuestion >= reviewQuestions.length) {
+                showReviewResults();
+            } else {
+                renderReviewQuestion();
+            }
+        }
+
+        function showReviewResults() {
+            document.getElementById('reviewProgress').classList.add('hidden');
+            document.getElementById('reviewQuestion').classList.add('hidden');
+            document.getElementById('reviewOptions').classList.add('hidden');
+            document.getElementById('reviewFeedback').classList.add('hidden');
+            document.getElementById('reviewCheckBtn').classList.add('hidden');
+            document.getElementById('reviewNextBtn').classList.add('hidden');
+            
+            const scoreDiv = document.getElementById('reviewScore');
+            scoreDiv.classList.remove('hidden');
+            
+            document.getElementById('reviewCompleteHeader').textContent = 
+                currentLanguage === 'spanish' ? '🎉 ¡Repaso Completado!' : '🎉 Review Complete!';
+            
+            const percentage = Math.round((reviewScore / reviewQuestions.length) * 100);
+            const scoreText = currentLanguage === 'spanish'
+                ? `¡Obtuviste ${reviewScore} de ${reviewQuestions.length} correctas (${percentage}%) en el repaso!`
+                : `You got ${reviewScore} out of ${reviewQuestions.length} correct (${percentage}%) on the review!`;
+            document.getElementById('reviewScoreText').textContent = scoreText;
+        }
+
+        function restartQuiz() {
+            document.getElementById('resultsScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+            document.getElementById('reviewSection').classList.add('hidden');
+        }
+
+        // Drag and Drop Functions
+        let draggedLabel = null;
+        let placedLabels = {};
+
+        function initDragDrop() {
+            const labels = document.querySelectorAll('.draggable-label');
+            const dropZones = document.querySelectorAll('.drop-zone');
+
+            labels.forEach(label => {
+                label.addEventListener('dragstart', handleDragStart);
+                label.addEventListener('dragend', handleDragEnd);
+                
+                // Touch support
+                label.addEventListener('touchstart', handleTouchStart, {passive: false});
+                label.addEventListener('touchmove', handleTouchMove, {passive: false});
+                label.addEventListener('touchend', handleTouchEnd);
+            });
+
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', handleDragOver);
+                zone.addEventListener('dragleave', handleDragLeave);
+                zone.addEventListener('drop', handleDrop);
+            });
+        }
+
+        function handleDragStart(e) {
+            draggedLabel = e.target;
+            e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', e.target.dataset.stage);
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+            draggedLabel = null;
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.target.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            e.target.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const dropZone = e.target;
+            dropZone.classList.remove('drag-over');
+
+            if (draggedLabel && !dropZone.classList.contains('filled')) {
+                const stage = draggedLabel.dataset.stage;
+                const zoneId = dropZone.dataset.correct;
+                
+                // Remove from previous zone if any
+                Object.keys(placedLabels).forEach(key => {
+                    if (placedLabels[key] === stage) {
+                        const prevZone = document.querySelector(`[data-correct="${key}"]`);
+                        if (prevZone) {
+                            prevZone.textContent = prevZone.className.includes('drop-zone-a') ? 'A' :
+                                                   prevZone.className.includes('drop-zone-b') ? 'B' :
+                                                   prevZone.className.includes('drop-zone-c') ? 'C' : 'D';
+                            prevZone.classList.remove('filled');
+                        }
+                        delete placedLabels[key];
+                    }
+                });
+
+                // Place in new zone
+                dropZone.textContent = draggedLabel.textContent;
+                dropZone.classList.add('filled');
+                placedLabels[zoneId] = stage;
+                draggedLabel.classList.add('placed');
+
+                updateCheckButton();
+            }
+        }
+
+        // Touch support for mobile
+        let touchLabel = null;
+        let touchClone = null;
+
+        function handleTouchStart(e) {
+            touchLabel = e.target;
+            touchLabel.classList.add('dragging');
+            
+            touchClone = touchLabel.cloneNode(true);
+            touchClone.style.position = 'fixed';
+            touchClone.style.pointerEvents = 'none';
+            touchClone.style.zIndex = '1000';
+            touchClone.style.opacity = '0.8';
+            document.body.appendChild(touchClone);
+            
+            const touch = e.touches[0];
+            touchClone.style.left = (touch.clientX - 50) + 'px';
+            touchClone.style.top = (touch.clientY - 20) + 'px';
+            
+            e.preventDefault();
+        }
+
+        function handleTouchMove(e) {
+            if (!touchClone) return;
+            const touch = e.touches[0];
+            touchClone.style.left = (touch.clientX - 50) + 'px';
+            touchClone.style.top = (touch.clientY - 20) + 'px';
+            e.preventDefault();
+        }
+
+        function handleTouchEnd(e) {
+            if (!touchLabel || !touchClone) return;
+            
+            const touch = e.changedTouches[0];
+            const dropZones = document.querySelectorAll('.drop-zone');
+            
+            dropZones.forEach(zone => {
+                const rect = zone.getBoundingClientRect();
+                if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
+                    touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+                    
+                    if (!zone.classList.contains('filled')) {
+                        const stage = touchLabel.dataset.stage;
+                        const zoneId = zone.dataset.correct;
+                        
+                        Object.keys(placedLabels).forEach(key => {
+                            if (placedLabels[key] === stage) {
+                                const prevZone = document.querySelector(`[data-correct="${key}"]`);
+                                if (prevZone) {
+                                    prevZone.textContent = prevZone.className.includes('drop-zone-a') ? 'A' :
+                                                           prevZone.className.includes('drop-zone-b') ? 'B' :
+                                                           prevZone.className.includes('drop-zone-c') ? 'C' : 'D';
+                                    prevZone.classList.remove('filled');
+                                }
+                                delete placedLabels[key];
+                            }
+                        });
+
+                        zone.textContent = touchLabel.textContent;
+                        zone.classList.add('filled');
+                        placedLabels[zoneId] = stage;
+                        touchLabel.classList.add('placed');
+                        updateCheckButton();
+                    }
+                }
+            });
+
+            touchLabel.classList.remove('dragging');
+            document.body.removeChild(touchClone);
+            touchLabel = null;
+            touchClone = null;
+        }
+
+        function updateCheckButton() {
+            const checkBtn = document.getElementById('checkDiagramBtn');
+            checkBtn.disabled = Object.keys(placedLabels).length < 4;
+        }
+
+        function checkDiagram() {
+            const dropZones = document.querySelectorAll('.drop-zone');
+            let correctCount = 0;
+
+            dropZones.forEach(zone => {
+                const correctAnswer = zone.dataset.correct;
+                const placedAnswer = placedLabels[correctAnswer];
+                
+                zone.classList.remove('correct', 'incorrect');
+                
+                if (placedAnswer === correctAnswer) {
+                    zone.classList.add('correct');
+                    correctCount++;
+                } else {
+                    zone.classList.add('incorrect');
+                }
+            });
+
+            const feedback = document.getElementById('diagramFeedback');
+            feedback.classList.remove('hidden', 'correct', 'incorrect');
+
+            if (correctCount === 4) {
+                feedback.classList.add('correct');
+                feedback.innerHTML = currentLanguage === 'spanish' 
+                    ? '🎉 ¡Excelente! ¡Todas las respuestas son correctas!'
+                    : '🎉 Excellent! All answers are correct!';
+            } else {
+                feedback.classList.add('incorrect');
+                feedback.innerHTML = currentLanguage === 'spanish'
+                    ? `❌ ${correctCount}/4 correctas. ¡Intenta de nuevo!`
+                    : `❌ ${correctCount}/4 correct. Try again!`;
+            }
+
+            document.getElementById('checkDiagramBtn').classList.add('hidden');
+            document.getElementById('resetDiagramBtn').classList.remove('hidden');
+        }
+
+        function resetDiagram() {
+            const dropZones = document.querySelectorAll('.drop-zone');
+            const labels = document.querySelectorAll('.draggable-label');
+
+            dropZones.forEach(zone => {
+                zone.classList.remove('filled', 'correct', 'incorrect');
+                zone.textContent = zone.className.includes('drop-zone-a') ? 'A' :
+                                   zone.className.includes('drop-zone-b') ? 'B' :
+                                   zone.className.includes('drop-zone-c') ? 'C' : 'D';
+            });
+
+            labels.forEach(label => {
+                label.classList.remove('placed');
+            });
+
+            placedLabels = {};
+            document.getElementById('diagramFeedback').classList.add('hidden');
+            document.getElementById('checkDiagramBtn').classList.remove('hidden');
+            document.getElementById('checkDiagramBtn').disabled = true;
+            document.getElementById('resetDiagramBtn').classList.add('hidden');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderFlashcards();
+            initDragDrop();
+        });
+    </script>
+</body>
+</html>

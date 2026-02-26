@@ -1,0 +1,2436 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medición de Ángulos - Quiz Interactivo (Unidad 5)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f4f8 0%, #d4e9ed 50%, #e0f0f5 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #2c3e50;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2rem;
+            color: #2980b9;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #5d6d7e;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+        }
+
+        /* Language Toggle */
+        .language-toggle {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .lang-btn {
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border: 2px solid #b8d4e3;
+            border-radius: 25px;
+            background: white;
+            color: #5d6d7e;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            margin: 0 8px;
+        }
+
+        .lang-btn:hover {
+            background: #f0f7fa;
+            border-color: #2980b9;
+        }
+
+        .lang-btn.active {
+            background: #2980b9;
+            color: white;
+            border-color: #2980b9;
+        }
+
+        /* Topic Cards */
+        .topic-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .topic-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border: 1px solid #d4e9ed;
+        }
+
+        .topic-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .topic-card h3 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+            color: #2980b9;
+        }
+
+        .topic-card p {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
+
+        /* Reference Card */
+        .reference-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border: 1px solid #d4e9ed;
+        }
+
+        .reference-card h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            color: #2980b9;
+        }
+
+        .reference-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .reference-section {
+            background: #f8fbfc;
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid #e8f4f8;
+        }
+
+        .reference-section h4 {
+            margin-bottom: 10px;
+            color: #27ae60;
+        }
+
+        .reference-section ul {
+            list-style: none;
+        }
+
+        .reference-section li {
+            padding: 5px 0;
+            font-size: 0.95rem;
+            color: #5d6d7e;
+        }
+
+        /* Start Button */
+        .start-btn {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 20px auto;
+            padding: 18px 30px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(39,174,96,0.3);
+        }
+
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(39,174,96,0.4);
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border: 1px solid #d4e9ed;
+            color: #5d6d7e;
+        }
+
+        .timer {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        .timer.warning { color: #f39c12; }
+        .timer.danger { color: #e74c3c; animation: pulse 0.5s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background: #e8f4f8;
+            border-radius: 10px;
+            height: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            transition: width 0.3s;
+        }
+
+        /* Question Card */
+        .question-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            color: #2c3e50;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border: 1px solid #d4e9ed;
+        }
+
+        .category-tag {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #2980b9, #3498db);
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .question-text code {
+            background: #e3f2fd;
+            padding: 2px 8px;
+            border-radius: 5px;
+            color: #1565c0;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Angle Visual */
+        .angle-visual {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: transparent;
+            border-radius: 15px;
+        }
+
+        .angle-visual svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Options */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 16px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.1rem;
+        }
+
+        .option:hover {
+            border-color: #2980b9;
+            background: #f0f7fa;
+        }
+
+        .option.selected {
+            border-color: #2980b9;
+            background: #e8f4f8;
+        }
+
+        .option.correct {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+        }
+
+        .option.incorrect {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        .option.reveal {
+            border-color: #4CAF50;
+            background: #c8e6c9;
+            animation: glow 0.5s ease-in-out;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px #4CAF50; }
+            50% { box-shadow: 0 0 20px #4CAF50; }
+        }
+
+        /* Feedback */
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: #e8f5e9;
+            border: 1px solid #4CAF50;
+            color: #2e7d32;
+        }
+
+        .feedback.incorrect {
+            background: #ffebee;
+            border: 1px solid #f44336;
+            color: #c62828;
+        }
+
+        /* Buttons */
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #2980b9, #3498db);
+            color: white;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(41,128,185,0.4);
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(39,174,96,0.4);
+        }
+
+        /* Results Screen */
+        .results-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            color: #2c3e50;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border: 1px solid #d4e9ed;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            color: white;
+        }
+
+        .score-circle .score {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .score-message {
+            font-size: 1.2em;
+            margin: 20px 0;
+            color: #555;
+        }
+
+        /* Review Section */
+        .review-section {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 15px;
+            text-align: left;
+        }
+
+        .review-section h3 {
+            color: #2980b9;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .review-progress {
+            text-align: center;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .review-question-text {
+            font-size: 1.05rem;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 500;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .review-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .review-option {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .review-option:hover {
+            border-color: #2980b9;
+            background: #f0f7fa;
+        }
+
+        .review-option.selected {
+            border-color: #1e3c72;
+            background: #e3f2fd;
+        }
+
+        .review-option.correct {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+        }
+
+        .review-option.incorrect {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        .review-option.reveal-correct {
+            border-color: #4CAF50;
+            background: #c8e6c9;
+        }
+
+        .review-feedback {
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .review-feedback.correct {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .review-feedback.incorrect {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .review-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .review-btn-check {
+            background: linear-gradient(135deg, #2980b9, #3498db);
+            color: white;
+        }
+
+        .review-btn-next {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+
+        .review-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .review-score {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .review-score h4 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+
+        .btn-restart {
+            background: linear-gradient(135deg, #2980b9, #3498db);
+            color: white;
+            margin-top: 20px;
+            padding: 15px 40px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Hover Translation Tooltips */
+        .translatable {
+            position: relative;
+            display: inline;
+            border-bottom: 1px dotted #7f8c8d;
+            cursor: help;
+        }
+
+        .translatable .translation {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c3e50;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            z-index: 100;
+            margin-bottom: 5px;
+        }
+
+        .translatable .translation::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #2c3e50;
+        }
+
+        .translatable:hover .translation {
+            display: block;
+        }
+
+        @media (max-width: 600px) {
+            .topic-cards { grid-template-columns: 1fr; }
+            h1 { font-size: 1.5rem; }
+            .question-text { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Start Screen -->
+        <div id="startScreen">
+            <h1>📐 <span id="titleText">Medición de Ángulos</span> 📐</h1>
+            <p class="subtitle" id="subtitleText">Unidad 5 - 4.° Grado</p>
+
+            <div class="language-toggle">
+                <p style="margin-bottom: 10px;">Selecciona el idioma / Select language:</p>
+                <button class="lang-btn active" id="btnSpanish" onclick="setLanguage('es')">🇪🇸 Español</button>
+                <button class="lang-btn" id="btnEnglish" onclick="setLanguage('en')">🇺🇸 English</button>
+            </div>
+
+            <div class="topic-cards">
+                <div class="topic-card">
+                    <div class="icon">📏</div>
+                    <h3 id="topicTypes">Tipos de Ángulos</h3>
+                    <p>Agudo, Recto, Obtuso, Llano</p>
+                </div>
+                <div class="topic-card">
+                    <div class="icon">⭕</div>
+                    <h3 id="topicCircle">Círculo = 360°</h3>
+                    <p>Fracciones y grados</p>
+                </div>
+                <div class="topic-card">
+                    <div class="icon">🕐</div>
+                    <h3 id="topicClock">Ángulos del Reloj</h3>
+                    <p>Manecillas y grados</p>
+                </div>
+            </div>
+
+            <div class="reference-card">
+                <h3 id="refTitle">📚 Tipos de Ángulos</h3>
+                <div class="reference-grid">
+                    <div class="reference-section">
+                        <h4>📐 <span id="refBasic">Básicos</span></h4>
+                        <ul>
+                            <li id="refAcute">Agudo = menos de 90°</li>
+                            <li id="refRight">Recto = exactamente 90°</li>
+                            <li id="refObtuse">Obtuso = más de 90°</li>
+                        </ul>
+                    </div>
+                    <div class="reference-section">
+                        <h4>⭕ <span id="refLarge">Grandes</span></h4>
+                        <ul>
+                            <li id="refStraight">Llano = 180°</li>
+                            <li id="refReflex">Reflejo = más de 180°</li>
+                            <li id="refFull">Rotación completa = 360°</li>
+                        </ul>
+                    </div>
+                    <div class="reference-section">
+                        <h4>🔢 <span id="refCircle">Círculo</span></h4>
+                        <ul>
+                            <li>1/4 círculo = 90°</li>
+                            <li>1/2 círculo = 180°</li>
+                            <li>Círculo completo = 360°</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <button class="start-btn" onclick="startQuiz()" id="startBtn">🚀 ¡Comenzar!</button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quizScreen" class="hidden">
+            <div class="stats-bar">
+                <span>📊 <span id="scoreLabel">Puntos</span>: <strong id="score">0</strong>/<strong id="totalAnswered">0</strong></span>
+                <span>❓ <span id="questionLabel">Pregunta</span>: <strong id="currentQ">1</strong>/<strong id="totalQ">20</strong></span>
+                <span class="timer" id="timer">⏱️ 0:45</span>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <div class="question-card">
+                <div class="category-tag" id="categoryTag">Tipos de Ángulos</div>
+                <div class="question-text" id="questionText">Pregunta aquí</div>
+                <div class="angle-visual hidden" id="angleVisual"></div>
+                <div class="options" id="options"></div>
+                <div class="feedback" id="feedback"></div>
+                <div class="btn-row">
+                    <button class="btn btn-submit" id="submitBtn" onclick="submitAnswer()" disabled>Enviar</button>
+                    <button class="btn btn-next hidden" id="nextBtn" onclick="nextQuestion()">Siguiente →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="hidden">
+            <div class="results-card">
+                <h2 id="resultsTitle">🎉 ¡Quiz Completado!</h2>
+                <div class="score-circle">
+                    <div class="score" id="finalScore">0%</div>
+                    <div class="label" id="scoreCircleLabel">Puntuación</div>
+                </div>
+                <div class="score-message" id="scoreMessage">¡Buen trabajo!</div>
+
+                <div class="review-section hidden" id="reviewSection">
+                    <h3 id="reviewTitle">📝 ¡Practiquemos las preguntas falladas!</h3>
+                    <div class="review-progress" id="reviewProgress">Pregunta 1 de 3</div>
+                    <div class="review-question-text" id="reviewQuestion"></div>
+                    <div class="angle-visual hidden" id="reviewVisual"></div>
+                    <div class="review-options" id="reviewOptions"></div>
+                    <div class="review-feedback hidden" id="reviewFeedback"></div>
+                    <button class="review-btn review-btn-check" id="reviewCheckBtn" onclick="checkReviewAnswer()" disabled>Verificar</button>
+                    <button class="review-btn review-btn-next hidden" id="reviewNextBtn" onclick="nextReviewQuestion()">Siguiente →</button>
+                    <div class="review-score hidden" id="reviewScore">
+                        <h4 id="reviewCompleteTitle">🎉 ¡Revisión Completa!</h4>
+                        <p id="reviewScoreText"></p>
+                    </div>
+                </div>
+
+                <button class="btn btn-restart" onclick="restartQuiz()" id="restartBtn">🔄 Intentar de Nuevo</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Language
+        let currentLang = 'es';
+
+        const translations = {
+            es: {
+                title: 'Medición de Ángulos',
+                subtitle: 'Unidad 5 - 4.° Grado',
+                topicTypes: 'Tipos de Ángulos',
+                topicCircle: 'Círculo = 360°',
+                topicClock: 'Ángulos del Reloj',
+                refTitle: '📚 Tipos de Ángulos',
+                refBasic: 'Básicos',
+                refLarge: 'Grandes',
+                refCircle: 'Círculo',
+                refAcute: 'Agudo = menos de 90°',
+                refRight: 'Recto = exactamente 90°',
+                refObtuse: 'Obtuso = más de 90°',
+                refStraight: 'Llano = 180°',
+                refReflex: 'Reflejo = más de 180°',
+                refFull: 'Rotación completa = 360°',
+                startBtn: '🚀 ¡Comenzar!',
+                scoreLabel: 'Puntos',
+                questionLabel: 'Pregunta',
+                submitBtn: 'Enviar',
+                nextBtn: 'Siguiente →',
+                resultsTitle: '🎉 ¡Quiz Completado!',
+                scoreCircleLabel: 'Puntuación',
+                reviewTitle: '📝 ¡Practiquemos las preguntas falladas!',
+                reviewCheck: 'Verificar',
+                reviewNext: 'Siguiente →',
+                reviewComplete: '🎉 ¡Revisión Completa!',
+                restartBtn: '🔄 Intentar de Nuevo',
+                correct: '✅ ¡Correcto!',
+                incorrect: '❌ Incorrecto.',
+                reviewCorrect: '✅ ¡Muy bien!',
+                reviewIncorrect: '❌ La respuesta correcta está resaltada.'
+            },
+            en: {
+                title: 'Angle Measurement',
+                subtitle: 'Unit 5 - 4th Grade',
+                topicTypes: 'Types of Angles',
+                topicCircle: 'Circle = 360°',
+                topicClock: 'Clock Angles',
+                refTitle: '📚 Types of Angles',
+                refBasic: 'Basic',
+                refLarge: 'Large',
+                refCircle: 'Circle',
+                refAcute: 'Acute = less than 90°',
+                refRight: 'Right = exactly 90°',
+                refObtuse: 'Obtuse = more than 90°',
+                refStraight: 'Straight = 180°',
+                refReflex: 'Reflex = more than 180°',
+                refFull: 'Full rotation = 360°',
+                startBtn: '🚀 Start!',
+                scoreLabel: 'Score',
+                questionLabel: 'Question',
+                submitBtn: 'Submit',
+                nextBtn: 'Next →',
+                resultsTitle: '🎉 Quiz Complete!',
+                scoreCircleLabel: 'Score',
+                reviewTitle: '📝 Let\'s practice the missed questions!',
+                reviewCheck: 'Check',
+                reviewNext: 'Next →',
+                reviewComplete: '🎉 Review Complete!',
+                restartBtn: '🔄 Try Again',
+                correct: '✅ Correct!',
+                incorrect: '❌ Incorrect.',
+                reviewCorrect: '✅ Great job!',
+                reviewIncorrect: '❌ The correct answer is highlighted.'
+            }
+        };
+
+        // Spanish to English word translations for hover tooltips
+        const wordTranslations = {
+            'ángulo': 'angle',
+            'Ángulo': 'Angle',
+            'ángulos': 'angles',
+            'Ángulos': 'Angles',
+            'agudo': 'acute',
+            'Agudo': 'Acute',
+            'recto': 'right',
+            'Recto': 'Right',
+            'obtuso': 'obtuse',
+            'Obtuso': 'Obtuse',
+            'llano': 'straight',
+            'Llano': 'Straight',
+            'reflejo': 'reflex',
+            'Reflejo': 'Reflex',
+            'rotación completa': 'full rotation',
+            'Rotación completa': 'Full rotation',
+            'círculo': 'circle',
+            'Círculo': 'Circle',
+            'grados': 'degrees',
+            'Grados': 'Degrees',
+            'mide': 'measures',
+            'menos de': 'less than',
+            'más de': 'more than',
+            'exactamente': 'exactly',
+            'fracción': 'fraction',
+            'Fracción': 'Fraction',
+            'mitad': 'half',
+            'cuarto': 'quarter',
+            'pizza': 'pizza',
+            'pastel': 'cake',
+            'porciones': 'slices/pieces',
+            'porción': 'slice/piece',
+            'reloj': 'clock',
+            'Reloj': 'Clock',
+            'manecillas': 'hands (clock)',
+            'cuadrado': 'square',
+            'Cuadrado': 'Square',
+            'rectángulo': 'rectangle',
+            'Rectángulo': 'Rectangle',
+            'triángulo': 'triangle',
+            'Triángulo': 'Triangle',
+            'paralelogramo': 'parallelogram',
+            'Paralelogramo': 'Parallelogram',
+            'figura': 'shape/figure',
+            'figuras': 'shapes/figures',
+            'transportador': 'protractor',
+            'ecuación': 'equation',
+            'ecuaciones': 'equations',
+            'resto': 'rest/remainder',
+            'juntas': 'together',
+            'iguales': 'equal',
+            'corta': 'cut',
+            'divide': 'divides',
+            'muestra': 'shows',
+            'tipo': 'type',
+            'tipos': 'types'
+        };
+
+        // Function to wrap Spanish words with translation tooltips
+        function addTranslationTooltips(text) {
+            if (currentLang !== 'es') return text;
+            
+            let result = text;
+            // Sort by length (longest first) to avoid partial replacements
+            const sortedWords = Object.keys(wordTranslations).sort((a, b) => b.length - a.length);
+            
+            for (const spanishWord of sortedWords) {
+                const englishWord = wordTranslations[spanishWord];
+                const regex = new RegExp(`\\b${spanishWord}\\b`, 'g');
+                result = result.replace(regex, `<span class="translatable">${spanishWord}<span class="translation">${englishWord}</span></span>`);
+            }
+            return result;
+        }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.getElementById('btnSpanish').classList.toggle('active', lang === 'es');
+            document.getElementById('btnEnglish').classList.toggle('active', lang === 'en');
+            
+            const t = translations[lang];
+            document.getElementById('titleText').textContent = t.title;
+            document.getElementById('subtitleText').textContent = t.subtitle;
+            document.getElementById('topicTypes').textContent = t.topicTypes;
+            document.getElementById('topicCircle').textContent = t.topicCircle;
+            document.getElementById('topicClock').textContent = t.topicClock;
+            document.getElementById('refTitle').textContent = t.refTitle;
+            document.getElementById('refBasic').textContent = t.refBasic;
+            document.getElementById('refLarge').textContent = t.refLarge;
+            document.getElementById('refCircle').textContent = t.refCircle;
+            document.getElementById('refAcute').textContent = t.refAcute;
+            document.getElementById('refRight').textContent = t.refRight;
+            document.getElementById('refObtuse').textContent = t.refObtuse;
+            document.getElementById('refStraight').textContent = t.refStraight;
+            document.getElementById('refReflex').textContent = t.refReflex;
+            document.getElementById('refFull').textContent = t.refFull;
+            document.getElementById('startBtn').textContent = t.startBtn;
+        }
+
+        // Question Bank
+        // SVG Helper Functions
+        function createAngleSVG(degrees, showArc = true, label = '') {
+            const width = 280;
+            const height = 200;
+            const cx = 60;
+            const cy = height - 40;
+            const armLength = 140;
+            const arcRadius = 45;
+            
+            const rad = degrees * Math.PI / 180;
+            const x2 = cx + armLength * Math.cos(rad);
+            const y2 = cy - armLength * Math.sin(rad);
+            
+            const largeArc = degrees > 180 ? 1 : 0;
+            const arcEndX = cx + arcRadius * Math.cos(rad);
+            const arcEndY = cy - arcRadius * Math.sin(rad);
+            
+            let svg = `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="display:block;margin:0 auto;">`;
+            
+            // Light background
+            svg += `<rect x="0" y="0" width="${width}" height="${height}" fill="#f8fbfc" rx="8"/>`;
+            
+            // Angle arc fill (shaded region)
+            if (showArc && degrees > 0 && degrees < 360) {
+                const arcFillPath = `M ${cx} ${cy} L ${cx + arcRadius} ${cy} A ${arcRadius} ${arcRadius} 0 ${largeArc} 0 ${arcEndX} ${arcEndY} Z`;
+                svg += `<path d="${arcFillPath}" fill="rgba(39,174,96,0.2)" stroke="none"/>`;
+            }
+            
+            // Horizontal arm (base)
+            svg += `<line x1="${cx}" y1="${cy}" x2="${cx + armLength}" y2="${cy}" stroke="#2c3e50" stroke-width="4" stroke-linecap="round"/>`;
+            
+            // Angled arm
+            svg += `<line x1="${cx}" y1="${cy}" x2="${x2}" y2="${y2}" stroke="#2980b9" stroke-width="4" stroke-linecap="round"/>`;
+            
+            // Arc line
+            if (showArc && degrees > 0 && degrees < 360) {
+                svg += `<path d="M ${cx + arcRadius} ${cy} A ${arcRadius} ${arcRadius} 0 ${largeArc} 0 ${arcEndX} ${arcEndY}" fill="none" stroke="#27ae60" stroke-width="3"/>`;
+            }
+            
+            // Right angle square indicator
+            if (degrees === 90) {
+                svg += `<rect x="${cx + 8}" y="${cy - 20}" width="12" height="12" fill="none" stroke="#e74c3c" stroke-width="2"/>`;
+            }
+            
+            // Vertex point
+            svg += `<circle cx="${cx}" cy="${cy}" r="6" fill="#2c3e50"/>`;
+            
+            // Arrowheads on arms
+            const arrowSize = 10;
+            // Horizontal arrow
+            svg += `<polygon points="${cx + armLength},${cy} ${cx + armLength - arrowSize},${cy - arrowSize/2} ${cx + armLength - arrowSize},${cy + arrowSize/2}" fill="#2c3e50"/>`;
+            // Angled arrow
+            const arrowAngle = rad;
+            const ax = x2 - arrowSize * Math.cos(arrowAngle);
+            const ay = y2 + arrowSize * Math.sin(arrowAngle);
+            const perpAngle = arrowAngle + Math.PI/2;
+            const px1 = ax + (arrowSize/2) * Math.cos(perpAngle);
+            const py1 = ay - (arrowSize/2) * Math.sin(perpAngle);
+            const px2 = ax - (arrowSize/2) * Math.cos(perpAngle);
+            const py2 = ay + (arrowSize/2) * Math.sin(perpAngle);
+            svg += `<polygon points="${x2},${y2} ${px1},${py1} ${px2},${py2}" fill="#2980b9"/>`;
+            
+            // Degree label
+            if (label) {
+                const labelRadius = arcRadius + 20;
+                const labelAngle = rad / 2;
+                const labelX = cx + labelRadius * Math.cos(labelAngle);
+                const labelY = cy - labelRadius * Math.sin(labelAngle);
+                svg += `<text x="${labelX}" y="${labelY}" font-size="18" font-weight="bold" fill="#27ae60" text-anchor="middle" dominant-baseline="middle">${label}</text>`;
+            }
+            
+            svg += `</svg>`;
+            return svg;
+        }
+
+        function createClockSVG(hour) {
+            const size = 200;
+            const cx = size / 2;
+            const cy = size / 2;
+            const radius = 80;
+            
+            let svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="display:block;margin:0 auto;">`;
+            
+            // Background
+            svg += `<rect x="0" y="0" width="${size}" height="${size}" fill="#f8fbfc" rx="8"/>`;
+            
+            // Clock face
+            svg += `<circle cx="${cx}" cy="${cy}" r="${radius}" fill="white" stroke="#2c3e50" stroke-width="4"/>`;
+            svg += `<circle cx="${cx}" cy="${cy}" r="${radius-5}" fill="none" stroke="#e8f4f8" stroke-width="8"/>`;
+            
+            // Hour markers and numbers
+            for (let i = 1; i <= 12; i++) {
+                const angle = (i * 30 - 90) * Math.PI / 180;
+                const x = cx + (radius - 22) * Math.cos(angle);
+                const y = cy + (radius - 22) * Math.sin(angle);
+                svg += `<text x="${x}" y="${y + 6}" font-size="16" font-weight="bold" text-anchor="middle" fill="#2c3e50">${i}</text>`;
+                
+                // Tick marks
+                const tickInner = radius - 10;
+                const tickOuter = radius;
+                const tx1 = cx + tickInner * Math.cos(angle);
+                const ty1 = cy + tickInner * Math.sin(angle);
+                const tx2 = cx + tickOuter * Math.cos(angle);
+                const ty2 = cy + tickOuter * Math.sin(angle);
+                svg += `<line x1="${tx1}" y1="${ty1}" x2="${tx2}" y2="${ty2}" stroke="#2c3e50" stroke-width="2"/>`;
+            }
+            
+            // Angle highlight between hands
+            const minuteAngle = -90 * Math.PI / 180;
+            const hourAngle = ((hour * 30) - 90) * Math.PI / 180;
+            const arcRadius = 35;
+            const sweepFlag = hour <= 6 ? 1 : 0;
+            const arcEndX = cx + arcRadius * Math.cos(hourAngle);
+            const arcEndY = cy + arcRadius * Math.sin(hourAngle);
+            svg += `<path d="M ${cx} ${cy - arcRadius} A ${arcRadius} ${arcRadius} 0 0 ${sweepFlag} ${arcEndX} ${arcEndY}" fill="none" stroke="#27ae60" stroke-width="3"/>`;
+            
+            // Minute hand (pointing to 12)
+            const mx = cx + 55 * Math.cos(minuteAngle);
+            const my = cy + 55 * Math.sin(minuteAngle);
+            svg += `<line x1="${cx}" y1="${cy}" x2="${mx}" y2="${my}" stroke="#2c3e50" stroke-width="3" stroke-linecap="round"/>`;
+            
+            // Hour hand
+            const hx = cx + 38 * Math.cos(hourAngle);
+            const hy = cy + 38 * Math.sin(hourAngle);
+            svg += `<line x1="${cx}" y1="${cy}" x2="${hx}" y2="${hy}" stroke="#2980b9" stroke-width="5" stroke-linecap="round"/>`;
+            
+            // Center cap
+            svg += `<circle cx="${cx}" cy="${cy}" r="6" fill="#2c3e50"/>`;
+            
+            svg += `</svg>`;
+            return svg;
+        }
+
+        function createPizzaSVG(slices, highlightSlices = 0) {
+            const size = 200;
+            const cx = size / 2;
+            const cy = size / 2;
+            const radius = 80;
+            
+            let svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="display:block;margin:0 auto;">`;
+            
+            // Background
+            svg += `<rect x="0" y="0" width="${size}" height="${size}" fill="#f8fbfc" rx="8"/>`;
+            
+            // Pizza base (crust)
+            svg += `<circle cx="${cx}" cy="${cy}" r="${radius}" fill="#f5deb3" stroke="#8B4513" stroke-width="4"/>`;
+            // Pizza sauce
+            svg += `<circle cx="${cx}" cy="${cy}" r="${radius-8}" fill="#e74c3c"/>`;
+            // Cheese
+            svg += `<circle cx="${cx}" cy="${cy}" r="${radius-12}" fill="#ffeaa7"/>`;
+            
+            const anglePerSlice = 360 / slices;
+            
+            // Highlight slices first (so lines go on top)
+            if (highlightSlices > 0) {
+                for (let i = 0; i < highlightSlices; i++) {
+                    const startAngle = (i * anglePerSlice - 90) * Math.PI / 180;
+                    const endAngle = ((i + 1) * anglePerSlice - 90) * Math.PI / 180;
+                    const x1 = cx + radius * Math.cos(startAngle);
+                    const y1 = cy + radius * Math.sin(startAngle);
+                    const x2 = cx + radius * Math.cos(endAngle);
+                    const y2 = cy + radius * Math.sin(endAngle);
+                    svg += `<path d="M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 0 1 ${x2} ${y2} Z" fill="rgba(39,174,96,0.4)" stroke="#27ae60" stroke-width="2"/>`;
+                }
+            }
+            
+            // Slice divider lines
+            for (let i = 0; i < slices; i++) {
+                const angle = (i * anglePerSlice - 90) * Math.PI / 180;
+                const x = cx + radius * Math.cos(angle);
+                const y = cy + radius * Math.sin(angle);
+                svg += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#8B4513" stroke-width="3"/>`;
+            }
+            
+            // Center circle
+            svg += `<circle cx="${cx}" cy="${cy}" r="5" fill="#8B4513"/>`;
+            
+            // Slice count label
+            svg += `<text x="${cx}" y="${size - 10}" font-size="14" font-weight="bold" text-anchor="middle" fill="#2c3e50">${slices} slices</text>`;
+            
+            svg += `</svg>`;
+            return svg;
+        }
+
+        function createCircleWithAngleSVG(degrees, label = 'X') {
+            const size = 220;
+            const cx = size / 2;
+            const cy = size / 2;
+            const radius = 85;
+            
+            let svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="display:block;margin:0 auto;">`;
+            
+            // Background
+            svg += `<rect x="0" y="0" width="${size}" height="${size}" fill="#f8fbfc" rx="8"/>`;
+            
+            // Circle
+            svg += `<circle cx="${cx}" cy="${cy}" r="${radius}" fill="white" stroke="#2c3e50" stroke-width="4"/>`;
+            
+            const rad = degrees * Math.PI / 180;
+            const x = cx + radius * Math.cos(rad);
+            const y = cy - radius * Math.sin(rad);
+            
+            // Known angle section (filled)
+            const arcEndX = cx + radius * Math.cos(rad);
+            const arcEndY = cy - radius * Math.sin(rad);
+            const largeArc = degrees > 180 ? 1 : 0;
+            svg += `<path d="M ${cx} ${cy} L ${cx + radius} ${cy} A ${radius} ${radius} 0 ${largeArc} 0 ${arcEndX} ${arcEndY} Z" fill="rgba(41,128,185,0.2)" stroke="#2980b9" stroke-width="2"/>`;
+            
+            // Unknown angle section (filled differently)
+            const unknownDegrees = 360 - degrees;
+            const unknownLargeArc = unknownDegrees > 180 ? 1 : 0;
+            svg += `<path d="M ${cx} ${cy} L ${arcEndX} ${arcEndY} A ${radius} ${radius} 0 ${unknownLargeArc} 0 ${cx + radius} ${cy} Z" fill="rgba(231,76,60,0.2)" stroke="#e74c3c" stroke-width="2"/>`;
+            
+            // Radius lines
+            svg += `<line x1="${cx}" y1="${cy}" x2="${cx + radius}" y2="${cy}" stroke="#2c3e50" stroke-width="3"/>`;
+            svg += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#2c3e50" stroke-width="3"/>`;
+            
+            // Known angle label
+            const midAngle = rad / 2;
+            const labelRadius = radius * 0.5;
+            const textX = cx + labelRadius * Math.cos(midAngle);
+            const textY = cy - labelRadius * Math.sin(midAngle);
+            svg += `<text x="${textX}" y="${textY}" font-size="18" font-weight="bold" fill="#2980b9" text-anchor="middle" dominant-baseline="middle">${degrees}°</text>`;
+            
+            // Unknown angle label
+            const otherMidAngle = rad + (2*Math.PI - rad) / 2;
+            const otherTextX = cx + labelRadius * Math.cos(otherMidAngle);
+            const otherTextY = cy - labelRadius * Math.sin(otherMidAngle);
+            svg += `<text x="${otherTextX}" y="${otherTextY}" font-size="22" font-weight="bold" fill="#e74c3c" text-anchor="middle" dominant-baseline="middle">${label}</text>`;
+            
+            // Center point
+            svg += `<circle cx="${cx}" cy="${cy}" r="5" fill="#2c3e50"/>`;
+            
+            svg += `</svg>`;
+            return svg;
+        }
+
+        function createProtractorSVG(degrees) {
+            const width = 300;
+            const height = 180;
+            const cx = width / 2;
+            const cy = height - 25;
+            const radius = 110;
+            
+            let svg = `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="display:block;margin:0 auto;">`;
+            
+            // Background
+            svg += `<rect x="0" y="0" width="${width}" height="${height}" fill="#f8fbfc" rx="8"/>`;
+            
+            // Protractor body (semi-circle)
+            svg += `<path d="M ${cx - radius - 5} ${cy} A ${radius + 5} ${radius + 5} 0 0 1 ${cx + radius + 5} ${cy}" fill="#e8f4f8" stroke="#2980b9" stroke-width="3"/>`;
+            
+            // Tick marks and labels - 0° on right, 180° on left
+            for (let i = 0; i <= 180; i += 10) {
+                const rad = (180 - i) * Math.PI / 180;
+                const innerR = i % 30 === 0 ? radius - 25 : (i % 10 === 0 ? radius - 15 : radius - 10);
+                const x1 = cx + innerR * Math.cos(rad);
+                const y1 = cy - innerR * Math.sin(rad);
+                const x2 = cx + radius * Math.cos(rad);
+                const y2 = cy - radius * Math.sin(rad);
+                svg += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#2c3e50" stroke-width="${i % 30 === 0 ? 2 : 1}"/>`;
+                
+                if (i % 30 === 0) {
+                    const textR = radius - 35;
+                    const tx = cx + textR * Math.cos(rad);
+                    const ty = cy - textR * Math.sin(rad) + 5;
+                    svg += `<text x="${tx}" y="${ty}" font-size="14" font-weight="bold" text-anchor="middle" fill="#2c3e50">${i}°</text>`;
+                }
+            }
+            
+            // Base line (from center to right = 0°)
+            svg += `<line x1="${cx}" y1="${cy}" x2="${cx + radius - 10}" y2="${cy}" stroke="#2c3e50" stroke-width="3"/>`;
+            
+            // Angle indicator line - measured from 0° (right side) going counterclockwise
+            const angleRad = degrees * Math.PI / 180;
+            const ax = cx + (radius - 10) * Math.cos(angleRad);
+            const ay = cy - (radius - 10) * Math.sin(angleRad);
+            svg += `<line x1="${cx}" y1="${cy}" x2="${ax}" y2="${ay}" stroke="#e74c3c" stroke-width="4" stroke-linecap="round"/>`;
+            
+            // Angle arc highlight from 0° to the angle
+            const arcRadius = 40;
+            const arcEndX = cx + arcRadius * Math.cos(angleRad);
+            const arcEndY = cy - arcRadius * Math.sin(angleRad);
+            const largeArc = degrees > 90 ? 1 : 0;
+            svg += `<path d="M ${cx + arcRadius} ${cy} A ${arcRadius} ${arcRadius} 0 ${largeArc} 0 ${arcEndX} ${arcEndY}" fill="rgba(231,76,60,0.2)" stroke="#e74c3c" stroke-width="3"/>`;
+            
+            // Center point
+            svg += `<circle cx="${cx}" cy="${cy}" r="5" fill="#2c3e50"/>`;
+            
+            // Question mark label - position in middle of angle arc
+            const labelAngle = (degrees / 2) * Math.PI / 180;
+            const labelRadius = arcRadius + 18;
+            const labelX = cx + labelRadius * Math.cos(labelAngle);
+            const labelY = cy - labelRadius * Math.sin(labelAngle);
+            svg += `<text x="${labelX}" y="${labelY}" font-size="18" font-weight="bold" text-anchor="middle" dominant-baseline="middle" fill="#e74c3c">?°</text>`;
+            
+            svg += `</svg>`;
+            return svg;
+        }
+
+        function createShapeSVG(shape) {
+            const width = 200;
+            const height = 180;
+            let svg = `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="display:block;margin:0 auto;">`;
+            
+            // Background
+            svg += `<rect x="0" y="0" width="${width}" height="${height}" fill="#f8fbfc" rx="8"/>`;
+            
+            const cx = width / 2;
+            const cy = height / 2;
+            
+            switch(shape) {
+                case 'square':
+                    svg += `<rect x="${cx-55}" y="${cy-55}" width="110" height="110" fill="rgba(39,174,96,0.15)" stroke="#2980b9" stroke-width="3"/>`;
+                    // Right angle markers at each corner
+                    svg += `<rect x="${cx-55}" y="${cy-55}" width="12" height="12" fill="none" stroke="#e74c3c" stroke-width="2"/>`;
+                    svg += `<rect x="${cx+43}" y="${cy-55}" width="12" height="12" fill="none" stroke="#e74c3c" stroke-width="2"/>`;
+                    svg += `<rect x="${cx-55}" y="${cy+43}" width="12" height="12" fill="none" stroke="#e74c3c" stroke-width="2"/>`;
+                    svg += `<rect x="${cx+43}" y="${cy+43}" width="12" height="12" fill="none" stroke="#e74c3c" stroke-width="2"/>`;
+                    break;
+                case 'rectangle':
+                    svg += `<rect x="${cx-80}" y="${cy-40}" width="160" height="80" fill="rgba(39,174,96,0.15)" stroke="#2980b9" stroke-width="3"/>`;
+                    // Right angle markers
+                    svg += `<rect x="${cx-80}" y="${cy-40}" width="12" height="12" fill="none" stroke="#e74c3c" stroke-width="2"/>`;
+                    svg += `<rect x="${cx+68}" y="${cy-40}" width="12" height="12" fill="none" stroke="#e74c3c" stroke-width="2"/>`;
+                    svg += `<rect x="${cx-80}" y="${cy+28}" width="12" height="12" fill="none" stroke="#e74c3c" stroke-width="2"/>`;
+                    svg += `<rect x="${cx+68}" y="${cy+28}" width="12" height="12" fill="none" stroke="#e74c3c" stroke-width="2"/>`;
+                    break;
+                case 'parallelogram':
+                    svg += `<polygon points="${cx-70},${cy+50} ${cx-40},${cy-50} ${cx+70},${cy-50} ${cx+40},${cy+50}" fill="rgba(39,174,96,0.15)" stroke="#2980b9" stroke-width="3"/>`;
+                    break;
+                case 'triangle':
+                    svg += `<polygon points="${cx},${cy-65} ${cx-70},${cy+55} ${cx+70},${cy+55}" fill="rgba(39,174,96,0.15)" stroke="#2980b9" stroke-width="3"/>`;
+                    break;
+                case 'rightTriangle':
+                    svg += `<polygon points="${cx-60},${cy+55} ${cx-60},${cy-55} ${cx+60},${cy+55}" fill="rgba(39,174,96,0.15)" stroke="#2980b9" stroke-width="3"/>`;
+                    // Right angle marker
+                    svg += `<rect x="${cx-60}" y="${cy+35}" width="20" height="20" fill="none" stroke="#e74c3c" stroke-width="2"/>`;
+                    break;
+                case 'hexagon':
+                    const pts = [];
+                    for (let i = 0; i < 6; i++) {
+                        const angle = (i * 60 - 30) * Math.PI / 180;
+                        pts.push(`${cx + 65 * Math.cos(angle)},${cy + 65 * Math.sin(angle)}`);
+                    }
+                    svg += `<polygon points="${pts.join(' ')}" fill="rgba(39,174,96,0.15)" stroke="#2980b9" stroke-width="3"/>`;
+                    break;
+            }
+            
+            svg += `</svg>`;
+            return svg;
+        }
+
+        // Straight angle visualization (180°)
+        function createStraightAngleSVG() {
+            const width = 280;
+            const height = 120;
+            
+            let svg = `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="display:block;margin:0 auto;">`;
+            svg += `<rect x="0" y="0" width="${width}" height="${height}" fill="#f8fbfc" rx="8"/>`;
+            
+            // Straight line with arrows on both ends
+            svg += `<line x1="40" y1="60" x2="240" y2="60" stroke="#2c3e50" stroke-width="4"/>`;
+            // Left arrow
+            svg += `<polygon points="40,60 55,52 55,68" fill="#2c3e50"/>`;
+            // Right arrow
+            svg += `<polygon points="240,60 225,52 225,68" fill="#2c3e50"/>`;
+            // Center point
+            svg += `<circle cx="140" cy="60" r="5" fill="#e74c3c"/>`;
+            // Arc showing 180°
+            svg += `<path d="M 170 60 A 30 30 0 0 0 110 60" fill="none" stroke="#27ae60" stroke-width="3"/>`;
+            // Label
+            svg += `<text x="140" y="40" font-size="16" font-weight="bold" fill="#27ae60" text-anchor="middle">180°</text>`;
+            
+            svg += `</svg>`;
+            return svg;
+        }
+
+        // Generate random angle questions dynamically
+        function generateDynamicQuestions() {
+            const dynamicQuestions = [];
+            
+            // Generate random acute angles (10-85 degrees)
+            for (let i = 0; i < 3; i++) {
+                const angle = Math.floor(Math.random() * 76) + 10; // 10-85
+                dynamicQuestions.push({
+                    category: { es: 'Identificar Ángulos', en: 'Identify Angles' },
+                    question: { 
+                        es: '¿Qué tipo de ángulo se muestra?',
+                        en: 'What type of angle is shown?'
+                    },
+                    visual: () => createAngleSVG(angle),
+                    options: {
+                        es: ['Ángulo agudo', 'Ángulo recto', 'Ángulo obtuso', 'Ángulo llano'],
+                        en: ['Acute angle', 'Right angle', 'Obtuse angle', 'Straight angle']
+                    },
+                    correctIndex: 0,
+                    explanation: {
+                        es: `Este ángulo mide aproximadamente ${angle}°, que es menor de 90°, entonces es un ángulo agudo.`,
+                        en: `This angle measures approximately ${angle}°, which is less than 90°, so it is an acute angle.`
+                    }
+                });
+            }
+            
+            // Generate random obtuse angles (95-170 degrees)
+            for (let i = 0; i < 3; i++) {
+                const angle = Math.floor(Math.random() * 76) + 95; // 95-170
+                dynamicQuestions.push({
+                    category: { es: 'Identificar Ángulos', en: 'Identify Angles' },
+                    question: { 
+                        es: '¿Qué tipo de ángulo se muestra?',
+                        en: 'What type of angle is shown?'
+                    },
+                    visual: () => createAngleSVG(angle),
+                    options: {
+                        es: ['Ángulo agudo', 'Ángulo recto', 'Ángulo obtuso', 'Ángulo llano'],
+                        en: ['Acute angle', 'Right angle', 'Obtuse angle', 'Straight angle']
+                    },
+                    correctIndex: 2,
+                    explanation: {
+                        es: `Este ángulo mide aproximadamente ${angle}°, que es mayor de 90° pero menor de 180°, entonces es un ángulo obtuso.`,
+                        en: `This angle measures approximately ${angle}°, which is more than 90° but less than 180°, so it is an obtuse angle.`
+                    }
+                });
+            }
+            
+            // Generate random protractor reading questions
+            const protractorAngles = [30, 45, 60, 75, 90, 120, 135, 150];
+            for (let i = 0; i < 3; i++) {
+                const angle = protractorAngles[Math.floor(Math.random() * protractorAngles.length)];
+                const wrongOptions = protractorAngles.filter(a => a !== angle);
+                const shuffledWrong = wrongOptions.sort(() => Math.random() - 0.5).slice(0, 3);
+                const allOptions = [angle, ...shuffledWrong].sort(() => Math.random() - 0.5);
+                const correctIdx = allOptions.indexOf(angle);
+                
+                dynamicQuestions.push({
+                    category: { es: 'Leer el Transportador', en: 'Read the Protractor' },
+                    question: { 
+                        es: '¿Cuántos grados mide este ángulo?',
+                        en: 'How many degrees is this angle?'
+                    },
+                    visual: () => createProtractorSVG(angle),
+                    options: {
+                        es: allOptions.map(a => `${a}°`),
+                        en: allOptions.map(a => `${a}°`)
+                    },
+                    correctIndex: correctIdx,
+                    explanation: {
+                        es: `La línea roja apunta a ${angle}° en el transportador.`,
+                        en: `The red line points to ${angle}° on the protractor.`
+                    }
+                });
+            }
+            
+            // Generate random missing angle questions (circle = 360°)
+            for (let i = 0; i < 2; i++) {
+                const knownAngle = [60, 90, 120, 150, 180, 240, 270][Math.floor(Math.random() * 7)];
+                const missingAngle = 360 - knownAngle;
+                const wrongOptions = [missingAngle + 30, missingAngle - 30, missingAngle + 60].filter(a => a > 0 && a < 360);
+                const allOptions = [missingAngle, ...wrongOptions.slice(0, 3)].sort(() => Math.random() - 0.5);
+                const correctIdx = allOptions.indexOf(missingAngle);
+                
+                dynamicQuestions.push({
+                    category: { es: 'Ángulos Faltantes', en: 'Missing Angles' },
+                    question: { 
+                        es: `Si un ángulo en un círculo mide ${knownAngle}°, ¿cuánto mide el ángulo X que falta?`,
+                        en: `If one angle in a circle measures ${knownAngle}°, what is the measure of the missing angle X?`
+                    },
+                    visual: () => createCircleWithAngleSVG(knownAngle, 'X'),
+                    options: {
+                        es: allOptions.map(a => `${a}°`),
+                        en: allOptions.map(a => `${a}°`)
+                    },
+                    correctIndex: correctIdx,
+                    explanation: {
+                        es: `Un círculo completo = 360°. Entonces X = 360° - ${knownAngle}° = ${missingAngle}°`,
+                        en: `A full circle = 360°. So X = 360° - ${knownAngle}° = ${missingAngle}°`
+                    }
+                });
+            }
+            
+            return dynamicQuestions;
+        }
+
+        const questionBank = [
+            // Straight angle (180°) - clear example
+            {
+                category: { es: 'Identificar Ángulos', en: 'Identify Angles' },
+                question: { 
+                    es: '¿Qué tipo de ángulo se muestra? (Forma una línea recta)',
+                    en: 'What type of angle is shown? (Forms a straight line)'
+                },
+                visual: () => createStraightAngleSVG(),
+                options: {
+                    es: ['Ángulo recto (90°)', 'Ángulo obtuso', 'Ángulo llano (180°)', 'Ángulo reflejo'],
+                    en: ['Right angle (90°)', 'Obtuse angle', 'Straight angle (180°)', 'Reflex angle']
+                },
+                correctIndex: 2,
+                explanation: {
+                    es: 'Un ángulo llano mide exactamente 180° y forma una línea recta.',
+                    en: 'A straight angle measures exactly 180° and forms a straight line.'
+                }
+            },
+            // Right angle (90°) - always include
+            {
+                category: { es: 'Identificar Ángulos', en: 'Identify Angles' },
+                question: { 
+                    es: '¿Qué tipo de ángulo se muestra?',
+                    en: 'What type of angle is shown?'
+                },
+                visual: () => createAngleSVG(90),
+                options: {
+                    es: ['Ángulo agudo', 'Ángulo recto', 'Ángulo obtuso', 'Ángulo llano'],
+                    en: ['Acute angle', 'Right angle', 'Obtuse angle', 'Straight angle']
+                },
+                correctIndex: 1,
+                explanation: {
+                    es: 'Este ángulo mide exactamente 90°, entonces es un ángulo recto.',
+                    en: 'This angle measures exactly 90°, so it is a right angle.'
+                }
+            },
+            // Angle type definition questions (no visual needed)
+            {
+                category: { es: 'Definiciones', en: 'Definitions' },
+                question: { 
+                    es: '¿Qué tipo de ángulo mide menos de 90°?',
+                    en: 'What type of angle measures less than 90°?'
+                },
+                options: {
+                    es: ['Ángulo recto', 'Ángulo agudo', 'Ángulo obtuso', 'Ángulo llano'],
+                    en: ['Right angle', 'Acute angle', 'Obtuse angle', 'Straight angle']
+                },
+                correctIndex: 1,
+                explanation: {
+                    es: 'Un ángulo agudo mide menos de 90°.',
+                    en: 'An acute angle measures less than 90°.'
+                }
+            },
+            {
+                category: { es: 'Definiciones', en: 'Definitions' },
+                question: { 
+                    es: '¿Qué tipo de ángulo mide más de 90° pero menos de 180°?',
+                    en: 'What type of angle measures more than 90° but less than 180°?'
+                },
+                options: {
+                    es: ['Ángulo agudo', 'Ángulo recto', 'Ángulo obtuso', 'Ángulo reflejo'],
+                    en: ['Acute angle', 'Right angle', 'Obtuse angle', 'Reflex angle']
+                },
+                correctIndex: 2,
+                explanation: {
+                    es: 'Un ángulo obtuso mide más de 90° pero menos de 180°.',
+                    en: 'An obtuse angle measures more than 90° but less than 180°.'
+                }
+            },
+            {
+                category: { es: 'Definiciones', en: 'Definitions' },
+                question: { 
+                    es: '¿Cuántos grados tiene un círculo completo?',
+                    en: 'How many degrees are in a full circle?'
+                },
+                options: {
+                    es: ['180°', '270°', '360°', '90°'],
+                    en: ['180°', '270°', '360°', '90°']
+                },
+                correctIndex: 2,
+                explanation: {
+                    es: 'Un círculo completo tiene 360°.',
+                    en: 'A full circle has 360°.'
+                }
+            },
+            // VISUAL: Identify angle type from image
+            {
+                category: { es: 'Identificar Ángulos', en: 'Identify Angles' },
+                question: { 
+                    es: '¿Qué tipo de ángulo se muestra?',
+                    en: 'What type of angle is shown?'
+                },
+                visual: () => createAngleSVG(45),
+                options: {
+                    es: ['Ángulo agudo', 'Ángulo recto', 'Ángulo obtuso', 'Ángulo llano'],
+                    en: ['Acute angle', 'Right angle', 'Obtuse angle', 'Straight angle']
+                },
+                correctIndex: 0,
+                explanation: {
+                    es: 'Este ángulo es menor de 90°, entonces es un ángulo agudo.',
+                    en: 'This angle is less than 90°, so it is an acute angle.'
+                }
+            },
+            {
+                category: { es: 'Identificar Ángulos', en: 'Identify Angles' },
+                question: { 
+                    es: '¿Qué tipo de ángulo se muestra?',
+                    en: 'What type of angle is shown?'
+                },
+                visual: () => createAngleSVG(90),
+                options: {
+                    es: ['Ángulo agudo', 'Ángulo recto', 'Ángulo obtuso', 'Ángulo llano'],
+                    en: ['Acute angle', 'Right angle', 'Obtuse angle', 'Straight angle']
+                },
+                correctIndex: 1,
+                explanation: {
+                    es: 'Este ángulo mide exactamente 90°. El cuadrado pequeño indica un ángulo recto.',
+                    en: 'This angle measures exactly 90°. The small square indicates a right angle.'
+                }
+            },
+            {
+                category: { es: 'Identificar Ángulos', en: 'Identify Angles' },
+                question: { 
+                    es: '¿Qué tipo de ángulo se muestra?',
+                    en: 'What type of angle is shown?'
+                },
+                visual: () => createAngleSVG(135),
+                options: {
+                    es: ['Ángulo agudo', 'Ángulo recto', 'Ángulo obtuso', 'Ángulo llano'],
+                    en: ['Acute angle', 'Right angle', 'Obtuse angle', 'Straight angle']
+                },
+                correctIndex: 2,
+                explanation: {
+                    es: 'Este ángulo es mayor de 90° pero menor de 180°, entonces es un ángulo obtuso.',
+                    en: 'This angle is more than 90° but less than 180°, so it is an obtuse angle.'
+                }
+            },
+            {
+                category: { es: 'Identificar Ángulos', en: 'Identify Angles' },
+                question: { 
+                    es: '¿Qué tipo de ángulo se muestra?',
+                    en: 'What type of angle is shown?'
+                },
+                visual: () => createAngleSVG(180),
+                options: {
+                    es: ['Ángulo obtuso', 'Ángulo llano', 'Ángulo reflejo', 'Rotación completa'],
+                    en: ['Obtuse angle', 'Straight angle', 'Reflex angle', 'Full rotation']
+                },
+                correctIndex: 1,
+                explanation: {
+                    es: 'Este ángulo mide exactamente 180°. Parece una línea recta, entonces es un ángulo llano.',
+                    en: 'This angle measures exactly 180°. It looks like a straight line, so it is a straight angle.'
+                }
+            },
+            {
+                category: { es: 'Identificar Ángulos', en: 'Identify Angles' },
+                question: { 
+                    es: '¿Qué tipo de ángulo se muestra?',
+                    en: 'What type of angle is shown?'
+                },
+                visual: () => createAngleSVG(60),
+                options: {
+                    es: ['Agudo', 'Recto', 'Obtuso', 'Reflejo'],
+                    en: ['Acute', 'Right', 'Obtuse', 'Reflex']
+                },
+                correctIndex: 0,
+                explanation: {
+                    es: 'Este ángulo es menor de 90°, entonces es agudo.',
+                    en: 'This angle is less than 90°, so it is acute.'
+                }
+            },
+            {
+                category: { es: 'Identificar Ángulos', en: 'Identify Angles' },
+                question: { 
+                    es: '¿Qué tipo de ángulo se muestra?',
+                    en: 'What type of angle is shown?'
+                },
+                visual: () => createAngleSVG(120),
+                options: {
+                    es: ['Agudo', 'Recto', 'Obtuso', 'Llano'],
+                    en: ['Acute', 'Right', 'Obtuse', 'Straight']
+                },
+                correctIndex: 2,
+                explanation: {
+                    es: 'Este ángulo es mayor de 90° pero menor de 180°, entonces es obtuso.',
+                    en: 'This angle is more than 90° but less than 180°, so it is obtuse.'
+                }
+            },
+            // VISUAL: Protractor reading
+            {
+                category: { es: 'Leer el Transportador', en: 'Read the Protractor' },
+                question: { 
+                    es: '¿Cuántos grados mide este ángulo?',
+                    en: 'How many degrees is this angle?'
+                },
+                visual: () => createProtractorSVG(45),
+                options: {
+                    es: ['30°', '45°', '60°', '90°'],
+                    en: ['30°', '45°', '60°', '90°']
+                },
+                correctIndex: 1,
+                explanation: {
+                    es: 'La línea roja apunta a 45° en el transportador.',
+                    en: 'The red line points to 45° on the protractor.'
+                }
+            },
+            {
+                category: { es: 'Leer el Transportador', en: 'Read the Protractor' },
+                question: { 
+                    es: '¿Cuántos grados mide este ángulo?',
+                    en: 'How many degrees is this angle?'
+                },
+                visual: () => createProtractorSVG(60),
+                options: {
+                    es: ['45°', '60°', '90°', '120°'],
+                    en: ['45°', '60°', '90°', '120°']
+                },
+                correctIndex: 1,
+                explanation: {
+                    es: 'La línea roja apunta a 60° en el transportador.',
+                    en: 'The red line points to 60° on the protractor.'
+                }
+            },
+            {
+                category: { es: 'Leer el Transportador', en: 'Read the Protractor' },
+                question: { 
+                    es: '¿Cuántos grados mide este ángulo?',
+                    en: 'How many degrees is this angle?'
+                },
+                visual: () => createProtractorSVG(90),
+                options: {
+                    es: ['60°', '90°', '120°', '180°'],
+                    en: ['60°', '90°', '120°', '180°']
+                },
+                correctIndex: 1,
+                explanation: {
+                    es: 'La línea roja apunta a 90° en el transportador. ¡Es un ángulo recto!',
+                    en: 'The red line points to 90° on the protractor. It\'s a right angle!'
+                }
+            },
+            {
+                category: { es: 'Leer el Transportador', en: 'Read the Protractor' },
+                question: { 
+                    es: '¿Cuántos grados mide este ángulo?',
+                    en: 'How many degrees is this angle?'
+                },
+                visual: () => createProtractorSVG(120),
+                options: {
+                    es: ['90°', '110°', '120°', '150°'],
+                    en: ['90°', '110°', '120°', '150°']
+                },
+                correctIndex: 2,
+                explanation: {
+                    es: 'La línea roja apunta a 120° en el transportador.',
+                    en: 'The red line points to 120° on the protractor.'
+                }
+            },
+            {
+                category: { es: 'Leer el Transportador', en: 'Read the Protractor' },
+                question: { 
+                    es: '¿Cuántos grados mide este ángulo?',
+                    en: 'How many degrees is this angle?'
+                },
+                visual: () => createProtractorSVG(30),
+                options: {
+                    es: ['15°', '30°', '45°', '60°'],
+                    en: ['15°', '30°', '45°', '60°']
+                },
+                correctIndex: 1,
+                explanation: {
+                    es: 'La línea roja apunta a 30° en el transportador.',
+                    en: 'The red line points to 30° on the protractor.'
+                }
+            },
+            // VISUAL: Clock angles
+            {
+                category: { es: 'Ángulos del Reloj', en: 'Clock Angles' },
+                question: { 
+                    es: '¿Cuántos grados hay entre las manecillas del reloj?',
+                    en: 'How many degrees are between the clock hands?'
+                },
+                visual: () => createClockSVG(3),
+                options: {
+                    es: ['60°', '90°', '120°', '180°'],
+                    en: ['60°', '90°', '120°', '180°']
+                },
+                correctIndex: 1,
+                explanation: {
+                    es: 'A las 3:00, las manecillas forman un ángulo de 90° (un cuarto del círculo).',
+                    en: 'At 3:00, the hands form a 90° angle (one quarter of the circle).'
+                }
+            },
+            {
+                category: { es: 'Ángulos del Reloj', en: 'Clock Angles' },
+                question: { 
+                    es: '¿Cuántos grados hay entre las manecillas del reloj?',
+                    en: 'How many degrees are between the clock hands?'
+                },
+                visual: () => createClockSVG(6),
+                options: {
+                    es: ['90°', '120°', '180°', '270°'],
+                    en: ['90°', '120°', '180°', '270°']
+                },
+                correctIndex: 2,
+                explanation: {
+                    es: 'A las 6:00, las manecillas forman un ángulo de 180° (la mitad del círculo).',
+                    en: 'At 6:00, the hands form a 180° angle (half of the circle).'
+                }
+            },
+            {
+                category: { es: 'Ángulos del Reloj', en: 'Clock Angles' },
+                question: { 
+                    es: '¿Qué tipo de ángulo forman las manecillas del reloj?',
+                    en: 'What type of angle do the clock hands form?'
+                },
+                visual: () => createClockSVG(3),
+                options: {
+                    es: ['Agudo', 'Recto', 'Obtuso', 'Llano'],
+                    en: ['Acute', 'Right', 'Obtuse', 'Straight']
+                },
+                correctIndex: 1,
+                explanation: {
+                    es: 'A las 3:00, las manecillas forman 90°, que es un ángulo recto.',
+                    en: 'At 3:00, the hands form 90°, which is a right angle.'
+                }
+            },
+            {
+                category: { es: 'Ángulos del Reloj', en: 'Clock Angles' },
+                question: { 
+                    es: '¿Qué fracción del círculo representan las manecillas del reloj?',
+                    en: 'What fraction of the circle do the clock hands represent?'
+                },
+                visual: () => createClockSVG(3),
+                options: {
+                    es: ['1/2', '1/3', '1/4', '1/6'],
+                    en: ['1/2', '1/3', '1/4', '1/6']
+                },
+                correctIndex: 2,
+                explanation: {
+                    es: 'A las 3:00, las manecillas cubren 1/4 del círculo (90° de 360°).',
+                    en: 'At 3:00, the hands cover 1/4 of the circle (90° out of 360°).'
+                }
+            },
+            {
+                category: { es: 'Ángulos del Reloj', en: 'Clock Angles' },
+                question: { 
+                    es: '¿Qué tipo de ángulo forman las manecillas del reloj?',
+                    en: 'What type of angle do the clock hands form?'
+                },
+                visual: () => createClockSVG(2),
+                options: {
+                    es: ['Agudo', 'Recto', 'Obtuso', 'Llano'],
+                    en: ['Acute', 'Right', 'Obtuse', 'Straight']
+                },
+                correctIndex: 0,
+                explanation: {
+                    es: 'A las 2:00, las manecillas forman 60° (agudo, menor de 90°).',
+                    en: 'At 2:00, the hands form 60° (acute, less than 90°).'
+                }
+            },
+            {
+                category: { es: 'Ángulos del Reloj', en: 'Clock Angles' },
+                question: { 
+                    es: '¿Qué tipo de ángulo forman las manecillas del reloj?',
+                    en: 'What type of angle do the clock hands form?'
+                },
+                visual: () => createClockSVG(4),
+                options: {
+                    es: ['Agudo', 'Recto', 'Obtuso', 'Llano'],
+                    en: ['Acute', 'Right', 'Obtuse', 'Straight']
+                },
+                correctIndex: 2,
+                explanation: {
+                    es: 'A las 4:00, las manecillas forman 120° (obtuso, mayor de 90°).',
+                    en: 'At 4:00, the hands form 120° (obtuse, more than 90°).'
+                }
+            },
+            // VISUAL: Pizza division
+            {
+                category: { es: 'Dividir el Círculo', en: 'Dividing the Circle' },
+                question: { 
+                    es: 'Esta pizza se corta en 8 porciones iguales. ¿Cuántos grados tiene cada porción?',
+                    en: 'This pizza is cut into 8 equal slices. How many degrees is each slice?'
+                },
+                visual: () => createPizzaSVG(8, 1),
+                options: {
+                    es: ['30°', '45°', '60°', '90°'],
+                    en: ['30°', '45°', '60°', '90°']
+                },
+                correctIndex: 1,
+                explanation: {
+                    es: '360° ÷ 8 = 45° por porción.',
+                    en: '360° ÷ 8 = 45° per slice.'
+                }
+            },
+            {
+                category: { es: 'Dividir el Círculo', en: 'Dividing the Circle' },
+                question: { 
+                    es: 'Este pastel se divide en 12 porciones iguales. ¿Cuántos grados tiene cada porción?',
+                    en: 'This cake is divided into 12 equal pieces. How many degrees is each piece?'
+                },
+                visual: () => createPizzaSVG(12, 1),
+                options: {
+                    es: ['20°', '30°', '40°', '45°'],
+                    en: ['20°', '30°', '40°', '45°']
+                },
+                correctIndex: 1,
+                explanation: {
+                    es: '360° ÷ 12 = 30° por porción.',
+                    en: '360° ÷ 12 = 30° per piece.'
+                }
+            },
+            {
+                category: { es: 'Dividir el Círculo', en: 'Dividing the Circle' },
+                question: { 
+                    es: 'Esta pizza tiene 8 porciones. ¿Cuántos grados tienen 2 porciones juntas (área resaltada)?',
+                    en: 'This pizza has 8 slices. How many degrees are 2 slices together (highlighted area)?'
+                },
+                visual: () => createPizzaSVG(8, 2),
+                options: {
+                    es: ['45°', '60°', '90°', '120°'],
+                    en: ['45°', '60°', '90°', '120°']
+                },
+                correctIndex: 2,
+                explanation: {
+                    es: 'Cada porción = 45°. Dos porciones = 2 × 45° = 90°.',
+                    en: 'Each slice = 45°. Two slices = 2 × 45° = 90°.'
+                }
+            },
+            {
+                category: { es: 'Dividir el Círculo', en: 'Dividing the Circle' },
+                question: { 
+                    es: 'Este pastel tiene 12 porciones. ¿Cuántos grados tienen 5 porciones juntas (área resaltada)?',
+                    en: 'This cake has 12 pieces. How many degrees are 5 pieces together (highlighted area)?'
+                },
+                visual: () => createPizzaSVG(12, 5),
+                options: {
+                    es: ['120°', '150°', '180°', '200°'],
+                    en: ['120°', '150°', '180°', '200°']
+                },
+                correctIndex: 1,
+                explanation: {
+                    es: 'Cada porción = 30°. Cinco porciones = 5 × 30° = 150°.',
+                    en: 'Each piece = 30°. Five pieces = 5 × 30° = 150°.'
+                }
+            },
+            {
+                category: { es: 'Dividir el Círculo', en: 'Dividing the Circle' },
+                question: { 
+                    es: 'Esta pizza se divide en 6 porciones iguales. ¿Cuántos grados tiene cada porción?',
+                    en: 'This pizza is divided into 6 equal slices. How many degrees is each slice?'
+                },
+                visual: () => createPizzaSVG(6, 1),
+                options: {
+                    es: ['45°', '60°', '72°', '90°'],
+                    en: ['45°', '60°', '72°', '90°']
+                },
+                correctIndex: 1,
+                explanation: {
+                    es: '360° ÷ 6 = 60° por porción.',
+                    en: '360° ÷ 6 = 60° per slice.'
+                }
+            },
+            // VISUAL: Missing angles in circle
+            {
+                category: { es: 'Ángulos Faltantes', en: 'Missing Angles' },
+                question: { 
+                    es: 'Un ángulo del círculo mide 120°. ¿Cuántos grados mide X (el resto del círculo)?',
+                    en: 'One angle of the circle measures 120°. How many degrees is X (the rest of the circle)?'
+                },
+                visual: () => createCircleWithAngleSVG(120, 'X'),
+                options: {
+                    es: ['180°', '200°', '240°', '260°'],
+                    en: ['180°', '200°', '240°', '260°']
+                },
+                correctIndex: 2,
+                explanation: {
+                    es: '360° - 120° = 240°. El resto del círculo (X) mide 240°.',
+                    en: '360° - 120° = 240°. The rest of the circle (X) measures 240°.'
+                }
+            },
+            {
+                category: { es: 'Ángulos Faltantes', en: 'Missing Angles' },
+                question: { 
+                    es: 'Un ángulo del círculo mide 90°. ¿Cuántos grados mide X (el resto del círculo)?',
+                    en: 'One angle of the circle measures 90°. How many degrees is X (the rest of the circle)?'
+                },
+                visual: () => createCircleWithAngleSVG(90, 'X'),
+                options: {
+                    es: ['180°', '220°', '270°', '300°'],
+                    en: ['180°', '220°', '270°', '300°']
+                },
+                correctIndex: 2,
+                explanation: {
+                    es: '360° - 90° = 270°. El resto del círculo (X) mide 270°.',
+                    en: '360° - 90° = 270°. The rest of the circle (X) measures 270°.'
+                }
+            },
+            {
+                category: { es: 'Ángulos Faltantes', en: 'Missing Angles' },
+                question: { 
+                    es: 'Un ángulo del círculo mide 60°. ¿Cuántos grados mide X (el resto del círculo)?',
+                    en: 'One angle of the circle measures 60°. How many degrees is X (the rest of the circle)?'
+                },
+                visual: () => createCircleWithAngleSVG(60, 'X'),
+                options: {
+                    es: ['240°', '280°', '300°', '320°'],
+                    en: ['240°', '280°', '300°', '320°']
+                },
+                correctIndex: 2,
+                explanation: {
+                    es: '360° - 60° = 300°. El resto del círculo (X) mide 300°.',
+                    en: '360° - 60° = 300°. The rest of the circle (X) measures 300°.'
+                }
+            },
+            // VISUAL: Shapes
+            {
+                category: { es: 'Ángulos en Figuras', en: 'Angles in Shapes' },
+                question: { 
+                    es: '¿Cuántos ángulos rectos tiene esta figura?',
+                    en: 'How many right angles does this shape have?'
+                },
+                visual: () => createShapeSVG('square'),
+                options: {
+                    es: ['2', '3', '4', '5'],
+                    en: ['2', '3', '4', '5']
+                },
+                correctIndex: 2,
+                explanation: {
+                    es: 'Un cuadrado tiene 4 ángulos rectos (todas sus esquinas son de 90°).',
+                    en: 'A square has 4 right angles (all its corners are 90°).'
+                }
+            },
+            {
+                category: { es: 'Ángulos en Figuras', en: 'Angles in Shapes' },
+                question: { 
+                    es: '¿Esta figura tiene ángulos agudos Y obtusos?',
+                    en: 'Does this shape have BOTH acute AND obtuse angles?'
+                },
+                visual: () => createShapeSVG('parallelogram'),
+                options: {
+                    es: ['Sí', 'No, solo agudos', 'No, solo obtusos', 'No, solo rectos'],
+                    en: ['Yes', 'No, only acute', 'No, only obtuse', 'No, only right']
+                },
+                correctIndex: 0,
+                explanation: {
+                    es: 'Un paralelogramo típico tiene 2 ángulos agudos y 2 ángulos obtusos.',
+                    en: 'A typical parallelogram has 2 acute angles and 2 obtuse angles.'
+                }
+            },
+            {
+                category: { es: 'Ángulos en Figuras', en: 'Angles in Shapes' },
+                question: { 
+                    es: '¿Cuántos ángulos rectos tiene este triángulo?',
+                    en: 'How many right angles does this triangle have?'
+                },
+                visual: () => createShapeSVG('rightTriangle'),
+                options: {
+                    es: ['0', '1', '2', '3'],
+                    en: ['0', '1', '2', '3']
+                },
+                correctIndex: 1,
+                explanation: {
+                    es: 'Este triángulo rectángulo tiene exactamente 1 ángulo recto (marcado con el cuadrado).',
+                    en: 'This right triangle has exactly 1 right angle (marked with the square).'
+                }
+            },
+            {
+                category: { es: 'Ángulos en Figuras', en: 'Angles in Shapes' },
+                question: { 
+                    es: '¿Cuántos ángulos rectos tiene un rectángulo?',
+                    en: 'How many right angles does a rectangle have?'
+                },
+                visual: () => createShapeSVG('rectangle'),
+                options: {
+                    es: ['2', '3', '4', '6'],
+                    en: ['2', '3', '4', '6']
+                },
+                correctIndex: 2,
+                explanation: {
+                    es: 'Un rectángulo tiene 4 ángulos rectos (todas sus esquinas son de 90°).',
+                    en: 'A rectangle has 4 right angles (all its corners are 90°).'
+                }
+            },
+            // Text-only questions (foundational concepts)
+            {
+                category: { es: 'Tipos de Ángulos', en: 'Types of Angles' },
+                question: { 
+                    es: '¿Qué tipo de ángulo mide EXACTAMENTE 90°?',
+                    en: 'What type of angle measures EXACTLY 90°?'
+                },
+                options: {
+                    es: ['Ángulo agudo', 'Ángulo recto', 'Ángulo obtuso', 'Ángulo llano'],
+                    en: ['Acute angle', 'Right angle', 'Obtuse angle', 'Straight angle']
+                },
+                correctIndex: 1,
+                explanation: {
+                    es: 'Un ángulo recto mide exactamente 90°.',
+                    en: 'A right angle measures exactly 90°.'
+                }
+            },
+            {
+                category: { es: 'Tipos de Ángulos', en: 'Types of Angles' },
+                question: { 
+                    es: '¿Qué tipo de ángulo mide MENOS de 90°?',
+                    en: 'What type of angle measures LESS than 90°?'
+                },
+                options: {
+                    es: ['Ángulo agudo', 'Ángulo recto', 'Ángulo obtuso', 'Ángulo llano'],
+                    en: ['Acute angle', 'Right angle', 'Obtuse angle', 'Straight angle']
+                },
+                correctIndex: 0,
+                explanation: {
+                    es: 'Un ángulo agudo mide menos de 90°.',
+                    en: 'An acute angle measures less than 90°.'
+                }
+            },
+            {
+                category: { es: 'Tipos de Ángulos', en: 'Types of Angles' },
+                question: { 
+                    es: '¿Qué tipo de ángulo mide MÁS de 180°?',
+                    en: 'What type of angle measures MORE than 180°?'
+                },
+                options: {
+                    es: ['Ángulo obtuso', 'Ángulo llano', 'Ángulo reflejo', 'Ángulo recto'],
+                    en: ['Obtuse angle', 'Straight angle', 'Reflex angle', 'Right angle']
+                },
+                correctIndex: 2,
+                explanation: {
+                    es: 'Un ángulo reflejo mide más de 180° pero menos de 360°.',
+                    en: 'A reflex angle measures more than 180° but less than 360°.'
+                }
+            },
+            {
+                category: { es: 'Tipos de Ángulos', en: 'Types of Angles' },
+                question: { 
+                    es: '¿Cuántos grados tiene una rotación completa?',
+                    en: 'How many degrees are in a full rotation?'
+                },
+                options: {
+                    es: ['90°', '180°', '270°', '360°'],
+                    en: ['90°', '180°', '270°', '360°']
+                },
+                correctIndex: 3,
+                explanation: {
+                    es: 'Una rotación completa tiene 360°.',
+                    en: 'A full rotation has 360°.'
+                }
+            },
+            {
+                category: { es: 'Círculo y Grados', en: 'Circle and Degrees' },
+                question: { 
+                    es: '¿Qué fracción de un círculo es 15 grados?',
+                    en: 'What fraction of a circle is 15 degrees?'
+                },
+                options: {
+                    es: ['1/360', '15/100', '15/90', '15/360'],
+                    en: ['1/360', '15/100', '15/90', '15/360']
+                },
+                correctIndex: 3,
+                explanation: {
+                    es: 'Un círculo tiene 360°, entonces 15° es 15/360 del círculo.',
+                    en: 'A circle has 360°, so 15° is 15/360 of the circle.'
+                }
+            },
+            {
+                category: { es: 'Círculo y Grados', en: 'Circle and Degrees' },
+                question: { 
+                    es: '¿Cuántos grados hay en la mitad de un círculo?',
+                    en: 'How many degrees are in half of a circle?'
+                },
+                options: {
+                    es: ['90°', '180°', '270°', '360°'],
+                    en: ['90°', '180°', '270°', '360°']
+                },
+                correctIndex: 1,
+                explanation: {
+                    es: 'La mitad de 360° es 180°.',
+                    en: 'Half of 360° is 180°.'
+                }
+            },
+            {
+                category: { es: 'Ecuaciones', en: 'Equations' },
+                question: { 
+                    es: 'Si una pizza se corta en 8 porciones iguales, ¿qué ecuación encuentra el ángulo de cada porción (m)?',
+                    en: 'If a pizza is cut into 8 equal slices, which equation finds the angle of each slice (m)?'
+                },
+                options: {
+                    es: ['8 + 360 = m', '360 × 8 = m', '360 ÷ 8 = m', '8 ÷ 360 = m'],
+                    en: ['8 + 360 = m', '360 × 8 = m', '360 ÷ 8 = m', '8 ÷ 360 = m']
+                },
+                correctIndex: 2,
+                explanation: {
+                    es: 'Para encontrar el ángulo, divide 360° entre el número de porciones: 360 ÷ 8 = m.',
+                    en: 'To find the angle, divide 360° by the number of slices: 360 ÷ 8 = m.'
+                }
+            },
+            {
+                category: { es: 'Ecuaciones', en: 'Equations' },
+                question: { 
+                    es: 'Otra ecuación que funciona para 8 porciones de pizza con ángulo m es:',
+                    en: 'Another equation that works for 8 pizza slices with angle m is:'
+                },
+                options: {
+                    es: ['m + 8 = 360', 'm × 8 = 360', 'm - 8 = 360', 'm ÷ 8 = 360'],
+                    en: ['m + 8 = 360', 'm × 8 = 360', 'm - 8 = 360', 'm ÷ 8 = 360']
+                },
+                correctIndex: 1,
+                explanation: {
+                    es: 'Si hay 8 porciones de m grados cada una, todas juntas = 360°. Entonces m × 8 = 360.',
+                    en: 'If there are 8 slices of m degrees each, all together = 360°. So m × 8 = 360.'
+                }
+            },
+        ];
+
+        // Quiz State
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let selectedOption = null;
+        let answered = false;
+        let missedQuestions = [];
+        let timerInterval = null;
+        let timeLeft = 45;
+
+        // Review State
+        let reviewQuestions = [];
+        let currentReviewQuestion = 0;
+        let reviewScore = 0;
+        let selectedReviewOption = null;
+
+        function shuffle(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function startQuiz() {
+            // Generate fresh dynamic questions with random values
+            const dynamicQuestions = generateDynamicQuestions();
+            
+            // Combine static question bank with dynamic questions
+            const allQuestions = [...questionBank, ...dynamicQuestions];
+            
+            // Select 20 random questions from the combined pool
+            currentQuestions = shuffle(allQuestions).slice(0, 20);
+            currentIndex = 0;
+            score = 0;
+            missedQuestions = [];
+
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('quizScreen').classList.remove('hidden');
+            document.getElementById('totalQ').textContent = currentQuestions.length;
+
+            updateUILabels();
+            showQuestion();
+        }
+
+        function updateUILabels() {
+            const t = translations[currentLang];
+            document.getElementById('scoreLabel').textContent = t.scoreLabel;
+            document.getElementById('questionLabel').textContent = t.questionLabel;
+            document.getElementById('submitBtn').textContent = t.submitBtn;
+            document.getElementById('nextBtn').textContent = t.nextBtn;
+        }
+
+        function showQuestion() {
+            const q = currentQuestions[currentIndex];
+            answered = false;
+            selectedOption = null;
+
+            document.getElementById('currentQ').textContent = currentIndex + 1;
+            document.getElementById('score').textContent = score;
+            document.getElementById('totalAnswered').textContent = currentIndex;
+            document.getElementById('progressBar').style.width = ((currentIndex / currentQuestions.length) * 100) + '%';
+
+            document.getElementById('categoryTag').innerHTML = addTranslationTooltips(q.category[currentLang]);
+            document.getElementById('questionText').innerHTML = addTranslationTooltips(q.question[currentLang]);
+
+            // Show visual if available
+            const visualDiv = document.getElementById('angleVisual');
+            if (q.visual) {
+                visualDiv.innerHTML = q.visual();
+                visualDiv.classList.remove('hidden');
+            } else {
+                visualDiv.classList.add('hidden');
+                visualDiv.innerHTML = '';
+            }
+
+            // Create options
+            const optionsDiv = document.getElementById('options');
+            const options = q.options[currentLang];
+            const indices = options.map((_, i) => i);
+            const shuffledIndices = shuffle(indices);
+            
+            optionsDiv.innerHTML = shuffledIndices.map(i => 
+                `<div class="option" data-index="${i}" onclick="selectOption(this, ${i})">${addTranslationTooltips(options[i])}</div>`
+            ).join('');
+
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('submitBtn').classList.remove('hidden');
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('nextBtn').classList.add('hidden');
+
+            startTimer();
+        }
+
+        function startTimer() {
+            timeLeft = 45;
+            updateTimerDisplay();
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    autoSubmit();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const timer = document.getElementById('timer');
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            timer.textContent = `⏱️ ${mins}:${secs.toString().padStart(2, '0')}`;
+            timer.classList.remove('warning', 'danger');
+            if (timeLeft <= 10) timer.classList.add('danger');
+            else if (timeLeft <= 20) timer.classList.add('warning');
+        }
+
+        function autoSubmit() {
+            if (!answered) {
+                if (selectedOption === null) selectedOption = -1;
+                submitAnswer();
+            }
+        }
+
+        function selectOption(element, index) {
+            if (answered) return;
+            document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedOption = index;
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        function submitAnswer() {
+            if (answered) return;
+            answered = true;
+            clearInterval(timerInterval);
+
+            const q = currentQuestions[currentIndex];
+            const isCorrect = selectedOption === q.correctIndex;
+            const t = translations[currentLang];
+
+            if (isCorrect) {
+                score++;
+            } else {
+                missedQuestions.push({
+                    question: q.question,
+                    options: q.options,
+                    correctIndex: q.correctIndex,
+                    explanation: q.explanation,
+                    visual: q.visual
+                });
+            }
+
+            // Show feedback
+            document.querySelectorAll('.option').forEach(opt => {
+                const idx = parseInt(opt.dataset.index);
+                if (idx === q.correctIndex) {
+                    opt.classList.add(isCorrect ? 'correct' : 'reveal');
+                } else if (idx === selectedOption && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+
+            const feedback = document.getElementById('feedback');
+            feedback.style.display = 'block';
+            feedback.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedback.innerHTML = `<strong>${isCorrect ? t.correct : t.incorrect}</strong> ${addTranslationTooltips(q.explanation[currentLang])}`;
+
+            document.getElementById('submitBtn').classList.add('hidden');
+            document.getElementById('nextBtn').classList.remove('hidden');
+            document.getElementById('score').textContent = score;
+            document.getElementById('totalAnswered').textContent = currentIndex + 1;
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            if (currentIndex < currentQuestions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('resultsScreen').classList.remove('hidden');
+
+            const t = translations[currentLang];
+            document.getElementById('resultsTitle').textContent = t.resultsTitle;
+            document.getElementById('scoreCircleLabel').textContent = t.scoreCircleLabel;
+            document.getElementById('restartBtn').textContent = t.restartBtn;
+
+            const percentage = Math.round((score / currentQuestions.length) * 100);
+            document.getElementById('finalScore').textContent = percentage + '%';
+
+            let message = '';
+            if (currentLang === 'es') {
+                if (percentage === 100) message = '🌟 ¡PERFECTO! ¡Increíble trabajo!';
+                else if (percentage >= 90) message = '🎉 ¡Excelente trabajo!';
+                else if (percentage >= 80) message = '👍 ¡Muy bien!';
+                else if (percentage >= 70) message = '😊 ¡Buen esfuerzo!';
+                else if (percentage >= 60) message = '📚 ¡Sigue practicando!';
+                else message = '💪 ¡Repasa el material e inténtalo de nuevo!';
+            } else {
+                if (percentage === 100) message = '🌟 PERFECT! Amazing job!';
+                else if (percentage >= 90) message = '🎉 Excellent work!';
+                else if (percentage >= 80) message = '👍 Great job!';
+                else if (percentage >= 70) message = '😊 Good effort!';
+                else if (percentage >= 60) message = '📚 Keep practicing!';
+                else message = '💪 Review the material and try again!';
+            }
+            document.getElementById('scoreMessage').textContent = message;
+
+            // Review section
+            if (missedQuestions.length > 0) {
+                document.getElementById('reviewSection').classList.remove('hidden');
+                document.getElementById('reviewTitle').textContent = t.reviewTitle;
+                document.getElementById('reviewCheckBtn').textContent = t.reviewCheck;
+                startReviewMode();
+            } else {
+                document.getElementById('reviewSection').classList.add('hidden');
+            }
+        }
+
+        function startReviewMode() {
+            reviewQuestions = [...missedQuestions];
+            currentReviewQuestion = 0;
+            reviewScore = 0;
+            selectedReviewOption = null;
+
+            document.getElementById('reviewScore').classList.add('hidden');
+            document.getElementById('reviewProgress').classList.remove('hidden');
+            document.getElementById('reviewQuestion').classList.remove('hidden');
+            document.getElementById('reviewOptions').classList.remove('hidden');
+            document.getElementById('reviewCheckBtn').classList.remove('hidden');
+
+            renderReviewQuestion();
+        }
+
+        function renderReviewQuestion() {
+            const q = reviewQuestions[currentReviewQuestion];
+            const t = translations[currentLang];
+
+            document.getElementById('reviewProgress').textContent = 
+                `${t.questionLabel} ${currentReviewQuestion + 1} / ${reviewQuestions.length}`;
+            document.getElementById('reviewQuestion').innerHTML = addTranslationTooltips(q.question[currentLang]);
+
+            // Show visual if available
+            const reviewVisualDiv = document.getElementById('reviewVisual');
+            if (q.visual) {
+                reviewVisualDiv.innerHTML = q.visual();
+                reviewVisualDiv.classList.remove('hidden');
+            } else {
+                reviewVisualDiv.classList.add('hidden');
+                reviewVisualDiv.innerHTML = '';
+            }
+
+            const options = q.options[currentLang];
+            const indices = options.map((_, i) => i);
+            const shuffledIndices = shuffle(indices);
+
+            const optionsContainer = document.getElementById('reviewOptions');
+            optionsContainer.innerHTML = shuffledIndices.map(i => `
+                <div class="review-option" data-index="${i}" data-correct="${i === q.correctIndex}" onclick="selectReviewOption(this, ${i})">${addTranslationTooltips(options[i])}</div>
+            `).join('');
+
+            selectedReviewOption = null;
+            document.getElementById('reviewCheckBtn').disabled = true;
+            document.getElementById('reviewCheckBtn').classList.remove('hidden');
+            document.getElementById('reviewNextBtn').classList.add('hidden');
+            document.getElementById('reviewFeedback').classList.add('hidden');
+        }
+
+        function selectReviewOption(element, index) {
+            document.querySelectorAll('.review-option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedReviewOption = index;
+            document.getElementById('reviewCheckBtn').disabled = false;
+        }
+
+        function checkReviewAnswer() {
+            const q = reviewQuestions[currentReviewQuestion];
+            const t = translations[currentLang];
+            const isCorrect = selectedReviewOption === q.correctIndex;
+
+            document.querySelectorAll('.review-option').forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                const idx = parseInt(opt.dataset.index);
+                if (idx === q.correctIndex) {
+                    opt.classList.add('reveal-correct');
+                }
+                if (idx === selectedReviewOption && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+                if (idx === selectedReviewOption && isCorrect) {
+                    opt.classList.add('correct');
+                }
+            });
+
+            if (isCorrect) reviewScore++;
+
+            const feedback = document.getElementById('reviewFeedback');
+            feedback.classList.remove('hidden', 'correct', 'incorrect');
+            feedback.classList.add(isCorrect ? 'correct' : 'incorrect');
+            feedback.textContent = isCorrect ? t.reviewCorrect : t.reviewIncorrect;
+
+            document.getElementById('reviewCheckBtn').classList.add('hidden');
+            document.getElementById('reviewNextBtn').classList.remove('hidden');
+            document.getElementById('reviewNextBtn').textContent = 
+                currentReviewQuestion < reviewQuestions.length - 1 ? t.reviewNext : (currentLang === 'es' ? 'Ver Resultados' : 'See Results');
+        }
+
+        function nextReviewQuestion() {
+            currentReviewQuestion++;
+            if (currentReviewQuestion >= reviewQuestions.length) {
+                showReviewResults();
+            } else {
+                renderReviewQuestion();
+            }
+        }
+
+        function showReviewResults() {
+            const t = translations[currentLang];
+            document.getElementById('reviewProgress').classList.add('hidden');
+            document.getElementById('reviewQuestion').classList.add('hidden');
+            document.getElementById('reviewOptions').classList.add('hidden');
+            document.getElementById('reviewFeedback').classList.add('hidden');
+            document.getElementById('reviewCheckBtn').classList.add('hidden');
+            document.getElementById('reviewNextBtn').classList.add('hidden');
+
+            const scoreDiv = document.getElementById('reviewScore');
+            scoreDiv.classList.remove('hidden');
+            document.getElementById('reviewCompleteTitle').textContent = t.reviewComplete;
+
+            const percentage = Math.round((reviewScore / reviewQuestions.length) * 100);
+            const text = currentLang === 'es' 
+                ? `¡Obtuviste ${reviewScore} de ${reviewQuestions.length} correctas (${percentage}%) en la revisión!`
+                : `You got ${reviewScore} out of ${reviewQuestions.length} correct (${percentage}%) on the review!`;
+            document.getElementById('reviewScoreText').textContent = text;
+        }
+
+        function restartQuiz() {
+            document.getElementById('resultsScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

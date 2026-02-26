@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Force & Motion - Review Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1a73e8;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: #1a73e8;
+            height: 100%;
+            transition: width 0.3s;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            color: #666;
+        }
+
+        .question-badge {
+            background: #1a73e8;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .question-image {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .question-image img {
+            max-width: 250px;
+            border-radius: 10px;
+        }
+
+        .question {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            color: #333;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            padding: 12px 15px;
+            padding-left: 50px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+            position: relative;
+            background: white;
+        }
+
+        .option::before {
+            content: attr(data-letter);
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 28px;
+            height: 28px;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .option:hover {
+            background: #f8f9fa;
+        }
+
+        .option.selected {
+            border-color: #1a73e8;
+        }
+
+        .option.selected::before {
+            background: #1a73e8;
+            border-color: #1a73e8;
+            color: white;
+        }
+
+        .option.correct {
+            background: #e8f5e9;
+            border-color: #81c784;
+        }
+
+        .option.correct::before {
+            background: #4caf50;
+            border-color: #4caf50;
+            color: white;
+        }
+
+        .option.incorrect {
+            background: #fce4ec;
+            border-color: #f48fb1;
+        }
+
+        .option.incorrect::before {
+            background: #1a73e8;
+            border-color: #1a73e8;
+            color: white;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: #1a73e8;
+            color: white;
+        }
+
+        .btn-success {
+            background: #1a73e8;
+            color: white;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .feedback.correct {
+            background: #e8f8f0;
+            border: 2px solid #27ae60;
+            color: #27ae60;
+        }
+
+        .feedback.incorrect {
+            background: #fde8e8;
+            border: 2px solid #e74c3c;
+            color: #e74c3c;
+        }
+
+        .results {
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: #1a73e8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            color: white;
+            box-shadow: 0 4px 15px rgba(26, 115, 232, 0.3);
+        }
+
+        .score-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+        }
+
+        .results-message {
+            font-size: 1.2rem;
+            margin: 20px 0;
+            color: #666;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Hover translation for Spanish */
+        .translatable {
+            border-bottom: 1px dotted #1a73e8;
+            cursor: help;
+            position: relative;
+        }
+
+        .translatable:hover::after {
+            content: attr(data-en);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            z-index: 100;
+        }
+
+        /* Review Section */
+        .review-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+            border: 1px solid #e0e0e0;
+        }
+
+        .review-section h3 {
+            color: #1a73e8;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .review-progress {
+            text-align: center;
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .review-question {
+            font-size: 1rem;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .review-image {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .review-image img {
+            max-width: 200px;
+            border-radius: 8px;
+        }
+
+        .review-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .review-option {
+            padding: 10px 15px;
+            padding-left: 45px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+            position: relative;
+            background: white;
+        }
+
+        .review-option::before {
+            content: attr(data-letter);
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .review-option:hover {
+            background: #f8f9fa;
+        }
+
+        .review-option.selected {
+            border-color: #1a73e8;
+        }
+
+        .review-option.selected::before {
+            background: #1a73e8;
+            border-color: #1a73e8;
+            color: white;
+        }
+
+        .review-option.correct {
+            background: #e8f5e9;
+            border-color: #81c784;
+        }
+
+        .review-option.correct::before {
+            background: #4caf50;
+            border-color: #4caf50;
+            color: white;
+        }
+
+        .review-option.incorrect {
+            background: #fce4ec;
+            border-color: #f48fb1;
+        }
+
+        .review-option.incorrect::before {
+            background: #1a73e8;
+            border-color: #1a73e8;
+            color: white;
+        }
+
+        .review-feedback {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .review-feedback.correct {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .review-feedback.incorrect {
+            background: #fce4ec;
+            color: #c62828;
+        }
+
+        .review-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .review-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .review-btn-check {
+            background: #1a73e8;
+            color: white;
+        }
+
+        .review-btn-next {
+            background: #1a73e8;
+            color: white;
+        }
+
+        .review-score {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .review-score h4 {
+            color: #1a73e8;
+            margin-bottom: 10px;
+        }
+
+        .restart-separator {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px dashed #ccc;
+        }
+
+        .restart-separator p {
+            color: #999;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .btn-secondary {
+            background: #757575;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div id="startScreen">
+                <h1>📚 Review Quiz</h1>
+                <p class="subtitle">Force, Motion & Simple Machines<br>Fuerza, Movimiento y Máquinas Simples</p>
+                <p style="text-align: center; color: #666; margin-bottom: 20px;">
+                    Let's practice the questions you missed!<br>
+                    ¡Practiquemos las preguntas que fallaste!
+                </p>
+                <p style="text-align: center; color: #666; margin-bottom: 15px; font-size: 0.9rem;">
+                    Choose your language / Elige tu idioma:
+                </p>
+                <button class="btn btn-primary" onclick="startQuiz('english')" style="margin-bottom: 10px;">
+                    🇺🇸 Start in English
+                </button>
+                <button class="btn btn-primary" onclick="startQuiz('spanish')">
+                    🇪🇸 Comenzar en Español
+                </button>
+            </div>
+
+            <div id="quizScreen" class="hidden">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                
+                <div class="stats">
+                    <span class="question-badge" id="questionNum">1</span>
+                    <span id="scoreDisplay">Score: 0</span>
+                </div>
+
+                <div class="question-image hidden" id="questionImage">
+                    <img src="" id="questionImg" alt="Question image">
+                </div>
+                <div class="question" id="questionText"></div>
+                <div class="options" id="optionsContainer"></div>
+
+                <button class="btn btn-primary" id="submitBtn" onclick="submitAnswer()" disabled>
+                    Check Answer
+                </button>
+                <button class="btn btn-success hidden" id="nextBtn" onclick="nextQuestion()">
+                    Next Question →
+                </button>
+
+                <div class="feedback hidden" id="feedback"></div>
+            </div>
+
+            <div id="resultsScreen" class="hidden">
+                <div class="results">
+                    <h1>🎉 Quiz Complete!</h1>
+                    <div class="score-circle">
+                        <span class="score-number" id="finalScore">0%</span>
+                        <span class="score-label">Correct</span>
+                    </div>
+                    <p class="results-message" id="resultsMessage"></p>
+
+                    <div class="review-section hidden" id="reviewSection">
+                        <h3 id="reviewHeader">📝 Let's Practice the Missed Questions!</h3>
+                        <div class="review-progress" id="reviewProgress">Question 1 of 3</div>
+                        <div class="review-image hidden" id="reviewImage">
+                            <img src="" id="reviewImg" alt="Question image">
+                        </div>
+                        <div class="review-question" id="reviewQuestion"></div>
+                        <div class="review-options" id="reviewOptions"></div>
+                        <div class="review-feedback hidden" id="reviewFeedback"></div>
+                        <button class="review-btn review-btn-check" id="reviewCheckBtn" onclick="checkReviewAnswer()" disabled>Check Answer</button>
+                        <button class="review-btn review-btn-next hidden" id="reviewNextBtn" onclick="nextReviewQuestion()">Next →</button>
+                        <div class="review-score hidden" id="reviewScore">
+                            <h4>🎉 Review Complete!</h4>
+                            <p id="reviewScoreText"></p>
+                        </div>
+                    </div>
+
+                    <div class="restart-separator">
+                        <p>Ready for another try?</p>
+                        <button class="btn btn-secondary" onclick="restartQuiz()">
+                            🔄 Try Again
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                questionEn: "Kaylee claims that the force of gravity affects an object's movement. What argument can Hannah present that BEST supports her claim?",
+                questionEs: "Kaylee afirma que la <span class='translatable' data-en='force of gravity'>fuerza de gravedad</span> afecta el <span class='translatable' data-en='movement'>movimiento</span> de un objeto. ¿Qué argumento puede presentar Hannah que respalde mejor su afirmación?",
+                optionsEn: [
+                    "When a pulley is used, an object can move upward.",
+                    "When a soccer ball falls to the ground.",
+                    "When a toy car is pushed to the floor, it stops rolling.",
+                    "When a ball is thrown against a wall, it bounces."
+                ],
+                optionsEs: [
+                    "Cuando se utiliza una <span class='translatable' data-en='pulley'>polea</span>, un objeto puede moverse hacia arriba.",
+                    "Cuando una pelota de fútbol <span class='translatable' data-en='falls'>cae</span> al suelo.",
+                    "Cuando un carrito de juguete es <span class='translatable' data-en='pushed'>empujado</span> al suelo, deja de rodar.",
+                    "Cuando se lanza una pelota contra una pared, <span class='translatable' data-en='bounces'>rebota</span>."
+                ],
+                correct: 1,
+                explanationEn: "A soccer ball falling to the ground directly shows gravity pulling it down - that's gravity affecting motion!",
+                explanationEs: "Una pelota de fútbol cayendo al suelo muestra directamente la gravedad jalándola hacia abajo - ¡eso es la gravedad afectando el movimiento!"
+            },
+            {
+                questionEn: "When would be a good time to use a wedge?",
+                questionEs: "¿Cuándo sería un buen momento para utilizar una <span class='translatable' data-en='wedge'>cuña</span>?",
+                optionsEn: [
+                    "Keeping a door open",
+                    "Moving a load of dirt",
+                    "Opening a water bottle",
+                    "Lifting a heavy box onto a table"
+                ],
+                optionsEs: [
+                    "Manteniendo abierta una <span class='translatable' data-en='door'>puerta</span>",
+                    "Moviendo una <span class='translatable' data-en='load'>carga</span> de tierra",
+                    "Abriendo una botella de agua",
+                    "<span class='translatable' data-en='Lifting'>Levantar</span> una caja pesada sobre una mesa"
+                ],
+                correct: 0,
+                explanationEn: "A doorstop is a wedge! Wedges have a triangular shape and are used to hold things apart or split things.",
+                explanationEs: "¡Un tope de puerta es una cuña! Las cuñas tienen forma triangular y se usan para mantener cosas separadas o dividir cosas."
+            },
+            {
+                questionEn: "Which of these things does NOT happen because of the force of gravity?",
+                questionEs: "¿Cuál de estas cosas NO sucede debido a la <span class='translatable' data-en='force of gravity'>fuerza de gravedad</span>?",
+                optionsEn: [
+                    "An apple falling from a tree",
+                    "A book falling from a table",
+                    "A toy car rolling down a ramp",
+                    "A ball going up into the air"
+                ],
+                optionsEs: [
+                    "Una <span class='translatable' data-en='apple'>manzana</span> <span class='translatable' data-en='falling'>cayendo</span> de un árbol",
+                    "Un libro <span class='translatable' data-en='falling'>cayendo</span> de una mesa",
+                    "Un coche de juguete <span class='translatable' data-en='rolling'>rodando</span> por una <span class='translatable' data-en='ramp'>rampa</span>",
+                    "Una bola <span class='translatable' data-en='going up'>subiendo</span> al aire"
+                ],
+                correct: 3,
+                explanationEn: "When you throw a ball UP, that's YOUR force pushing it - gravity actually works AGAINST it, pulling it back down!",
+                explanationEs: "Cuando lanzas una pelota HACIA ARRIBA, esa es TU fuerza empujándola - ¡la gravedad en realidad trabaja EN CONTRA, jalándola hacia abajo!"
+            },
+            {
+                questionEn: "Which of the following options BEST describes a screw as a simple machine?",
+                questionEs: "¿Cuál de las siguientes opciones describe mejor el <span class='translatable' data-en='screw'>tornillo</span> como una <span class='translatable' data-en='simple machine'>máquina simple</span>?",
+                optionsEn: [
+                    "An inclined plane wrapped around an axis",
+                    "A wheel wrapped around an inclined plane",
+                    "A pulley wrapped around a lever",
+                    "A lever wrapped around a wedge"
+                ],
+                optionsEs: [
+                    "Un <span class='translatable' data-en='inclined plane'>plano inclinado</span> <span class='translatable' data-en='wrapped'>enrollado</span> alrededor de un <span class='translatable' data-en='axis'>eje</span>",
+                    "Una <span class='translatable' data-en='wheel'>rueda</span> enrollada alrededor de un plano inclinado",
+                    "Una <span class='translatable' data-en='pulley'>polea</span> enrollada alrededor de una <span class='translatable' data-en='lever'>palanca</span>",
+                    "Una <span class='translatable' data-en='lever'>palanca</span> enrollada alrededor de una <span class='translatable' data-en='wedge'>cuña</span>"
+                ],
+                correct: 0,
+                explanationEn: "A screw is just a ramp (inclined plane) that spirals around a center pole! Think of the threads going around.",
+                explanationEs: "¡Un tornillo es simplemente una rampa (plano inclinado) que gira en espiral alrededor de un poste central! Piensa en las roscas dando vueltas."
+            },
+            {
+                questionEn: "Which of the following is an inclined plane?",
+                questionEs: "¿Cuál de los siguientes es un <span class='translatable' data-en='inclined plane'>plano inclinado</span>?",
+                optionsEn: [
+                    "Car",
+                    "Ramp",
+                    "Seesaw",
+                    "Flag"
+                ],
+                optionsEs: [
+                    "<span class='translatable' data-en='Car'>Carro</span>",
+                    "<span class='translatable' data-en='Ramp'>Rampa</span>",
+                    "<span class='translatable' data-en='Seesaw'>Balancín</span>",
+                    "<span class='translatable' data-en='Flag'>Bandera</span>"
+                ],
+                correct: 1,
+                explanationEn: "A ramp IS an inclined plane - it's a flat surface at an angle that makes it easier to move things up or down!",
+                explanationEs: "Una rampa ES un plano inclinado - ¡es una superficie plana en ángulo que hace más fácil mover cosas hacia arriba o abajo!"
+            },
+            {
+                questionEn: "Which simple machine is a wheel and axle?",
+                questionEs: "¿Qué <span class='translatable' data-en='simple machine'>máquina simple</span> es una <span class='translatable' data-en='wheel and axle'>rueda y un eje</span>?",
+                optionsEn: [
+                    "Ramp",
+                    "Scissors",
+                    "Bicycle",
+                    "Seesaw"
+                ],
+                optionsEs: [
+                    "<span class='translatable' data-en='Ramp'>Rampa</span>",
+                    "<span class='translatable' data-en='Scissors'>Tijeras</span>",
+                    "<span class='translatable' data-en='Bicycle'>Bicicleta</span>",
+                    "<span class='translatable' data-en='Seesaw'>Balancín</span>"
+                ],
+                correct: 2,
+                explanationEn: "A bicycle wheel spins around its center axle - that's a wheel and axle! Scissors are actually two levers joined together.",
+                explanationEs: "La rueda de una bicicleta gira alrededor de su eje central - ¡eso es una rueda y eje! Las tijeras son en realidad dos palancas unidas."
+            },
+            {
+                questionEn: "Which of the following is NOT an example of a simple machine?",
+                questionEs: "¿Cuál de los siguientes NO es un ejemplo de una <span class='translatable' data-en='simple machine'>máquina simple</span>?",
+                optionsEn: [
+                    "A lever",
+                    "A wheel and axle",
+                    "A screw",
+                    "A spring"
+                ],
+                optionsEs: [
+                    "Una <span class='translatable' data-en='lever'>palanca</span>",
+                    "Una <span class='translatable' data-en='wheel and axle'>rueda y eje</span>",
+                    "Un <span class='translatable' data-en='screw'>tornillo</span>",
+                    "Un <span class='translatable' data-en='spring'>resorte</span>"
+                ],
+                correct: 3,
+                explanationEn: "The 6 simple machines are: lever, pulley, inclined plane, wheel and axle, screw, and wedge. A spring is NOT one of them!",
+                explanationEs: "Las 6 máquinas simples son: palanca, polea, plano inclinado, rueda y eje, tornillo, y cuña. ¡Un resorte NO es una de ellas!"
+            },
+            {
+                questionEn: "Look at the picture of kids on a seesaw. What is the object in the middle of this simple machine that distributes the weight called?",
+                questionEs: "Mira la imagen de niños en un <span class='translatable' data-en='seesaw'>balancín</span>. ¿Cómo se llama el objeto en medio de esta <span class='translatable' data-en='simple machine'>máquina simple</span> que distribuye el <span class='translatable' data-en='weight'>peso</span>?",
+                image: "seesaw.png",
+                optionsEn: [
+                    "Rock",
+                    "Chair",
+                    "Fulcrum",
+                    "Balance"
+                ],
+                optionsEs: [
+                    "<span class='translatable' data-en='Rock'>Roca</span>",
+                    "<span class='translatable' data-en='Chair'>Silla</span>",
+                    "<span class='translatable' data-en='Fulcrum'>Fulcro</span>",
+                    "<span class='translatable' data-en='Will balance'>Balanceará</span>"
+                ],
+                correct: 2,
+                explanationEn: "The fulcrum is the pivot point in the middle of a lever (like a seesaw). It's the point where the lever balances and rotates!",
+                explanationEs: "El fulcro es el punto de apoyo en el medio de una palanca (como un balancín). ¡Es el punto donde la palanca se equilibra y gira!"
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedOption = null;
+        let shuffledQuestions = [];
+        let missedQuestions = [];
+        let currentLanguage = 'english';
+        
+        // Review state
+        let reviewQuestions = [];
+        let currentReviewQuestion = 0;
+        let reviewScore = 0;
+        let selectedReviewOption = null;
+
+        function shuffle(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function startQuiz(language) {
+            currentLanguage = language;
+            shuffledQuestions = shuffle(questions);
+            currentQuestion = 0;
+            score = 0;
+            missedQuestions = [];
+            
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('quizScreen').classList.remove('hidden');
+            
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = shuffledQuestions[currentQuestion];
+            const isEnglish = currentLanguage === 'english';
+            
+            document.getElementById('progressFill').style.width = 
+                `${(currentQuestion / shuffledQuestions.length) * 100}%`;
+            document.getElementById('questionNum').textContent = currentQuestion + 1;
+            document.getElementById('scoreDisplay').textContent = isEnglish ? `Score: ${score}` : `Puntos: ${score}`;
+            
+            // Handle image
+            const imageDiv = document.getElementById('questionImage');
+            if (q.image) {
+                document.getElementById('questionImg').src = q.image;
+                imageDiv.classList.remove('hidden');
+            } else {
+                imageDiv.classList.add('hidden');
+            }
+            
+            document.getElementById('questionText').innerHTML = isEnglish ? q.questionEn : q.questionEs;
+            
+            // Shuffle options but track correct answer
+            const options = isEnglish ? q.optionsEn : q.optionsEs;
+            const optionIndices = [0, 1, 2, 3];
+            const shuffledIndices = shuffle(optionIndices);
+            const letters = ['A', 'B', 'C', 'D'];
+            
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = shuffledIndices.map((origIndex, displayIndex) => `
+                <div class="option" data-original="${origIndex}" data-letter="${letters[displayIndex]}" onclick="selectOption(this, ${origIndex})">
+                    ${options[origIndex]}
+                </div>
+            `).join('');
+            
+            selectedOption = null;
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').textContent = isEnglish ? 'Check Answer' : 'Verificar Respuesta';
+            document.getElementById('submitBtn').classList.remove('hidden');
+            document.getElementById('nextBtn').classList.add('hidden');
+            document.getElementById('feedback').classList.add('hidden');
+        }
+
+        function selectOption(element, index) {
+            document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedOption = index;
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        function submitAnswer() {
+            const q = shuffledQuestions[currentQuestion];
+            const isEnglish = currentLanguage === 'english';
+            const options = document.querySelectorAll('.option');
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                const origIndex = parseInt(opt.dataset.original);
+                if (origIndex === q.correct) {
+                    opt.classList.add('correct');
+                } else if (origIndex === selectedOption && selectedOption !== q.correct) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            const feedback = document.getElementById('feedback');
+            feedback.classList.remove('hidden', 'correct', 'incorrect');
+            
+            if (selectedOption === q.correct) {
+                score++;
+                feedback.classList.add('correct');
+                feedback.innerHTML = `<strong>${isEnglish ? '✅ Correct!' : '✅ ¡Correcto!'}</strong><br>${q.explanationEn}`;
+            } else {
+                feedback.classList.add('incorrect');
+                feedback.innerHTML = `<strong>${isEnglish ? '❌ Not quite.' : '❌ No exactamente.'}</strong><br>${q.explanationEn}`;
+                missedQuestions.push(q);
+            }
+            
+            document.getElementById('scoreDisplay').textContent = isEnglish ? `Score: ${score}` : `Puntos: ${score}`;
+            document.getElementById('submitBtn').classList.add('hidden');
+            document.getElementById('nextBtn').textContent = isEnglish ? 'Next Question →' : 'Siguiente →';
+            document.getElementById('nextBtn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion >= shuffledQuestions.length) {
+                showResults();
+            } else {
+                renderQuestion();
+            }
+        }
+
+        function showResults() {
+            const isEnglish = currentLanguage === 'english';
+            
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('resultsScreen').classList.remove('hidden');
+            
+            const percentage = Math.round((score / shuffledQuestions.length) * 100);
+            document.getElementById('finalScore').textContent = `${percentage}%`;
+            
+            // Update labels based on language
+            document.querySelector('#resultsScreen h1').textContent = isEnglish ? '🎉 Quiz Complete!' : '🎉 ¡Quiz Completado!';
+            document.querySelector('.score-label').textContent = isEnglish ? 'Correct' : 'Correctas';
+            
+            let message = '';
+            if (isEnglish) {
+                if (percentage === 100) message = '🌟 Perfect! You really understand this now!';
+                else if (percentage >= 75) message = '👍 Great job! You\'ve learned a lot!';
+                else if (percentage >= 50) message = '📚 Good effort! Review the explanations and try again.';
+                else message = '💪 Keep practicing! Read through the explanations carefully.';
+            } else {
+                if (percentage === 100) message = '🌟 ¡Perfecto! ¡Ahora realmente lo entiendes!';
+                else if (percentage >= 75) message = '👍 ¡Muy bien! ¡Has aprendido mucho!';
+                else if (percentage >= 50) message = '📚 ¡Buen esfuerzo! Revisa las explicaciones e intenta de nuevo.';
+                else message = '💪 ¡Sigue practicando! Lee las explicaciones cuidadosamente.';
+            }
+            
+            document.getElementById('resultsMessage').textContent = message;
+            document.querySelector('.restart-separator p').textContent = isEnglish ? 'Ready for another try?' : '¿Listo para otro intento?';
+            document.querySelector('.btn-secondary').textContent = isEnglish ? '🔄 Try Again' : '🔄 Intentar de Nuevo';
+            
+            // Start review if there are missed questions
+            const reviewSection = document.getElementById('reviewSection');
+            if (missedQuestions.length > 0) {
+                reviewSection.classList.remove('hidden');
+                document.getElementById('reviewHeader').textContent = isEnglish ? 
+                    '📝 Let\'s Practice the Missed Questions!' : '📝 ¡Practiquemos las preguntas que fallaste!';
+                startReviewMode();
+            } else {
+                reviewSection.classList.add('hidden');
+            }
+        }
+
+        // Review Mode Functions
+        function startReviewMode() {
+            reviewQuestions = [...missedQuestions];
+            currentReviewQuestion = 0;
+            reviewScore = 0;
+            selectedReviewOption = null;
+            
+            document.getElementById('reviewScore').classList.add('hidden');
+            document.getElementById('reviewProgress').classList.remove('hidden');
+            document.getElementById('reviewQuestion').classList.remove('hidden');
+            document.getElementById('reviewOptions').classList.remove('hidden');
+            document.getElementById('reviewCheckBtn').classList.remove('hidden');
+            
+            renderReviewQuestion();
+        }
+
+        function renderReviewQuestion() {
+            const q = reviewQuestions[currentReviewQuestion];
+            const isEnglish = currentLanguage === 'english';
+            
+            document.getElementById('reviewProgress').textContent = isEnglish ?
+                `Question ${currentReviewQuestion + 1} of ${reviewQuestions.length}` :
+                `Pregunta ${currentReviewQuestion + 1} de ${reviewQuestions.length}`;
+            
+            // Handle image
+            const imageDiv = document.getElementById('reviewImage');
+            if (q.image) {
+                document.getElementById('reviewImg').src = q.image;
+                imageDiv.classList.remove('hidden');
+            } else {
+                imageDiv.classList.add('hidden');
+            }
+            
+            document.getElementById('reviewQuestion').innerHTML = isEnglish ? q.questionEn : q.questionEs;
+            
+            // Shuffle options
+            const options = isEnglish ? q.optionsEn : q.optionsEs;
+            const optionIndices = [0, 1, 2, 3];
+            const shuffledIndices = shuffle(optionIndices);
+            const letters = ['A', 'B', 'C', 'D'];
+            
+            const optionsContainer = document.getElementById('reviewOptions');
+            optionsContainer.innerHTML = shuffledIndices.map((origIndex, displayIndex) => `
+                <div class="review-option" data-original="${origIndex}" data-correct="${origIndex === q.correct}" data-letter="${letters[displayIndex]}" onclick="selectReviewOption(this, ${origIndex})">${options[origIndex]}</div>
+            `).join('');
+            
+            selectedReviewOption = null;
+            document.getElementById('reviewCheckBtn').disabled = true;
+            document.getElementById('reviewCheckBtn').textContent = isEnglish ? 'Check Answer' : 'Verificar';
+            document.getElementById('reviewCheckBtn').classList.remove('hidden');
+            document.getElementById('reviewNextBtn').classList.add('hidden');
+            document.getElementById('reviewFeedback').classList.add('hidden');
+        }
+
+        function selectReviewOption(element, index) {
+            const options = document.querySelectorAll('.review-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedReviewOption = index;
+            document.getElementById('reviewCheckBtn').disabled = false;
+        }
+
+        function checkReviewAnswer() {
+            const q = reviewQuestions[currentReviewQuestion];
+            const isEnglish = currentLanguage === 'english';
+            const options = document.querySelectorAll('.review-option');
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                const origIndex = parseInt(opt.dataset.original);
+                if (origIndex === q.correct) {
+                    opt.classList.add('correct');
+                } else if (origIndex === selectedReviewOption && selectedReviewOption !== q.correct) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            const isCorrect = selectedReviewOption === q.correct;
+            if (isCorrect) reviewScore++;
+            
+            const feedback = document.getElementById('reviewFeedback');
+            feedback.classList.remove('hidden', 'correct', 'incorrect');
+            feedback.classList.add(isCorrect ? 'correct' : 'incorrect');
+            
+            const feedbackLabel = isEnglish 
+                ? (isCorrect ? '✅ Great job! You got it!' : '❌ Not quite.')
+                : (isCorrect ? '✅ ¡Muy bien! ¡Lo lograste!' : '❌ No exactamente.');
+            
+            feedback.innerHTML = `<strong>${feedbackLabel}</strong><br>${q.explanationEn}`;
+            
+            document.getElementById('reviewCheckBtn').classList.add('hidden');
+            document.getElementById('reviewNextBtn').classList.remove('hidden');
+            
+            if (currentReviewQuestion < reviewQuestions.length - 1) {
+                document.getElementById('reviewNextBtn').textContent = isEnglish ? 'Next →' : 'Siguiente →';
+            } else {
+                document.getElementById('reviewNextBtn').textContent = isEnglish ? 'See Results' : 'Ver Resultados';
+            }
+        }
+
+        function nextReviewQuestion() {
+            currentReviewQuestion++;
+            if (currentReviewQuestion >= reviewQuestions.length) {
+                showReviewResults();
+            } else {
+                renderReviewQuestion();
+            }
+        }
+
+        function showReviewResults() {
+            const isEnglish = currentLanguage === 'english';
+            
+            document.getElementById('reviewProgress').classList.add('hidden');
+            document.getElementById('reviewQuestion').classList.add('hidden');
+            document.getElementById('reviewOptions').classList.add('hidden');
+            document.getElementById('reviewFeedback').classList.add('hidden');
+            document.getElementById('reviewCheckBtn').classList.add('hidden');
+            document.getElementById('reviewNextBtn').classList.add('hidden');
+            document.getElementById('reviewImage').classList.add('hidden');
+            
+            const scoreDiv = document.getElementById('reviewScore');
+            scoreDiv.classList.remove('hidden');
+            
+            document.querySelector('#reviewScore h4').textContent = isEnglish ? '🎉 Review Complete!' : '🎉 ¡Repaso Completado!';
+            
+            const percentage = Math.round((reviewScore / reviewQuestions.length) * 100);
+            if (isEnglish) {
+                document.getElementById('reviewScoreText').textContent = 
+                    `You got ${reviewScore} out of ${reviewQuestions.length} correct (${percentage}%) on the review!`;
+            } else {
+                document.getElementById('reviewScoreText').textContent = 
+                    `¡Obtuviste ${reviewScore} de ${reviewQuestions.length} correctas (${percentage}%) en el repaso!`;
+            }
+        }
+
+        function restartQuiz() {
+            document.getElementById('resultsScreen').classList.add('hidden');
+            document.getElementById('reviewSection').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

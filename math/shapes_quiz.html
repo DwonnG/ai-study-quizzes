@@ -1,0 +1,1994 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📐 Figuras y Geometría - Quiz Interactivo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3), 0 0 60px rgba(233, 69, 96, 0.1);
+            border: 1px solid rgba(233, 69, 96, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #e94560;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        /* Language Toggle */
+        .language-toggle {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .toggle-btn {
+            background: linear-gradient(135deg, #e94560, #c23a51);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: transform 0.2s;
+        }
+
+        .toggle-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Flashcard Section */
+        .flashcard-section {
+            margin-bottom: 30px;
+        }
+
+        .flashcard-section h2 {
+            text-align: center;
+            color: #e94560;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .flashcard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .flashcard {
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            border-radius: 10px;
+        }
+
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.75rem;
+            line-height: 1.3;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .flashcard-front {
+            background: linear-gradient(135deg, #ffffff, #fff5f6);
+            color: #e94560;
+            font-weight: bold;
+            border: 2px solid #e94560;
+        }
+
+        .flashcard-back {
+            background: linear-gradient(135deg, #ffe4e8, #fff5f6);
+            color: #333;
+            transform: rotateY(180deg);
+            border: 2px solid #e94560;
+        }
+
+        /* Hover translation */
+        .translatable {
+            position: relative;
+            border-bottom: 2px dashed #e94560;
+            cursor: help;
+            color: #c23a51;
+            font-weight: 600;
+            padding: 0 2px;
+            background: rgba(233, 69, 96, 0.1);
+            border-radius: 3px;
+        }
+
+        .translatable:hover {
+            background: rgba(233, 69, 96, 0.2);
+        }
+
+        .translatable:hover::after {
+            content: "English: " attr(data-en);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #2c3e50, #1a252f);
+            color: #f1c40f;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            white-space: nowrap;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border: 2px solid #f1c40f;
+        }
+
+        .translatable:hover::before {
+            content: "";
+            position: absolute;
+            bottom: calc(100% + 2px);
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #f1c40f;
+            z-index: 1001;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #e94560, #c23a51);
+            height: 100%;
+            transition: width 0.3s;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Question */
+        .category {
+            display: inline-block;
+            background: linear-gradient(135deg, #e94560, #c23a51);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+        }
+
+        .question {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        /* Shape display in questions */
+        .shape-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 15px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .shape-box {
+            border: 3px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Options */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .option:hover {
+            border-color: #e94560;
+            background: #fff5f6;
+        }
+
+        .option.selected {
+            border-color: #e94560;
+            background: linear-gradient(135deg, #ffe4e8, #fff5f6);
+        }
+
+        .option.correct {
+            border-color: #27ae60;
+            background: #e8f8f0;
+        }
+
+        .option.incorrect {
+            border-color: #e74c3c;
+            background: #fde8e8;
+        }
+
+        /* Buttons */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #e94560, #c23a51);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        /* Feedback */
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .feedback.correct {
+            background: #e8f8f0;
+            border: 2px solid #27ae60;
+            color: #27ae60;
+        }
+
+        .feedback.incorrect {
+            background: #fde8e8;
+            border: 2px solid #e74c3c;
+            color: #e74c3c;
+        }
+
+        /* Results */
+        .results {
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e94560, #c23a51);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            color: white;
+            box-shadow: 0 0 30px rgba(233, 69, 96, 0.4);
+        }
+
+        .score-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .results-message {
+            font-size: 1.2rem;
+            margin: 20px 0;
+            color: #666;
+        }
+
+        /* Review Section */
+        .review-section {
+            background: linear-gradient(135deg, #fff5f6, #ffe4e8);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+            border: 2px solid #e94560;
+        }
+
+        .review-section h3 {
+            color: #c23a51;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .review-progress {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .review-question {
+            font-size: 1.05rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .review-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .review-option {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .review-option:hover {
+            border-color: #e94560;
+            background: #ffe4e8;
+        }
+
+        .review-option.selected {
+            border-color: #e94560;
+            background: #ffe4e8;
+        }
+
+        .review-option.correct {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+        }
+
+        .review-option.incorrect {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        .review-option.reveal-correct {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+            animation: glow 0.5s ease-in-out;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px #4CAF50; }
+            50% { box-shadow: 0 0 20px #4CAF50; }
+        }
+
+        .review-feedback {
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .review-feedback.correct {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .review-feedback.incorrect {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .review-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .review-btn-check {
+            background: linear-gradient(135deg, #e94560, #c23a51);
+            color: white;
+        }
+
+        .review-btn-next {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+
+        .review-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .review-score {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .review-score h4 {
+            color: #27ae60;
+            margin-bottom: 10px;
+        }
+
+        .review-score p {
+            color: #7f8c8d;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Restart separator */
+        .restart-separator {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px dashed #ccc;
+        }
+
+        .restart-separator p {
+            color: #7f8c8d;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        /* Shape illustrations */
+        .shape-illustration {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .shape-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .shape-item svg {
+            margin-bottom: 8px;
+        }
+
+        .shape-item span {
+            font-size: 0.8rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <!-- Start Screen -->
+            <div id="startScreen">
+                <h1>📐 Figuras y Geometría</h1>
+                <p class="subtitle">Shapes & Geometry - Interactive Quiz</p>
+
+                <div class="language-toggle">
+                    <button class="toggle-btn" onclick="toggleLanguage()">
+                        🌐 <span id="langText">Show English</span>
+                    </button>
+                </div>
+
+                <div class="flashcard-section">
+                    <h2>📚 Vocabulario / Vocabulary</h2>
+                    <p style="text-align: center; color: #666; margin-bottom: 15px; font-size: 0.85rem;">
+                        (Haz clic para voltear / Click to flip)
+                    </p>
+                    <div class="flashcard-grid" id="flashcardGrid"></div>
+                </div>
+
+                <button class="btn btn-primary" onclick="startQuiz()">
+                    🚀 Comenzar Quiz / Start Quiz
+                </button>
+            </div>
+
+            <!-- Quiz Screen -->
+            <div id="quizScreen" class="hidden">
+                <div class="language-toggle" style="margin-bottom: 15px;">
+                    <button class="toggle-btn" onclick="toggleLanguage()">
+                        🌐 <span id="langTextQuiz">Show English</span>
+                    </button>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                
+                <div class="stats">
+                    <span id="questionNum">Pregunta 1 de 15</span>
+                    <span id="scoreDisplay">Puntos: 0</span>
+                </div>
+
+                <div class="category" id="category"></div>
+                <div class="question" id="questionText"></div>
+                <div class="options" id="optionsContainer"></div>
+
+                <button class="btn btn-primary" id="submitBtn" onclick="submitAnswer()" disabled>
+                    Enviar Respuesta / Submit
+                </button>
+                <button class="btn btn-success hidden" id="nextBtn" onclick="nextQuestion()">
+                    Siguiente → / Next →
+                </button>
+
+                <div class="feedback hidden" id="feedback"></div>
+            </div>
+
+            <!-- Results Screen -->
+            <div id="resultsScreen" class="hidden">
+                <div class="results">
+                    <div class="language-toggle" style="margin-bottom: 15px;">
+                        <button class="toggle-btn" onclick="toggleLanguage()">
+                            🌐 <span id="langTextResults">Show English</span>
+                        </button>
+                    </div>
+                    
+                    <h1>🎉 ¡Quiz Completado!</h1>
+                    <div class="score-circle">
+                        <span class="score-number" id="finalScore">0%</span>
+                        <span class="score-label">Correctas</span>
+                    </div>
+                    <p class="results-message" id="resultsMessage"></p>
+
+                    <div class="review-section hidden" id="reviewSection">
+                        <h3 id="reviewHeader">📝 ¡Practiquemos las preguntas que fallaste!</h3>
+                        <div class="review-progress" id="reviewProgress">Pregunta 1 de 3</div>
+                        <div class="review-question" id="reviewQuestion"></div>
+                        <div class="review-options" id="reviewOptions"></div>
+                        <div class="review-feedback hidden" id="reviewFeedback"></div>
+                        <button class="review-btn review-btn-check" id="reviewCheckBtn" onclick="checkReviewAnswer()" disabled>Verificar / Check</button>
+                        <button class="review-btn review-btn-next hidden" id="reviewNextBtn" onclick="nextReviewQuestion()">Siguiente → / Next →</button>
+                        <div class="review-score hidden" id="reviewScore">
+                            <h4 id="reviewCompleteHeader">🎉 ¡Repaso Completado!</h4>
+                            <p id="reviewScoreText"></p>
+                        </div>
+                    </div>
+
+                    <div class="restart-separator">
+                        <p>¿Listo para otro intento? / Ready for another try?</p>
+                    </div>
+                    <button class="btn btn-secondary" onclick="restartQuiz()">
+                        🔄 Intentar de Nuevo / Try Again
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Vocabulary flashcards
+        const flashcards = [
+            { spanish: "Perímetro", english: "Perimeter" },
+            { spanish: "Área", english: "Area" },
+            { spanish: "Líneas Paralelas", english: "Parallel Lines" },
+            { spanish: "Líneas Perpendiculares", english: "Perpendicular Lines" },
+            { spanish: "Ángulo Recto", english: "Right Angle (90°)" },
+            { spanish: "Ángulo Agudo", english: "Acute Angle (<90°)" },
+            { spanish: "Ángulo Obtuso", english: "Obtuse Angle (>90°)" },
+            { spanish: "Eje de Simetría", english: "Line of Symmetry" },
+            { spanish: "Polígono", english: "Polygon" },
+            { spanish: "Triángulo", english: "Triangle" },
+            { spanish: "Cuadrilátero", english: "Quadrilateral" },
+            { spanish: "Pentágono", english: "Pentagon (5 sides)" },
+            { spanish: "Hexágono", english: "Hexagon (6 sides)" },
+            { spanish: "Rombo", english: "Rhombus" },
+            { spanish: "Trapecio", english: "Trapezoid" },
+            { spanish: "Triángulo Equilátero", english: "Equilateral Triangle" },
+            { spanish: "Triángulo Isósceles", english: "Isosceles Triangle" },
+            { spanish: "Triángulo Escaleno", english: "Scalene Triangle" },
+            { spanish: "Triángulo Rectángulo", english: "Right Triangle" },
+            { spanish: "Triángulo Acutángulo", english: "Acute Triangle" },
+            { spanish: "Triángulo Obtusángulo", english: "Obtuse Triangle" }
+        ];
+
+        // Question bank
+        const questionBank = [
+            // Perimeter
+            {
+                category: "Perímetro / Perimeter",
+                question: "¿Qué es el <span class='translatable' data-en='perimeter'>perímetro</span>?",
+                questionEn: "What is perimeter?",
+                options: [
+                    "El espacio dentro de una figura",
+                    "La distancia alrededor de una figura",
+                    "El número de lados de una figura",
+                    "El número de ángulos de una figura"
+                ],
+                optionsEn: [
+                    "The space inside a shape",
+                    "The distance around a shape",
+                    "The number of sides of a shape",
+                    "The number of angles of a shape"
+                ],
+                correct: 1,
+                explanation: "El perímetro es la distancia total alrededor de una figura. Se calcula sumando todos los lados.",
+                explanationEn: "Perimeter is the total distance around a shape. It's calculated by adding all the sides."
+            },
+            {
+                category: "Perímetro / Perimeter",
+                question: "Un rectángulo tiene lados de 12 pies y 6 pies. ¿Cuál es el <span class='translatable' data-en='perimeter'>perímetro</span>?",
+                questionEn: "A rectangle has sides of 12 feet and 6 feet. What is the perimeter?",
+                options: [
+                    "18 pies",
+                    "36 pies",
+                    "72 pies",
+                    "24 pies"
+                ],
+                optionsEn: [
+                    "18 feet",
+                    "36 feet",
+                    "72 feet",
+                    "24 feet"
+                ],
+                correct: 1,
+                explanation: "Perímetro = 12 + 6 + 12 + 6 = 36 pies. (O usa la fórmula: 2 × largo + 2 × ancho = 2×12 + 2×6 = 36)",
+                explanationEn: "Perimeter = 12 + 6 + 12 + 6 = 36 feet. (Or use the formula: 2 × length + 2 × width = 2×12 + 2×6 = 36)"
+            },
+            {
+                category: "Perímetro / Perimeter",
+                question: "Un cuadrado tiene lados de 8 metros. ¿Cuál es el perímetro?",
+                questionEn: "A square has sides of 8 meters. What is the perimeter?",
+                options: [
+                    "16 metros",
+                    "24 metros",
+                    "32 metros",
+                    "64 metros"
+                ],
+                optionsEn: [
+                    "16 meters",
+                    "24 meters",
+                    "32 meters",
+                    "64 meters"
+                ],
+                correct: 2,
+                explanation: "Un cuadrado tiene 4 lados iguales. Perímetro = 4 × 8 = 32 metros.",
+                explanationEn: "A square has 4 equal sides. Perimeter = 4 × 8 = 32 meters."
+            },
+            // Area
+            {
+                category: "Área / Area",
+                question: "¿Qué es el <span class='translatable' data-en='area'>área</span>?",
+                questionEn: "What is area?",
+                options: [
+                    "La distancia alrededor de una figura",
+                    "El espacio dentro de una figura",
+                    "El número de lados",
+                    "La altura de una figura"
+                ],
+                optionsEn: [
+                    "The distance around a shape",
+                    "The space inside a shape",
+                    "The number of sides",
+                    "The height of a shape"
+                ],
+                correct: 1,
+                explanation: "El área es el espacio que cubre una figura. Se mide en unidades cuadradas.",
+                explanationEn: "Area is the space a shape covers. It's measured in square units."
+            },
+            {
+                category: "Área / Area",
+                question: "Un rectángulo tiene 10 metros de largo y 5 metros de ancho. ¿Cuál es el área?",
+                questionEn: "A rectangle is 10 meters long and 5 meters wide. What is the area?",
+                options: [
+                    "15 metros cuadrados",
+                    "30 metros cuadrados",
+                    "50 metros cuadrados",
+                    "100 metros cuadrados"
+                ],
+                optionsEn: [
+                    "15 square meters",
+                    "30 square meters",
+                    "50 square meters",
+                    "100 square meters"
+                ],
+                correct: 2,
+                explanation: "Área = largo × ancho = 10 × 5 = 50 metros cuadrados.",
+                explanationEn: "Area = length × width = 10 × 5 = 50 square meters."
+            },
+            {
+                category: "Área / Area",
+                question: "Un cuadrado tiene lados de 7 pies. ¿Cuál es el área?",
+                questionEn: "A square has sides of 7 feet. What is the area?",
+                options: [
+                    "14 pies cuadrados",
+                    "28 pies cuadrados",
+                    "49 pies cuadrados",
+                    "21 pies cuadrados"
+                ],
+                optionsEn: [
+                    "14 square feet",
+                    "28 square feet",
+                    "49 square feet",
+                    "21 square feet"
+                ],
+                correct: 2,
+                explanation: "Área de un cuadrado = lado × lado = 7 × 7 = 49 pies cuadrados.",
+                explanationEn: "Area of a square = side × side = 7 × 7 = 49 square feet."
+            },
+            // Parallel and Perpendicular Lines
+            {
+                category: "Líneas / Lines",
+                question: "¿Qué son las líneas <span class='translatable' data-en='parallel'>paralelas</span>?",
+                questionEn: "What are parallel lines?",
+                options: [
+                    "Líneas que se cruzan en un punto",
+                    "Líneas que nunca se cruzan y mantienen la misma distancia",
+                    "Líneas que forman un ángulo de 90°",
+                    "Líneas curvas"
+                ],
+                optionsEn: [
+                    "Lines that cross at a point",
+                    "Lines that never cross and stay the same distance apart",
+                    "Lines that form a 90° angle",
+                    "Curved lines"
+                ],
+                correct: 1,
+                explanation: "Las líneas paralelas nunca se cruzan y siempre mantienen la misma distancia entre ellas.",
+                explanationEn: "Parallel lines never cross and always stay the same distance apart."
+            },
+            {
+                category: "Líneas / Lines",
+                question: "¿Qué son las líneas <span class='translatable' data-en='perpendicular'>perpendiculares</span>?",
+                questionEn: "What are perpendicular lines?",
+                options: [
+                    "Líneas que nunca se cruzan",
+                    "Líneas curvas",
+                    "Líneas que se cruzan formando ángulos de 90°",
+                    "Líneas del mismo largo"
+                ],
+                optionsEn: [
+                    "Lines that never cross",
+                    "Curved lines",
+                    "Lines that cross forming 90° angles",
+                    "Lines of the same length"
+                ],
+                correct: 2,
+                explanation: "Las líneas perpendiculares se cruzan formando ángulos rectos (90°).",
+                explanationEn: "Perpendicular lines cross forming right angles (90°)."
+            },
+            {
+                category: "Líneas / Lines",
+                question: "¿Cuál es un ejemplo de líneas paralelas en la vida real?",
+                questionEn: "What is an example of parallel lines in real life?",
+                options: [
+                    "Las esquinas de una mesa",
+                    "Los rieles de un tren",
+                    "Las agujas de un reloj a las 3:00",
+                    "Una escalera"
+                ],
+                optionsEn: [
+                    "The corners of a table",
+                    "Train tracks",
+                    "Clock hands at 3:00",
+                    "A ladder"
+                ],
+                correct: 1,
+                explanation: "Los rieles del tren son paralelos - nunca se cruzan y mantienen la misma distancia.",
+                explanationEn: "Train tracks are parallel - they never cross and stay the same distance apart."
+            },
+            // Angles
+            {
+                category: "Ángulos / Angles",
+                question: "¿Cuántos grados tiene un <span class='translatable' data-en='right angle'>ángulo recto</span>?",
+                questionEn: "How many degrees is a right angle?",
+                options: [
+                    "45°",
+                    "90°",
+                    "180°",
+                    "360°"
+                ],
+                optionsEn: [
+                    "45°",
+                    "90°",
+                    "180°",
+                    "360°"
+                ],
+                correct: 1,
+                explanation: "Un ángulo recto mide exactamente 90 grados. Forma una 'L' perfecta.",
+                explanationEn: "A right angle measures exactly 90 degrees. It forms a perfect 'L' shape."
+            },
+            {
+                category: "Ángulos / Angles",
+                question: "Un <span class='translatable' data-en='acute angle'>ángulo agudo</span> mide:",
+                questionEn: "An acute angle measures:",
+                options: [
+                    "Exactamente 90°",
+                    "Menos de 90°",
+                    "Más de 90° pero menos de 180°",
+                    "180°"
+                ],
+                optionsEn: [
+                    "Exactly 90°",
+                    "Less than 90°",
+                    "More than 90° but less than 180°",
+                    "180°"
+                ],
+                correct: 1,
+                explanation: "Un ángulo agudo es menor que 90°. Piensa en una 'V' puntiaguda.",
+                explanationEn: "An acute angle is less than 90°. Think of a sharp 'V' shape."
+            },
+            {
+                category: "Ángulos / Angles",
+                question: "Un <span class='translatable' data-en='obtuse angle'>ángulo obtuso</span> mide:",
+                questionEn: "An obtuse angle measures:",
+                options: [
+                    "Menos de 90°",
+                    "Exactamente 90°",
+                    "Más de 90° pero menos de 180°",
+                    "Exactamente 180°"
+                ],
+                optionsEn: [
+                    "Less than 90°",
+                    "Exactly 90°",
+                    "More than 90° but less than 180°",
+                    "Exactly 180°"
+                ],
+                correct: 2,
+                explanation: "Un ángulo obtuso mide más de 90° pero menos de 180°. Es más 'abierto' que un ángulo recto.",
+                explanationEn: "An obtuse angle measures more than 90° but less than 180°. It's more 'open' than a right angle."
+            },
+            // Symmetry
+            {
+                category: "Simetría / Symmetry",
+                question: "¿Qué es un <span class='translatable' data-en='line of symmetry'>eje de simetría</span>?",
+                questionEn: "What is a line of symmetry?",
+                options: [
+                    "Una línea que divide una figura en partes desiguales",
+                    "Una línea que divide una figura en dos partes iguales que son imágenes espejo",
+                    "Una línea diagonal",
+                    "El lado más largo de una figura"
+                ],
+                optionsEn: [
+                    "A line that divides a shape into unequal parts",
+                    "A line that divides a shape into two equal mirror-image parts",
+                    "A diagonal line",
+                    "The longest side of a shape"
+                ],
+                correct: 1,
+                explanation: "Un eje de simetría divide una figura en dos partes exactamente iguales que son imágenes espejo una de la otra.",
+                explanationEn: "A line of symmetry divides a shape into two exactly equal parts that are mirror images of each other."
+            },
+            {
+                category: "Simetría / Symmetry",
+                question: "¿Cuántos ejes de simetría tiene un cuadrado?",
+                questionEn: "How many lines of symmetry does a square have?",
+                options: [
+                    "1",
+                    "2",
+                    "4",
+                    "0"
+                ],
+                optionsEn: [
+                    "1",
+                    "2",
+                    "4",
+                    "0"
+                ],
+                correct: 2,
+                explanation: "Un cuadrado tiene 4 ejes de simetría: 2 a través de los lados opuestos y 2 a través de las esquinas opuestas.",
+                explanationEn: "A square has 4 lines of symmetry: 2 through opposite sides and 2 through opposite corners."
+            },
+            {
+                category: "Simetría / Symmetry",
+                question: "¿Cuántos ejes de simetría tiene un triángulo equilátero?",
+                questionEn: "How many lines of symmetry does an equilateral triangle have?",
+                options: [
+                    "0",
+                    "1",
+                    "3",
+                    "6"
+                ],
+                optionsEn: [
+                    "0",
+                    "1",
+                    "3",
+                    "6"
+                ],
+                correct: 2,
+                explanation: "Un triángulo equilátero tiene 3 ejes de simetría, uno desde cada vértice hasta el punto medio del lado opuesto.",
+                explanationEn: "An equilateral triangle has 3 lines of symmetry, one from each vertex to the midpoint of the opposite side."
+            },
+            // Polygons
+            {
+                category: "Polígonos / Polygons",
+                question: "¿Qué es un <span class='translatable' data-en='polygon'>polígono</span>?",
+                questionEn: "What is a polygon?",
+                options: [
+                    "Una figura con lados curvos",
+                    "Una figura cerrada con lados rectos",
+                    "Solo figuras con 4 lados",
+                    "Un círculo"
+                ],
+                optionsEn: [
+                    "A shape with curved sides",
+                    "A closed shape with straight sides",
+                    "Only shapes with 4 sides",
+                    "A circle"
+                ],
+                correct: 1,
+                explanation: "Un polígono es una figura cerrada formada por segmentos de línea recta.",
+                explanationEn: "A polygon is a closed shape made of straight line segments."
+            },
+            {
+                category: "Polígonos / Polygons",
+                question: "¿Cuántos lados tiene un <span class='translatable' data-en='pentagon'>pentágono</span>?",
+                questionEn: "How many sides does a pentagon have?",
+                options: [
+                    "4",
+                    "5",
+                    "6",
+                    "8"
+                ],
+                optionsEn: [
+                    "4",
+                    "5",
+                    "6",
+                    "8"
+                ],
+                correct: 1,
+                explanation: "Un pentágono tiene 5 lados. 'Penta' significa cinco.",
+                explanationEn: "A pentagon has 5 sides. 'Penta' means five."
+            },
+            {
+                category: "Polígonos / Polygons",
+                question: "¿Cuántos lados tiene un <span class='translatable' data-en='hexagon'>hexágono</span>?",
+                questionEn: "How many sides does a hexagon have?",
+                options: [
+                    "5",
+                    "6",
+                    "7",
+                    "8"
+                ],
+                optionsEn: [
+                    "5",
+                    "6",
+                    "7",
+                    "8"
+                ],
+                correct: 1,
+                explanation: "Un hexágono tiene 6 lados. 'Hexa' significa seis.",
+                explanationEn: "A hexagon has 6 sides. 'Hexa' means six."
+            },
+            // Quadrilaterals
+            {
+                category: "Cuadriláteros / Quadrilaterals",
+                question: "¿Qué es un <span class='translatable' data-en='quadrilateral'>cuadrilátero</span>?",
+                questionEn: "What is a quadrilateral?",
+                options: [
+                    "Un polígono con 3 lados",
+                    "Un polígono con 4 lados",
+                    "Un polígono con 5 lados",
+                    "Cualquier polígono"
+                ],
+                optionsEn: [
+                    "A polygon with 3 sides",
+                    "A polygon with 4 sides",
+                    "A polygon with 5 sides",
+                    "Any polygon"
+                ],
+                correct: 1,
+                explanation: "Un cuadrilátero es cualquier polígono con exactamente 4 lados. 'Cuadri' significa cuatro.",
+                explanationEn: "A quadrilateral is any polygon with exactly 4 sides. 'Quad' means four."
+            },
+            {
+                category: "Cuadriláteros / Quadrilaterals",
+                question: "¿Qué figura tiene 4 lados iguales pero NO tiene ángulos rectos?",
+                questionEn: "Which shape has 4 equal sides but NO right angles?",
+                options: [
+                    "Cuadrado",
+                    "Rectángulo",
+                    "Rombo",
+                    "Trapecio"
+                ],
+                optionsEn: [
+                    "Square",
+                    "Rectangle",
+                    "Rhombus",
+                    "Trapezoid"
+                ],
+                correct: 2,
+                explanation: "Un rombo tiene 4 lados iguales, pero sus ángulos no son de 90°. Un cuadrado es un rombo especial CON ángulos rectos.",
+                explanationEn: "A rhombus has 4 equal sides, but its angles are not 90°. A square is a special rhombus WITH right angles."
+            },
+            {
+                category: "Cuadriláteros / Quadrilaterals",
+                question: "¿Qué figura tiene exactamente UN par de lados paralelos?",
+                questionEn: "Which shape has exactly ONE pair of parallel sides?",
+                options: [
+                    "Cuadrado",
+                    "Rectángulo",
+                    "Rombo",
+                    "Trapecio"
+                ],
+                optionsEn: [
+                    "Square",
+                    "Rectangle",
+                    "Rhombus",
+                    "Trapezoid"
+                ],
+                correct: 3,
+                explanation: "Un trapecio tiene exactamente un par de lados paralelos. Las otras figuras tienen dos pares.",
+                explanationEn: "A trapezoid has exactly one pair of parallel sides. The other shapes have two pairs."
+            },
+            // Triangles by sides
+            {
+                category: "Triángulos / Triangles",
+                question: "Un <span class='translatable' data-en='equilateral triangle'>triángulo equilátero</span> tiene:",
+                questionEn: "An equilateral triangle has:",
+                options: [
+                    "Todos los lados diferentes",
+                    "Dos lados iguales",
+                    "Tres lados iguales",
+                    "Ningún lado igual"
+                ],
+                optionsEn: [
+                    "All different sides",
+                    "Two equal sides",
+                    "Three equal sides",
+                    "No equal sides"
+                ],
+                correct: 2,
+                explanation: "Un triángulo equilátero tiene los 3 lados iguales y los 3 ángulos iguales (60° cada uno).",
+                explanationEn: "An equilateral triangle has all 3 sides equal and all 3 angles equal (60° each)."
+            },
+            {
+                category: "Triángulos / Triangles",
+                question: "Un <span class='translatable' data-en='isosceles triangle'>triángulo isósceles</span> tiene:",
+                questionEn: "An isosceles triangle has:",
+                options: [
+                    "Tres lados iguales",
+                    "Dos lados iguales",
+                    "Ningún lado igual",
+                    "Cuatro lados"
+                ],
+                optionsEn: [
+                    "Three equal sides",
+                    "Two equal sides",
+                    "No equal sides",
+                    "Four sides"
+                ],
+                correct: 1,
+                explanation: "Un triángulo isósceles tiene exactamente 2 lados iguales.",
+                explanationEn: "An isosceles triangle has exactly 2 equal sides."
+            },
+            {
+                category: "Triángulos / Triangles",
+                question: "Un <span class='translatable' data-en='scalene triangle'>triángulo escaleno</span> tiene:",
+                questionEn: "A scalene triangle has:",
+                options: [
+                    "Tres lados iguales",
+                    "Dos lados iguales",
+                    "Ningún lado igual (todos diferentes)",
+                    "Solo ángulos rectos"
+                ],
+                optionsEn: [
+                    "Three equal sides",
+                    "Two equal sides",
+                    "No equal sides (all different)",
+                    "Only right angles"
+                ],
+                correct: 2,
+                explanation: "Un triángulo escaleno tiene los 3 lados de diferentes longitudes.",
+                explanationEn: "A scalene triangle has all 3 sides of different lengths."
+            },
+            // Triangles by angles
+            {
+                category: "Triángulos / Triangles",
+                question: "Un <span class='translatable' data-en='right triangle'>triángulo rectángulo</span> tiene:",
+                questionEn: "A right triangle has:",
+                options: [
+                    "Tres ángulos agudos",
+                    "Un ángulo de 90°",
+                    "Un ángulo obtuso",
+                    "Todos los ángulos iguales"
+                ],
+                optionsEn: [
+                    "Three acute angles",
+                    "One 90° angle",
+                    "One obtuse angle",
+                    "All angles equal"
+                ],
+                correct: 1,
+                explanation: "Un triángulo rectángulo tiene exactamente un ángulo recto (90°).",
+                explanationEn: "A right triangle has exactly one right angle (90°)."
+            },
+            {
+                category: "Triángulos / Triangles",
+                question: "Un <span class='translatable' data-en='acute triangle'>triángulo acutángulo</span> tiene:",
+                questionEn: "An acute triangle has:",
+                options: [
+                    "Un ángulo recto",
+                    "Un ángulo obtuso",
+                    "Todos los ángulos menores de 90°",
+                    "Todos los ángulos mayores de 90°"
+                ],
+                optionsEn: [
+                    "One right angle",
+                    "One obtuse angle",
+                    "All angles less than 90°",
+                    "All angles greater than 90°"
+                ],
+                correct: 2,
+                explanation: "Un triángulo acutángulo tiene los 3 ángulos agudos (menores de 90°).",
+                explanationEn: "An acute triangle has all 3 angles acute (less than 90°)."
+            },
+            {
+                category: "Triángulos / Triangles",
+                question: "Un <span class='translatable' data-en='obtuse triangle'>triángulo obtusángulo</span> tiene:",
+                questionEn: "An obtuse triangle has:",
+                options: [
+                    "Todos los ángulos agudos",
+                    "Un ángulo mayor de 90°",
+                    "Un ángulo recto",
+                    "Dos ángulos obtusos"
+                ],
+                optionsEn: [
+                    "All acute angles",
+                    "One angle greater than 90°",
+                    "One right angle",
+                    "Two obtuse angles"
+                ],
+                correct: 1,
+                explanation: "Un triángulo obtusángulo tiene exactamente un ángulo obtuso (mayor de 90°). Un triángulo solo puede tener un ángulo obtuso.",
+                explanationEn: "An obtuse triangle has exactly one obtuse angle (greater than 90°). A triangle can only have one obtuse angle."
+            },
+            // Compare and Contrast
+            {
+                category: "Comparar / Compare",
+                question: "¿Qué tienen en común un rombo y un triángulo equilátero?",
+                questionEn: "What do a rhombus and equilateral triangle have in common?",
+                options: [
+                    "Ambos tienen 4 lados",
+                    "Ambos tienen todos los lados iguales",
+                    "Ambos tienen ángulos rectos",
+                    "Ambos tienen líneas paralelas"
+                ],
+                optionsEn: [
+                    "Both have 4 sides",
+                    "Both have all equal sides",
+                    "Both have right angles",
+                    "Both have parallel lines"
+                ],
+                correct: 1,
+                explanation: "Tanto el rombo como el triángulo equilátero tienen todos sus lados iguales.",
+                explanationEn: "Both the rhombus and equilateral triangle have all their sides equal."
+            },
+            {
+                category: "Comparar / Compare",
+                question: "¿Cuál es una diferencia entre un rombo y un triángulo equilátero?",
+                questionEn: "What is a difference between a rhombus and equilateral triangle?",
+                options: [
+                    "El rombo tiene lados iguales, el triángulo no",
+                    "El rombo tiene líneas paralelas, el triángulo no",
+                    "El triángulo tiene más lados",
+                    "Ambos tienen los mismos ángulos"
+                ],
+                optionsEn: [
+                    "The rhombus has equal sides, the triangle doesn't",
+                    "The rhombus has parallel lines, the triangle doesn't",
+                    "The triangle has more sides",
+                    "Both have the same angles"
+                ],
+                correct: 1,
+                explanation: "El rombo tiene 2 pares de líneas paralelas. El triángulo equilátero no tiene líneas paralelas.",
+                explanationEn: "The rhombus has 2 pairs of parallel lines. The equilateral triangle has no parallel lines."
+            },
+            // Test-style calculation questions
+            {
+                category: "Problema / Word Problem",
+                question: "Kaylee está diseñando una piscina rectangular. La piscina mide 18 pies de largo y 9 pies de ancho. Necesita poner azulejos alrededor del <span class='translatable' data-en='perimeter'>perímetro</span>. ¿Cuántos pies de azulejos necesita?",
+                questionEn: "Kaylee is designing a rectangular pool. The pool is 18 feet long and 9 feet wide. She needs to put tiles around the perimeter. How many feet of tiles does she need?",
+                options: [
+                    "27 pies",
+                    "54 pies",
+                    "162 pies",
+                    "36 pies"
+                ],
+                optionsEn: [
+                    "27 feet",
+                    "54 feet",
+                    "162 feet",
+                    "36 feet"
+                ],
+                correct: 1,
+                explanation: "Perímetro = 2 × largo + 2 × ancho = 2 × 18 + 2 × 9 = 36 + 18 = 54 pies.",
+                explanationEn: "Perimeter = 2 × length + 2 × width = 2 × 18 + 2 × 9 = 36 + 18 = 54 feet."
+            },
+            {
+                category: "Problema / Word Problem",
+                question: "El Parque Lenora tiene 250 metros cuadrados de terreno para una piscina. La piscina mide 15 metros de largo y 12 metros de ancho. ¿Hay suficiente terreno?",
+                questionEn: "Lenora Park has 250 square meters of land for a pool. The pool is 15 meters long and 12 meters wide. Is there enough land?",
+                options: [
+                    "Sí, sobran 70 metros cuadrados",
+                    "No, faltan 70 metros cuadrados",
+                    "Sí, sobran 30 metros cuadrados",
+                    "No, faltan 30 metros cuadrados"
+                ],
+                optionsEn: [
+                    "Yes, 70 square meters left over",
+                    "No, 70 square meters short",
+                    "Yes, 30 square meters left over",
+                    "No, 30 square meters short"
+                ],
+                correct: 3,
+                explanation: "Área de la piscina = 15 × 12 = 180 m². Terreno disponible = 250 m². 250 - 180 = 70 m² sobrantes. ¡SÍ hay suficiente!",
+                explanationEn: "Pool area = 15 × 12 = 180 m². Available land = 250 m². 250 - 180 = 70 m² left over. YES there's enough!"
+            },
+            {
+                category: "Problema / Word Problem",
+                question: "Los padres de Selena buscan apartamentos. El Apartamento A mide 12m × 8m. El Apartamento B mide 10m × 10m. ¿Cuál tiene mayor <span class='translatable' data-en='area'>área</span>?",
+                questionEn: "Selena's parents are looking for apartments. Apartment A is 12m × 8m. Apartment B is 10m × 10m. Which has more area?",
+                options: [
+                    "Apartamento A (96 m²)",
+                    "Apartamento B (100 m²)",
+                    "Son iguales",
+                    "No se puede saber"
+                ],
+                optionsEn: [
+                    "Apartment A (96 m²)",
+                    "Apartment B (100 m²)",
+                    "They're equal",
+                    "Cannot tell"
+                ],
+                correct: 1,
+                explanation: "Área A = 12 × 8 = 96 m². Área B = 10 × 10 = 100 m². El Apartamento B tiene más área.",
+                explanationEn: "Area A = 12 × 8 = 96 m². Area B = 10 × 10 = 100 m². Apartment B has more area."
+            },
+            {
+                category: "Problema / Word Problem",
+                question: "Una piscina rectangular tiene un perímetro de 64 pies. Si el largo es 20 pies, ¿cuál es el ancho?",
+                questionEn: "A rectangular pool has a perimeter of 64 feet. If the length is 20 feet, what is the width?",
+                options: [
+                    "44 pies",
+                    "24 pies",
+                    "12 pies",
+                    "32 pies"
+                ],
+                optionsEn: [
+                    "44 feet",
+                    "24 feet",
+                    "12 feet",
+                    "32 feet"
+                ],
+                correct: 2,
+                explanation: "Perímetro = 2L + 2W. 64 = 2(20) + 2W. 64 = 40 + 2W. 24 = 2W. W = 12 pies.",
+                explanationEn: "Perimeter = 2L + 2W. 64 = 2(20) + 2W. 64 = 40 + 2W. 24 = 2W. W = 12 feet."
+            },
+            // More comparison questions from test #9
+            {
+                category: "Comparar / Compare",
+                question: "¿Cuál de estas afirmaciones es verdadera sobre un <span class='translatable' data-en='rhombus'>rombo</span>?",
+                questionEn: "Which statement is true about a rhombus?",
+                options: [
+                    "No tiene líneas paralelas",
+                    "Tiene dos pares de líneas paralelas",
+                    "Tiene tres ejes de simetría",
+                    "Es un triángulo"
+                ],
+                optionsEn: [
+                    "It has no parallel lines",
+                    "It has two pairs of parallel lines",
+                    "It has three lines of symmetry",
+                    "It's a triangle"
+                ],
+                correct: 1,
+                explanation: "Un rombo tiene 2 pares de líneas paralelas (lados opuestos son paralelos).",
+                explanationEn: "A rhombus has 2 pairs of parallel lines (opposite sides are parallel)."
+            },
+            {
+                category: "Comparar / Compare",
+                question: "¿Cuál de estas afirmaciones es verdadera sobre un <span class='translatable' data-en='equilateral triangle'>triángulo equilátero</span>?",
+                questionEn: "Which statement is true about an equilateral triangle?",
+                options: [
+                    "Tiene dos pares de líneas paralelas",
+                    "Tiene ángulos obtusos",
+                    "No tiene líneas paralelas",
+                    "Es un cuadrilátero"
+                ],
+                optionsEn: [
+                    "It has two pairs of parallel lines",
+                    "It has obtuse angles",
+                    "It has no parallel lines",
+                    "It's a quadrilateral"
+                ],
+                correct: 2,
+                explanation: "Un triángulo equilátero NO tiene líneas paralelas. Tiene 3 ángulos agudos de 60° cada uno.",
+                explanationEn: "An equilateral triangle has NO parallel lines. It has 3 acute angles of 60° each."
+            },
+            {
+                category: "Comparar / Compare",
+                question: "¿Cuántos ejes de simetría tiene un rombo?",
+                questionEn: "How many lines of symmetry does a rhombus have?",
+                options: [
+                    "0",
+                    "1",
+                    "2",
+                    "4"
+                ],
+                optionsEn: [
+                    "0",
+                    "1",
+                    "2",
+                    "4"
+                ],
+                correct: 2,
+                explanation: "Un rombo tiene 2 ejes de simetría: las dos diagonales.",
+                explanationEn: "A rhombus has 2 lines of symmetry: the two diagonals."
+            },
+            // Triangle classification scenarios from test #10
+            {
+                category: "Clasificar Triángulos / Classify Triangles",
+                question: "Un triángulo tiene lados de 5cm, 5cm, y 5cm. ¿Cómo se clasifica por sus lados?",
+                questionEn: "A triangle has sides of 5cm, 5cm, and 5cm. How is it classified by its sides?",
+                options: [
+                    "Escaleno",
+                    "Isósceles",
+                    "Equilátero",
+                    "Rectángulo"
+                ],
+                optionsEn: [
+                    "Scalene",
+                    "Isosceles",
+                    "Equilateral",
+                    "Right"
+                ],
+                correct: 2,
+                explanation: "Tiene los 3 lados iguales (5, 5, 5), así que es equilátero.",
+                explanationEn: "It has all 3 sides equal (5, 5, 5), so it's equilateral."
+            },
+            {
+                category: "Clasificar Triángulos / Classify Triangles",
+                question: "Un triángulo tiene lados de 7cm, 7cm, y 4cm. ¿Cómo se clasifica por sus lados?",
+                questionEn: "A triangle has sides of 7cm, 7cm, and 4cm. How is it classified by its sides?",
+                options: [
+                    "Escaleno",
+                    "Isósceles",
+                    "Equilátero",
+                    "Obtusángulo"
+                ],
+                optionsEn: [
+                    "Scalene",
+                    "Isosceles",
+                    "Equilateral",
+                    "Obtuse"
+                ],
+                correct: 1,
+                explanation: "Tiene exactamente 2 lados iguales (7 y 7), así que es isósceles.",
+                explanationEn: "It has exactly 2 equal sides (7 and 7), so it's isosceles."
+            },
+            {
+                category: "Clasificar Triángulos / Classify Triangles",
+                question: "Un triángulo tiene lados de 3cm, 5cm, y 7cm. ¿Cómo se clasifica por sus lados?",
+                questionEn: "A triangle has sides of 3cm, 5cm, and 7cm. How is it classified by its sides?",
+                options: [
+                    "Equilátero",
+                    "Isósceles",
+                    "Escaleno",
+                    "Rectángulo"
+                ],
+                optionsEn: [
+                    "Equilateral",
+                    "Isosceles",
+                    "Scalene",
+                    "Right"
+                ],
+                correct: 2,
+                explanation: "Todos los lados son diferentes (3, 5, 7), así que es escaleno.",
+                explanationEn: "All sides are different (3, 5, 7), so it's scalene."
+            },
+            {
+                category: "Clasificar Triángulos / Classify Triangles",
+                question: "Un triángulo tiene ángulos de 60°, 60°, y 60°. ¿Cómo se clasifica por sus ángulos?",
+                questionEn: "A triangle has angles of 60°, 60°, and 60°. How is it classified by its angles?",
+                options: [
+                    "Rectángulo",
+                    "Obtusángulo",
+                    "Acutángulo",
+                    "Escaleno"
+                ],
+                optionsEn: [
+                    "Right",
+                    "Obtuse",
+                    "Acute",
+                    "Scalene"
+                ],
+                correct: 2,
+                explanation: "Todos los ángulos son menores de 90° (60°), así que es acutángulo.",
+                explanationEn: "All angles are less than 90° (60°), so it's an acute triangle."
+            },
+            {
+                category: "Clasificar Triángulos / Classify Triangles",
+                question: "Un triángulo tiene ángulos de 30°, 60°, y 90°. ¿Cómo se clasifica por sus ángulos?",
+                questionEn: "A triangle has angles of 30°, 60°, and 90°. How is it classified by its angles?",
+                options: [
+                    "Acutángulo",
+                    "Obtusángulo",
+                    "Rectángulo",
+                    "Equilátero"
+                ],
+                optionsEn: [
+                    "Acute",
+                    "Obtuse",
+                    "Right",
+                    "Equilateral"
+                ],
+                correct: 2,
+                explanation: "Tiene un ángulo de exactamente 90°, así que es un triángulo rectángulo.",
+                explanationEn: "It has one angle of exactly 90°, so it's a right triangle."
+            },
+            {
+                category: "Clasificar Triángulos / Classify Triangles",
+                question: "Un triángulo tiene ángulos de 20°, 40°, y 120°. ¿Cómo se clasifica por sus ángulos?",
+                questionEn: "A triangle has angles of 20°, 40°, and 120°. How is it classified by its angles?",
+                options: [
+                    "Acutángulo",
+                    "Rectángulo",
+                    "Obtusángulo",
+                    "Isósceles"
+                ],
+                optionsEn: [
+                    "Acute",
+                    "Right",
+                    "Obtuse",
+                    "Isosceles"
+                ],
+                correct: 2,
+                explanation: "Tiene un ángulo mayor de 90° (120°), así que es obtusángulo.",
+                explanationEn: "It has one angle greater than 90° (120°), so it's an obtuse triangle."
+            },
+            // Polygon properties from test #4
+            {
+                category: "Propiedades / Properties",
+                question: "Un polígono tiene 4 lados, 2 ángulos agudos, 2 ángulos obtusos, y exactamente 1 par de lados paralelos. ¿Qué figura es?",
+                questionEn: "A polygon has 4 sides, 2 acute angles, 2 obtuse angles, and exactly 1 pair of parallel sides. What shape is it?",
+                options: [
+                    "Cuadrado",
+                    "Rectángulo",
+                    "Rombo",
+                    "Trapecio"
+                ],
+                optionsEn: [
+                    "Square",
+                    "Rectangle",
+                    "Rhombus",
+                    "Trapezoid"
+                ],
+                correct: 3,
+                explanation: "Un trapecio tiene exactamente 1 par de lados paralelos y puede tener ángulos agudos y obtusos.",
+                explanationEn: "A trapezoid has exactly 1 pair of parallel sides and can have acute and obtuse angles."
+            },
+            {
+                category: "Propiedades / Properties",
+                question: "¿Cuál figura tiene 4 ángulos rectos Y 2 pares de lados paralelos?",
+                questionEn: "Which shape has 4 right angles AND 2 pairs of parallel sides?",
+                options: [
+                    "Trapecio",
+                    "Rombo",
+                    "Rectángulo",
+                    "Triángulo"
+                ],
+                optionsEn: [
+                    "Trapezoid",
+                    "Rhombus",
+                    "Rectangle",
+                    "Triangle"
+                ],
+                correct: 2,
+                explanation: "Un rectángulo (incluyendo el cuadrado) tiene 4 ángulos de 90° y 2 pares de lados paralelos.",
+                explanationEn: "A rectangle (including square) has 4 angles of 90° and 2 pairs of parallel sides."
+            },
+            // Street map questions similar to test #8
+            {
+                category: "Líneas / Lines",
+                question: "En un mapa, la Calle A va de norte a sur. La Calle B también va de norte a sur. ¿Qué tipo de líneas son?",
+                questionEn: "On a map, Street A goes north to south. Street B also goes north to south. What type of lines are they?",
+                options: [
+                    "Perpendiculares",
+                    "Paralelas",
+                    "Intersecantes",
+                    "Curvas"
+                ],
+                optionsEn: [
+                    "Perpendicular",
+                    "Parallel",
+                    "Intersecting",
+                    "Curved"
+                ],
+                correct: 1,
+                explanation: "Si ambas calles van en la misma dirección (norte-sur), son paralelas - nunca se cruzan.",
+                explanationEn: "If both streets go the same direction (north-south), they're parallel - they never cross."
+            },
+            {
+                category: "Líneas / Lines",
+                question: "En un mapa, la Calle Oak va de este a oeste. La Calle Pine va de norte a sur. ¿Qué tipo de líneas son?",
+                questionEn: "On a map, Oak Street goes east to west. Pine Street goes north to south. What type of lines are they?",
+                options: [
+                    "Paralelas",
+                    "Perpendiculares",
+                    "No se cruzan",
+                    "Curvas"
+                ],
+                optionsEn: [
+                    "Parallel",
+                    "Perpendicular",
+                    "Don't cross",
+                    "Curved"
+                ],
+                correct: 1,
+                explanation: "Si una calle va este-oeste y otra va norte-sur, se cruzan en ángulo recto (90°) - son perpendiculares.",
+                explanationEn: "If one street goes east-west and another goes north-south, they cross at a right angle (90°) - they're perpendicular."
+            }
+        ];
+
+        let currentLanguage = 'spanish';
+        let questions = [];
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedOption = null;
+        let missedQuestions = [];
+
+        // Review state
+        let reviewQuestions = [];
+        let currentReviewQuestion = 0;
+        let reviewScore = 0;
+        let selectedReviewOption = null;
+
+        // Initialize flashcards
+        function renderFlashcards() {
+            const grid = document.getElementById('flashcardGrid');
+            grid.innerHTML = flashcards.map((card, i) => `
+                <div class="flashcard" onclick="flipCard(this)">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">${card.spanish}</div>
+                        <div class="flashcard-back">${card.english}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function flipCard(card) {
+            card.classList.toggle('flipped');
+        }
+
+        function toggleLanguage() {
+            currentLanguage = currentLanguage === 'spanish' ? 'english' : 'spanish';
+            const langLabel = currentLanguage === 'spanish' ? 'Show English' : 'Mostrar Español';
+            document.getElementById('langText').textContent = langLabel;
+            if (document.getElementById('langTextQuiz')) {
+                document.getElementById('langTextQuiz').textContent = langLabel;
+            }
+            if (document.getElementById('langTextResults')) {
+                document.getElementById('langTextResults').textContent = langLabel;
+            }
+            
+            if (!document.getElementById('quizScreen').classList.contains('hidden')) {
+                updateQuestionLanguage();
+            }
+            
+            if (!document.getElementById('resultsScreen').classList.contains('hidden')) {
+                updateResultsLanguage();
+            }
+        }
+        
+        function updateQuestionLanguage() {
+            const q = questions[currentQuestion];
+            document.getElementById('questionText').innerHTML = 
+                currentLanguage === 'spanish' ? q.question : q.questionEn;
+            
+            const options = currentLanguage === 'spanish' ? q.options : q.optionsEn;
+            const optionElements = document.querySelectorAll('.option');
+            optionElements.forEach((opt, i) => {
+                opt.innerHTML = options[i];
+            });
+            
+            const questionLabel = currentLanguage === 'spanish' ? 'Pregunta' : 'Question';
+            const ofLabel = currentLanguage === 'spanish' ? 'de' : 'of';
+            document.getElementById('questionNum').textContent = 
+                `${questionLabel} ${currentQuestion + 1} ${ofLabel} ${questions.length}`;
+            
+            const pointsLabel = currentLanguage === 'spanish' ? 'Puntos' : 'Points';
+            document.getElementById('scoreDisplay').textContent = `${pointsLabel}: ${score}`;
+            
+            document.getElementById('submitBtn').textContent = 
+                currentLanguage === 'spanish' ? 'Enviar Respuesta / Submit' : 'Submit Answer';
+            document.getElementById('nextBtn').textContent = 
+                currentLanguage === 'spanish' ? 'Siguiente → / Next →' : 'Next →';
+        }
+
+        function shuffle(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function startQuiz() {
+            questions = shuffle(questionBank).slice(0, 15);
+            currentQuestion = 0;
+            score = 0;
+            missedQuestions = [];
+            
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('quizScreen').classList.remove('hidden');
+            
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = questions[currentQuestion];
+            
+            document.getElementById('progressFill').style.width = 
+                `${((currentQuestion) / questions.length) * 100}%`;
+            const questionLabel = currentLanguage === 'spanish' ? 'Pregunta' : 'Question';
+            const ofLabel = currentLanguage === 'spanish' ? 'de' : 'of';
+            document.getElementById('questionNum').textContent = 
+                `${questionLabel} ${currentQuestion + 1} ${ofLabel} ${questions.length}`;
+            const pointsLabel = currentLanguage === 'spanish' ? 'Puntos' : 'Points';
+            document.getElementById('scoreDisplay').textContent = `${pointsLabel}: ${score}`;
+            document.getElementById('category').textContent = q.category;
+            
+            document.getElementById('questionText').innerHTML = 
+                currentLanguage === 'spanish' ? q.question : q.questionEn;
+            
+            const options = currentLanguage === 'spanish' ? q.options : q.optionsEn;
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = options.map((opt, i) => `
+                <div class="option" data-index="${i}" onclick="selectOption(this, ${i})">
+                    ${opt}
+                </div>
+            `).join('');
+            
+            selectedOption = null;
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').classList.remove('hidden');
+            document.getElementById('nextBtn').classList.add('hidden');
+            document.getElementById('feedback').classList.add('hidden');
+        }
+
+        function selectOption(element, index) {
+            document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedOption = index;
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        function submitAnswer() {
+            const q = questions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            
+            options.forEach((opt, i) => {
+                opt.style.pointerEvents = 'none';
+                if (i === q.correct) {
+                    opt.classList.add('correct');
+                } else if (i === selectedOption && selectedOption !== q.correct) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            const feedback = document.getElementById('feedback');
+            feedback.classList.remove('hidden', 'correct', 'incorrect');
+            
+            const explanation = currentLanguage === 'spanish' ? q.explanation : (q.explanationEn || q.explanation);
+            
+            if (selectedOption === q.correct) {
+                score++;
+                feedback.classList.add('correct');
+                const correctMsg = currentLanguage === 'spanish' ? '✅ ¡Correcto!' : '✅ Correct!';
+                feedback.innerHTML = `<strong>${correctMsg}</strong><br>${explanation}`;
+            } else {
+                feedback.classList.add('incorrect');
+                const correctAnswer = currentLanguage === 'spanish' ? 
+                    q.options[q.correct] : q.optionsEn[q.correct];
+                const incorrectMsg = currentLanguage === 'spanish' ? '❌ Incorrecto' : '❌ Incorrect';
+                const answerLabel = currentLanguage === 'spanish' ? 'La respuesta correcta es' : 'The correct answer is';
+                feedback.innerHTML = `<strong>${incorrectMsg}</strong><br>
+                    ${answerLabel}: <strong>${correctAnswer}</strong><br>
+                    ${explanation}`;
+                missedQuestions.push({
+                    question: currentLanguage === 'spanish' ? q.question : q.questionEn,
+                    correctAnswer: correctAnswer,
+                    originalQuestion: q
+                });
+            }
+            
+            const pointsLbl = currentLanguage === 'spanish' ? 'Puntos' : 'Points';
+            document.getElementById('scoreDisplay').textContent = `${pointsLbl}: ${score}`;
+            document.getElementById('submitBtn').classList.add('hidden');
+            document.getElementById('nextBtn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion >= questions.length) {
+                showResults();
+            } else {
+                renderQuestion();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('resultsScreen').classList.remove('hidden');
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            document.getElementById('finalScore').textContent = `${percentage}%`;
+            
+            updateResultsLanguage();
+            
+            const reviewSection = document.getElementById('reviewSection');
+            
+            if (missedQuestions.length > 0) {
+                reviewSection.classList.remove('hidden');
+                startReviewMode();
+            } else {
+                reviewSection.classList.add('hidden');
+            }
+        }
+        
+        function updateResultsLanguage() {
+            const percentage = Math.round((score / questions.length) * 100);
+            
+            document.querySelector('#resultsScreen .results > h1').textContent = 
+                currentLanguage === 'spanish' ? '🎉 ¡Quiz Completado!' : '🎉 Quiz Complete!';
+            document.querySelector('.score-label').textContent = 
+                currentLanguage === 'spanish' ? 'Correctas' : 'Correct';
+            
+            let message = '';
+            if (currentLanguage === 'spanish') {
+                if (percentage >= 90) message = '🌟 ¡Excelente! ¡Eres un experto en geometría!';
+                else if (percentage >= 70) message = '👍 ¡Muy bien! ¡Entiendes bien las figuras!';
+                else if (percentage >= 50) message = '📚 ¡Sigue practicando! Repasa las figuras y ángulos.';
+                else message = '💪 ¡No te rindas! Estudia las tarjetas e intenta de nuevo.';
+            } else {
+                if (percentage >= 90) message = '🌟 Excellent! You\'re a geometry expert!';
+                else if (percentage >= 70) message = '👍 Great job! You understand shapes well!';
+                else if (percentage >= 50) message = '📚 Keep practicing! Review shapes and angles.';
+                else message = '💪 Don\'t give up! Study the flashcards and try again!';
+            }
+            
+            document.getElementById('resultsMessage').textContent = message;
+            
+            document.querySelector('.restart-separator p').textContent = 
+                currentLanguage === 'spanish' ? '¿Listo para otro intento?' : 'Ready for another try?';
+            
+            document.querySelector('.btn-secondary').textContent = 
+                currentLanguage === 'spanish' ? '🔄 Intentar de Nuevo' : '🔄 Try Again';
+            
+            if (document.getElementById('reviewHeader')) {
+                document.getElementById('reviewHeader').textContent = 
+                    currentLanguage === 'spanish' ? '📝 ¡Practiquemos las preguntas que fallaste!' : '📝 Let\'s Practice the Missed Questions!';
+            }
+            
+            if (document.getElementById('reviewCompleteHeader')) {
+                document.getElementById('reviewCompleteHeader').textContent = 
+                    currentLanguage === 'spanish' ? '🎉 ¡Repaso Completado!' : '🎉 Review Complete!';
+            }
+        }
+
+        // Review Mode Functions
+        function startReviewMode() {
+            reviewQuestions = [...missedQuestions];
+            currentReviewQuestion = 0;
+            reviewScore = 0;
+            selectedReviewOption = null;
+            
+            document.getElementById('reviewScore').classList.add('hidden');
+            document.getElementById('reviewProgress').classList.remove('hidden');
+            document.getElementById('reviewQuestion').classList.remove('hidden');
+            document.getElementById('reviewOptions').classList.remove('hidden');
+            document.getElementById('reviewCheckBtn').classList.remove('hidden');
+            
+            document.getElementById('reviewHeader').textContent = 
+                currentLanguage === 'spanish' ? '📝 ¡Practiquemos las preguntas que fallaste!' : '📝 Let\'s Practice the Missed Questions!';
+            
+            renderReviewQuestion();
+        }
+
+        function renderReviewQuestion() {
+            const q = reviewQuestions[currentReviewQuestion];
+            const originalQ = q.originalQuestion;
+            
+            const progressLabel = currentLanguage === 'spanish' ? 
+                `Pregunta ${currentReviewQuestion + 1} de ${reviewQuestions.length}` :
+                `Question ${currentReviewQuestion + 1} of ${reviewQuestions.length}`;
+            document.getElementById('reviewProgress').textContent = progressLabel;
+            
+            const questionText = currentLanguage === 'spanish' ? originalQ.question : originalQ.questionEn;
+            document.getElementById('reviewQuestion').innerHTML = questionText;
+            
+            const opts = currentLanguage === 'spanish' ? originalQ.options : originalQ.optionsEn;
+            const correctAnswer = opts[originalQ.correct];
+            
+            let allOptions = shuffle([...opts]);
+            
+            const optionsContainer = document.getElementById('reviewOptions');
+            optionsContainer.innerHTML = allOptions.map((opt, i) => `
+                <div class="review-option" data-correct="${opt === correctAnswer}" onclick="selectReviewOption(${i})">${opt}</div>
+            `).join('');
+            
+            selectedReviewOption = null;
+            document.getElementById('reviewCheckBtn').disabled = true;
+            document.getElementById('reviewCheckBtn').classList.remove('hidden');
+            document.getElementById('reviewCheckBtn').textContent = 
+                currentLanguage === 'spanish' ? 'Verificar / Check' : 'Check Answer';
+            document.getElementById('reviewNextBtn').classList.add('hidden');
+            document.getElementById('reviewFeedback').classList.add('hidden');
+        }
+
+        function selectReviewOption(index) {
+            const options = document.querySelectorAll('.review-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            options[index].classList.add('selected');
+            selectedReviewOption = index;
+            document.getElementById('reviewCheckBtn').disabled = false;
+        }
+
+        function checkReviewAnswer() {
+            const options = document.querySelectorAll('.review-option');
+            const selectedOpt = options[selectedReviewOption];
+            const isCorrect = selectedOpt.dataset.correct === 'true';
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt.dataset.correct === 'true') {
+                    opt.classList.add('reveal-correct');
+                }
+            });
+            
+            if (isCorrect) {
+                selectedOpt.classList.add('correct');
+                reviewScore++;
+            } else {
+                selectedOpt.classList.add('incorrect');
+            }
+            
+            const feedback = document.getElementById('reviewFeedback');
+            feedback.classList.remove('hidden', 'correct', 'incorrect');
+            feedback.classList.add(isCorrect ? 'correct' : 'incorrect');
+            
+            if (currentLanguage === 'spanish') {
+                feedback.textContent = isCorrect ? '✅ ¡Muy bien! ¡Lo lograste!' : '❌ No exactamente. La respuesta correcta está resaltada.';
+            } else {
+                feedback.textContent = isCorrect ? '✅ Great job! You got it!' : '❌ Not quite. The correct answer is highlighted.';
+            }
+            
+            document.getElementById('reviewCheckBtn').classList.add('hidden');
+            document.getElementById('reviewNextBtn').classList.remove('hidden');
+            
+            const nextBtnText = currentReviewQuestion < reviewQuestions.length - 1 
+                ? (currentLanguage === 'spanish' ? 'Siguiente → / Next →' : 'Next Question →')
+                : (currentLanguage === 'spanish' ? 'Ver Resultados' : 'See Results');
+            document.getElementById('reviewNextBtn').textContent = nextBtnText;
+        }
+
+        function nextReviewQuestion() {
+            currentReviewQuestion++;
+            if (currentReviewQuestion >= reviewQuestions.length) {
+                showReviewResults();
+            } else {
+                renderReviewQuestion();
+            }
+        }
+
+        function showReviewResults() {
+            document.getElementById('reviewProgress').classList.add('hidden');
+            document.getElementById('reviewQuestion').classList.add('hidden');
+            document.getElementById('reviewOptions').classList.add('hidden');
+            document.getElementById('reviewFeedback').classList.add('hidden');
+            document.getElementById('reviewCheckBtn').classList.add('hidden');
+            document.getElementById('reviewNextBtn').classList.add('hidden');
+            
+            const scoreDiv = document.getElementById('reviewScore');
+            scoreDiv.classList.remove('hidden');
+            
+            document.getElementById('reviewCompleteHeader').textContent = 
+                currentLanguage === 'spanish' ? '🎉 ¡Repaso Completado!' : '🎉 Review Complete!';
+            
+            const percentage = Math.round((reviewScore / reviewQuestions.length) * 100);
+            const scoreText = currentLanguage === 'spanish'
+                ? `¡Obtuviste ${reviewScore} de ${reviewQuestions.length} correctas (${percentage}%) en el repaso!`
+                : `You got ${reviewScore} out of ${reviewQuestions.length} correct (${percentage}%) on the review!`;
+            document.getElementById('reviewScoreText').textContent = scoreText;
+        }
+
+        function restartQuiz() {
+            document.getElementById('resultsScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+            document.getElementById('reviewSection').classList.add('hidden');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', renderFlashcards);
+    </script>
+</body>
+</html>
