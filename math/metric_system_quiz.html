@@ -875,7 +875,7 @@
             <div class="stats-bar">
                 <div class="timer" id="timer">⏱️ 0:00</div>
                 <div class="question-timer" id="questionTimer">⏳ 1:00</div>
-                <div class="progress" id="progress">Pregunta 1 de 18</div>
+                <div class="progress" id="progress">Pregunta 1 de 20</div>
                 <div class="score" id="currentScore">✓ 0 correctas</div>
             </div>
 
@@ -1095,6 +1095,31 @@
                         </ul>
                         <p style="margin-top:10px">💡 Large unit → small = <strong>×</strong><br>
                         💡 Small unit → large = <strong>÷</strong></p>`
+                }
+            },
+            {
+                icon: '👉',
+                title: { es: 'Mover el Decimal', en: 'Moving the Decimal' },
+                hint: { es: 'Toca para ver más', en: 'Tap to see more' },
+                back: {
+                    es: `<strong>× 10, 100, 1000</strong><br>
+                        Mueve el punto a la <strong>DERECHA</strong><br>
+                        <small>0.6 × 1000 = 600</small>
+                        <hr style="margin:8px 0">
+                        <strong>÷ 10, 100, 1000</strong><br>
+                        Mueve el punto a la <strong>IZQUIERDA</strong><br>
+                        <small>600 ÷ 1000 = 0.6</small>
+                        <hr style="margin:8px 0">
+                        <small>¡Cuenta los ceros!</small>`,
+                    en: `<strong>× 10, 100, 1000</strong><br>
+                        Move decimal to the <strong>RIGHT</strong><br>
+                        <small>0.6 × 1000 = 600</small>
+                        <hr style="margin:8px 0">
+                        <strong>÷ 10, 100, 1000</strong><br>
+                        Move decimal to the <strong>LEFT</strong><br>
+                        <small>600 ÷ 1000 = 0.6</small>
+                        <hr style="margin:8px 0">
+                        <small>Count the zeros!</small>`
                 }
             }
         ];
@@ -1987,6 +2012,88 @@
             };
         }
 
+        // ===== DECIMAL POINT MOVEMENT QUESTIONS =====
+
+        function generateDecimalMultiplyQuestion() {
+            // Multiplication moves decimal RIGHT
+            const problems = [
+                { num: 1.5, by: 10, answer: 15, moves: 1 },
+                { num: 2.34, by: 10, answer: 23.4, moves: 1 },
+                { num: 0.6, by: 10, answer: 6, moves: 1 },
+                { num: 1.2, by: 100, answer: 120, moves: 2 },
+                { num: 0.5, by: 100, answer: 50, moves: 2 },
+                { num: 3.45, by: 100, answer: 345, moves: 2 },
+                { num: 0.6, by: 1000, answer: 600, moves: 3 },
+                { num: 1.5, by: 1000, answer: 1500, moves: 3 },
+                { num: 2.5, by: 1000, answer: 2500, moves: 3 }
+            ];
+            
+            const problem = randomChoice(problems);
+            const wrongAnswers = [
+                problem.answer * 10,
+                problem.answer / 10,
+                problem.num * (problem.by === 1000 ? 100 : 10)
+            ].filter(w => w !== problem.answer && w > 0);
+            
+            const options = shuffle([problem.answer, ...wrongAnswers.slice(0, 3)]);
+            const correctIndex = options.indexOf(problem.answer);
+            
+            return {
+                category: 'Longitud',
+                type: 'multiple-choice',
+                question: {
+                    es: `${problem.num} × ${problem.by.toLocaleString()} = ?`,
+                    en: `${problem.num} × ${problem.by.toLocaleString()} = ?`
+                },
+                options: options.map(String),
+                correct: correctIndex,
+                explanation: {
+                    es: `Mueve el punto decimal ${problem.moves} lugar(es) a la DERECHA. ${problem.num} × ${problem.by.toLocaleString()} = ${problem.answer}`,
+                    en: `Move the decimal point ${problem.moves} place(s) to the RIGHT. ${problem.num} × ${problem.by.toLocaleString()} = ${problem.answer}`
+                }
+            };
+        }
+
+        function generateDecimalDivideQuestion() {
+            // Division moves decimal LEFT
+            const problems = [
+                { num: 15, by: 10, answer: 1.5, moves: 1 },
+                { num: 234, by: 10, answer: 23.4, moves: 1 },
+                { num: 60, by: 10, answer: 6, moves: 1 },
+                { num: 120, by: 100, answer: 1.2, moves: 2 },
+                { num: 500, by: 100, answer: 5, moves: 2 },
+                { num: 345, by: 100, answer: 3.45, moves: 2 },
+                { num: 600, by: 1000, answer: 0.6, moves: 3 },
+                { num: 1500, by: 1000, answer: 1.5, moves: 3 },
+                { num: 2500, by: 1000, answer: 2.5, moves: 3 }
+            ];
+            
+            const problem = randomChoice(problems);
+            const wrongAnswers = [
+                problem.answer * 10,
+                problem.answer / 10,
+                problem.num / (problem.by === 1000 ? 100 : 10)
+            ].filter(w => w !== problem.answer && w > 0);
+            
+            const options = shuffle([problem.answer, ...wrongAnswers.slice(0, 3)]);
+            const correctIndex = options.indexOf(problem.answer);
+            
+            return {
+                category: 'Capacidad',
+                type: 'multiple-choice',
+                question: {
+                    es: `${problem.num.toLocaleString()} ÷ ${problem.by.toLocaleString()} = ?`,
+                    en: `${problem.num.toLocaleString()} ÷ ${problem.by.toLocaleString()} = ?`
+                },
+                options: options.map(String),
+                correct: correctIndex,
+                explanation: {
+                    es: `Mueve el punto decimal ${problem.moves} lugar(es) a la IZQUIERDA. ${problem.num.toLocaleString()} ÷ ${problem.by.toLocaleString()} = ${problem.answer}`,
+                    en: `Move the decimal point ${problem.moves} place(s) to the LEFT. ${problem.num.toLocaleString()} ÷ ${problem.by.toLocaleString()} = ${problem.answer}`
+                }
+            };
+        }
+
         // Generate all questions
         function generateAllQuestions() {
             const generators = [
@@ -2010,7 +2117,10 @@
                 generateWeightComparisonQuestion,
                 generateWeightFillBlankQuestion,
                 generateWeightWordProblem,
-                generateWeightToolQuestion
+                generateWeightToolQuestion,
+                // Decimal movement
+                generateDecimalMultiplyQuestion,
+                generateDecimalDivideQuestion
             ];
             
             questions = shuffle(generators).map(gen => gen());

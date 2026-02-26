@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Printable Ruler - Inches with Fractions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .no-print {
+            max-width: 800px;
+            margin: 0 auto 30px;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #9b59b6;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .instructions {
+            background: #f8f4fc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .instructions h3 {
+            color: #8e44ad;
+            margin-bottom: 10px;
+        }
+
+        .instructions ul {
+            margin-left: 20px;
+        }
+
+        .instructions li {
+            margin: 8px 0;
+            color: #555;
+        }
+
+        .print-btn {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 20px auto;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .print-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 20px rgba(155, 89, 182, 0.4);
+        }
+
+        /* Ruler Styles */
+        .ruler-container {
+            background: white;
+            padding: 40px 20px;
+            margin: 20px auto;
+            max-width: 800px;
+        }
+
+        .ruler {
+            width: 6.3in;
+            height: 1.2in;
+            border: 2px solid #333;
+            position: relative;
+            background: #fffef0;
+            margin: 30px auto;
+            padding-right: 0.3in;
+        }
+
+        .inch-mark {
+            position: absolute;
+            bottom: 0;
+            width: 2px;
+            background: #333;
+        }
+
+        .inch-mark.whole {
+            height: 100%;
+        }
+
+        .inch-mark.half {
+            height: 70%;
+        }
+
+        .inch-mark.quarter {
+            height: 50%;
+        }
+
+        .inch-mark.eighth {
+            height: 30%;
+        }
+
+        .inch-label {
+            position: absolute;
+            top: 5px;
+            transform: translateX(-50%);
+            font-size: 14pt;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .inch-label.first {
+            transform: translateX(0);
+        }
+
+        .inch-label.last {
+            transform: translateX(-100%);
+        }
+
+        .fraction-guide {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 600px;
+            border: 2px dashed #9b59b6;
+        }
+
+        .fraction-guide h3 {
+            color: #9b59b6;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .fraction-row {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .fraction-row:last-child {
+            border-bottom: none;
+        }
+
+        .mark-example {
+            width: 4px;
+            background: #333;
+        }
+
+        .mark-example.whole { height: 50px; }
+        .mark-example.half { height: 35px; }
+        .mark-example.quarter { height: 25px; }
+        .mark-example.eighth { height: 15px; }
+
+        .fraction-label {
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .ruler-container {
+                padding: 0;
+                margin: 0;
+            }
+
+            .ruler {
+                margin: 0.5in auto;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .fraction-guide {
+                page-break-before: avoid;
+                margin-top: 1in;
+            }
+        }
+
+        @page {
+            size: letter;
+            margin: 0.5in;
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <h1>📏 Printable Ruler</h1>
+        
+        <div class="instructions">
+            <h3>Print Instructions:</h3>
+            <ul>
+                <li><strong>Important:</strong> Print at <strong>100% scale</strong> (no shrink/fit to page)</li>
+                <li>Use regular 8.5" x 11" letter paper</li>
+                <li>Cut along the black border to make your ruler</li>
+                <li>Check accuracy: the ruler should be exactly 6 inches long</li>
+            </ul>
+        </div>
+
+        <div class="instructions">
+            <h3>How to Read the Marks:</h3>
+            <ul>
+                <li><strong>Tallest marks</strong> = Whole inches (1, 2, 3...)</li>
+                <li><strong>Second tallest</strong> = Half inches (½)</li>
+                <li><strong>Third tallest</strong> = Quarter inches (¼, ¾)</li>
+                <li><strong>Shortest marks</strong> = Eighth inches (⅛, ⅜, ⅝, ⅞)</li>
+            </ul>
+        </div>
+
+        <button class="print-btn" onclick="window.print()">🖨️ Print Ruler</button>
+    </div>
+
+    <div class="ruler-container">
+        <div class="ruler" id="ruler"></div>
+
+        <div class="fraction-guide">
+            <h3>Mark Size Guide</h3>
+            <div class="fraction-row">
+                <div class="mark-example whole"></div>
+                <span class="fraction-label"><strong>Whole inch</strong> (1, 2, 3...)</span>
+            </div>
+            <div class="fraction-row">
+                <div class="mark-example half"></div>
+                <span class="fraction-label"><strong>Half inch</strong> (½)</span>
+            </div>
+            <div class="fraction-row">
+                <div class="mark-example quarter"></div>
+                <span class="fraction-label"><strong>Quarter inch</strong> (¼, ¾)</span>
+            </div>
+            <div class="fraction-row">
+                <div class="mark-example eighth"></div>
+                <span class="fraction-label"><strong>Eighth inch</strong> (⅛, ⅜, ⅝, ⅞)</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function createRuler() {
+            const ruler = document.getElementById('ruler');
+            const inches = 6;
+            
+            for (let i = 0; i <= inches * 8; i++) {
+                const mark = document.createElement('div');
+                mark.className = 'inch-mark';
+                
+                if (i % 8 === 0) {
+                    mark.classList.add('whole');
+                    const label = document.createElement('div');
+                    label.className = 'inch-label';
+                    if (i === 0) label.classList.add('first');
+                    if (i === inches * 8) label.classList.add('last');
+                    label.textContent = i / 8;
+                    label.style.left = (i / 8) + 'in';
+                    ruler.appendChild(label);
+                } else if (i % 4 === 0) {
+                    mark.classList.add('half');
+                } else if (i % 2 === 0) {
+                    mark.classList.add('quarter');
+                } else {
+                    mark.classList.add('eighth');
+                }
+                
+                mark.style.left = (i / 8) + 'in';
+                ruler.appendChild(mark);
+            }
+        }
+
+        createRuler();
+    </script>
+</body>
+</html>

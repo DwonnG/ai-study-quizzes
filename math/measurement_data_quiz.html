@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 4c - Measurement & Data Reasoning Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #4a3966;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .hidden { display: none !important; }
+
+        .quiz-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .lang-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .lang-btn {
+            padding: 8px 16px;
+            border: 2px solid #9b59b6;
+            background: white;
+            cursor: pointer;
+            border-radius: 20px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+        }
+
+        .progress {
+            background: #ecf0f1;
+            border-radius: 10px;
+            height: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #9b59b6, #8e44ad);
+            transition: width 0.4s;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .timer-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .timer {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #9b59b6;
+        }
+
+        .timer.warning { color: #e74c3c; animation: pulse 0.5s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
+
+        .question {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .option:hover {
+            border-color: #9b59b6;
+            background: #f8f4fc;
+        }
+
+        .option.selected {
+            border-color: #9b59b6;
+            background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+        }
+
+        .option.correct {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+        }
+
+        .option.incorrect {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(155, 89, 182, 0.4);
+        }
+
+        .btn-submit:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+        }
+
+        .feedback {
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .feedback.correct {
+            background: #e8f5e9;
+            border: 2px solid #4CAF50;
+        }
+
+        .feedback.incorrect {
+            background: #ffebee;
+            border: 2px solid #f44336;
+        }
+
+        .feedback h3 {
+            margin-bottom: 10px;
+        }
+
+        .feedback.correct h3 { color: #2e7d32; }
+        .feedback.incorrect h3 { color: #c62828; }
+
+        /* Flashcard Styles */
+        .flashcard-section {
+            margin-bottom: 30px;
+        }
+
+        .flashcard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .flashcard {
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.75rem;
+        }
+
+        .flashcard-front {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            font-weight: bold;
+        }
+
+        .flashcard-back {
+            background: #e8f5e9;
+            color: #2e7d32;
+            transform: rotateY(180deg);
+            font-size: 0.7rem;
+        }
+
+        /* Results */
+        .results-container {
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            color: white;
+        }
+
+        .score-circle .score { font-size: 2.5rem; font-weight: bold; }
+        .score-circle .label { font-size: 0.9rem; opacity: 0.9; }
+
+        .review-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 25px;
+            text-align: left;
+        }
+
+        .review-section h3 {
+            color: #e74c3c;
+            margin-bottom: 15px;
+        }
+
+        .missed-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .missed-item .q { font-weight: bold; margin-bottom: 8px; }
+        .missed-item .your-answer { color: #e74c3c; }
+        .missed-item .correct-answer { color: #27ae60; }
+
+        /* Hover Translation */
+        .translatable {
+            border-bottom: 1px dotted #9b59b6;
+            cursor: help;
+            position: relative;
+        }
+
+        .translation-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c3e50;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            z-index: 100;
+        }
+
+        .translatable:hover .translation-tooltip {
+            opacity: 1;
+        }
+
+        .btn-restart {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        @media (max-width: 500px) {
+            .quiz-container { padding: 20px; }
+            .header h1 { font-size: 1.3rem; }
+            .question { font-size: 1rem; }
+            .flashcard-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <!-- Language Toggle -->
+        <div class="lang-toggle">
+            <button class="lang-btn active" onclick="setLanguage('es')">🇪🇸 ES</button>
+            <button class="lang-btn" onclick="setLanguage('en')">🇺🇸 EN</button>
+        </div>
+
+        <!-- Start Screen -->
+        <div id="startScreen">
+            <div class="header">
+                <h1 id="quizTitle">📊 Medición y Razonamiento de Datos</h1>
+                <p id="quizSubtitle">Unidad 4c - Guía de Estudio</p>
+            </div>
+
+            <div class="flashcard-section">
+                <h3 id="flashcardTitle" style="text-align: center; color: #9b59b6; margin-bottom: 10px;">📚 Study Cards - Click to flip!</h3>
+                <div class="flashcard-grid" id="flashcardGrid"></div>
+            </div>
+
+            <button class="btn btn-submit" onclick="startQuiz()" id="startBtn">
+                🚀 Start Quiz
+            </button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quizScreen" class="hidden">
+            <div class="progress">
+                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+            </div>
+            <div class="progress-text" id="progressText">Pregunta 1 de 20</div>
+
+            <div class="timer-container">
+                <div class="timer" id="timer">1:00</div>
+            </div>
+
+            <div class="category-badge" id="categoryBadge">Category</div>
+            <div class="question" id="questionText">Question text here</div>
+            <div class="options" id="optionsContainer"></div>
+
+            <button class="btn btn-submit" id="submitBtn" onclick="submitAnswer()" disabled>
+                Submit Answer
+            </button>
+            <button class="btn btn-next hidden" id="nextBtn" onclick="nextQuestion()">
+                Next Question →
+            </button>
+
+            <div class="feedback hidden" id="feedback">
+                <h3 id="feedbackTitle"></h3>
+                <p id="feedbackText"></p>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="hidden">
+            <div class="results-container">
+                <h2 id="resultsTitle">🎉 Quiz Complete!</h2>
+                <div class="score-circle">
+                    <span class="score" id="finalScore">0%</span>
+                    <span class="label" id="scoreLabel">Correct</span>
+                </div>
+                <p id="scoreMessage"></p>
+
+                <div class="review-section hidden" id="reviewSection">
+                    <h3 id="reviewTitle">📝 Questions to Review</h3>
+                    <div id="missedQuestions"></div>
+                </div>
+
+                <button class="btn btn-restart" onclick="restartQuiz()" id="restartBtn">
+                    🔄 Try Again
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Language state
+        let currentLang = 'es';
+        let showTranslations = true;
+
+        // Quiz state
+        let questions = [];
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedOption = null;
+        let missedQuestions = [];
+        let timerInterval = null;
+        let timeLeft = 60;
+
+        // UI Translations
+        const uiText = {
+            es: {
+                title: '📊 Medición y Razonamiento de Datos',
+                subtitle: 'Unidad 4c - Guía de Estudio',
+                flashcardTitle: '📚 Tarjetas de Estudio - ¡Clic para voltear!',
+                startBtn: '🚀 Comenzar Quiz',
+                submitBtn: 'Enviar Respuesta',
+                nextBtn: 'Siguiente Pregunta →',
+                resultsTitle: '🎉 ¡Quiz Completo!',
+                scoreLabel: 'Correctas',
+                reviewTitle: '📝 Preguntas para Repasar',
+                restartBtn: '🔄 Intentar de Nuevo',
+                questionOf: 'Pregunta {current} de {total}',
+                correct: '✅ ¡Correcto!',
+                incorrect: '❌ Incorrecto',
+                yourAnswer: 'Tu respuesta: ',
+                correctAnswer: 'Respuesta correcta: '
+            },
+            en: {
+                title: '📊 Measurement & Data Reasoning',
+                subtitle: 'Unit 4c - Study Guide',
+                flashcardTitle: '📚 Study Cards - Click to flip!',
+                startBtn: '🚀 Start Quiz',
+                submitBtn: 'Submit Answer',
+                nextBtn: 'Next Question →',
+                resultsTitle: '🎉 Quiz Complete!',
+                scoreLabel: 'Correct',
+                reviewTitle: '📝 Questions to Review',
+                restartBtn: '🔄 Try Again',
+                questionOf: 'Question {current} of {total}',
+                correct: '✅ Correct!',
+                incorrect: '❌ Incorrect',
+                yourAnswer: 'Your answer: ',
+                correctAnswer: 'Correct answer: '
+            }
+        };
+
+        // Flashcards data
+        const flashcards = [
+            { front: '1 km = ?', back: '1,000 metros' },
+            { front: '1 kg = ?', back: '1,000 gramos' },
+            { front: '1 hora = ?', back: '60 minutos' },
+            { front: '1/4 hora = ?', back: '15 minutos' },
+            { front: '1/2 hora = ?', back: '30 minutos' },
+            { front: 'Line Plot', back: 'X marks show how many for each value' },
+            { front: 'km → m', back: 'Multiply by 1,000' },
+            { front: 'kg → g', back: 'Multiply by 1,000' },
+            { front: '1 paper clip', back: '≈ 1 gram' },
+            { front: '1/8 inch', back: 'Smallest ruler marks' },
+            { front: 'Bar Graph', back: 'Taller bar = more items' },
+            { front: 'Time Backwards', back: 'Subtract to find start time' }
+        ];
+
+        // Question generators
+        function generateConversionQuestion() {
+            const types = [
+                { from: 'km', to: 'm', mult: 1000, name: { es: 'kilómetros', en: 'kilometers' }, toName: { es: 'metros', en: 'meters' } },
+                { from: 'kg', to: 'g', mult: 1000, name: { es: 'kilogramos', en: 'kilograms' }, toName: { es: 'gramos', en: 'grams' } }
+            ];
+            const type = types[Math.floor(Math.random() * types.length)];
+            const val = Math.floor(Math.random() * 9) + 2;
+            const answer = val * type.mult;
+            
+            return {
+                category: { es: 'Conversión de Unidades', en: 'Unit Conversion' },
+                question: {
+                    es: `¿Cuántos ${type.toName.es} hay en ${val} ${type.name.es}?`,
+                    en: `How many ${type.toName.en} are in ${val} ${type.name.en}?`
+                },
+                options: shuffle([
+                    { text: answer.toLocaleString(), correct: true },
+                    { text: (answer / 10).toLocaleString(), correct: false },
+                    { text: (answer * 10).toLocaleString(), correct: false },
+                    { text: (answer + 100).toLocaleString(), correct: false }
+                ]),
+                explanation: {
+                    es: `${val} ${type.from} × 1,000 = ${answer.toLocaleString()} ${type.to}`,
+                    en: `${val} ${type.from} × 1,000 = ${answer.toLocaleString()} ${type.to}`
+                }
+            };
+        }
+
+        function generateDistanceComparisonQuestion() {
+            const km = Math.floor(Math.random() * 5) + 3;
+            const meters = (km + Math.floor(Math.random() * 4) + 1) * 1000;
+            const kmInMeters = km * 1000;
+            const diff = meters - kmInMeters;
+            const names = [
+                { es: 'Sofía', en: 'Sofia' },
+                { es: 'Miguel', en: 'Miguel' },
+                { es: 'Ana', en: 'Ana' },
+                { es: 'Carlos', en: 'Carlos' }
+            ];
+            const n1 = names[Math.floor(Math.random() * names.length)];
+            let n2;
+            do { n2 = names[Math.floor(Math.random() * names.length)]; } while (n2 === n1);
+
+            return {
+                category: { es: 'Problema de Distancia', en: 'Distance Problem' },
+                question: {
+                    es: `${n1.es} corrió ${km} kilómetros y ${n2.es} corrió ${meters.toLocaleString()} metros. ¿Cuántos metros más corrió ${n2.es}?`,
+                    en: `${n1.en} ran ${km} kilometers and ${n2.en} ran ${meters.toLocaleString()} meters. How many more meters did ${n2.en} run?`
+                },
+                options: shuffle([
+                    { text: diff.toLocaleString() + ' m', correct: true },
+                    { text: (diff + 1000).toLocaleString() + ' m', correct: false },
+                    { text: kmInMeters.toLocaleString() + ' m', correct: false },
+                    { text: (diff - 500).toLocaleString() + ' m', correct: false }
+                ]),
+                explanation: {
+                    es: `${km} km = ${kmInMeters.toLocaleString()} m. ${meters.toLocaleString()} - ${kmInMeters.toLocaleString()} = ${diff.toLocaleString()} m`,
+                    en: `${km} km = ${kmInMeters.toLocaleString()} m. ${meters.toLocaleString()} - ${kmInMeters.toLocaleString()} = ${diff.toLocaleString()} m`
+                }
+            };
+        }
+
+        function generateWeightCapacityQuestion() {
+            const items = Math.floor(Math.random() * 6) + 5;
+            const weightEach = (Math.floor(Math.random() * 5) + 3) * 100 + 75;
+            const totalWeight = items * weightEach;
+            const capacityKg = Math.floor(totalWeight / 1000);
+            const capacityG = capacityKg * 1000;
+            const fits = totalWeight <= capacityG;
+            
+            const itemNames = [
+                { es: 'tazas', en: 'cups' },
+                { es: 'platos', en: 'plates' },
+                { es: 'libros', en: 'books' }
+            ];
+            const item = itemNames[Math.floor(Math.random() * itemNames.length)];
+
+            return {
+                category: { es: 'Capacidad de Peso', en: 'Weight Capacity' },
+                question: {
+                    es: `Una caja tiene ${items} ${item.es}. Cada uno pesa ${weightEach} gramos. La caja puede cargar ${capacityKg} kg. ¿Caben todos?`,
+                    en: `A box has ${items} ${item.en}. Each weighs ${weightEach} grams. The box can hold ${capacityKg} kg. Do they all fit?`
+                },
+                options: shuffle([
+                    { text: fits ? 'Sí / Yes' : 'No', correct: true },
+                    { text: fits ? 'No' : 'Sí / Yes', correct: false },
+                    { text: totalWeight.toLocaleString() + ' g', correct: false },
+                    { text: capacityG.toLocaleString() + ' g', correct: false }
+                ]),
+                explanation: {
+                    es: `${items} × ${weightEach}g = ${totalWeight.toLocaleString()}g. Capacidad: ${capacityG.toLocaleString()}g. ${totalWeight.toLocaleString()} ${fits ? '≤' : '>'} ${capacityG.toLocaleString()}`,
+                    en: `${items} × ${weightEach}g = ${totalWeight.toLocaleString()}g. Capacity: ${capacityG.toLocaleString()}g. ${totalWeight.toLocaleString()} ${fits ? '≤' : '>'} ${capacityG.toLocaleString()}`
+                }
+            };
+        }
+
+        function generateRemainingCapacityQuestion() {
+            const maxCapacity = Math.floor(Math.random() * 5000) + 5000;
+            const usedKg = Math.floor(Math.random() * 4) + 3;
+            const usedG = usedKg * 1000;
+            const remaining = maxCapacity - usedG;
+
+            return {
+                category: { es: 'Capacidad Restante', en: 'Remaining Capacity' },
+                question: {
+                    es: `Un maletero tiene capacidad máxima de ${maxCapacity.toLocaleString()} gramos. Ya tiene ${usedKg} kilogramos. ¿Cuántos gramos más caben?`,
+                    en: `A trunk has a max capacity of ${maxCapacity.toLocaleString()} grams. It already has ${usedKg} kilograms. How many more grams can fit?`
+                },
+                options: shuffle([
+                    { text: remaining.toLocaleString() + ' g', correct: true },
+                    { text: (remaining + 1000).toLocaleString() + ' g', correct: false },
+                    { text: usedG.toLocaleString() + ' g', correct: false },
+                    { text: (remaining - 500).toLocaleString() + ' g', correct: false }
+                ]),
+                explanation: {
+                    es: `${usedKg} kg = ${usedG.toLocaleString()} g. ${maxCapacity.toLocaleString()} - ${usedG.toLocaleString()} = ${remaining.toLocaleString()} g`,
+                    en: `${usedKg} kg = ${usedG.toLocaleString()} g. ${maxCapacity.toLocaleString()} - ${usedG.toLocaleString()} = ${remaining.toLocaleString()} g`
+                }
+            };
+        }
+
+        function generateTimeAdditionQuestion() {
+            const hours = Math.floor(Math.random() * 2) + 1;
+            const fractionHours = [0, 0.25, 0.5, 0.75][Math.floor(Math.random() * 4)];
+            const fractionNames = { 0: '', 0.25: ' 1/4', 0.5: ' 1/2', 0.75: ' 3/4' };
+            const extraMinutes = Math.floor(Math.random() * 40) + 20;
+            
+            const totalMinutes = hours * 60 + fractionHours * 60 + extraMinutes;
+            const resultHours = Math.floor(totalMinutes / 60);
+            const resultMinutes = totalMinutes % 60;
+
+            const startHour = Math.floor(Math.random() * 4) + 1;
+            const startMinute = Math.floor(Math.random() * 4) * 15;
+            
+            const endTotalMinutes = startHour * 60 + startMinute + totalMinutes;
+            const endHour = Math.floor(endTotalMinutes / 60) % 12 || 12;
+            const endMinute = endTotalMinutes % 60;
+            const endPeriod = endTotalMinutes >= 720 ? 'PM' : 'PM';
+
+            const activities = [
+                { es: 'fútbol', en: 'soccer' },
+                { es: 'voleibol', en: 'volleyball' },
+                { es: 'baloncesto', en: 'basketball' }
+            ];
+            const act = activities[Math.floor(Math.random() * activities.length)];
+
+            return {
+                category: { es: 'Problema de Tiempo', en: 'Time Problem' },
+                question: {
+                    es: `Practica ${act.es} por ${hours}${fractionNames[fractionHours]} horas y luego descansa ${extraMinutes} minutos. Si empieza a las ${startHour}:${startMinute.toString().padStart(2,'0')} PM, ¿a qué hora termina?`,
+                    en: `Practice ${act.en} for ${hours}${fractionNames[fractionHours]} hours then rest ${extraMinutes} minutes. Starting at ${startHour}:${startMinute.toString().padStart(2,'0')} PM, what time does it end?`
+                },
+                options: shuffle([
+                    { text: `${endHour}:${endMinute.toString().padStart(2,'0')} PM`, correct: true },
+                    { text: `${endHour}:${((endMinute + 15) % 60).toString().padStart(2,'0')} PM`, correct: false },
+                    { text: `${(endHour % 12) + 1}:${endMinute.toString().padStart(2,'0')} PM`, correct: false },
+                    { text: `${endHour}:${Math.abs(endMinute - 20).toString().padStart(2,'0')} PM`, correct: false }
+                ]),
+                explanation: {
+                    es: `${hours}${fractionNames[fractionHours]} h = ${hours * 60 + fractionHours * 60} min + ${extraMinutes} min = ${totalMinutes} min total`,
+                    en: `${hours}${fractionNames[fractionHours]} h = ${hours * 60 + fractionHours * 60} min + ${extraMinutes} min = ${totalMinutes} min total`
+                }
+            };
+        }
+
+        function generateTimeBackwardsQuestion() {
+            const arrivalHour = Math.floor(Math.random() * 4) + 5;
+            const arrivalMinute = [0, 15, 30, 45][Math.floor(Math.random() * 4)];
+            
+            const prepMinutes = Math.floor(Math.random() * 30) + 30;
+            const driveHours = Math.floor(Math.random() * 2) + 1;
+            const driveMinutes = Math.floor(Math.random() * 30) + 15;
+            
+            const totalMinutes = prepMinutes + driveHours * 60 + driveMinutes;
+            const arrivalTotalMinutes = arrivalHour * 60 + arrivalMinute;
+            const startTotalMinutes = arrivalTotalMinutes - totalMinutes;
+            const startHour = Math.floor(startTotalMinutes / 60);
+            const startMinute = startTotalMinutes % 60;
+
+            return {
+                category: { es: 'Tiempo hacia Atrás', en: 'Backwards Time' },
+                question: {
+                    es: `Necesita llegar a las ${arrivalHour}:${arrivalMinute.toString().padStart(2,'0')} PM. Tarda ${prepMinutes} minutos en prepararse y ${driveHours} hora${driveHours > 1 ? 's' : ''} ${driveMinutes} minutos en conducir. ¿A qué hora debe empezar?`,
+                    en: `Need to arrive at ${arrivalHour}:${arrivalMinute.toString().padStart(2,'0')} PM. Takes ${prepMinutes} minutes to get ready and ${driveHours} hour${driveHours > 1 ? 's' : ''} ${driveMinutes} minutes to drive. What time should they start?`
+                },
+                options: shuffle([
+                    { text: `${startHour}:${startMinute.toString().padStart(2,'0')} PM`, correct: true },
+                    { text: `${startHour}:${((startMinute + 10) % 60).toString().padStart(2,'0')} PM`, correct: false },
+                    { text: `${startHour + 1}:${startMinute.toString().padStart(2,'0')} PM`, correct: false },
+                    { text: `${startHour}:${Math.abs(startMinute - 15).toString().padStart(2,'0')} PM`, correct: false }
+                ]),
+                explanation: {
+                    es: `Total: ${prepMinutes} + ${driveHours * 60 + driveMinutes} = ${totalMinutes} min. ${arrivalHour}:${arrivalMinute.toString().padStart(2,'0')} - ${Math.floor(totalMinutes/60)}h ${totalMinutes%60}m`,
+                    en: `Total: ${prepMinutes} + ${driveHours * 60 + driveMinutes} = ${totalMinutes} min. ${arrivalHour}:${arrivalMinute.toString().padStart(2,'0')} - ${Math.floor(totalMinutes/60)}h ${totalMinutes%60}m`
+                }
+            };
+        }
+
+        function generateMassEstimationQuestion() {
+            const objects = [
+                { name: { es: '4 clips', en: '4 paper clips' }, answer: '4 gramos', wrong: ['4 kilogramos', '40 gramos', '40 kilogramos'] },
+                { name: { es: 'una manzana', en: 'an apple' }, answer: '200 gramos', wrong: ['200 kilogramos', '2 gramos', '20 kilogramos'] },
+                { name: { es: 'un libro de texto', en: 'a textbook' }, answer: '1 kilogramo', wrong: ['1 gramo', '100 gramos', '10 kilogramos'] },
+                { name: { es: 'un lápiz', en: 'a pencil' }, answer: '5 gramos', wrong: ['5 kilogramos', '50 gramos', '500 gramos'] },
+                { name: { es: 'una pelota de fútbol', en: 'a soccer ball' }, answer: '450 gramos', wrong: ['45 gramos', '4 kilogramos', '45 kilogramos'] }
+            ];
+            const obj = objects[Math.floor(Math.random() * objects.length)];
+
+            return {
+                category: { es: 'Estimación de Masa', en: 'Mass Estimation' },
+                question: {
+                    es: `¿Cuál es la masa más probable de ${obj.name.es}?`,
+                    en: `What is the most likely mass of ${obj.name.en}?`
+                },
+                options: shuffle([
+                    { text: obj.answer, correct: true },
+                    ...obj.wrong.map(w => ({ text: w, correct: false }))
+                ]),
+                explanation: {
+                    es: `Piensa en objetos similares que conoces. ${obj.answer} es razonable.`,
+                    en: `Think about similar objects you know. ${obj.answer} is reasonable.`
+                }
+            };
+        }
+
+        function generateLinePlotReadingQuestion() {
+            const values = ['1/4', '1/2', '3/4', '1', '1 1/4', '1 1/2'];
+            const counts = values.map(() => Math.floor(Math.random() * 5) + 1);
+            const maxCount = Math.max(...counts);
+            const minCount = Math.min(...counts);
+            const maxIdx = counts.indexOf(maxCount);
+            const minIdx = counts.indexOf(minCount);
+
+            return {
+                category: { es: 'Diagrama de Líneas', en: 'Line Plot' },
+                question: {
+                    es: `En un diagrama lineal: ${values.map((v, i) => `${v} hora tiene ${counts[i]} X`).join(', ')}. ¿Cuál valor tiene MÁS estudiantes?`,
+                    en: `In a line plot: ${values.map((v, i) => `${v} hour has ${counts[i]} X's`).join(', ')}. Which value has the MOST students?`
+                },
+                options: shuffle([
+                    { text: values[maxIdx] + ' hora/hour', correct: true },
+                    { text: values[minIdx] + ' hora/hour', correct: false },
+                    { text: values[(maxIdx + 1) % values.length] + ' hora/hour', correct: false },
+                    { text: values[(maxIdx + 2) % values.length] + ' hora/hour', correct: false }
+                ]),
+                explanation: {
+                    es: `${values[maxIdx]} tiene ${maxCount} X - el mayor número.`,
+                    en: `${values[maxIdx]} has ${maxCount} X's - the highest count.`
+                }
+            };
+        }
+
+        function generateLinePlotDifferenceQuestion() {
+            const maxX = Math.floor(Math.random() * 4) + 5;
+            const minX = Math.floor(Math.random() * 2) + 1;
+            const diff = maxX - minX;
+
+            return {
+                category: { es: 'Diagrama de Líneas', en: 'Line Plot' },
+                question: {
+                    es: `En un diagrama lineal, el valor con más estudiantes tiene ${maxX} X y el valor con menos tiene ${minX} X. ¿Cuál es la diferencia?`,
+                    en: `In a line plot, the value with most students has ${maxX} X's and the least has ${minX} X's. What's the difference?`
+                },
+                options: shuffle([
+                    { text: diff.toString(), correct: true },
+                    { text: (diff + 1).toString(), correct: false },
+                    { text: (diff - 1 || 1).toString(), correct: false },
+                    { text: maxX.toString(), correct: false }
+                ]),
+                explanation: {
+                    es: `${maxX} - ${minX} = ${diff}`,
+                    en: `${maxX} - ${minX} = ${diff}`
+                }
+            };
+        }
+
+        function generateBarGraphQuestion() {
+            const items = ['Chocolates', 'Gummy Bears / Ositos', 'Lollipops / Paletas', 'Gummies / Gomitas'];
+            const amounts = items.map(() => Math.floor(Math.random() * 30) + 10);
+            const total1 = amounts[0] + amounts[1];
+            const total2 = amounts[2] + amounts[3];
+            const diff = Math.abs(total1 - total2);
+
+            return {
+                category: { es: 'Gráfico de Barras', en: 'Bar Graph' },
+                question: {
+                    es: `Dulces recolectados: ${items[0]}: ${amounts[0]}, ${items[1]}: ${amounts[1]}, ${items[2]}: ${amounts[2]}, ${items[3]}: ${amounts[3]}. ¿Cuántos más ${items[0]} y ${items[1]} que ${items[2]} y ${items[3]} combinados?`,
+                    en: `Candy collected: ${items[0]}: ${amounts[0]}, ${items[1]}: ${amounts[1]}, ${items[2]}: ${amounts[2]}, ${items[3]}: ${amounts[3]}. How many more ${items[0]} and ${items[1]} than ${items[2]} and ${items[3]} combined?`
+                },
+                options: shuffle([
+                    { text: (total1 - total2).toString(), correct: true },
+                    { text: total1.toString(), correct: false },
+                    { text: total2.toString(), correct: false },
+                    { text: (diff + 5).toString(), correct: false }
+                ]),
+                explanation: {
+                    es: `(${amounts[0]} + ${amounts[1]}) - (${amounts[2]} + ${amounts[3]}) = ${total1} - ${total2} = ${total1 - total2}`,
+                    en: `(${amounts[0]} + ${amounts[1]}) - (${amounts[2]} + ${amounts[3]}) = ${total1} - ${total2} = ${total1 - total2}`
+                }
+            };
+        }
+
+        function generateFractionalMeasurementQuestion() {
+            const fractions = ['1/8', '1/4', '3/8', '1/2', '5/8', '3/4', '7/8'];
+            const wholeInches = Math.floor(Math.random() * 3) + 2;
+            const fraction = fractions[Math.floor(Math.random() * fractions.length)];
+            const measurement = `${wholeInches} ${fraction}`;
+
+            return {
+                category: { es: 'Medición Fraccional', en: 'Fractional Measurement' },
+                question: {
+                    es: `Una cinta mide ${measurement} pulgadas. ¿Cuántas cintas de este tamaño se necesitan para tener más de ${wholeInches * 3} pulgadas?`,
+                    en: `A ribbon measures ${measurement} inches. How many ribbons of this size are needed to have more than ${wholeInches * 3} inches?`
+                },
+                options: shuffle([
+                    { text: '3', correct: true },
+                    { text: '2', correct: false },
+                    { text: '4', correct: false },
+                    { text: '5', correct: false }
+                ]),
+                explanation: {
+                    es: `${measurement} × 3 = más de ${wholeInches * 3} pulgadas`,
+                    en: `${measurement} × 3 = more than ${wholeInches * 3} inches`
+                }
+            };
+        }
+
+        function generateFractionIdentifyQuestion() {
+            const fractions = [
+                { name: '1/2', marks: 'middle mark between inches' },
+                { name: '1/4', marks: '4 equal parts per inch' },
+                { name: '1/8', marks: 'smallest marks (8 per inch)' }
+            ];
+            const frac = fractions[Math.floor(Math.random() * fractions.length)];
+
+            return {
+                category: { es: 'Lectura de Regla', en: 'Reading a Ruler' },
+                question: {
+                    es: `En una regla, ¿qué marcas representan ${frac.name} de pulgada?`,
+                    en: `On a ruler, which marks represent ${frac.name} inch?`
+                },
+                options: shuffle([
+                    { text: frac.marks, correct: true },
+                    { text: 'the longest marks only', correct: false },
+                    { text: 'every other mark', correct: false },
+                    { text: 'the numbered marks', correct: false }
+                ]),
+                explanation: {
+                    es: `Las marcas de ${frac.name}" son ${frac.marks}.`,
+                    en: `${frac.name}" marks are ${frac.marks}.`
+                }
+            };
+        }
+
+        function generateHoursToMinutesQuestion() {
+            const fractions = [
+                { display: '1/4', value: 0.25, minutes: 15 },
+                { display: '1/2', value: 0.5, minutes: 30 },
+                { display: '3/4', value: 0.75, minutes: 45 }
+            ];
+            const hours = Math.floor(Math.random() * 3) + 1;
+            const frac = fractions[Math.floor(Math.random() * fractions.length)];
+            const totalMinutes = hours * 60 + frac.minutes;
+
+            return {
+                category: { es: 'Conversión de Tiempo', en: 'Time Conversion' },
+                question: {
+                    es: `¿Cuántos minutos hay en ${hours} ${frac.display} horas?`,
+                    en: `How many minutes are in ${hours} ${frac.display} hours?`
+                },
+                options: shuffle([
+                    { text: totalMinutes + ' minutos/minutes', correct: true },
+                    { text: (totalMinutes + 15) + ' minutos/minutes', correct: false },
+                    { text: (totalMinutes - 15) + ' minutos/minutes', correct: false },
+                    { text: (hours * 60) + ' minutos/minutes', correct: false }
+                ]),
+                explanation: {
+                    es: `${hours} h = ${hours * 60} min, ${frac.display} h = ${frac.minutes} min. Total: ${totalMinutes} min`,
+                    en: `${hours} h = ${hours * 60} min, ${frac.display} h = ${frac.minutes} min. Total: ${totalMinutes} min`
+                }
+            };
+        }
+
+        function generateAllQuestions() {
+            const generators = [
+                generateConversionQuestion,
+                generateConversionQuestion,
+                generateDistanceComparisonQuestion,
+                generateDistanceComparisonQuestion,
+                generateWeightCapacityQuestion,
+                generateRemainingCapacityQuestion,
+                generateTimeAdditionQuestion,
+                generateTimeAdditionQuestion,
+                generateTimeBackwardsQuestion,
+                generateTimeBackwardsQuestion,
+                generateMassEstimationQuestion,
+                generateMassEstimationQuestion,
+                generateLinePlotReadingQuestion,
+                generateLinePlotDifferenceQuestion,
+                generateBarGraphQuestion,
+                generateBarGraphQuestion,
+                generateFractionalMeasurementQuestion,
+                generateFractionIdentifyQuestion,
+                generateHoursToMinutesQuestion,
+                generateHoursToMinutesQuestion
+            ];
+            return shuffle(generators.map(gen => gen()));
+        }
+
+        function shuffle(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            showTranslations = (lang === 'es');
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.lang-btn[onclick="setLanguage('${lang}')"]`).classList.add('active');
+            updateUIText();
+            if (questions.length > 0 && currentQuestion < questions.length) {
+                renderQuestion();
+            }
+            renderFlashcards();
+        }
+
+        function updateUIText() {
+            const t = uiText[currentLang];
+            document.getElementById('quizTitle').textContent = t.title;
+            document.getElementById('quizSubtitle').textContent = t.subtitle;
+            document.getElementById('flashcardTitle').textContent = t.flashcardTitle;
+            document.getElementById('startBtn').textContent = t.startBtn;
+            document.getElementById('submitBtn').textContent = t.submitBtn;
+            document.getElementById('nextBtn').textContent = t.nextBtn;
+            document.getElementById('resultsTitle').textContent = t.resultsTitle;
+            document.getElementById('scoreLabel').textContent = t.scoreLabel;
+            document.getElementById('reviewTitle').textContent = t.reviewTitle;
+            document.getElementById('restartBtn').textContent = t.restartBtn;
+            if (questions.length > 0) {
+                document.getElementById('progressText').textContent = t.questionOf
+                    .replace('{current}', currentQuestion + 1)
+                    .replace('{total}', questions.length);
+            }
+        }
+
+        function renderFlashcards() {
+            const grid = document.getElementById('flashcardGrid');
+            grid.innerHTML = flashcards.map((card, i) => `
+                <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">${card.front}</div>
+                        <div class="flashcard-back">${card.back}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function startQuiz() {
+            questions = generateAllQuestions();
+            currentQuestion = 0;
+            score = 0;
+            missedQuestions = [];
+            
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('quizScreen').classList.remove('hidden');
+            
+            renderQuestion();
+            startTimer();
+        }
+
+        function startTimer() {
+            timeLeft = 60;
+            updateTimerDisplay();
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    autoSubmit();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const timer = document.getElementById('timer');
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            timer.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+            timer.classList.toggle('warning', timeLeft <= 10);
+        }
+
+        function autoSubmit() {
+            if (selectedOption === null) {
+                selectedOption = -1;
+            }
+            submitAnswer();
+        }
+
+        function renderQuestion() {
+            const q = questions[currentQuestion];
+            
+            document.getElementById('progressBar').style.width = ((currentQuestion + 1) / questions.length * 100) + '%';
+            document.getElementById('progressText').textContent = uiText[currentLang].questionOf
+                .replace('{current}', currentQuestion + 1)
+                .replace('{total}', questions.length);
+            
+            document.getElementById('categoryBadge').textContent = q.category[currentLang];
+            document.getElementById('questionText').innerHTML = q.question[currentLang];
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = q.options.map((opt, i) => `
+                <div class="option" onclick="selectOption(${i})">${opt.text}</div>
+            `).join('');
+            
+            selectedOption = null;
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').classList.remove('hidden');
+            document.getElementById('nextBtn').classList.add('hidden');
+            document.getElementById('feedback').classList.add('hidden');
+        }
+
+        function selectOption(index) {
+            const options = document.querySelectorAll('.option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            options[index].classList.add('selected');
+            selectedOption = index;
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        function submitAnswer() {
+            clearInterval(timerInterval);
+            
+            const q = questions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            const correctIndex = q.options.findIndex(opt => opt.correct);
+            const isCorrect = selectedOption === correctIndex;
+            
+            options.forEach((opt, i) => {
+                opt.style.pointerEvents = 'none';
+                if (i === correctIndex) opt.classList.add('correct');
+                if (i === selectedOption && !isCorrect) opt.classList.add('incorrect');
+            });
+            
+            if (isCorrect) {
+                score++;
+            } else {
+                missedQuestions.push({
+                    question: q.question[currentLang],
+                    yourAnswer: selectedOption >= 0 ? q.options[selectedOption]?.text || 'No answer' : 'Time ran out',
+                    correctAnswer: q.options[correctIndex].text,
+                    explanation: q.explanation[currentLang]
+                });
+            }
+            
+            const feedback = document.getElementById('feedback');
+            const feedbackTitle = document.getElementById('feedbackTitle');
+            const feedbackText = document.getElementById('feedbackText');
+            
+            feedback.classList.remove('hidden', 'correct', 'incorrect');
+            feedback.classList.add(isCorrect ? 'correct' : 'incorrect');
+            feedbackTitle.textContent = isCorrect ? uiText[currentLang].correct : uiText[currentLang].incorrect;
+            feedbackText.textContent = q.explanation[currentLang];
+            
+            document.getElementById('submitBtn').classList.add('hidden');
+            document.getElementById('nextBtn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion >= questions.length) {
+                showResults();
+            } else {
+                renderQuestion();
+                startTimer();
+            }
+        }
+
+        function showResults() {
+            clearInterval(timerInterval);
+            
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('resultsScreen').classList.remove('hidden');
+            document.getElementById('resultsScreen').style.display = 'block';
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            document.getElementById('finalScore').textContent = percentage + '%';
+            
+            const messages = {
+                es: percentage >= 80 ? '¡Excelente trabajo!' : percentage >= 60 ? '¡Buen esfuerzo!' : 'Sigue practicando',
+                en: percentage >= 80 ? 'Excellent work!' : percentage >= 60 ? 'Good effort!' : 'Keep practicing'
+            };
+            document.getElementById('scoreMessage').textContent = messages[currentLang];
+            
+            const reviewSection = document.getElementById('reviewSection');
+            const missedContainer = document.getElementById('missedQuestions');
+            
+            if (missedQuestions.length > 0) {
+                reviewSection.classList.remove('hidden');
+                missedContainer.innerHTML = missedQuestions.map(m => `
+                    <div class="missed-item">
+                        <div class="q">${m.question}</div>
+                        <div class="your-answer">${uiText[currentLang].yourAnswer}${m.yourAnswer}</div>
+                        <div class="correct-answer">${uiText[currentLang].correctAnswer}${m.correctAnswer}</div>
+                        <div style="margin-top: 8px; color: #666; font-size: 0.9rem;">${m.explanation}</div>
+                    </div>
+                `).join('');
+            } else {
+                reviewSection.classList.add('hidden');
+            }
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            selectedOption = null;
+            missedQuestions = [];
+            
+            document.getElementById('resultsScreen').classList.add('hidden');
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderFlashcards();
+            updateUIText();
+        });
+    </script>
+</body>
+</html>

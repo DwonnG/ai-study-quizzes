@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solutions & Solubility Quiz | Chemistry</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .hidden { display: none !important; }
+
+        .quiz-container {
+            background: #fafafa;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            border-top: 4px solid #2d4a5e;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px 15px;
+            border: none;
+            background: #f1f5f9;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+        .tab-btn:hover {
+            background: #e2e8f0;
+            color: #334155;
+        }
+        .tab-btn.active {
+            background: #2d4a5e;
+            color: white;
+        }
+
+        /* Flashcard Styles */
+        .flashcard-section {
+            margin-bottom: 25px;
+        }
+
+        .flashcard-section h3 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .flashcard-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        
+        @media (max-width: 800px) {
+            .flashcard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .flashcard {
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .flashcard:hover .flashcard-inner {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 140px;
+            transition: transform 0.6s, box-shadow 0.3s;
+            transform-style: preserve-3d;
+            border-radius: 8px;
+        }
+
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            text-align: center;
+            font-size: 0.75rem;
+            line-height: 1.4;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .flashcard-front {
+            background: #2d4a5e;
+            color: #e2e8f0;
+            font-weight: bold;
+            border: 2px solid #3d5a6e;
+        }
+
+        .flashcard-back {
+            background: #f1f5f9;
+            color: #334155;
+            transform: rotateY(180deg);
+            border: 2px solid #94a3b8;
+            text-align: left;
+            align-items: flex-start;
+            padding-top: 15px;
+        }
+
+        /* Quiz Styles */
+        .progress {
+            background: #ecf0f1;
+            border-radius: 10px;
+            height: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #2d4a5e;
+            transition: width 0.4s;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: #f1f5f9;
+            border: 1px solid #94a3b8;
+            color: #475569;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
+
+        .question {
+            font-size: 1.15rem;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            padding: 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .option:hover {
+            border-color: #2d4a5e;
+            background: #f1f5f9;
+        }
+
+        .option.selected {
+            border-color: #2d4a5e;
+            background: #e2e8f0;
+        }
+
+        .option.correct {
+            border-color: #16a34a;
+            background: #dcfce7;
+        }
+
+        .option.incorrect {
+            border-color: #dc2626;
+            background: #fee2e2;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .btn-submit {
+            background: #2d4a5e;
+            color: white;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(45, 74, 94, 0.4);
+            background: #3d5a6e;
+        }
+
+        .btn-submit:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .btn-next {
+            background: #2d4a5e;
+            color: white;
+        }
+
+        .feedback {
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+
+        .feedback.correct {
+            background: #dcfce7;
+            border: 2px solid #16a34a;
+        }
+
+        .feedback.incorrect {
+            background: #fee2e2;
+            border: 2px solid #dc2626;
+        }
+
+        .feedback h3 { margin-bottom: 8px; }
+        .feedback.correct h3 { color: #166534; }
+        .feedback.incorrect h3 { color: #991b1b; }
+
+        /* Results */
+        .results-container {
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: #2d4a5e;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            color: white;
+        }
+
+        .score-circle .score { font-size: 2.5rem; font-weight: bold; }
+        .score-circle .label { font-size: 0.9rem; opacity: 0.9; }
+
+        .btn-restart {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            color: white;
+            font-size: 0.9rem;
+            padding: 12px 25px;
+        }
+
+        .restart-separator {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px dashed #ccc;
+        }
+
+        /* Review Section */
+        .review-section {
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .review-section h3 {
+            color: #2d4a5e;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .review-progress {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .review-question {
+            font-size: 1.05rem;
+            color: #334155;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .review-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .review-option {
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .review-option:hover {
+            border-color: #2d4a5e;
+            background: #e2e8f0;
+        }
+
+        .review-option.selected {
+            border-color: #2d4a5e;
+            background: #e2e8f0;
+        }
+
+        .review-option.correct {
+            border-color: #16a34a;
+            background: #dcfce7;
+        }
+
+        .review-option.incorrect {
+            border-color: #dc2626;
+            background: #fee2e2;
+        }
+
+        .review-option.reveal-correct {
+            border-color: #16a34a;
+            background: #dcfce7;
+            animation: glow 0.5s ease-in-out;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px #16a34a; }
+            50% { box-shadow: 0 0 20px #16a34a; }
+        }
+
+        .review-feedback {
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .review-feedback.correct {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .review-feedback.incorrect {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .review-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .review-btn-check {
+            background: #2d4a5e;
+            color: white;
+        }
+
+        .review-btn-next {
+            background: #2d4a5e;
+            color: white;
+        }
+
+        .review-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .review-score {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .review-score h4 {
+            color: #334155;
+            margin-bottom: 10px;
+        }
+
+        .review-score p {
+            color: #64748b;
+        }
+
+        /* Streak Counter */
+        .streak-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 10px 0;
+            padding: 8px 16px;
+            background: #f1f5f9;
+            border-radius: 20px;
+            border: 2px solid #94a3b8;
+        }
+        .streak-fire {
+            font-size: 1.5rem;
+        }
+        .streak-count {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #334155;
+        }
+        .streak-label {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        .streak-container.hot {
+            background: #2d4a5e;
+            border-color: #2d4a5e;
+        }
+        .streak-container.hot .streak-count,
+        .streak-container.hot .streak-label {
+            color: white;
+        }
+
+        @media (max-width: 500px) {
+            .quiz-container { padding: 20px; }
+            .header h1 { font-size: 1.3rem; }
+            .question { font-size: 1rem; }
+            .flashcard-grid { grid-template-columns: repeat(2, 1fr); }
+            .flashcard-inner { height: 100px; }
+        }
+
+        /* Fill in blank */
+        .fill-blank {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        .blank-space {
+            display: inline-block;
+            min-width: 120px;
+            border-bottom: 3px solid #2d4a5e;
+            margin: 0 5px;
+            text-align: center;
+        }
+
+        /* Quiz Graph (for graph reading questions) */
+        .quiz-graph-container {
+            background: white;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #e2e8f0;
+            max-height: 300px;
+        }
+        .quiz-graph-container canvas {
+            max-height: 280px;
+        }
+
+        /* Solubility Graph Section */
+        .graph-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+        }
+        .graph-section h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .graph-instructions {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+        .graph-container {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .graph-legend {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #475569;
+        }
+        .graph-legend p {
+            margin-bottom: 8px;
+        }
+        .graph-legend p:last-child {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <!-- Flashcards Screen -->
+        <div id="flashcardsScreen">
+            <div class="header">
+                <h1>Solutions & Solubility</h1>
+                <p>Chemistry Test Review</p>
+            </div>
+            
+            <div class="flashcard-section">
+                <h3>Study Cards - Click to flip!</h3>
+                <div class="flashcard-grid" id="flashcardGrid"></div>
+            </div>
+
+            <div class="graph-section">
+                <h3>Solubility Curves - Practice Reading the Graph!</h3>
+                <p class="graph-instructions">Use this graph to answer questions about solubility at different temperatures.</p>
+                <div class="graph-container">
+                    <canvas id="solubilityChart"></canvas>
+                </div>
+                <div class="graph-legend">
+                    <p><strong>How to read:</strong> Find the temperature on the x-axis, go up to the curve, then read across to the y-axis for grams per 100g water.</p>
+                    <p><strong>Remember:</strong> ON the line = saturated | BELOW = unsaturated | ABOVE = supersaturated</p>
+                </div>
+            </div>
+
+            <button class="btn btn-submit" onclick="startQuiz()">Start Quiz</button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quizScreen" class="hidden">
+            <div class="progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">Question 1 of 20</div>
+
+            <div class="streak-container hidden" id="streakContainer">
+                <span class="streak-fire">🔥</span>
+                <span class="streak-count" id="streakCount">0</span>
+                <span class="streak-label">in a row!</span>
+            </div>
+
+            <div id="questionArea">
+                <div class="category-badge" id="categoryBadge">Vocabulary</div>
+                
+                <!-- Graph for Graph Reading questions -->
+                <div class="quiz-graph-container hidden" id="quizGraphContainer">
+                    <canvas id="quizSolubilityChart"></canvas>
+                </div>
+                
+                <div class="question" id="questionText"></div>
+                <div class="options" id="optionsContainer"></div>
+            </div>
+
+            <button class="btn btn-submit" id="submitBtn" onclick="submitAnswer()" disabled>Submit Answer</button>
+            <button class="btn btn-next hidden" id="nextBtn" onclick="nextQuestion()">Next Question →</button>
+
+            <div class="feedback hidden" id="feedback">
+                <h3 id="feedbackTitle"></h3>
+                <p id="feedbackText"></p>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="hidden">
+            <div class="results-container">
+                <h2>Quiz Complete!</h2>
+                <div class="score-circle">
+                    <span class="score" id="finalScore">0%</span>
+                    <span class="label">Score</span>
+                </div>
+                <p id="scoreMessage"></p>
+                
+                <div class="review-section hidden" id="reviewSection">
+                    <h3>Let's Practice the Missed Questions!</h3>
+                    <div class="review-progress" id="reviewProgress">Question 1 of 3</div>
+                    <div class="review-question" id="reviewQuestion"></div>
+                    <div class="review-options" id="reviewOptions"></div>
+                    <div class="review-feedback hidden" id="reviewFeedback"></div>
+                    <button class="review-btn review-btn-check" id="reviewCheckBtn" onclick="checkReviewAnswer()" disabled>Check Answer</button>
+                    <button class="review-btn review-btn-next hidden" id="reviewNextBtn" onclick="nextReviewQuestion()">Next Question →</button>
+                    <div class="review-score hidden" id="reviewScore">
+                        <h4>Review Complete!</h4>
+                        <p id="reviewScoreText"></p>
+                    </div>
+                </div>
+                
+                <div class="restart-separator">
+                    <p>Want to try again?</p>
+                    <button class="btn btn-restart" onclick="restartQuiz()">Restart Quiz</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Flashcards Data
+        const flashcards = [
+            // Basic Vocabulary
+            { front: 'Solution', back: 'A homogeneous mixture of two or more substances' },
+            { front: 'Solute', back: 'The substance that gets dissolved (usually the smaller amount)' },
+            { front: 'Solvent', back: 'The substance that does the dissolving (usually the larger amount)' },
+            { front: 'Dissolving', back: 'The process of a solute mixing evenly into a solvent' },
+            { front: 'Dissociation', back: 'When ionic compounds break apart into ions when dissolved' },
+            { front: 'Solvation', back: 'When solvent molecules surround solute particles' },
+            { front: 'Molarity (M)', back: 'Concentration measured as moles of solute per liter of solution' },
+            { front: 'Saturated', back: 'A solution that contains the maximum amount of dissolved solute' },
+            { front: 'Unsaturated', back: 'A solution that can still dissolve more solute' },
+            { front: 'Supersaturated', back: 'A solution containing MORE solute than it normally could hold' },
+            { front: 'Solubility', back: 'The maximum amount of solute that can dissolve in a solvent at a given temperature' },
+            { front: 'Aqueous Solution', back: 'A solution where water is the solvent' },
+            // Factors & Concepts
+            { front: '4 Factors Affecting Dissolving Rate', back: '1. Temperature\n2. Surface area\n3. Stirring/Agitation\n4. Nature of solute & solvent' },
+            { front: 'Temperature Effect', back: 'Higher temperature = faster dissolving (for most solids)' },
+            { front: 'Surface Area Effect', back: 'More surface area = faster dissolving (crush it up!)' },
+            { front: '"Like Dissolves Like"', back: 'Polar solvents dissolve polar solutes; nonpolar dissolves nonpolar' },
+            { front: 'Colligative Properties', back: 'Properties that depend on NUMBER of particles, not type' },
+            { front: 'Boiling Point Elevation', back: 'Adding solute RAISES the boiling point' },
+            { front: 'Freezing Point Depression', back: 'Adding solute LOWERS the freezing point' },
+            // Dissociation & Solvation
+            { front: 'Dissociation', back: 'Ionic compounds break into IONS in water\nNaCl → Na⁺ + Cl⁻\nCaCl₂ → Ca²⁺ + 2Cl⁻' },
+            { front: 'Solvation', back: 'Solvent molecules surround solute particles\nCovalent compounds ONLY go through solvation\n(they don\'t break into ions)' },
+            { front: 'Electrolyte', back: 'A substance that conducts electricity when dissolved\nIonic compounds are electrolytes (they make ions!)' },
+            { front: 'Non-electrolyte', back: 'A substance that does NOT conduct electricity when dissolved\nCovalent compounds like sugar are non-electrolytes' },
+            { front: 'Counting Particles (Colligative)', back: 'More particles = bigger effect on BP/FP\nNaCl → 2 particles (Na⁺ + Cl⁻)\nCaCl₂ → 3 particles (Ca²⁺ + 2Cl⁻)\nAlF₃ → 4 particles (Al³⁺ + 3F⁻)' },
+            // Calculation Formulas
+            { front: 'Molarity Formula', back: 'M = moles of solute ÷ liters of solution\n\nRemember: Moles over Liters!' },
+            { front: 'Grams to Moles', back: 'moles = grams ÷ molar mass\n\nAlways convert grams to moles first!' },
+            { front: 'Molarity Calculation Steps', back: '1. Convert grams → moles (g ÷ molar mass)\n2. Divide moles by liters\n3. Answer is in M (mol/L)' },
+            // Solubility Curves
+            { front: 'Reading Solubility Curves', back: 'X-axis: Temperature\nY-axis: Grams solute per 100g water\nON line = saturated\nBELOW = unsaturated\nABOVE = supersaturated' },
+            { front: 'Solubility & Temperature (Solids)', back: 'Most solids: solubility INCREASES with temperature\n(Steep upward curve)' },
+            { front: 'Solubility & Temperature (Gases)', back: 'Gases: solubility DECREASES with temperature\n(Why warm soda goes flat!)' },
+        ];
+
+        // Question Bank
+        const questionBank = [
+            // Vocabulary
+            {
+                category: 'Vocabulary',
+                question: 'What is the substance that gets dissolved in a solution?',
+                options: ['Solvent', 'Solute', 'Solution', 'Mixture'],
+                correct: 1,
+                explanation: 'The solute is the substance that gets dissolved. Think of it as the smaller amount that disappears into the solvent.'
+            },
+            {
+                category: 'Vocabulary',
+                question: 'What is the substance that does the dissolving?',
+                options: ['Solute', 'Mixture', 'Solvent', 'Product'],
+                correct: 2,
+                explanation: 'The solvent is what does the dissolving - it\'s usually the larger amount. Water is called the "universal solvent."'
+            },
+            {
+                category: 'Vocabulary',
+                question: 'What is a homogeneous mixture of two or more substances called?',
+                options: ['Compound', 'Element', 'Solution', 'Suspension'],
+                correct: 2,
+                explanation: 'A solution is a homogeneous (evenly mixed) mixture. You can\'t see the separate parts.'
+            },
+            {
+                category: 'Vocabulary',
+                question: 'What is molarity?',
+                options: ['Grams per liter', 'Moles of solute per liter of solution', 'Liters per mole', 'Mass divided by volume'],
+                correct: 1,
+                explanation: 'Molarity (M) = moles of solute ÷ liters of solution. It tells us the concentration.'
+            },
+            {
+                category: 'Vocabulary',
+                question: 'When ionic compounds break apart into ions in water, this is called:',
+                options: ['Solvation', 'Evaporation', 'Dissociation', 'Condensation'],
+                correct: 2,
+                explanation: 'Dissociation is when ionic compounds (like NaCl) split into their ions (Na⁺ and Cl⁻) in water.'
+            },
+            {
+                category: 'Vocabulary',
+                question: 'A solution that contains the MAXIMUM amount of dissolved solute is:',
+                options: ['Unsaturated', 'Supersaturated', 'Dilute', 'Saturated'],
+                correct: 3,
+                explanation: 'A saturated solution has dissolved all the solute it can at that temperature - it\'s "full."'
+            },
+            {
+                category: 'Vocabulary',
+                question: 'A solution that can still dissolve MORE solute is:',
+                options: ['Saturated', 'Supersaturated', 'Unsaturated', 'Concentrated'],
+                correct: 2,
+                explanation: 'Unsaturated means there\'s still room for more solute to dissolve.'
+            },
+            {
+                category: 'Vocabulary',
+                question: 'A solution containing MORE solute than it should normally hold is:',
+                options: ['Saturated', 'Unsaturated', 'Supersaturated', 'Dilute'],
+                correct: 2,
+                explanation: 'Supersaturated solutions are unstable - they have more dissolved than normal. Adding a seed crystal can cause it to crystallize out!'
+            },
+            {
+                category: 'Vocabulary',
+                question: 'An aqueous solution uses what as the solvent?',
+                options: ['Alcohol', 'Oil', 'Water', 'Acid'],
+                correct: 2,
+                explanation: 'Aqueous means water-based. "Aqua" means water in Latin.'
+            },
+            // Factors Affecting Dissolving
+            {
+                category: 'Factors',
+                question: 'Which of these will make sugar dissolve FASTER in water?',
+                options: ['Using cold water', 'Using a big sugar cube', 'Heating the water', 'Letting it sit still'],
+                correct: 2,
+                explanation: 'Higher temperature makes particles move faster, so dissolving happens faster!'
+            },
+            {
+                category: 'Factors',
+                question: 'Crushing a solid into smaller pieces affects dissolving by:',
+                options: ['Decreasing temperature', 'Increasing surface area', 'Decreasing surface area', 'Changing the solvent'],
+                correct: 1,
+                explanation: 'Crushing increases surface area - more of the solid is exposed to the solvent, so it dissolves faster.'
+            },
+            {
+                category: 'Factors',
+                question: 'Stirring a solution helps dissolving because it:',
+                options: ['Heats up the solution', 'Brings fresh solvent to the solute', 'Decreases surface area', 'Changes the solute'],
+                correct: 1,
+                explanation: 'Stirring (agitation) moves saturated solvent away and brings fresh solvent in contact with the solute.'
+            },
+            {
+                category: 'Factors',
+                question: 'What are the 4 factors that affect how fast something dissolves?',
+                options: ['Size, color, shape, smell', 'Temperature, surface area, stirring, nature of substances', 'Heat, light, sound, pressure', 'Mass, volume, density, weight'],
+                correct: 1,
+                explanation: 'The 4 factors are: Temperature, Surface Area, Stirring/Agitation, and Nature of Solute & Solvent.'
+            },
+            {
+                category: 'Factors',
+                question: '"Like dissolves like" means:',
+                options: ['Hot things dissolve hot things', 'Polar dissolves polar, nonpolar dissolves nonpolar', 'Solids dissolve solids', 'Big dissolves big'],
+                correct: 1,
+                explanation: 'Polar solvents (like water) dissolve polar solutes. Nonpolar solvents (like oil) dissolve nonpolar solutes.'
+            },
+            {
+                category: 'Factors',
+                question: 'Why doesn\'t oil dissolve in water?',
+                options: ['Oil is too heavy', 'Water is polar, oil is nonpolar', 'Oil is a solid', 'Water is too cold'],
+                correct: 1,
+                explanation: 'Water is polar and oil is nonpolar - they don\'t mix because "like dissolves like."'
+            },
+            // Colligative Properties
+            {
+                category: 'Colligative Properties',
+                question: 'What happens to the boiling point when you add salt to water?',
+                options: ['It decreases', 'It stays the same', 'It increases', 'It disappears'],
+                correct: 2,
+                explanation: 'Adding solute causes boiling point ELEVATION - the water needs to get hotter to boil.'
+            },
+            {
+                category: 'Colligative Properties',
+                question: 'What happens to the freezing point when you add salt to water?',
+                options: ['It increases', 'It decreases', 'It stays the same', 'It doubles'],
+                correct: 1,
+                explanation: 'Adding solute causes freezing point DEPRESSION - that\'s why we put salt on icy roads!'
+            },
+            {
+                category: 'Colligative Properties',
+                question: 'Colligative properties depend on:',
+                options: ['The type of solute particles', 'The color of the solution', 'The NUMBER of solute particles', 'The shape of the container'],
+                correct: 2,
+                explanation: 'Colligative properties only care about HOW MANY particles, not what kind they are.'
+            },
+            {
+                category: 'Colligative Properties',
+                question: 'Why do we put salt on icy roads in winter?',
+                options: ['Salt melts into the ice', 'Salt lowers the freezing point of water', 'Salt makes ice warmer', 'Salt is slippery'],
+                correct: 1,
+                explanation: 'Salt causes freezing point depression - the ice melts at a lower temperature, so it turns to liquid.'
+            },
+            {
+                category: 'Colligative Properties',
+                question: 'Which would lower the freezing point of water MORE?',
+                options: ['0.1 M NaCl', '0.1 M AlF₃', 'They would be equal', '0.1 M glucose'],
+                correct: 1,
+                explanation: 'AlF₃ → Al³⁺ + 3F⁻ = 4 particles. NaCl → Na⁺ + Cl⁻ = 2 particles. More particles = bigger effect!'
+            },
+            {
+                category: 'Colligative Properties',
+                question: 'When NaCl dissolves in water, how many particles does each formula unit create?',
+                options: ['1 particle', '2 particles (Na⁺ and Cl⁻)', '3 particles', '0 particles'],
+                correct: 1,
+                explanation: 'NaCl dissociates into 2 ions: Na⁺ and Cl⁻. Each NaCl makes 2 particles.'
+            },
+            {
+                category: 'Colligative Properties',
+                question: 'When CaCl₂ dissolves in water, how many particles does each formula unit create?',
+                options: ['1 particle', '2 particles', '3 particles (Ca²⁺ and 2Cl⁻)', '4 particles'],
+                correct: 2,
+                explanation: 'CaCl₂ → Ca²⁺ + Cl⁻ + Cl⁻ = 3 total particles (1 calcium ion + 2 chloride ions).'
+            },
+            // Dissociation vs Solvation
+            {
+                category: 'Vocabulary',
+                question: 'When ionic compounds like NaCl break apart into ions in water, this process is called:',
+                options: ['Solvation', 'Dissociation', 'Evaporation', 'Dilution'],
+                correct: 1,
+                explanation: 'Dissociation is when ionic compounds split into their positive and negative ions.'
+            },
+            {
+                category: 'Vocabulary',
+                question: 'When solvent molecules surround solute particles (without breaking them apart), this is called:',
+                options: ['Dissociation', 'Solvation', 'Precipitation', 'Ionization'],
+                correct: 1,
+                explanation: 'Solvation is when solvent molecules surround the solute. Covalent compounds ONLY go through solvation.'
+            },
+            {
+                category: 'Vocabulary',
+                question: 'Glucose (C₆H₁₂O₆) is a covalent compound. When it dissolves in water, it goes through:',
+                options: ['Dissociation only', 'Solvation only', 'Both dissociation and solvation', 'Neither'],
+                correct: 1,
+                explanation: 'Covalent compounds don\'t break into ions - they only go through solvation (water molecules surround the glucose molecules).'
+            },
+            {
+                category: 'Vocabulary',
+                question: 'NaCl is an ionic compound. When it dissolves in water, it goes through:',
+                options: ['Solvation only', 'Dissociation (breaking into ions)', 'Neither', 'Evaporation'],
+                correct: 1,
+                explanation: 'Ionic compounds dissociate (break into ions) when dissolved. NaCl → Na⁺ + Cl⁻'
+            },
+            {
+                category: 'Vocabulary',
+                question: 'Which type of compound conducts electricity when dissolved in water?',
+                options: ['Covalent compounds (like sugar)', 'Ionic compounds (like NaCl)', 'Both equally', 'Neither'],
+                correct: 1,
+                explanation: 'Ionic compounds make ions when dissolved - ions carry electrical charge, so the solution conducts electricity. These are called electrolytes.'
+            },
+            {
+                category: 'Vocabulary',
+                question: 'Sugar dissolved in water does NOT conduct electricity because:',
+                options: ['Sugar is too sweet', 'Sugar molecules don\'t break into ions', 'Sugar is heavier than water', 'Water blocks the electricity'],
+                correct: 1,
+                explanation: 'Sugar is covalent - it dissolves through solvation but doesn\'t create ions. No ions = no electrical conduction (non-electrolyte).'
+            },
+            {
+                category: 'Vocabulary',
+                question: 'What is the dissociation equation for CaCl₂ dissolving in water?',
+                options: ['CaCl₂ → Ca + Cl₂', 'CaCl₂ → Ca²⁺ + 2Cl⁻', 'CaCl₂ → Ca²⁺ + Cl⁻', 'CaCl₂ → 2Ca⁺ + Cl⁻'],
+                correct: 1,
+                explanation: 'CaCl₂ has 1 calcium and 2 chlorines. It dissociates into Ca²⁺ + 2Cl⁻ (the charges must balance!).'
+            },
+            // Solubility Curves
+            {
+                category: 'Solubility Curves',
+                question: 'On a solubility curve, if a point is BELOW the line, the solution is:',
+                options: ['Saturated', 'Supersaturated', 'Unsaturated', 'Impossible'],
+                correct: 2,
+                explanation: 'Below the curve = unsaturated (can dissolve more). On the line = saturated. Above = supersaturated.'
+            },
+            {
+                category: 'Solubility Curves',
+                question: 'On a solubility curve, if a point is ON the line, the solution is:',
+                options: ['Unsaturated', 'Saturated', 'Supersaturated', 'Dilute'],
+                correct: 1,
+                explanation: 'A point ON the solubility curve means the solution is exactly saturated at that temperature.'
+            },
+            {
+                category: 'Solubility Curves',
+                question: 'On a solubility curve, if a point is ABOVE the line, the solution is:',
+                options: ['Unsaturated', 'Saturated', 'Supersaturated', 'Impossible under normal conditions'],
+                correct: 2,
+                explanation: 'Above the curve = supersaturated. This is unstable and the extra solute may crystallize out.'
+            },
+            {
+                category: 'Solubility Curves',
+                question: 'For most solid solutes, as temperature increases, solubility:',
+                options: ['Decreases', 'Stays the same', 'Increases', 'Becomes zero'],
+                correct: 2,
+                explanation: 'Most solid solutes dissolve better in warmer solvents - that\'s why you heat water to dissolve more sugar.'
+            },
+            {
+                category: 'Solubility Curves',
+                question: 'For gases dissolved in liquids, as temperature increases, solubility:',
+                options: ['Increases', 'Decreases', 'Stays the same', 'Doubles'],
+                correct: 1,
+                explanation: 'Gases are opposite! Hot soda goes flat because CO₂ escapes more easily from warm liquid.'
+            },
+            // Calculations
+            {
+                category: 'Calculations',
+                question: 'The formula for molarity is:',
+                options: ['M = grams × liters', 'M = moles of solute ÷ liters of solution', 'M = liters ÷ moles', 'M = mass × volume'],
+                correct: 1,
+                explanation: 'Molarity (M) = moles of solute ÷ liters of solution. Remember: Moles over Liters!'
+            },
+            {
+                category: 'Calculations',
+                question: 'If you have 2 moles of NaCl in 4 liters of solution, what is the molarity?',
+                options: ['8 M', '2 M', '0.5 M', '6 M'],
+                correct: 2,
+                explanation: 'M = moles ÷ liters = 2 ÷ 4 = 0.5 M'
+            },
+            {
+                category: 'Calculations',
+                question: 'A 2.0 M solution means there are:',
+                options: ['2 grams per liter', '2 moles of solute per liter', '2 liters of solution', '2 moles total'],
+                correct: 1,
+                explanation: '2.0 M means 2 moles of solute dissolved in every 1 liter of solution.'
+            },
+            // Real World
+            {
+                category: 'Real World',
+                question: 'Which is an example of a solution?',
+                options: ['Sand and water', 'Oil and water', 'Salt water', 'Salad'],
+                correct: 2,
+                explanation: 'Salt water is a solution - the salt (solute) is completely dissolved in water (solvent).'
+            },
+            {
+                category: 'Real World',
+                question: 'In salt water, what is the solute?',
+                options: ['Water', 'Salt', 'Both', 'Neither'],
+                correct: 1,
+                explanation: 'Salt is the solute (it gets dissolved). Water is the solvent (it does the dissolving).'
+            },
+            {
+                category: 'Real World',
+                question: 'Why does a warm soda go flat faster than a cold one?',
+                options: ['Warm soda is heavier', 'Gases are less soluble in warm liquids', 'The can expands', 'Sugar dissolves faster'],
+                correct: 1,
+                explanation: 'Gas solubility DECREASES with temperature. Warm soda can\'t hold as much CO₂, so it escapes.'
+            },
+            {
+                category: 'Real World',
+                question: 'Why can 50 mL of hot tea hold more sugar than 50 mL of cold tea?',
+                options: ['Hot tea is lighter', 'Solid solubility INCREASES with temperature', 'Cold tea already has sugar', 'Hot tea has more water'],
+                correct: 1,
+                explanation: 'For most solids, solubility increases with temperature. Hot tea can dissolve more sugar before becoming saturated.'
+            },
+            {
+                category: 'Real World',
+                question: 'Why doesn\'t vegetable oil dissolve in water?',
+                options: ['Oil is too heavy', 'Oil is nonpolar and water is polar', 'Oil is a solid', 'Water is too hot'],
+                correct: 1,
+                explanation: '"Like dissolves like" - water is polar and oil is nonpolar, so they don\'t mix.'
+            },
+            {
+                category: 'Real World',
+                question: 'Which would be an electrolyte when dissolved in water?',
+                options: ['Sugar (C₁₂H₂₂O₁₁)', 'NaCl (table salt)', 'Alcohol', 'Oil'],
+                correct: 1,
+                explanation: 'NaCl is ionic - it dissociates into Na⁺ and Cl⁻ ions, which conduct electricity. The others are covalent or don\'t dissolve.'
+            },
+            // Step-by-Step Molarity Calculations
+            {
+                category: 'Calculations',
+                question: 'To find molarity, what do you need to know? (Select the best answer)',
+                options: ['Only the grams of solute', 'Moles of solute AND liters of solution', 'Only the volume', 'The temperature'],
+                correct: 1,
+                explanation: 'Molarity = moles ÷ liters. You need BOTH the moles of solute and the liters of solution.'
+            },
+            {
+                category: 'Calculations',
+                question: 'If you have 72 grams of glucose (C₆H₁₂O₆) and its molar mass is 180 g/mol, how many MOLES do you have?',
+                options: ['180 moles', '72 moles', '0.4 moles', '252 moles'],
+                correct: 2,
+                explanation: 'Moles = grams ÷ molar mass = 72 ÷ 180 = 0.4 moles'
+            },
+            {
+                category: 'Calculations',
+                question: 'You have 0.6 moles of glucose in 3.0 L of solution. What is the molarity?',
+                options: ['1.8 M', '0.2 M', '5.0 M', '3.6 M'],
+                correct: 1,
+                explanation: 'M = moles ÷ liters = 0.6 ÷ 3.0 = 0.2 M'
+            },
+            {
+                category: 'Calculations',
+                question: 'FULL PROBLEM: 36g of glucose (C₆H₁₂O₆, molar mass = 180 g/mol) is dissolved in 1.0 L of water. What is the molarity?',
+                options: ['0.5 M', '0.2 M', '36 M', '0.36 M'],
+                correct: 1,
+                explanation: 'Step 1: moles = 36g ÷ 180g/mol = 0.2 mol. Step 2: M = 0.2 mol ÷ 1.0 L = 0.2 M'
+            },
+            {
+                category: 'Calculations',
+                question: 'What is the first step to calculate molarity when given grams of solute?',
+                options: ['Divide by liters', 'Convert grams to moles using molar mass', 'Multiply by volume', 'Add the molar mass'],
+                correct: 1,
+                explanation: 'First convert grams to moles: moles = grams ÷ molar mass. Then divide by liters.'
+            },
+            {
+                category: 'Calculations',
+                question: 'You dissolve 21.2g of LiCl (molar mass = 42.4 g/mol) in 2.5 L of water. What is the molarity?',
+                options: ['0.2 M', '0.5 M', '8.48 M', '53 M'],
+                correct: 0,
+                explanation: 'Moles = 21.2g ÷ 42.4g/mol = 0.5 mol. M = 0.5 mol ÷ 2.5 L = 0.2 M'
+            },
+            {
+                category: 'Calculations',
+                question: 'How many grams of CCl₄ (molar mass = 154 g/mol) are needed to make 10 L of a 0.5 M solution?',
+                options: ['770 g', '154 g', '77 g', '5 g'],
+                correct: 0,
+                explanation: 'Moles needed = M × L = 0.5 × 10 = 5 mol. Grams = moles × molar mass = 5 × 154 = 770 g'
+            },
+            {
+                category: 'Calculations',
+                question: 'A solution has 2.4 moles of solute in 1.2 liters. What is its molarity?',
+                options: ['2.88 M', '0.5 M', '2 M', '1.2 M'],
+                correct: 2,
+                explanation: 'M = moles ÷ liters = 2.4 ÷ 1.2 = 2 M'
+            },
+            {
+                category: 'Calculations',
+                question: 'How many moles are in a 1.5 M solution if you have 4 liters?',
+                options: ['0.375 moles', '2.67 moles', '6 moles', '5.5 moles'],
+                correct: 2,
+                explanation: 'Rearrange: moles = M × liters = 1.5 × 4 = 6 moles'
+            },
+            {
+                category: 'Calculations',
+                question: 'What volume is needed to make a 0.8 M solution using 4 moles of solute?',
+                options: ['3.2 L', '5 L', '0.2 L', '32 L'],
+                correct: 1,
+                explanation: 'Rearrange: liters = moles ÷ M = 4 ÷ 0.8 = 5 L'
+            },
+            {
+                category: 'Calculations',
+                question: 'What is the volume of a 2.0 M LiCl solution that contains 8.48g of LiCl (molar mass = 42.4 g/mol)?',
+                options: ['0.1 L', '0.2 L', '4.24 L', '16.96 L'],
+                correct: 0,
+                explanation: 'Step 1: moles = 8.48g ÷ 42.4g/mol = 0.2 mol. Step 2: V = moles ÷ M = 0.2 ÷ 2.0 = 0.1 L'
+            },
+            {
+                category: 'Calculations',
+                question: 'How would you correctly prepare 1 L of a 2 M MgSO₄ solution?',
+                options: ['Dissolve 2 moles in exactly 1 L of water', 'Dissolve 2 moles and add water until you reach the 1 L mark', 'Dissolve 1 mole in 2 L of water', 'Add 2 L of water to 1 mole'],
+                correct: 1,
+                explanation: 'The correct method is to dissolve the solute first, then add water until the total volume reaches 1 L (not dissolve IN 1 L of water).'
+            },
+            {
+                category: 'Calculations',
+                question: 'To find the VOLUME of solution when given molarity and grams, what formula do you use?',
+                options: ['V = M × grams', 'V = moles ÷ M (after converting grams to moles)', 'V = grams × M', 'V = M ÷ grams'],
+                correct: 1,
+                explanation: 'First convert grams to moles (g ÷ molar mass), then V = moles ÷ M'
+            },
+            // Solubility Curve Reading
+            {
+                category: 'Solubility Curves',
+                question: 'On a solubility graph, temperature is usually on which axis?',
+                options: ['Y-axis (vertical)', 'X-axis (horizontal)', 'Neither', 'Both'],
+                correct: 1,
+                explanation: 'Temperature is typically on the x-axis (horizontal), and grams of solute per 100g water is on the y-axis.'
+            },
+            {
+                category: 'Solubility Curves',
+                question: 'If the solubility of KNO₃ at 70°C is about 140g/100g water, what does this mean?',
+                options: ['You can only dissolve 70g', 'At 70°C, up to 140g of KNO₃ can dissolve in 100g of water', 'KNO₃ won\'t dissolve at 70°C', '140°C is needed'],
+                correct: 1,
+                explanation: 'Solubility tells you the MAXIMUM amount that can dissolve at that temperature.'
+            },
+            {
+                category: 'Solubility Curves',
+                question: 'At 55°C, NaNO₃ can dissolve about 110g in 100g water. You only have 80g dissolved. The solution is:',
+                options: ['Saturated', 'Supersaturated', 'Unsaturated', 'At equilibrium'],
+                correct: 2,
+                explanation: '80g is LESS than the max of 110g, so it\'s unsaturated - more can dissolve!'
+            },
+            {
+                category: 'Solubility Curves',
+                question: 'You have 60g of K₂Cr₂O₇ dissolved at 70°C where solubility is about 50g/100g water. The solution is:',
+                options: ['Unsaturated', 'Saturated', 'Supersaturated', 'Impossible'],
+                correct: 2,
+                explanation: '60g is MORE than the maximum of 50g - this is supersaturated (unstable!).'
+            },
+            {
+                category: 'Solubility Curves',
+                question: 'If you cool a saturated KNO₃ solution from 90°C to 30°C, what happens to the extra solute?',
+                options: ['It disappears', 'It crystallizes out (precipitates)', 'It stays dissolved', 'It evaporates'],
+                correct: 1,
+                explanation: 'When you cool a saturated solution, solubility decreases, so excess solute crystallizes out as solid crystals.'
+            },
+            {
+                category: 'Solubility Curves',
+                question: 'Looking at a solubility curve graph, which compound is LEAST affected by temperature changes?',
+                options: ['KNO₃ (steep curve)', 'NaCl (nearly flat curve)', 'K₂Cr₂O₇ (moderate curve)', 'All are equally affected'],
+                correct: 1,
+                explanation: 'NaCl has a nearly flat curve - its solubility stays around 35-40g whether hot or cold.'
+            },
+            {
+                category: 'Solubility Curves',
+                question: 'KNO₃ has a very steep solubility curve. This means:',
+                options: ['It doesn\'t dissolve well', 'Its solubility changes dramatically with temperature', 'Its solubility stays the same at all temperatures', 'It only dissolves in cold water'],
+                correct: 1,
+                explanation: 'KNO₃ dissolves much more in hot water than cold - from ~13g at 0°C to ~245g at 100°C!'
+            },
+            {
+                category: 'Solubility Curves',
+                question: 'At what temperature do KCl and KNO₃ have the same solubility (where their curves cross)?',
+                options: ['At 0°C', 'At about 25-30°C', 'At 100°C', 'They never have the same solubility'],
+                correct: 1,
+                explanation: 'Where curves intersect, both compounds have equal solubility at that temperature.'
+            },
+            {
+                category: 'Solubility Curves',
+                question: 'K₂Cr₂O₇ is cooled from 90°C to 50°C. Solubility drops from about 70g to 40g. How much precipitates from a solution with 60g dissolved?',
+                options: ['10g', '20g', '30g', '60g'],
+                correct: 1,
+                explanation: 'At 50°C only 40g can stay dissolved. 60g - 40g = 20g will precipitate out.'
+            },
+            {
+                category: 'Solubility Curves',
+                question: 'Why does KNO₃ dissolve so much more in hot water than cold water?',
+                options: ['Hot water is heavier', 'Higher temperature gives particles more energy to break apart and dissolve', 'KNO₃ melts at higher temperatures', 'Cold water repels KNO₃'],
+                correct: 1,
+                explanation: 'Higher temperature = more kinetic energy = particles can break apart and mix more easily.'
+            },
+            {
+                category: 'Solubility Curves',
+                question: 'At 30°C, about how many grams of KCl can dissolve in 100g of water?',
+                options: ['About 10g', 'About 35g', 'About 100g', 'About 200g'],
+                correct: 1,
+                explanation: 'KCl has moderate solubility - around 35-40g per 100g water at 30°C.'
+            },
+            {
+                category: 'Solubility Curves',
+                question: 'If you only have 50g of water instead of 100g, and solubility is 80g/100g water at 40°C, how much solute can dissolve?',
+                options: ['Still 80g', '40g (half)', '160g (double)', '25g'],
+                correct: 1,
+                explanation: 'Half the water = half the capacity. 80g/100g means 40g/50g water.'
+            },
+            // Graph-specific questions (reference the actual chart values)
+            {
+                category: 'Graph Reading',
+                question: 'According to the graph: What is the approximate solubility of KNO₃ at 60°C?',
+                options: ['About 45g', 'About 85g', 'About 110g', 'About 170g'],
+                correct: 2,
+                explanation: 'Reading the KNO₃ curve (red line) at 60°C, it shows approximately 110g per 100g water.'
+            },
+            {
+                category: 'Graph Reading',
+                question: 'According to the graph: At what temperature does KNO₃ have a solubility of about 85g/100g water?',
+                options: ['30°C', '50°C', '70°C', '90°C'],
+                correct: 1,
+                explanation: 'Looking at the KNO₃ curve where it reaches 85g, that corresponds to about 50°C.'
+            },
+            {
+                category: 'Graph Reading',
+                question: 'According to the graph: Which compound has the HIGHEST solubility at 100°C?',
+                options: ['NaCl', 'KCl', 'KNO₃', 'K₂Cr₂O₇'],
+                correct: 2,
+                explanation: 'At 100°C, KNO₃ reaches about 245g/100g water - much higher than the others!'
+            },
+            {
+                category: 'Graph Reading',
+                question: 'According to the graph: At approximately what temperature do KCl and KNO₃ curves intersect?',
+                options: ['About 20-25°C', 'About 50°C', 'About 75°C', 'They don\'t intersect'],
+                correct: 0,
+                explanation: 'The KCl and KNO₃ curves cross at approximately 20-25°C where both have similar solubility (~32-34g).'
+            },
+            {
+                category: 'Graph Reading',
+                question: 'According to the graph: What is the solubility of NaCl at 80°C?',
+                options: ['About 38g', 'About 51g', 'About 73g', 'About 169g'],
+                correct: 0,
+                explanation: 'NaCl has a nearly flat curve - its solubility stays around 38g even at high temperatures.'
+            },
+            {
+                category: 'Graph Reading',
+                question: 'According to the graph: You have 50g of K₂Cr₂O₇ in 100g of water at 60°C. Is this solution saturated, unsaturated, or supersaturated?',
+                options: ['Unsaturated (below the line)', 'Saturated (on the line)', 'Supersaturated (above the line)', 'Cannot determine'],
+                correct: 2,
+                explanation: 'At 60°C, K₂Cr₂O₇ solubility is about 46g. Having 50g means you\'re ABOVE the curve - supersaturated!'
+            },
+        ];
+
+        // State variables
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedAnswer = null;
+        let answered = false;
+        let streak = 0;
+        let selectedQuestions = [];
+        let missedQuestions = [];
+        let currentReviewQuestion = 0;
+        let reviewScore = 0;
+        let reviewSelectedAnswer = null;
+        let reviewAnswered = false;
+
+        // Render flashcards
+        function renderFlashcards() {
+            const grid = document.getElementById('flashcardGrid');
+            grid.innerHTML = flashcards.map((card, i) => `
+                <div class="flashcard" onclick="flipCard(this)">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">${card.front}</div>
+                        <div class="flashcard-back">${card.back.replace(/\n/g, '<br>')}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function flipCard(card) {
+            card.classList.toggle('flipped');
+        }
+
+        function startQuiz() {
+            const QUIZ_SIZE = 20;
+            
+            // Get all unique categories
+            const categories = [...new Set(questionBank.map(q => q.category))];
+            
+            // Group questions by category
+            const byCategory = {};
+            questionBank.forEach(q => {
+                if (!byCategory[q.category]) byCategory[q.category] = [];
+                byCategory[q.category].push(q);
+            });
+            
+            // Start with one random question from each category
+            let selected = [];
+            categories.forEach(cat => {
+                const pool = byCategory[cat];
+                if (pool && pool.length > 0) {
+                    const idx = Math.floor(Math.random() * pool.length);
+                    selected.push(pool[idx]);
+                    pool.splice(idx, 1); // Remove from pool
+                }
+            });
+            
+            // Flatten remaining questions and shuffle
+            let remaining = [];
+            Object.values(byCategory).forEach(arr => remaining.push(...arr));
+            remaining.sort(() => Math.random() - 0.5);
+            
+            // Fill up to QUIZ_SIZE
+            while (selected.length < QUIZ_SIZE && remaining.length > 0) {
+                selected.push(remaining.pop());
+            }
+            
+            // Final shuffle
+            selectedQuestions = selected.sort(() => Math.random() - 0.5);
+            
+            // Debug
+            console.log('Total questions in bank:', questionBank.length);
+            console.log('Categories found:', categories);
+            console.log('Quiz starting with', selectedQuestions.length, 'questions');
+            
+            currentQuestion = 0;
+            score = 0;
+            streak = 0;
+            missedQuestions = [];
+            
+            document.getElementById('flashcardsScreen').classList.add('hidden');
+            document.getElementById('quizScreen').classList.remove('hidden');
+            document.getElementById('resultsScreen').classList.add('hidden');
+            
+            renderQuestion();
+        }
+
+        let quizChart = null; // Store reference to quiz chart
+
+        function renderQuestion() {
+            const q = selectedQuestions[currentQuestion];
+            
+            // Safety check - if question is undefined, skip to results
+            if (!q) {
+                console.error('Question undefined at index', currentQuestion);
+                showResults();
+                return;
+            }
+            
+            document.getElementById('progressBar').style.width = ((currentQuestion) / selectedQuestions.length * 100) + '%';
+            document.getElementById('progressText').textContent = `Question ${currentQuestion + 1} of ${selectedQuestions.length}`;
+            document.getElementById('categoryBadge').textContent = q.category;
+            document.getElementById('questionText').textContent = q.question;
+            
+            // Show/hide graph for Graph Reading questions
+            const graphContainer = document.getElementById('quizGraphContainer');
+            if (q.category === 'Graph Reading') {
+                graphContainer.classList.remove('hidden');
+                renderQuizGraph();
+            } else {
+                graphContainer.classList.add('hidden');
+            }
+            
+            const optionsHtml = q.options.map((opt, i) => `
+                <div class="option" onclick="selectOption(${i})">${opt}</div>
+            `).join('');
+            document.getElementById('optionsContainer').innerHTML = optionsHtml;
+            
+            document.getElementById('submitBtn').classList.remove('hidden');
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('nextBtn').classList.add('hidden');
+            document.getElementById('feedback').classList.add('hidden');
+            
+            selectedAnswer = null;
+            answered = false;
+            
+            // Update streak display
+            updateStreakDisplay();
+        }
+
+        function selectOption(index) {
+            if (answered) return;
+            
+            selectedAnswer = index;
+            document.querySelectorAll('.option').forEach((opt, i) => {
+                opt.classList.toggle('selected', i === index);
+            });
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        function submitAnswer() {
+            if (selectedAnswer === null || answered) return;
+            
+            answered = true;
+            
+            const q = selectedQuestions[currentQuestion];
+            const isCorrect = selectedAnswer === q.correct;
+            
+            if (isCorrect) {
+                score++;
+                streak++;
+            } else {
+                streak = 0;
+                // Track missed question for review
+                missedQuestions.push({
+                    question: q.question,
+                    options: q.options,
+                    correct: q.correct,
+                    explanation: q.explanation,
+                    yourAnswer: q.options[selectedAnswer]
+                });
+            }
+            
+            // Show correct/incorrect
+            document.querySelectorAll('.option').forEach((opt, i) => {
+                if (i === q.correct) {
+                    opt.classList.add('correct');
+                } else if (i === selectedAnswer && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            // Show feedback
+            const feedback = document.getElementById('feedback');
+            feedback.classList.remove('hidden', 'correct', 'incorrect');
+            feedback.classList.add(isCorrect ? 'correct' : 'incorrect');
+            document.getElementById('feedbackTitle').textContent = isCorrect ? '✅ Correct!' : '❌ Not quite...';
+            document.getElementById('feedbackText').textContent = q.explanation;
+            
+            document.getElementById('submitBtn').classList.add('hidden');
+            document.getElementById('nextBtn').classList.remove('hidden');
+            
+            updateStreakDisplay();
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            console.log('Moving to question', currentQuestion + 1, 'of', selectedQuestions.length);
+            if (currentQuestion >= selectedQuestions.length) {
+                console.log('Quiz complete - showing results');
+                showResults();
+            } else {
+                renderQuestion();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('resultsScreen').classList.remove('hidden');
+            
+            const percentage = Math.round((score / selectedQuestions.length) * 100);
+            document.getElementById('finalScore').textContent = percentage + '%';
+            
+            let message = '';
+            if (percentage >= 90) message = 'Excellent! You really know your chemistry! 🧪';
+            else if (percentage >= 80) message = 'Great job! You\'re well prepared! 🔬';
+            else if (percentage >= 70) message = 'Good work! Review a few more concepts. 📚';
+            else if (percentage >= 60) message = 'Keep studying! You\'re getting there. 💪';
+            else message = 'Review the study cards and try again! 📖';
+            
+            document.getElementById('scoreMessage').textContent = message;
+            
+            // Show review section if there are missed questions
+            const reviewSection = document.getElementById('reviewSection');
+            if (missedQuestions.length > 0) {
+                reviewSection.classList.remove('hidden');
+                currentReviewQuestion = 0;
+                reviewScore = 0;
+                renderReviewQuestion();
+            } else {
+                reviewSection.classList.add('hidden');
+            }
+        }
+
+        function renderReviewQuestion() {
+            const q = missedQuestions[currentReviewQuestion];
+            
+            document.getElementById('reviewProgress').textContent = `Question ${currentReviewQuestion + 1} of ${missedQuestions.length}`;
+            document.getElementById('reviewQuestion').textContent = q.question;
+            
+            const optionsHtml = q.options.map((opt, i) => `
+                <div class="review-option" onclick="selectReviewOption(${i})">${opt}</div>
+            `).join('');
+            document.getElementById('reviewOptions').innerHTML = optionsHtml;
+            
+            document.getElementById('reviewCheckBtn').classList.remove('hidden');
+            document.getElementById('reviewCheckBtn').disabled = true;
+            document.getElementById('reviewNextBtn').classList.add('hidden');
+            document.getElementById('reviewFeedback').classList.add('hidden');
+            document.getElementById('reviewScore').classList.add('hidden');
+            
+            reviewSelectedAnswer = null;
+            reviewAnswered = false;
+        }
+
+        function selectReviewOption(index) {
+            if (reviewAnswered) return;
+            
+            reviewSelectedAnswer = index;
+            document.querySelectorAll('.review-option').forEach((opt, i) => {
+                opt.classList.toggle('selected', i === index);
+            });
+            document.getElementById('reviewCheckBtn').disabled = false;
+        }
+
+        function checkReviewAnswer() {
+            if (reviewSelectedAnswer === null || reviewAnswered) return;
+            
+            reviewAnswered = true;
+            const q = missedQuestions[currentReviewQuestion];
+            const isCorrect = reviewSelectedAnswer === q.correct;
+            
+            if (isCorrect) {
+                reviewScore++;
+            }
+            
+            // Show correct/incorrect
+            document.querySelectorAll('.review-option').forEach((opt, i) => {
+                if (i === q.correct) {
+                    opt.classList.add('correct');
+                    if (!isCorrect) {
+                        opt.classList.add('reveal-correct');
+                    }
+                } else if (i === reviewSelectedAnswer && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            // Show feedback
+            const feedback = document.getElementById('reviewFeedback');
+            feedback.classList.remove('hidden', 'correct', 'incorrect');
+            feedback.classList.add(isCorrect ? 'correct' : 'incorrect');
+            feedback.textContent = isCorrect ? '✅ Correct!' : '❌ The correct answer is highlighted above.';
+            
+            document.getElementById('reviewCheckBtn').classList.add('hidden');
+            document.getElementById('reviewNextBtn').classList.remove('hidden');
+        }
+
+        function nextReviewQuestion() {
+            currentReviewQuestion++;
+            if (currentReviewQuestion >= missedQuestions.length) {
+                // Show review complete
+                document.getElementById('reviewProgress').classList.add('hidden');
+                document.getElementById('reviewQuestion').classList.add('hidden');
+                document.getElementById('reviewOptions').classList.add('hidden');
+                document.getElementById('reviewFeedback').classList.add('hidden');
+                document.getElementById('reviewCheckBtn').classList.add('hidden');
+                document.getElementById('reviewNextBtn').classList.add('hidden');
+                
+                const reviewScoreDiv = document.getElementById('reviewScore');
+                reviewScoreDiv.classList.remove('hidden');
+                document.getElementById('reviewScoreText').textContent = 
+                    `You got ${reviewScore} out of ${missedQuestions.length} correct on the review!`;
+            } else {
+                renderReviewQuestion();
+            }
+        }
+
+        function restartQuiz() {
+            document.getElementById('resultsScreen').classList.add('hidden');
+            document.getElementById('flashcardsScreen').classList.remove('hidden');
+            selectedQuestions = [];
+            missedQuestions = [];
+            
+            // Reset review section
+            document.getElementById('reviewSection').classList.add('hidden');
+            document.getElementById('reviewProgress').classList.remove('hidden');
+            document.getElementById('reviewQuestion').classList.remove('hidden');
+            document.getElementById('reviewOptions').classList.remove('hidden');
+            document.getElementById('reviewScore').classList.add('hidden');
+        }
+
+        function updateStreakDisplay() {
+            const container = document.getElementById('streakContainer');
+            const count = document.getElementById('streakCount');
+            
+            if (streak >= 2) {
+                container.classList.remove('hidden');
+                count.textContent = streak;
+                container.classList.toggle('hot', streak >= 5);
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        // Render graph for quiz questions
+        function renderQuizGraph() {
+            // Destroy existing chart if any
+            if (quizChart) {
+                quizChart.destroy();
+            }
+            
+            const ctx = document.getElementById('quizSolubilityChart').getContext('2d');
+            const temps = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+            const compounds = {
+                'KNO₃': [13, 21, 32, 46, 64, 85, 110, 138, 169, 202, 245],
+                'NaNO₃': [73, 80, 88, 96, 104, 114, 124, 134, 148, 163, 180],
+                'KCl': [28, 31, 34, 37, 40, 43, 46, 48, 51, 54, 57],
+                'NaCl': [35, 35, 36, 36, 37, 37, 37, 38, 38, 39, 39],
+                'K₂Cr₂O₇': [5, 8, 12, 18, 26, 36, 46, 58, 73, 90, 102]
+            };
+            const colors = {
+                'KNO₃': '#e74c3c',
+                'NaNO₃': '#3498db',
+                'KCl': '#2ecc71',
+                'NaCl': '#9b59b6',
+                'K₂Cr₂O₇': '#f39c12'
+            };
+            
+            const datasets = Object.keys(compounds).map(name => ({
+                label: name,
+                data: temps.map((t, i) => ({ x: t, y: compounds[name][i] })),
+                borderColor: colors[name],
+                borderWidth: 2,
+                pointRadius: 3,
+                tension: 0.3,
+                fill: false
+            }));
+            
+            quizChart = new Chart(ctx, {
+                type: 'line',
+                data: { datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: { display: true, text: 'Solubility Curves', font: { size: 14 } },
+                        legend: { position: 'right', labels: { boxWidth: 12, font: { size: 10 } } }
+                    },
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            title: { display: true, text: 'Temperature (°C)', font: { size: 11 } },
+                            min: 0, max: 100,
+                            ticks: { stepSize: 20 }
+                        },
+                        y: {
+                            title: { display: true, text: 'g/100g H₂O', font: { size: 11 } },
+                            min: 0, max: 260,
+                            ticks: { stepSize: 40 }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Solubility Curve Data (approximate values per 100g water)
+        function renderSolubilityChart() {
+            const ctx = document.getElementById('solubilityChart').getContext('2d');
+            
+            // Temperature points (x-axis)
+            const temps = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+            
+            // Solubility data for each compound (grams per 100g water)
+            const compounds = {
+                'KNO₃': [13, 21, 32, 46, 64, 85, 110, 138, 169, 202, 245],
+                'NaNO₃': [73, 80, 88, 96, 104, 114, 124, 134, 148, 163, 180],
+                'KCl': [28, 31, 34, 37, 40, 43, 46, 48, 51, 54, 57],
+                'NaCl': [35, 35, 36, 36, 37, 37, 37, 38, 38, 39, 39],
+                'K₂Cr₂O₇': [5, 8, 12, 18, 26, 36, 46, 58, 73, 90, 102]
+            };
+            
+            const colors = {
+                'KNO₃': { line: '#e74c3c', bg: 'rgba(231, 76, 60, 0.1)' },
+                'NaNO₃': { line: '#3498db', bg: 'rgba(52, 152, 219, 0.1)' },
+                'KCl': { line: '#2ecc71', bg: 'rgba(46, 204, 113, 0.1)' },
+                'NaCl': { line: '#9b59b6', bg: 'rgba(155, 89, 182, 0.1)' },
+                'K₂Cr₂O₇': { line: '#f39c12', bg: 'rgba(243, 156, 18, 0.1)' }
+            };
+            
+            const datasets = Object.keys(compounds).map(name => ({
+                label: name,
+                data: temps.map((t, i) => ({ x: t, y: compounds[name][i] })),
+                borderColor: colors[name].line,
+                backgroundColor: colors[name].bg,
+                borderWidth: 3,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                tension: 0.3,
+                fill: false
+            }));
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: { datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Solubility Curves',
+                            font: { size: 16, weight: 'bold' },
+                            color: '#2d3748'
+                        },
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 15,
+                                font: { size: 12 }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.parsed.y}g per 100g water at ${context.parsed.x}°C`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: 'Temperature (°C)',
+                                font: { size: 14, weight: 'bold' },
+                                color: '#475569'
+                            },
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                stepSize: 10,
+                                color: '#64748b'
+                            },
+                            grid: {
+                                color: '#e2e8f0'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Solubility (g solute / 100g H₂O)',
+                                font: { size: 14, weight: 'bold' },
+                                color: '#475569'
+                            },
+                            min: 0,
+                            max: 260,
+                            ticks: {
+                                stepSize: 20,
+                                color: '#64748b'
+                            },
+                            grid: {
+                                color: '#e2e8f0'
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderFlashcards();
+            renderSolubilityChart();
+        });
+    </script>
+</body>
+</html>

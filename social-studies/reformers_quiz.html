@@ -1,0 +1,2658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reformers Unit - Abolitionists & Suffragists | Black History Month</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Pan-African Colors: Red #C0392B, Gold #D4A017, Green #1D8348, Black #111111 */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('bhm-background.png') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .hidden { display: none !important; }
+
+        .quiz-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 950px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            border-top: 5px solid #C0392B;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        /* Pan-African color banner */
+        .header::before {
+            content: '';
+            display: block;
+            height: 8px;
+            background: linear-gradient(90deg, #C0392B 0%, #C0392B 33%, #D4A017 33%, #D4A017 66%, #1D8348 66%, #1D8348 100%);
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #111111;
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(212, 160, 23, 0.3);
+        }
+
+        .header p {
+            color: #7f8c8d;
+        }
+
+        /* Flashcard Styles */
+        .flashcard-section {
+            margin-bottom: 25px;
+        }
+
+        .flashcard-section h3 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .flashcard-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        
+        @media (max-width: 800px) {
+            .flashcard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .flashcard {
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .flashcard:hover .flashcard-inner {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 160px;
+            transition: transform 0.6s, box-shadow 0.3s;
+            transform-style: preserve-3d;
+            border-radius: 8px;
+        }
+
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            text-align: center;
+            font-size: 0.75rem;
+            line-height: 1.4;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .flashcard-front {
+            background: #111111;
+            color: #1D8348;
+            font-weight: bold;
+            border: 2px solid #333;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5), 0 0 10px rgba(212, 160, 23, 0.3);
+        }
+
+        .flashcard-back {
+            background: #1D8348;
+            color: #111;
+            transform: rotateY(180deg);
+            border: 2px solid #1D8348;
+            text-align: left;
+            align-items: flex-start;
+            padding-top: 15px;
+        }
+
+        /* Quiz Styles */
+        .progress {
+            background: #ecf0f1;
+            border-radius: 10px;
+            height: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #d4a017, #e6b422);
+            transition: width 0.4s;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .timer-container {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .timer {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #d4a017;
+        }
+
+        .timer.warning { color: #C0392B; animation: pulse 0.5s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: #111111;
+            border: 1px solid #D4A017;
+            color: #D4A017;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
+
+        .question {
+            font-size: 1.15rem;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            padding: 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .option:hover {
+            border-color: #d4a017;
+            background: #fff8e7;
+        }
+
+        .option.selected {
+            border-color: #d4a017;
+            background: linear-gradient(135deg, #fff8e7, #fef3d0);
+        }
+
+        .option.correct {
+            border-color: #1D8348;
+            background: #d4edda;
+        }
+
+        .option.incorrect {
+            border-color: #C0392B;
+            background: #f8d7da;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .btn-submit {
+            background: #D4A017;
+            color: #111;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 160, 23, 0.4);
+        }
+
+        .btn-submit:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .btn-next {
+            background: #D4A017;
+            color: #111;
+        }
+
+        .btn-restart {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            color: white;
+            font-size: 0.9rem;
+            padding: 12px 25px;
+        }
+
+        .restart-separator {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px dashed #ccc;
+        }
+
+        .restart-separator p {
+            color: #7f8c8d;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+
+        .feedback {
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            border: 2px solid #1D8348;
+        }
+
+        .feedback.incorrect {
+            background: #f8d7da;
+            border: 2px solid #C0392B;
+        }
+
+        .feedback h3 { margin-bottom: 8px; }
+        .feedback.correct h3 { color: #1D8348; }
+        .feedback.incorrect h3 { color: #C0392B; }
+
+        /* Results */
+        .results-container {
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: #D4A017;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            color: #111;
+        }
+
+        .score-circle .score { font-size: 2.5rem; font-weight: bold; }
+        .score-circle .label { font-size: 0.9rem; opacity: 0.9; }
+
+        .review-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .review-section h3 {
+            color: #C0392B;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .review-progress {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .review-question {
+            font-size: 1.05rem;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .review-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .review-option {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .review-option:hover {
+            border-color: #d4a017;
+            background: #fff8e7;
+        }
+
+        .review-option.selected {
+            border-color: #d4a017;
+            background: #fff8e7;
+        }
+
+        .review-option.correct {
+            border-color: #1D8348;
+            background: #d4edda;
+        }
+
+        .review-option.incorrect {
+            border-color: #C0392B;
+            background: #f8d7da;
+        }
+
+        .review-option.reveal-correct {
+            border-color: #1D8348;
+            background: #d4edda;
+            animation: glow 0.5s ease-in-out;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px #1D8348; }
+            50% { box-shadow: 0 0 20px #1D8348; }
+        }
+
+        .review-feedback {
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .review-feedback.correct {
+            background: #d4edda;
+            color: #1D8348;
+        }
+
+        .review-feedback.incorrect {
+            background: #f8d7da;
+            color: #C0392B;
+        }
+
+        .review-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .review-btn-check {
+            background: #D4A017;
+            color: #111;
+        }
+
+        .review-btn-next {
+            background: #D4A017;
+            color: #111;
+        }
+
+        .review-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .review-score {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .review-score h4 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .review-score p {
+            color: #7f8c8d;
+        }
+
+        @media (max-width: 500px) {
+            .quiz-container { padding: 20px; }
+            .header h1 { font-size: 1.3rem; }
+            .question { font-size: 1rem; }
+            .flashcard-grid { grid-template-columns: repeat(2, 1fr); }
+            .flashcard-inner { height: 90px; }
+        }
+
+        /* Streak Counter */
+        .streak-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 10px 0;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #fff8e7, #fef3d0);
+            border-radius: 20px;
+            border: 2px solid #d4a017;
+        }
+        .streak-fire {
+            font-size: 1.5rem;
+            animation: pulse 0.5s ease-in-out;
+        }
+        .streak-count {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #d4a017;
+        }
+        .streak-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+        .streak-container.hot {
+            background: linear-gradient(135deg, #C0392B, #922B21);
+            border-color: #922B21;
+        }
+        .streak-container.hot .streak-count,
+        .streak-container.hot .streak-label {
+            color: white;
+        }
+
+        /* Person Image */
+        .person-image {
+            text-align: center;
+            margin: 15px 0;
+        }
+        .person-image svg {
+            border-radius: 50%;
+            border: 3px solid #d4a017;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .person-name {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        /* True/False styling */
+        .tf-options {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        .tf-option {
+            padding: 20px 50px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tf-option.true-opt {
+            background: #d4edda;
+            border: 3px solid #1D8348;
+            color: #1D8348;
+        }
+        .tf-option.false-opt {
+            background: #f8d7da;
+            border: 3px solid #C0392B;
+            color: #C0392B;
+        }
+        .tf-option:hover {
+            transform: scale(1.05);
+        }
+        .tf-option.selected {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Fill in the blank */
+        .fill-blank {
+            font-size: 1.3rem;
+            text-align: center;
+            line-height: 2;
+        }
+        .blank-space {
+            display: inline-block;
+            min-width: 120px;
+            border-bottom: 3px solid #d4a017;
+            margin: 0 5px;
+            color: #d4a017;
+            font-weight: bold;
+        }
+
+        /* Timeline styling - Drag and Drop */
+        .timeline-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 20px 0;
+        }
+        .timeline-dates {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: linear-gradient(90deg, #111111, #d4a017, #111111);
+            border-radius: 20px;
+        }
+        .timeline-date {
+            background: white;
+            padding: 8px 15px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .timeline-dropzone {
+            min-height: 60px;
+            border: 3px dashed #ccc;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            transition: all 0.2s;
+            margin: 5px 0;
+        }
+        .timeline-dropzone.drag-over {
+            border-color: #d4a017;
+            background: #fff8e7;
+        }
+        .timeline-dropzone.filled {
+            border-style: solid;
+            border-color: #1D8348;
+            background: #d4edda;
+        }
+        .timeline-dropzone-label {
+            color: #999;
+            font-size: 0.9rem;
+        }
+        .timeline-events {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 10px;
+        }
+        .timeline-event {
+            padding: 12px 18px;
+            background: white;
+            border: 2px solid #d4a017;
+            border-radius: 8px;
+            cursor: grab;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+        .timeline-event:hover {
+            transform: scale(1.02);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+        }
+        .timeline-event.dragging {
+            opacity: 0.5;
+        }
+        .timeline-event.placed {
+            background: #d4edda;
+            border-color: #1D8348;
+            cursor: pointer;
+        }
+        .timeline-event.placed:hover {
+            background: #f8d7da;
+            border-color: #C0392B;
+        }
+        .timeline-event.placed:hover::after {
+            content: ' ✕';
+            color: #C0392B;
+        }
+        .timeline-event.in-slot {
+            margin: 0;
+            flex: 1;
+        }
+        .timeline-number {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            background: #d4a017;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 25px;
+            font-weight: bold;
+            margin-right: 8px;
+            font-size: 0.85rem;
+        }
+
+        /* Matching mode */
+        .matching-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .matching-column h4 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #666;
+        }
+        .matching-item {
+            padding: 12px;
+            margin: 8px 0;
+            background: #f8f9fa;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid #ddd;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .matching-item:hover {
+            border-color: #d4a017;
+        }
+        .matching-item.selected {
+            background: #fff8e7;
+            border-color: #d4a017;
+        }
+        .matching-item.matched {
+            background: #d4edda;
+            border-color: #1D8348;
+            cursor: default;
+        }
+        .matching-item.wrong {
+            background: #f8d7da;
+            border-color: #C0392B;
+            animation: shake 0.3s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Select All That Apply */
+        .select-all-hint {
+            text-align: center;
+            color: #d4a017;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        .multi-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            margin: 8px 0;
+            background: #f8f9fa;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .multi-option:hover {
+            border-color: #d4a017;
+            background: #fff8e7;
+        }
+        .multi-option.selected {
+            border-color: #d4a017;
+            background: #fff8e7;
+        }
+        .multi-option .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #bbb;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .multi-option.selected .checkbox {
+            background: #d4a017;
+            border-color: #d4a017;
+            color: white;
+        }
+        .multi-option.correct {
+            border-color: #1D8348;
+            background: #d4edda;
+            border-width: 3px;
+        }
+        .multi-option.correct::after {
+            content: '✓ Correct';
+            color: #1D8348;
+            font-weight: bold;
+            margin-left: auto;
+            font-size: 0.9rem;
+        }
+        .multi-option.correct .checkbox {
+            background: #1D8348;
+            border-color: #1D8348;
+            color: white;
+        }
+        .multi-option.incorrect {
+            border-color: #C0392B;
+            background: #f8d7da;
+            border-width: 3px;
+        }
+        .multi-option.incorrect::after {
+            content: '✗ Wrong';
+            color: #C0392B;
+            font-weight: bold;
+            margin-left: auto;
+            font-size: 0.9rem;
+        }
+        .multi-option.incorrect .checkbox {
+            background: #C0392B;
+            border-color: #C0392B;
+            color: white;
+        }
+        .multi-option.missed {
+            border-color: #f39c12;
+            background: #fef9e7;
+            border-width: 3px;
+        }
+        .multi-option.missed::after {
+            content: '← Should have selected';
+            color: #f39c12;
+            font-weight: bold;
+            margin-left: auto;
+            font-size: 0.85rem;
+        }
+        .multi-option.missed .checkbox {
+            background: #f39c12;
+            border-color: #f39c12;
+            color: white;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            border-bottom: 3px solid;
+            border-image: linear-gradient(90deg, #C0392B 0%, #D4A017 50%, #1D8348 100%) 1;
+            padding-bottom: 10px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px 15px;
+            border: none;
+            background: #f8f9fa;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.2s;
+        }
+        .tab-btn:hover {
+            background: #fff8e7;
+            color: #D4A017;
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #111111, #C0392B);
+            color: #D4A017;
+            border-bottom: 3px solid #C0392B;
+        }
+
+        /* Writing Practice Styles */
+        .writing-container {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 25px;
+        }
+        @media (max-width: 800px) {
+            .writing-container {
+                grid-template-columns: 1fr;
+            }
+            .writing-tips {
+                order: -1;
+            }
+        }
+        .writing-main {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .person-header {
+            text-align: center;
+            padding: 15px;
+            background: #111111;
+            border-radius: 12px;
+            color: white;
+            border: 2px solid #1D8348;
+        }
+        .person-type {
+            display: inline-block;
+            background: #d4a017;
+            color: #111111;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .person-name {
+            color: #1D8348;
+            font-size: 1.8rem;
+            margin: 0;
+        }
+        .writing-prompt {
+            background: #fff8e7;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #d4a017;
+        }
+        .writing-prompt p {
+            margin: 0;
+            color: #333;
+        }
+        .key-facts {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .key-facts h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 1rem;
+        }
+        .key-facts ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .key-facts li {
+            margin: 8px 0;
+            color: #444;
+            line-height: 1.5;
+        }
+        .writing-area {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .writing-area label {
+            font-weight: 600;
+            color: #333;
+        }
+        #writingTextarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 1rem;
+            line-height: 1.6;
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+        #writingTextarea:focus {
+            outline: none;
+            border-color: #d4a017;
+        }
+        #writingTextarea::placeholder {
+            color: #aaa;
+        }
+        .word-count {
+            text-align: right;
+            color: #888;
+            font-size: 0.85rem;
+        }
+        .writing-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .btn-secondary {
+            background: #ecf0f1;
+            color: #333;
+        }
+        .btn-secondary:hover {
+            background: #ddd;
+        }
+        .person-progress {
+            text-align: center;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        /* Writing Tips Sidebar */
+        .writing-tips {
+            background: linear-gradient(135deg, #fff8e7, #fef3d0);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #C0392B;
+        }
+        .writing-tips h3 {
+            margin: 0 0 15px 0;
+            color: #333;
+            font-size: 1.1rem;
+        }
+        .tip {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(192, 57, 43, 0.3);
+        }
+        .tip:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        .tip strong {
+            color: #C0392B;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .tip p {
+            margin: 0 0 5px 0;
+            color: #444;
+            font-size: 0.9rem;
+        }
+        .tip em {
+            color: #666;
+            font-size: 0.85rem;
+            display: block;
+            background: white;
+            padding: 8px;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+
+        /* Check button */
+        .btn-check {
+            background: #D4A017;
+            color: #111;
+        }
+        .btn-check:hover {
+            background: #b8860b;
+        }
+
+        /* Writing Feedback */
+        .writing-feedback {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 15px;
+            border: 2px solid #e9ecef;
+        }
+        .writing-feedback h3 {
+            margin: 0 0 15px 0;
+            color: #333;
+        }
+        .feedback-section {
+            margin-bottom: 15px;
+        }
+        .feedback-section h4 {
+            margin: 0 0 8px 0;
+            color: #555;
+            font-size: 0.95rem;
+        }
+        .feedback-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .feedback-section li {
+            padding: 6px 10px;
+            margin: 4px 0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+        .feedback-section li.pass {
+            background: #d4edda;
+            color: #1D8348;
+        }
+        .feedback-section li.fail {
+            background: #f8d7da;
+            color: #C0392B;
+        }
+        .feedback-score {
+            text-align: center;
+            padding: 15px;
+            background: #111111;
+            border: 2px solid #D4A017;
+            border-radius: 10px;
+            color: #D4A017;
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+        .feedback-score .score-num {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #d4a017;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <!-- Tab Navigation -->
+        <div class="tab-nav" id="tabNav">
+            <button class="tab-btn active" onclick="showTab('flashcards')">Home</button>
+            <button class="tab-btn" onclick="showTab('writing')">Writing Practice</button>
+        </div>
+
+        <!-- Flashcards Screen (was Start Screen) -->
+        <div id="flashcardsScreen">
+            <div class="header">
+                <h1>Reformers Unit</h1>
+                <p>Abolitionists & Suffragists | Black History Month</p>
+            </div>
+
+            <div class="flashcard-section">
+                <h3>Study Cards - Click to flip!</h3>
+                <div class="flashcard-grid" id="flashcardGrid"></div>
+            </div>
+
+            <button class="btn btn-submit" onclick="startQuiz()">
+                Start Quiz
+            </button>
+        </div>
+
+        <!-- Start Screen (hidden, kept for compatibility) -->
+        <div id="startScreen" class="hidden"></div>
+
+        <!-- Quiz Screen -->
+        <div id="quizScreen" class="hidden">
+            <div class="progress">
+                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+            </div>
+            <div class="progress-text" id="progressText">Question 1 of 20</div>
+
+            <div class="timer-container">
+                <div class="timer" id="timer">1:00</div>
+            </div>
+
+            <div class="streak-container hidden" id="streakContainer">
+                <span class="streak-fire">🔥</span>
+                <span class="streak-count" id="streakCount">0</span>
+                <span class="streak-label">in a row!</span>
+            </div>
+
+            <div class="category-badge" id="categoryBadge">Category</div>
+            <div class="person-image hidden" id="personImage"></div>
+            <div class="question" id="questionText">Question text here</div>
+            <div class="options" id="optionsContainer"></div>
+
+            <button class="btn btn-submit" id="submitBtn" onclick="submitAnswer()" disabled>
+                Submit Answer
+            </button>
+            <button class="btn btn-next hidden" id="nextBtn" onclick="nextQuestion()">
+                Next Question →
+            </button>
+
+            <div class="feedback hidden" id="feedback">
+                <h3 id="feedbackTitle"></h3>
+                <p id="feedbackText"></p>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="hidden">
+            <div class="results-container">
+                <h2>🎉 Quiz Complete!</h2>
+                <div class="score-circle">
+                    <span class="score" id="finalScore">0%</span>
+                    <span class="label">Correct</span>
+                </div>
+                <p id="scoreMessage"></p>
+
+                <div class="review-section hidden" id="reviewSection">
+                    <h3>📝 Let's Practice the Missed Questions!</h3>
+                    <div class="review-progress" id="reviewProgress">Question 1 of 3</div>
+                    <div class="review-question" id="reviewQuestion"></div>
+                    <div class="review-options" id="reviewOptions"></div>
+                    <div class="review-feedback hidden" id="reviewFeedback"></div>
+                    <button class="review-btn review-btn-check" id="reviewCheckBtn" onclick="checkReviewAnswer()" disabled>Check Answer</button>
+                    <button class="review-btn review-btn-next hidden" id="reviewNextBtn" onclick="nextReviewQuestion()">Next Question →</button>
+                    <div class="review-score hidden" id="reviewScore">
+                        <h4>🎉 Review Complete!</h4>
+                        <p id="reviewScoreText"></p>
+                    </div>
+                </div>
+
+                <div class="restart-separator">
+                    <p>Done reviewing? Start a new quiz:</p>
+                </div>
+                <button class="btn btn-restart" onclick="restartQuiz()">
+                    🔄 Try Again
+                </button>
+            </div>
+        </div>
+
+        <!-- Writing Practice Screen -->
+        <div id="writingScreen" class="hidden">
+            <div class="header">
+                <h1>Writing Practice</h1>
+                <p>Practice writing paragraphs about the reformers</p>
+            </div>
+
+            <div class="writing-container">
+                <div class="writing-main">
+                    <div class="person-header">
+                        <span class="person-type" id="personType">Abolitionist</span>
+                        <h2 class="person-name" id="writingPersonName">Harriet Tubman</h2>
+                    </div>
+
+                    <div class="writing-prompt">
+                        <p><strong>Your task:</strong> Write a paragraph explaining who <span id="promptPersonName">Harriet Tubman</span> was and why they were important.</p>
+                    </div>
+
+                    <div class="key-facts">
+                        <h3>📋 Key Facts to Include:</h3>
+                        <ul id="keyFactsList">
+                            <li>Fact 1</li>
+                            <li>Fact 2</li>
+                        </ul>
+                    </div>
+
+                    <div class="writing-area">
+                        <label for="writingTextarea">Your Paragraph:</label>
+                        <textarea id="writingTextarea" placeholder="Start writing your paragraph here. Remember to include a topic sentence, supporting details from the facts above, and a closing sentence..."></textarea>
+                        <div class="word-count">Words: <span id="wordCount">0</span></div>
+                    </div>
+
+                    <div class="writing-buttons">
+                        <button class="btn btn-secondary hidden" id="prevPersonBtn" onclick="prevWritingPerson()">← Previous Person</button>
+                        <button class="btn btn-secondary" onclick="clearWriting()">🗑️ Clear</button>
+                        <button class="btn btn-check" onclick="checkWriting()">✓ Check My Writing</button>
+                        <button class="btn btn-submit" onclick="nextWritingPerson()">Next Person →</button>
+                    </div>
+
+                    <div class="writing-feedback hidden" id="writingFeedback">
+                        <h3>📝 Paragraph Check</h3>
+                        <div class="feedback-section">
+                            <h4>Structure</h4>
+                            <ul id="structureFeedback"></ul>
+                        </div>
+                        <div class="feedback-section">
+                            <h4>Facts Included</h4>
+                            <ul id="factsFeedback"></ul>
+                        </div>
+                        <div class="feedback-score" id="feedbackScore"></div>
+                    </div>
+
+                    <div class="person-progress">
+                        <span id="personProgress">Person 1 of 5</span>
+                    </div>
+                </div>
+
+                <div class="writing-tips">
+                    <h3>💡 Writing Tips</h3>
+                    <div class="tip">
+                        <strong>1. Topic Sentence</strong>
+                        <p>Start with who the person is and their main role.</p>
+                        <em>Example: "Harriet Tubman was a famous abolitionist who..."</em>
+                    </div>
+                    <div class="tip">
+                        <strong>2. Supporting Details</strong>
+                        <p>Include 2-3 facts from the list. Use transition words like "She also...", "In addition...", "Furthermore..."</p>
+                    </div>
+                    <div class="tip">
+                        <strong>3. Closing Sentence</strong>
+                        <p>End with why this person was important or what impact they had.</p>
+                        <em>Example: "Her courage helped change history."</em>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Quiz state
+        let questions = [];
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedOption = null;
+        let missedQuestions = [];
+        let timerInterval = null;
+        let timeLeft = 60;
+        let streak = 0;
+        let bestStreak = 0;
+
+        // Review state
+        let reviewQuestions = [];
+        let currentReviewQuestion = 0;
+        let reviewScore = 0;
+        let selectedReviewOption = null;
+
+        // Writing Practice state
+        let currentWritingPerson = 0;
+        let writingResponses = {};
+        
+        // Writing Practice - Key facts for each person (from the study guide)
+        const writingPeople = [
+            {
+                name: 'Harriet Tubman',
+                type: 'Abolitionist',
+                facts: [
+                    'She was a conductor on the Underground Railroad',
+                    'The Underground Railroad helped slaves escape north to freedom',
+                    'It was a very dangerous job - if caught, she would be enslaved again',
+                    'She made 13 trips to help about 70 slaves escape',
+                    'She also served as a nurse and spy for the Union Army during the Civil War'
+                ],
+                keywords: [
+                    { term: 'conductor|underground railroad', label: 'Conductor on Underground Railroad' },
+                    { term: 'dangerous|enslaved|caught', label: 'Dangerous job' },
+                    { term: '13.{0,20}trip|thirteen.{0,20}trip', label: '13 trips' },
+                    { term: '70.{0,20}slave|seventy.{0,20}slave', label: '70 slaves rescued' },
+                    { term: 'nurse|spy|union army|civil war', label: 'Nurse/spy in Civil War' }
+                ]
+            },
+            {
+                name: 'Frederick Douglass',
+                type: 'Abolitionist',
+                facts: [
+                    'He was a well-known Black abolitionist',
+                    'He had been a slave and escaped',
+                    'He was a writer and often spoke to white people about slavery',
+                    'He published an anti-slavery newspaper called "The North Star"',
+                    'He wrote a biography titled "Narrative of the Life of Frederick Douglass, an American Slave"'
+                ],
+                keywords: [
+                    { term: 'abolitionist', label: 'Was an abolitionist' },
+                    { term: 'slave|escaped|escape', label: 'Was a slave who escaped' },
+                    { term: 'writer|spoke|speak|speech', label: 'Writer/speaker' },
+                    { term: 'north star|newspaper', label: 'The North Star newspaper' },
+                    { term: 'narrative|biography|autobiography', label: 'Wrote autobiography' }
+                ]
+            },
+            {
+                name: 'Sojourner Truth',
+                type: 'Abolitionist',
+                facts: [
+                    'She was an important abolitionist',
+                    'She was born into slavery',
+                    'She had a big presence and booming voice',
+                    'She gave speeches for women\'s rights and abolition',
+                    'She spoke at an Ohio women\'s convention in 1851 where she gave her famous "Ain\'t I a Woman" speech'
+                ],
+                keywords: [
+                    { term: 'abolitionist', label: 'Was an abolitionist' },
+                    { term: 'born.+slavery|born.+slave', label: 'Born into slavery' },
+                    { term: 'women.+right|abolition', label: 'Fought for women\'s rights/abolition' },
+                    { term: "ain't i a woman|aint i a woman", label: '"Ain\'t I a Woman" speech' },
+                    { term: 'ohio|convention|1851', label: 'Ohio convention 1851' }
+                ]
+            },
+            {
+                name: 'Elizabeth Cady Stanton',
+                type: 'Suffragist',
+                facts: [
+                    'She led the way for women\'s rights',
+                    'She helped organize a women\'s rights convention in Seneca Falls, NY in 1848',
+                    'She gave a speech called the "Declaration of Sentiments," which was modeled after the Declaration of Independence',
+                    'In 1869, she and Susan B. Anthony founded the National Women\'s Suffrage Association',
+                    'She was an active abolitionist AND suffragist'
+                ],
+                keywords: [
+                    { term: 'women.+right|suffrag', label: 'Women\'s rights leader' },
+                    { term: 'seneca falls|1848', label: 'Seneca Falls Convention 1848' },
+                    { term: 'declaration of sentiments|declaration of independence', label: 'Declaration of Sentiments' },
+                    { term: 'national women.+suffrage|nwsa|susan b. anthony', label: 'Founded NWSA with Anthony' },
+                    { term: 'abolitionist.+suffragist|suffragist.+abolitionist', label: 'Both abolitionist & suffragist' }
+                ]
+            },
+            {
+                name: 'Susan B. Anthony',
+                type: 'Suffragist',
+                facts: [
+                    'She helped lead the way for women\'s suffrage',
+                    'She was arrested for trying to vote',
+                    'She and Stanton founded the National Women\'s Suffrage Association',
+                    'Later, she led the National American Woman Suffrage Association',
+                    'Her main goal was to get the 19th Amendment passed, which would give women the right to vote'
+                ],
+                keywords: [
+                    { term: 'suffrag|women.+vote', label: 'Women\'s suffrage leader' },
+                    { term: 'arrested|vote|voting', label: 'Arrested for voting' },
+                    { term: 'national.+suffrage|nwsa|nawsa|stanton', label: 'Founded suffrage association' },
+                    { term: '19th amendment|nineteenth amendment', label: '19th Amendment' },
+                    { term: 'right to vote|vote', label: 'Fought for right to vote' }
+                ]
+            }
+        ];
+
+        // SVG Portraits of Reformers
+        function createPortraitSVG(person) {
+            const portraits = {
+                'Harriet Tubman': `<svg width="80" height="80" viewBox="0 0 80 80">
+                    <circle cx="40" cy="40" r="38" fill="#8B4513"/>
+                    <circle cx="40" cy="32" r="18" fill="#654321"/>
+                    <ellipse cx="40" cy="60" rx="22" ry="16" fill="#1D8348"/>
+                    <circle cx="40" cy="35" r="14" fill="#8B6914"/>
+                    <circle cx="35" cy="32" r="2" fill="#000"/>
+                    <circle cx="45" cy="32" r="2" fill="#000"/>
+                    <path d="M 35 40 Q 40 44 45 40" stroke="#000" fill="none" stroke-width="1.5"/>
+                    <ellipse cx="40" cy="18" rx="16" ry="8" fill="#1a1a1a"/>
+                    <text x="40" y="78" text-anchor="middle" font-size="8" fill="#d4a017">Harriet Tubman</text>
+                </svg>`,
+                'Frederick Douglass': `<svg width="80" height="80" viewBox="0 0 80 80">
+                    <circle cx="40" cy="40" r="38" fill="#5D4E37"/>
+                    <circle cx="40" cy="30" r="16" fill="#8B6914"/>
+                    <ellipse cx="40" cy="58" rx="20" ry="18" fill="#1a1a1a"/>
+                    <rect x="32" y="50" width="16" height="6" fill="white"/>
+                    <circle cx="35" cy="28" r="2" fill="#000"/>
+                    <circle cx="45" cy="28" r="2" fill="#000"/>
+                    <path d="M 35 36 Q 40 38 45 36" stroke="#000" fill="none" stroke-width="1.5"/>
+                    <path d="M 25 15 Q 40 5 55 15 Q 55 25 40 22 Q 25 25 25 15" fill="#1a1a1a"/>
+                    <text x="40" y="78" text-anchor="middle" font-size="7" fill="#d4a017">Frederick Douglass</text>
+                </svg>`,
+                'Sojourner Truth': `<svg width="80" height="80" viewBox="0 0 80 80">
+                    <circle cx="40" cy="40" r="38" fill="#6B4423"/>
+                    <circle cx="40" cy="32" r="15" fill="#8B6914"/>
+                    <ellipse cx="40" cy="58" rx="18" ry="16" fill="#4a4a4a"/>
+                    <circle cx="35" cy="30" r="2" fill="#000"/>
+                    <circle cx="45" cy="30" r="2" fill="#000"/>
+                    <path d="M 35 38 Q 40 41 45 38" stroke="#000" fill="none" stroke-width="1.5"/>
+                    <ellipse cx="40" cy="18" rx="18" ry="10" fill="white"/>
+                    <text x="40" y="78" text-anchor="middle" font-size="7" fill="#d4a017">Sojourner Truth</text>
+                </svg>`,
+                'Elizabeth Cady Stanton': `<svg width="80" height="80" viewBox="0 0 80 80">
+                    <circle cx="40" cy="40" r="38" fill="#D4A574"/>
+                    <circle cx="40" cy="32" r="15" fill="#F5DEB3"/>
+                    <ellipse cx="40" cy="60" rx="20" ry="16" fill="#4a235a"/>
+                    <circle cx="35" cy="30" r="2" fill="#4a4a4a"/>
+                    <circle cx="45" cy="30" r="2" fill="#4a4a4a"/>
+                    <path d="M 35 38 Q 40 41 45 38" stroke="#8B4513" fill="none" stroke-width="1.5"/>
+                    <path d="M 22 20 Q 30 10 40 12 Q 50 10 58 20 Q 55 28 40 26 Q 25 28 22 20" fill="#5D4E37"/>
+                    <text x="40" y="78" text-anchor="middle" font-size="6" fill="#d4a017">Elizabeth C. Stanton</text>
+                </svg>`,
+                'Susan B. Anthony': `<svg width="80" height="80" viewBox="0 0 80 80">
+                    <circle cx="40" cy="40" r="38" fill="#C4A882"/>
+                    <circle cx="40" cy="32" r="15" fill="#F5DEB3"/>
+                    <ellipse cx="40" cy="60" rx="18" ry="16" fill="#111111"/>
+                    <circle cx="35" cy="30" r="2" fill="#4a4a4a"/>
+                    <circle cx="45" cy="30" r="2" fill="#4a4a4a"/>
+                    <path d="M 35 38 Q 40 40 45 38" stroke="#8B4513" fill="none" stroke-width="1.5"/>
+                    <path d="M 25 18 Q 40 8 55 18 L 55 24 Q 40 20 25 24 Z" fill="#808080"/>
+                    <text x="40" y="78" text-anchor="middle" font-size="7" fill="#d4a017">Susan B. Anthony</text>
+                </svg>`
+            };
+            return portraits[person] || '';
+        }
+
+        function updateStreak(correct) {
+            const container = document.getElementById('streakContainer');
+            const countEl = document.getElementById('streakCount');
+            
+            if (correct) {
+                streak++;
+                if (streak > bestStreak) bestStreak = streak;
+                
+                if (streak >= 2) {
+                    container.classList.remove('hidden');
+                    countEl.textContent = streak;
+                    container.classList.toggle('hot', streak >= 5);
+                    
+                    // Animate
+                    const fire = container.querySelector('.streak-fire');
+                    fire.style.animation = 'none';
+                    setTimeout(() => fire.style.animation = 'pulse 0.5s ease-in-out', 10);
+                }
+            } else {
+                streak = 0;
+                container.classList.add('hidden');
+            }
+        }
+
+        // Timeline drag-and-drop state
+        let timelineAnswer = [];
+        let draggedEvent = null;
+        
+        // Multi-select state
+        let selectedMulti = [];
+
+        function renderTimelineDrag(q) {
+            const optionsContainer = document.getElementById('optionsContainer');
+            timelineAnswer = new Array(q.events.length).fill(null);
+            
+            // Create shuffled events
+            const shuffledEvents = q.events.map((e, i) => ({ text: e, originalIndex: i }));
+            shuffle(shuffledEvents);
+            
+            let html = `
+                <div class="timeline-container">
+                    <p style="text-align:center;color:#666;margin-bottom:10px;">📅 Drag events to match the dates (earliest to latest)</p>
+                    <div class="timeline-dates">
+                        ${q.dates.map((d, i) => `<span class="timeline-date">${i + 1}. ${d}</span>`).join('')}
+                    </div>
+                    <div id="dropzones">
+            `;
+            
+            for (let i = 0; i < q.events.length; i++) {
+                html += `
+                    <div class="timeline-dropzone" data-slot="${i}" ondragover="handleDragOver(event)" ondrop="handleDrop(event, ${i})" ondragleave="handleDragLeave(event)">
+                        <span class="timeline-number">${i + 1}</span>
+                        <span class="timeline-dropzone-label" id="label-${i}">Drop event for ${q.dates[i]}</span>
+                    </div>
+                `;
+            }
+            
+            html += `
+                    </div>
+                    <div class="timeline-events" id="eventsPool">
+                        <p style="text-align:center;color:#888;font-size:0.85rem;margin-bottom:8px;">👆 Drag these events to the slots above (click placed event to remove)</p>
+                        ${shuffledEvents.map(e => `
+                            <div class="timeline-event" draggable="true" data-index="${e.originalIndex}" 
+                                ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)"
+                                onclick="returnEventToPool(this)">
+                                ${e.text}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            optionsContainer.innerHTML = html;
+        }
+
+        function handleDragStart(e) {
+            draggedEvent = e.target;
+            e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', e.target.dataset.index);
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+            draggedEvent = null;
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        function returnEventToPool(eventEl) {
+            // Only works if the event is in a dropzone (has 'placed' class)
+            if (!eventEl.classList.contains('placed')) return;
+            
+            const dropzone = eventEl.parentElement;
+            const slot = parseInt(dropzone.dataset.slot);
+            const q = questions[currentQuestion];
+            
+            // Return to pool
+            document.getElementById('eventsPool').appendChild(eventEl);
+            eventEl.classList.remove('placed', 'in-slot');
+            
+            // Reset dropzone
+            dropzone.classList.remove('filled');
+            dropzone.innerHTML = `
+                <span class="timeline-number">${slot + 1}</span>
+                <span class="timeline-dropzone-label" id="label-${slot}">Drop event for ${q.dates[slot]}</span>
+            `;
+            
+            // Clear from answer
+            timelineAnswer[slot] = null;
+            
+            // Update submit button
+            updateTimelineSubmitButton();
+        }
+
+        function handleDrop(e, slot) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            
+            if (!draggedEvent) return;
+            
+            const dropzone = e.currentTarget;
+            const eventIndex = parseInt(draggedEvent.dataset.index);
+            const eventText = draggedEvent.textContent.trim();
+            const q = questions[currentQuestion];
+            
+            // If the dragged event was in another slot, clear that slot
+            const previousSlot = timelineAnswer.indexOf(eventIndex);
+            if (previousSlot !== -1 && previousSlot !== slot) {
+                const prevDropzone = document.querySelector(`[data-slot="${previousSlot}"]`);
+                prevDropzone.classList.remove('filled');
+                prevDropzone.innerHTML = `
+                    <span class="timeline-number">${previousSlot + 1}</span>
+                    <span class="timeline-dropzone-label" id="label-${previousSlot}">Drop event for ${q.dates[previousSlot]}</span>
+                `;
+                timelineAnswer[previousSlot] = null;
+            }
+            
+            // If this slot already has an event, return it to pool
+            if (timelineAnswer[slot] !== null && timelineAnswer[slot] !== eventIndex) {
+                const existingIndex = timelineAnswer[slot];
+                const existingEvent = document.querySelector(`.timeline-event[data-index="${existingIndex}"]`);
+                if (existingEvent) {
+                    document.getElementById('eventsPool').appendChild(existingEvent);
+                    existingEvent.classList.remove('placed', 'in-slot');
+                }
+            }
+            
+            // Place the event in the dropzone
+            dropzone.innerHTML = `<span class="timeline-number">${slot + 1}</span>`;
+            dropzone.appendChild(draggedEvent);
+            draggedEvent.classList.add('placed', 'in-slot');
+            dropzone.classList.add('filled');
+            
+            // Update answer array
+            timelineAnswer[slot] = eventIndex;
+            
+            // Update submit button
+            updateTimelineSubmitButton();
+        }
+        
+        function updateTimelineSubmitButton() {
+            const allFilled = timelineAnswer.every(a => a !== null);
+            document.getElementById('submitBtn').disabled = !allFilled;
+        }
+
+        function checkTimelineAnswer() {
+            const q = questions[currentQuestion];
+            // Compare user's order with correct order
+            for (let i = 0; i < q.correctOrder.length; i++) {
+                if (timelineAnswer[i] !== q.correctOrder[i]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // Multi-select functions
+        function renderSelectAll(q) {
+            const optionsContainer = document.getElementById('optionsContainer');
+            selectedMulti = [];
+            
+            // Shuffle options
+            const shuffledOptions = q.options.map((opt, i) => ({ text: opt, originalIndex: i }));
+            shuffle(shuffledOptions);
+            
+            let html = `<div class="select-all-hint">☑️ Select ALL correct answers</div>`;
+            html += shuffledOptions.map((opt, i) => `
+                <div class="multi-option" data-original="${opt.originalIndex}" onclick="toggleMultiOption(this, ${opt.originalIndex})">
+                    <span class="checkbox"></span>
+                    <span>${opt.text}</span>
+                </div>
+            `).join('');
+            
+            optionsContainer.innerHTML = html;
+        }
+
+        function toggleMultiOption(element, originalIndex) {
+            element.classList.toggle('selected');
+            
+            const checkbox = element.querySelector('.checkbox');
+            if (element.classList.contains('selected')) {
+                checkbox.innerHTML = '✓';
+                if (!selectedMulti.includes(originalIndex)) {
+                    selectedMulti.push(originalIndex);
+                }
+            } else {
+                checkbox.innerHTML = '';
+                selectedMulti = selectedMulti.filter(i => i !== originalIndex);
+            }
+            
+            // Enable submit if at least one selected
+            document.getElementById('submitBtn').disabled = selectedMulti.length === 0;
+        }
+
+        function checkSelectAllAnswer() {
+            const q = questions[currentQuestion];
+            // Check if selected matches correct (order doesn't matter)
+            if (selectedMulti.length !== q.correctIndices.length) return false;
+            return selectedMulti.every(i => q.correctIndices.includes(i));
+        }
+
+        // Flashcards - Vocabulary and Key People
+        const flashcards = [
+            // Vocabulary
+            { front: 'Underground Railroad', back: 'Secret escape routes & safe places that led slaves to free land' },
+            { front: 'Suffrage', back: 'The right to vote (for women)' },
+            { front: 'Abolitionist', back: 'One who works to END slavery' },
+            { front: 'Anti-slavery', back: 'Against slavery' },
+            { front: 'Movement', back: 'Slow process of activities that make a change' },
+            { front: 'Reformer', back: 'Person who helps make changes to improve something' },
+            { front: 'Convention', back: 'Meeting where important topics are discussed' },
+            { front: 'Suffragist', back: 'One who supports women\'s right to vote' },
+            // Key People - Detailed
+            { front: 'Harriet Tubman', back: '• Conductor on Underground Railroad<br>• ~70 slaves rescued in 13 trips<br>• Civil War: nurse & spy for Union Army<br>• Risk: would be enslaved again if caught' },
+            { front: 'Frederick Douglass', back: '• Escaped slave turned abolitionist<br>• Writer: "Narrative of the Life of Frederick Douglass"<br>• Publisher: The North Star newspaper<br>• Spoke to white audiences about evils of slavery' },
+            { front: 'Sojourner Truth', back: '• Born into slavery<br>• Famous speech: "Ain\'t I a Woman" (1851)<br>• Spoke at Ohio women\'s convention<br>• Fought for BOTH abolition & women\'s rights' },
+            { front: 'Elizabeth Cady Stanton', back: '• Organized Seneca Falls Convention (1848, NY)<br>• Wrote "Declaration of Sentiments"<br>• Founded NWSA with Anthony (1869)<br>• Both abolitionist AND suffragist' },
+            { front: 'Susan B. Anthony', back: '• Arrested for trying to vote!<br>• Led National American Woman Suffrage Association<br>• Worked with Elizabeth Cady Stanton<br>• Helped pass 19th Amendment' },
+            // Key Events/Documents
+            { front: 'Seneca Falls Convention', back: '1848 - First women\'s rights convention in NY<br>Organized by Elizabeth Cady Stanton' },
+            { front: 'Declaration of Sentiments', back: 'Written by Stanton<br>Modeled after Declaration of Independence<br>Demanded women\'s rights' },
+            { front: '19th Amendment', back: 'Gave women the right to vote<br>What Susan B. Anthony fought for!' },
+            { front: 'The North Star', back: 'Frederick Douglass\'s anti-slavery newspaper<br>Spread abolitionist message' },
+            { front: '"Ain\'t I a Woman"', back: 'Famous speech by Sojourner Truth<br>Ohio women\'s convention (1851)<br>Argued for women\'s equality' },
+        ];
+
+        // Question bank
+        const questionBank = [
+            // Harriet Tubman
+            {
+                category: 'Harriet Tubman',
+                question: 'What was Harriet Tubman famous for being?',
+                options: ['A conductor on the Underground Railroad', 'A president', 'A newspaper publisher', 'A soldier only'],
+                correct: 0,
+                explanation: 'Harriet Tubman was a famous conductor on the Underground Railroad, helping slaves escape to freedom.'
+            },
+            {
+                category: 'Harriet Tubman',
+                question: 'About how many slaves did Harriet Tubman help escape?',
+                options: ['About 10', 'About 70', 'About 500', 'About 5'],
+                correct: 1,
+                explanation: 'Harriet Tubman made 13 trips and helped about 70 slaves escape to freedom.'
+            },
+            {
+                category: 'Harriet Tubman',
+                question: 'How many trips did Harriet Tubman make on the Underground Railroad?',
+                options: ['3 trips', '7 trips', '13 trips', '100 trips'],
+                correct: 2,
+                explanation: 'Harriet Tubman made 13 dangerous trips to help slaves escape north.'
+            },
+            {
+                category: 'Harriet Tubman',
+                question: 'What would have happened if Harriet Tubman had been caught?',
+                options: ['Nothing', 'She would be enslaved again', 'She would become president', 'She would get a reward'],
+                correct: 1,
+                explanation: 'It was very dangerous - if caught, she would have been enslaved again.'
+            },
+            {
+                category: 'Harriet Tubman',
+                question: 'What did Harriet Tubman do during the Civil War?',
+                options: ['She stayed home', 'She was a nurse and spy for the Union Army', 'She moved to Canada', 'She became president'],
+                correct: 1,
+                explanation: 'During the Civil War, Harriet Tubman served as a nurse and spy for the Union Army.'
+            },
+            // Frederick Douglass
+            {
+                category: 'Frederick Douglass',
+                question: 'What was Frederick Douglass before he became an abolitionist?',
+                options: ['A president', 'A British soldier', 'A slave who escaped', 'A teacher'],
+                correct: 2,
+                explanation: 'Frederick Douglass had been a slave and escaped. He used his experience to speak against slavery.'
+            },
+            {
+                category: 'Frederick Douglass',
+                question: 'What was the name of Frederick Douglass\'s anti-slavery newspaper?',
+                options: ['The Daily News', 'The Freedom Paper', 'The American Times', 'The North Star'],
+                correct: 3,
+                explanation: 'Frederick Douglass published an anti-slavery newspaper called "The North Star."'
+            },
+            {
+                category: 'Frederick Douglass',
+                question: 'What was the title of Frederick Douglass\'s autobiography?',
+                options: ['"Narrative of the Life of Frederick Douglass, an American Slave"', '"My Life Story"', '"Freedom Journey"', '"The Escape"'],
+                correct: 0,
+                explanation: 'His biography was titled "Narrative of the Life of Frederick Douglass, an American Slave."'
+            },
+            {
+                category: 'Frederick Douglass',
+                question: 'Frederick Douglass often spoke to which group of people about slavery?',
+                options: ['Only other former slaves', 'Only children', 'White people', 'Only women'],
+                correct: 2,
+                explanation: 'Frederick Douglass was a writer and often spoke to white people about the evils of slavery.'
+            },
+            // Sojourner Truth
+            {
+                category: 'Sojourner Truth',
+                question: 'What is Sojourner Truth best known for?',
+                options: ['Her speeches for women\'s rights and abolition', 'Being president', 'Building railroads', 'Writing laws'],
+                correct: 0,
+                explanation: 'Sojourner Truth was known for her powerful speeches supporting both women\'s rights and abolition.'
+            },
+            {
+                category: 'Sojourner Truth',
+                question: 'What was the name of Sojourner Truth\'s famous speech?',
+                options: ['"I Have a Dream"', '"Ain\'t I a Woman"', '"Freedom Now"', '"The Declaration"'],
+                correct: 1,
+                explanation: 'Sojourner Truth gave her famous speech "Ain\'t I a Woman" at an Ohio women\'s convention in 1851.'
+            },
+            {
+                category: 'Sojourner Truth',
+                question: 'Where did Sojourner Truth give her famous "Ain\'t I a Woman" speech?',
+                options: ['New York', 'Washington D.C.', 'Boston', 'Ohio women\'s convention'],
+                correct: 3,
+                explanation: 'She spoke at an Ohio women\'s convention in 1851.'
+            },
+            {
+                category: 'Sojourner Truth',
+                question: 'Was Sojourner Truth born free or into slavery?',
+                options: ['Born free', 'Born in England', 'Born into slavery', 'Born wealthy'],
+                correct: 2,
+                explanation: 'Sojourner Truth was born into slavery but became a powerful voice for freedom and women\'s rights.'
+            },
+            // Elizabeth Cady Stanton
+            {
+                category: 'Elizabeth Cady Stanton',
+                question: 'Where did Elizabeth Cady Stanton help organize a women\'s rights convention?',
+                options: ['Seneca Falls, NY', 'Boston, MA', 'Philadelphia, PA', 'Washington, D.C.'],
+                correct: 0,
+                explanation: 'Elizabeth Cady Stanton helped organize a women\'s rights convention in Seneca Falls, NY in 1848.'
+            },
+            {
+                category: 'Elizabeth Cady Stanton',
+                question: 'What year was the Seneca Falls Convention?',
+                options: ['1776', '1900', '1920', '1848'],
+                correct: 3,
+                explanation: 'The Seneca Falls Convention was held in 1848 - the first women\'s rights convention!'
+            },
+            {
+                category: 'Elizabeth Cady Stanton',
+                question: 'What was the "Declaration of Sentiments" modeled after?',
+                options: ['The Constitution', 'The Declaration of Independence', 'The Bible', 'A newspaper article'],
+                correct: 1,
+                explanation: 'The "Declaration of Sentiments" was modeled after the Declaration of Independence.'
+            },
+            {
+                category: 'Elizabeth Cady Stanton',
+                question: 'What organization did Elizabeth Cady Stanton found with Susan B. Anthony in 1869?',
+                options: ['The Red Cross', 'The Underground Railroad', 'National Women\'s Suffrage Association', 'The Peace Corps'],
+                correct: 2,
+                explanation: 'In 1869, Stanton and Anthony founded the National Women\'s Suffrage Association.'
+            },
+            {
+                category: 'Elizabeth Cady Stanton',
+                question: 'Elizabeth Cady Stanton was both an abolitionist AND a:',
+                options: ['Teacher', 'Suffragist', 'President', 'Soldier'],
+                correct: 1,
+                explanation: 'Elizabeth Cady Stanton was both an abolitionist (anti-slavery) and a suffragist (women\'s voting rights).'
+            },
+            // Susan B. Anthony
+            {
+                category: 'Susan B. Anthony',
+                question: 'What happened to Susan B. Anthony when she tried to vote?',
+                options: ['She was arrested', 'She was elected president', 'Nothing happened', 'She won a prize'],
+                correct: 0,
+                explanation: 'Susan B. Anthony was arrested for trying to vote! Women didn\'t have that right yet.'
+            },
+            {
+                category: 'Susan B. Anthony',
+                question: 'What organization did Susan B. Anthony lead that worked to pass the 19th Amendment?',
+                options: ['The Red Cross', 'The Senate', 'The Army', 'National American Woman Suffrage Association'],
+                correct: 3,
+                explanation: 'Susan B. Anthony led the National American Woman Suffrage Association to fight for the 19th Amendment.'
+            },
+            {
+                category: 'Susan B. Anthony',
+                question: 'What did the 19th Amendment do?',
+                options: ['Ended slavery', 'Created the president', 'Gave women the right to vote', 'Made a new holiday'],
+                correct: 2,
+                explanation: 'The 19th Amendment gave women the right to vote - what Susan B. Anthony fought for!'
+            },
+            {
+                category: 'Susan B. Anthony',
+                question: 'Who did Susan B. Anthony work closely with to fight for women\'s rights?',
+                options: ['Abraham Lincoln', 'Elizabeth Cady Stanton', 'George Washington', 'Harriet Tubman'],
+                correct: 1,
+                explanation: 'Susan B. Anthony and Elizabeth Cady Stanton worked together and founded the National Women\'s Suffrage Association.'
+            },
+            // Vocabulary
+            {
+                category: 'Vocabulary',
+                question: 'What is the Underground Railroad?',
+                options: ['A real train underground', 'A subway system', 'A system of secret escape routes for slaves', 'A type of music'],
+                correct: 2,
+                explanation: 'The Underground Railroad was a system of secret escape routes and safe places that led slaves to free land.'
+            },
+            {
+                category: 'Vocabulary',
+                question: 'What does "suffrage" mean?',
+                options: ['The right to vote', 'Suffering', 'A type of food', 'A disease'],
+                correct: 0,
+                explanation: 'Suffrage means the right to vote - specifically for this unit, women\'s right to vote.'
+            },
+            {
+                category: 'Vocabulary',
+                question: 'What is an "abolitionist"?',
+                options: ['Someone who builds things', 'A type of doctor', 'A soldier', 'Someone who works to end slavery'],
+                correct: 3,
+                explanation: 'An abolitionist is someone who works to END slavery.'
+            },
+            {
+                category: 'Vocabulary',
+                question: 'What is a "suffragist"?',
+                options: ['Someone who suffers', 'A type of nurse', 'Someone who supports women\'s right to vote', 'A cook'],
+                correct: 2,
+                explanation: 'A suffragist is someone who supports women\'s right to vote.'
+            },
+            {
+                category: 'Vocabulary',
+                question: 'What is a "reformer"?',
+                options: ['A person who helps make changes to improve something', 'Someone who forms things', 'A type of farmer', 'A builder'],
+                correct: 0,
+                explanation: 'A reformer is a person who helps to make changes to something to improve it.'
+            },
+            {
+                category: 'Vocabulary',
+                question: 'What is a "convention"?',
+                options: ['A type of building', 'A holiday', 'A game', 'A meeting where important topics are discussed'],
+                correct: 3,
+                explanation: 'A convention is a meeting where important topics are discussed.'
+            },
+            {
+                category: 'Vocabulary',
+                question: 'What does "anti-slavery" mean?',
+                options: ['Supports slavery', 'Doesn\'t care about slavery', 'Against slavery', 'A type of slavery'],
+                correct: 2,
+                explanation: 'Anti-slavery means being AGAINST slavery.'
+            },
+            {
+                category: 'Vocabulary',
+                question: 'What is a "movement"?',
+                options: ['A slow process of activities that make a change', 'A type of dance', 'A fast journey', 'A single event'],
+                correct: 0,
+                explanation: 'A movement is a slow process of activities that make a change - like the abolitionist movement or the suffrage movement.'
+            },
+            // Connections
+            {
+                category: 'Connections',
+                question: 'Which of these people was both an abolitionist AND a suffragist?',
+                options: ['George Washington', 'Elizabeth Cady Stanton', 'Abraham Lincoln', 'Thomas Jefferson'],
+                correct: 1,
+                explanation: 'Elizabeth Cady Stanton worked for both causes - ending slavery AND women\'s voting rights.'
+            },
+            {
+                category: 'Connections',
+                question: 'What do Harriet Tubman, Frederick Douglass, and Sojourner Truth all have in common?',
+                options: ['They were all abolitionists', 'They were all presidents', 'They all lived in England', 'They were all soldiers'],
+                correct: 0,
+                explanation: 'All three were famous abolitionists who worked to end slavery.'
+            },
+            {
+                category: 'Connections',
+                question: 'What do Susan B. Anthony and Elizabeth Cady Stanton have in common?',
+                options: ['They both fought for women\'s suffrage', 'They were both presidents', 'They were both slaves', 'They both lived in England'],
+                correct: 0,
+                explanation: 'Both Susan B. Anthony and Elizabeth Cady Stanton fought for women\'s right to vote (suffrage).'
+            },
+            // TRUE/FALSE QUESTIONS
+            {
+                category: 'True or False',
+                type: 'truefalse',
+                question: 'Susan B. Anthony was arrested for trying to vote.',
+                correct: 0, // 0 = True, 1 = False
+                options: ['True', 'False'],
+                explanation: 'TRUE! Susan B. Anthony was arrested in 1872 for voting illegally as a woman.'
+            },
+            {
+                category: 'True or False',
+                type: 'truefalse',
+                question: 'The Underground Railroad was an actual train that ran underground.',
+                correct: 1,
+                options: ['True', 'False'],
+                explanation: 'FALSE! The Underground Railroad was a system of secret routes and safe houses, not an actual railroad.'
+            },
+            {
+                category: 'True or False',
+                type: 'truefalse',
+                question: 'Harriet Tubman made 13 trips to help slaves escape.',
+                correct: 0,
+                options: ['True', 'False'],
+                explanation: 'TRUE! Harriet Tubman made 13 dangerous trips and helped about 70 slaves escape to freedom.'
+            },
+            {
+                category: 'True or False',
+                type: 'truefalse',
+                question: 'Frederick Douglass was born free.',
+                correct: 1,
+                options: ['True', 'False'],
+                explanation: 'FALSE! Frederick Douglass was born into slavery and escaped to become a famous abolitionist.'
+            },
+            {
+                category: 'True or False',
+                type: 'truefalse',
+                question: 'The 19th Amendment gave women the right to vote.',
+                correct: 0,
+                options: ['True', 'False'],
+                explanation: 'TRUE! The 19th Amendment, passed in 1920, gave women the right to vote.'
+            },
+            {
+                category: 'True or False',
+                type: 'truefalse',
+                question: 'Sojourner Truth gave a famous speech called "Ain\'t I a Woman".',
+                correct: 0,
+                options: ['True', 'False'],
+                explanation: 'TRUE! Sojourner Truth gave this powerful speech at an Ohio women\'s convention in 1851.'
+            },
+            // FILL IN THE BLANK QUESTIONS
+            {
+                category: 'Fill in the Blank',
+                type: 'fillin',
+                question: 'Harriet Tubman made ____ trips on the Underground Railroad.',
+                blank: '13',
+                options: ['13', '3', '100', '7'],
+                correct: 0,
+                explanation: 'Harriet Tubman made 13 dangerous trips to help slaves escape to freedom.'
+            },
+            {
+                category: 'Fill in the Blank',
+                type: 'fillin',
+                question: 'The Seneca Falls Convention was held in ____.',
+                blank: '1848',
+                options: ['1848', '1776', '1920', '1865'],
+                correct: 0,
+                explanation: 'The Seneca Falls Convention, the first women\'s rights convention, was held in 1848.'
+            },
+            {
+                category: 'Fill in the Blank',
+                type: 'fillin',
+                question: 'Frederick Douglass published an anti-slavery newspaper called "The ____ Star".',
+                blank: 'North',
+                options: ['North', 'Freedom', 'Evening', 'Morning'],
+                correct: 0,
+                explanation: 'Frederick Douglass published "The North Star" to spread the abolitionist message.'
+            },
+            {
+                category: 'Fill in the Blank',
+                type: 'fillin',
+                question: 'Harriet Tubman helped about ____ slaves escape to freedom.',
+                blank: '70',
+                options: ['70', '10', '500', '1000'],
+                correct: 0,
+                explanation: 'Harriet Tubman helped about 70 slaves escape through the Underground Railroad.'
+            },
+            // MATCHING (displayed as multiple choice)
+            {
+                category: 'Match the Person',
+                type: 'matching',
+                person: 'Harriet Tubman',
+                question: 'Match: Who was a conductor on the Underground Railroad?',
+                options: ['Harriet Tubman', 'Susan B. Anthony', 'Frederick Douglass', 'Elizabeth Cady Stanton'],
+                correct: 0,
+                explanation: 'Harriet Tubman was famous for being a conductor on the Underground Railroad.'
+            },
+            {
+                category: 'Match the Person',
+                type: 'matching',
+                person: 'Frederick Douglass',
+                question: 'Match: Who published the newspaper "The North Star"?',
+                options: ['Susan B. Anthony', 'Sojourner Truth', 'Frederick Douglass', 'Harriet Tubman'],
+                correct: 2,
+                explanation: 'Frederick Douglass published "The North Star" anti-slavery newspaper.'
+            },
+            {
+                category: 'Match the Person',
+                type: 'matching',
+                person: 'Sojourner Truth',
+                question: 'Match: Who gave the famous speech "Ain\'t I a Woman"?',
+                options: ['Elizabeth Cady Stanton', 'Sojourner Truth', 'Susan B. Anthony', 'Harriet Tubman'],
+                correct: 1,
+                explanation: 'Sojourner Truth gave the famous "Ain\'t I a Woman" speech in 1851.'
+            },
+            {
+                category: 'Match the Person',
+                type: 'matching',
+                person: 'Susan B. Anthony',
+                question: 'Match: Who was arrested for trying to vote?',
+                options: ['Harriet Tubman', 'Frederick Douglass', 'Elizabeth Cady Stanton', 'Susan B. Anthony'],
+                correct: 3,
+                explanation: 'Susan B. Anthony was arrested in 1872 for voting illegally as a woman.'
+            },
+            {
+                category: 'Match the Person',
+                type: 'matching',
+                person: 'Elizabeth Cady Stanton',
+                question: 'Match: Who organized the Seneca Falls Convention?',
+                options: ['Sojourner Truth', 'Elizabeth Cady Stanton', 'Harriet Tubman', 'Frederick Douglass'],
+                correct: 1,
+                explanation: 'Elizabeth Cady Stanton helped organize the Seneca Falls Convention in 1848.'
+            },
+        ];
+
+        function shuffle(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function renderFlashcards() {
+            const grid = document.getElementById('flashcardGrid');
+            grid.innerHTML = flashcards.map(card => `
+                <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">${card.front}</div>
+                        <div class="flashcard-back">${card.back}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Tab Navigation
+        function showTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach((btn, index) => {
+                btn.classList.remove('active');
+                if ((tab === 'flashcards' && index === 0) ||
+                    (tab === 'writing' && index === 1)) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Hide all screens
+            document.getElementById('flashcardsScreen').classList.add('hidden');
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('resultsScreen').classList.add('hidden');
+            document.getElementById('writingScreen').classList.add('hidden');
+            document.getElementById('tabNav').classList.remove('hidden');
+            
+            // Show selected screen
+            if (tab === 'flashcards') {
+                document.getElementById('flashcardsScreen').classList.remove('hidden');
+            } else if (tab === 'writing') {
+                document.getElementById('writingScreen').classList.remove('hidden');
+                renderWritingPerson();
+            }
+        }
+
+        // Writing Practice Functions
+        function renderWritingPerson() {
+            const person = writingPeople[currentWritingPerson];
+            
+            document.getElementById('personType').textContent = person.type;
+            document.getElementById('writingPersonName').textContent = person.name;
+            document.getElementById('promptPersonName').textContent = person.name;
+            
+            const factsList = document.getElementById('keyFactsList');
+            factsList.innerHTML = person.facts.map(fact => `<li>${fact}</li>`).join('');
+            
+            document.getElementById('personProgress').textContent = 
+                `Person ${currentWritingPerson + 1} of ${writingPeople.length}`;
+            
+            // Show/hide previous button (hide on first person)
+            const prevBtn = document.getElementById('prevPersonBtn');
+            if (currentWritingPerson === 0) {
+                prevBtn.classList.add('hidden');
+            } else {
+                prevBtn.classList.remove('hidden');
+            }
+            
+            // Restore saved text if any
+            const savedText = writingResponses[person.name] || '';
+            document.getElementById('writingTextarea').value = savedText;
+            updateWordCount();
+            
+            // Hide feedback when switching people
+            document.getElementById('writingFeedback').classList.add('hidden');
+        }
+
+        function nextWritingPerson() {
+            saveCurrentWriting();
+            currentWritingPerson = (currentWritingPerson + 1) % writingPeople.length;
+            renderWritingPerson();
+        }
+
+        function prevWritingPerson() {
+            saveCurrentWriting();
+            currentWritingPerson = (currentWritingPerson - 1 + writingPeople.length) % writingPeople.length;
+            renderWritingPerson();
+        }
+
+        function saveCurrentWriting() {
+            const person = writingPeople[currentWritingPerson];
+            const text = document.getElementById('writingTextarea').value;
+            writingResponses[person.name] = text;
+        }
+
+        function clearWriting() {
+            document.getElementById('writingTextarea').value = '';
+            updateWordCount();
+            const person = writingPeople[currentWritingPerson];
+            writingResponses[person.name] = '';
+            document.getElementById('writingFeedback').classList.add('hidden');
+        }
+
+        function checkWriting() {
+            const person = writingPeople[currentWritingPerson];
+            const text = document.getElementById('writingTextarea').value.toLowerCase();
+            const feedbackDiv = document.getElementById('writingFeedback');
+            const structureList = document.getElementById('structureFeedback');
+            const factsList = document.getElementById('factsFeedback');
+            const scoreDiv = document.getElementById('feedbackScore');
+            
+            if (!text.trim()) {
+                alert('Please write something first!');
+                return;
+            }
+            
+            // Structure checks
+            const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+            const wordCount = text.trim().split(/\s+/).length;
+            const hasName = text.includes(person.name.toLowerCase()) || 
+                           text.includes(person.name.split(' ')[0].toLowerCase());
+            
+            let structureResults = [];
+            structureResults.push({
+                pass: hasName,
+                text: hasName ? '✅ Mentions ' + person.name : '❌ Missing person\'s name'
+            });
+            structureResults.push({
+                pass: sentences.length >= 3,
+                text: sentences.length >= 3 ? '✅ Has ' + sentences.length + ' sentences (3+ is good!)' : '❌ Only ' + sentences.length + ' sentence(s) - try to write at least 3'
+            });
+            structureResults.push({
+                pass: wordCount >= 30,
+                text: wordCount >= 30 ? '✅ Good length (' + wordCount + ' words)' : '❌ Only ' + wordCount + ' words - try to write more'
+            });
+            
+            structureList.innerHTML = structureResults.map(r => 
+                `<li class="${r.pass ? 'pass' : 'fail'}">${r.text}</li>`
+            ).join('');
+            
+            // Fact checks
+            let factsFound = 0;
+            let factResults = [];
+            
+            person.keywords.forEach(kw => {
+                const regex = new RegExp(kw.term, 'i');
+                const found = regex.test(text);
+                if (found) factsFound++;
+                factResults.push({
+                    pass: found,
+                    text: (found ? '✅ ' : '❌ ') + kw.label
+                });
+            });
+            
+            factsList.innerHTML = factResults.map(r => 
+                `<li class="${r.pass ? 'pass' : 'fail'}">${r.text}</li>`
+            ).join('');
+            
+            // Calculate score
+            const structurePassed = structureResults.filter(r => r.pass).length;
+            const totalChecks = structureResults.length + person.keywords.length;
+            const totalPassed = structurePassed + factsFound;
+            const percentage = Math.round((totalPassed / totalChecks) * 100);
+            
+            let message = '';
+            if (percentage >= 80) {
+                message = '🌟 Excellent work!';
+            } else if (percentage >= 60) {
+                message = '👍 Good job! Try to include more facts.';
+            } else {
+                message = '📝 Keep going! Add more details from the facts list.';
+            }
+            
+            scoreDiv.innerHTML = `
+                <span class="score-num">${factsFound}/${person.keywords.length}</span> facts included<br>
+                <small>${message}</small>
+            `;
+            
+            feedbackDiv.classList.remove('hidden');
+        }
+
+        function updateWordCount() {
+            const text = document.getElementById('writingTextarea').value.trim();
+            const words = text ? text.split(/\s+/).length : 0;
+            document.getElementById('wordCount').textContent = words;
+        }
+
+        function startQuiz() {
+            // Ensure comprehensive coverage:
+            // 1. ALL vocabulary questions
+            // 2. At least 1 question per person
+            // 3. Fill remaining slots randomly
+            
+            // Helper to add questions without duplicates
+            const selectedSet = new Set();
+            const addQuestions = (pool, count) => {
+                const available = pool.filter(q => !selectedSet.has(q.question));
+                const picked = shuffle(available).slice(0, count);
+                picked.forEach(q => selectedSet.add(q.question));
+                return picked;
+            };
+            
+            const vocabQuestions = questionBank.filter(q => q.category === 'Vocabulary');
+            const tubmanQuestions = questionBank.filter(q => q.category === 'Harriet Tubman');
+            const douglassQuestions = questionBank.filter(q => q.category === 'Frederick Douglass');
+            const truthQuestions = questionBank.filter(q => q.category === 'Sojourner Truth');
+            const stantonQuestions = questionBank.filter(q => q.category === 'Elizabeth Cady Stanton');
+            const anthonyQuestions = questionBank.filter(q => q.category === 'Susan B. Anthony');
+            const connectionQuestions = questionBank.filter(q => q.category === 'Connections');
+            
+            // New question types
+            const trueFalseQuestions = questionBank.filter(q => q.type === 'truefalse');
+            const fillInQuestions = questionBank.filter(q => q.type === 'fillin');
+            const matchingQuestions = questionBank.filter(q => q.type === 'matching');
+            
+            // Start with all vocab questions (7)
+            let selectedQuestions = addQuestions(vocabQuestions, vocabQuestions.length);
+            
+            // Add 2 questions per person (randomized) - no duplicates
+            selectedQuestions.push(...addQuestions(tubmanQuestions, 2));
+            selectedQuestions.push(...addQuestions(douglassQuestions, 2));
+            selectedQuestions.push(...addQuestions(truthQuestions, 2));
+            selectedQuestions.push(...addQuestions(stantonQuestions, 2));
+            selectedQuestions.push(...addQuestions(anthonyQuestions, 2));
+            
+            // Add connection questions
+            selectedQuestions.push(...addQuestions(connectionQuestions, 2));
+            
+            // Add new question types for variety (no duplicates)
+            selectedQuestions.push(...addQuestions(trueFalseQuestions, 3));
+            selectedQuestions.push(...addQuestions(fillInQuestions, 2));
+            selectedQuestions.push(...addQuestions(matchingQuestions, 3));
+            
+            // Shuffle the final selection and take 25 questions
+            questions = shuffle(selectedQuestions).slice(0, 25);
+            
+            currentQuestion = 0;
+            score = 0;
+            missedQuestions = [];
+            streak = 0;
+            
+            // Reset streak display
+            document.getElementById('streakContainer').classList.add('hidden');
+            
+            document.getElementById('flashcardsScreen').classList.add('hidden');
+            document.getElementById('writingScreen').classList.add('hidden');
+            document.getElementById('tabNav').classList.add('hidden');
+            document.getElementById('quizScreen').classList.remove('hidden');
+            
+            renderQuestion();
+            startTimer();
+        }
+
+        function startTimer() {
+            timeLeft = 60;
+            updateTimerDisplay();
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    autoSubmit();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const timer = document.getElementById('timer');
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            timer.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+            timer.classList.toggle('warning', timeLeft <= 10);
+        }
+
+        function autoSubmit() {
+            if (selectedOption === null) selectedOption = -1;
+            submitAnswer();
+        }
+
+        function renderQuestion() {
+            const q = questions[currentQuestion];
+            
+            document.getElementById('progressBar').style.width = ((currentQuestion + 1) / questions.length * 100) + '%';
+            document.getElementById('progressText').textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+            document.getElementById('categoryBadge').textContent = q.category;
+            
+            // Hide portrait div (portraits removed per user request)
+            const personImageDiv = document.getElementById('personImage');
+            personImageDiv.classList.add('hidden');
+            
+            // Handle fill-in-the-blank display
+            if (q.type === 'fillin') {
+                const parts = q.question.split('____');
+                document.getElementById('questionText').innerHTML = `<span class="fill-blank">${parts[0]}<span class="blank-space">&nbsp;</span>${parts[1] || ''}</span>`;
+            } else {
+                document.getElementById('questionText').textContent = q.question;
+            }
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            
+            // Handle different question types
+            if (q.type === 'truefalse') {
+                optionsContainer.innerHTML = `
+                    <div class="tf-options">
+                        <div class="tf-option true-opt" data-original="0" onclick="selectOption(0, 0)">✓ True</div>
+                        <div class="tf-option false-opt" data-original="1" onclick="selectOption(1, 1)">✗ False</div>
+                    </div>
+                `;
+            } else if (q.type === 'timeline_drag') {
+                // Drag and drop timeline
+                renderTimelineDrag(q);
+                return; // Don't enable submit button yet - wait for all drops
+            } else if (q.type === 'selectall') {
+                // Select all that apply
+                renderSelectAll(q);
+                return; // Don't enable submit button yet - wait for selection
+            } else {
+                // Regular multiple choice (shuffle options)
+                const shuffledOptions = q.options.map((opt, i) => ({ text: opt, originalIndex: i }));
+                shuffle(shuffledOptions);
+                
+                optionsContainer.innerHTML = shuffledOptions.map((opt, i) => `
+                    <div class="option" data-original="${opt.originalIndex}" onclick="selectOption(${i}, ${opt.originalIndex})">${opt.text}</div>
+                `).join('');
+            }
+            
+            selectedOption = null;
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').classList.remove('hidden');
+            document.getElementById('nextBtn').classList.add('hidden');
+            document.getElementById('feedback').classList.add('hidden');
+        }
+
+        function selectOption(displayIndex, originalIndex) {
+            // Handle both regular options and true/false options
+            const options = document.querySelectorAll('.option, .tf-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            options[displayIndex].classList.add('selected');
+            selectedOption = originalIndex;
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        function submitAnswer() {
+            clearInterval(timerInterval);
+            
+            const q = questions[currentQuestion];
+            let isCorrect;
+            
+            // Handle different question types
+            if (q.type === 'timeline_drag') {
+                isCorrect = checkTimelineAnswer();
+                
+                // Show correct/incorrect styling on dropzones
+                const dropzones = document.querySelectorAll('.timeline-dropzone');
+                dropzones.forEach((dz, i) => {
+                    dz.style.pointerEvents = 'none';
+                    if (timelineAnswer[i] === q.correctOrder[i]) {
+                        dz.style.borderColor = '#1D8348';
+                        dz.style.background = '#d4edda';
+                    } else {
+                        dz.style.borderColor = '#C0392B';
+                        dz.style.background = '#f8d7da';
+                    }
+                });
+            } else if (q.type === 'selectall') {
+                isCorrect = checkSelectAllAnswer();
+                
+                // Show correct/incorrect/missed styling
+                const multiOptions = document.querySelectorAll('.multi-option');
+                multiOptions.forEach(opt => {
+                    opt.style.pointerEvents = 'none';
+                    const origIdx = parseInt(opt.dataset.original);
+                    const isCorrectAnswer = q.correctIndices.includes(origIdx);
+                    const wasSelected = selectedMulti.includes(origIdx);
+                    const checkbox = opt.querySelector('.checkbox');
+                    
+                    if (isCorrectAnswer && wasSelected) {
+                        opt.classList.add('correct');
+                        checkbox.innerHTML = '✓';
+                    } else if (!isCorrectAnswer && wasSelected) {
+                        opt.classList.add('incorrect');
+                        checkbox.innerHTML = '✗';
+                    } else if (isCorrectAnswer && !wasSelected) {
+                        opt.classList.add('missed');
+                        checkbox.innerHTML = '!';
+                    }
+                });
+            } else {
+                // Regular questions
+                const options = document.querySelectorAll('.option, .tf-option');
+                isCorrect = selectedOption === q.correct;
+                
+                options.forEach(opt => {
+                    opt.style.pointerEvents = 'none';
+                    const origIdx = parseInt(opt.dataset.original);
+                    if (origIdx === q.correct) opt.classList.add('correct');
+                    if (origIdx === selectedOption && !isCorrect) opt.classList.add('incorrect');
+                });
+            }
+            
+            // Update streak counter
+            updateStreak(isCorrect);
+            
+            if (isCorrect) {
+                score++;
+            } else {
+                if (q.type === 'timeline_drag') {
+                    missedQuestions.push({
+                        question: q.question,
+                        yourAnswer: 'Timeline order incorrect',
+                        correctAnswer: q.explanation,
+                        explanation: q.explanation
+                    });
+                } else if (q.type === 'selectall') {
+                    const correctAnswers = q.correctIndices.map(i => q.options[i]).join(', ');
+                    missedQuestions.push({
+                        question: q.question,
+                        yourAnswer: selectedMulti.length > 0 ? selectedMulti.map(i => q.options[i]).join(', ') : 'None selected',
+                        correctAnswer: correctAnswers,
+                        explanation: q.explanation
+                    });
+                } else {
+                    missedQuestions.push({
+                        question: q.question,
+                        yourAnswer: selectedOption >= 0 ? q.options[selectedOption] : 'No answer',
+                        correctAnswer: q.options[q.correct],
+                        explanation: q.explanation
+                    });
+                }
+            }
+            
+            const feedback = document.getElementById('feedback');
+            feedback.classList.remove('hidden', 'correct', 'incorrect');
+            feedback.classList.add(isCorrect ? 'correct' : 'incorrect');
+            
+            // Show streak info in feedback if on a streak
+            let streakText = '';
+            if (isCorrect && streak >= 3) {
+                streakText = ` 🔥 ${streak} in a row!`;
+            }
+            document.getElementById('feedbackTitle').textContent = isCorrect ? '✅ Correct!' + streakText : '❌ Incorrect';
+            document.getElementById('feedbackText').textContent = q.explanation;
+            
+            document.getElementById('submitBtn').classList.add('hidden');
+            document.getElementById('nextBtn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion >= questions.length) {
+                showResults();
+            } else {
+                renderQuestion();
+                startTimer();
+            }
+        }
+
+        function showResults() {
+            clearInterval(timerInterval);
+            
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('resultsScreen').classList.remove('hidden');
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            document.getElementById('finalScore').textContent = percentage + '%';
+            
+            const messages = percentage >= 80 ? 'Excellent work!' : percentage >= 60 ? 'Good effort!' : 'Keep studying!';
+            let streakMsg = bestStreak >= 3 ? ` | 🔥 Best streak: ${bestStreak}` : '';
+            document.getElementById('scoreMessage').textContent = `${messages} (${score}/${questions.length} correct)${streakMsg}`;
+            
+            const reviewSection = document.getElementById('reviewSection');
+            
+            if (missedQuestions.length > 0) {
+                reviewSection.classList.remove('hidden');
+                startReviewMode();
+            } else {
+                reviewSection.classList.add('hidden');
+            }
+        }
+
+        function startReviewMode() {
+            reviewQuestions = [...missedQuestions];
+            currentReviewQuestion = 0;
+            reviewScore = 0;
+            selectedReviewOption = null;
+            
+            document.getElementById('reviewScore').classList.add('hidden');
+            document.getElementById('reviewProgress').classList.remove('hidden');
+            document.getElementById('reviewQuestion').classList.remove('hidden');
+            document.getElementById('reviewOptions').classList.remove('hidden');
+            document.getElementById('reviewCheckBtn').classList.remove('hidden');
+            
+            renderReviewQuestion();
+        }
+
+        function renderReviewQuestion() {
+            const q = reviewQuestions[currentReviewQuestion];
+            
+            document.getElementById('reviewProgress').textContent = 
+                `Question ${currentReviewQuestion + 1} of ${reviewQuestions.length}`;
+            document.getElementById('reviewQuestion').textContent = q.question;
+            
+            // Create shuffled options
+            let allOptions = [q.correctAnswer];
+            const originalQ = questionBank.find(qb => qb.question === q.question);
+            if (originalQ) {
+                originalQ.options.forEach(opt => {
+                    if (opt !== q.correctAnswer && allOptions.length < 4) {
+                        allOptions.push(opt);
+                    }
+                });
+            }
+            allOptions = shuffle(allOptions);
+            
+            const optionsContainer = document.getElementById('reviewOptions');
+            optionsContainer.innerHTML = allOptions.map((opt, i) => `
+                <div class="review-option" data-correct="${opt === q.correctAnswer}" onclick="selectReviewOption(${i})">${opt}</div>
+            `).join('');
+            
+            selectedReviewOption = null;
+            document.getElementById('reviewCheckBtn').disabled = true;
+            document.getElementById('reviewCheckBtn').classList.remove('hidden');
+            document.getElementById('reviewNextBtn').classList.add('hidden');
+            document.getElementById('reviewFeedback').classList.add('hidden');
+        }
+
+        function selectReviewOption(index) {
+            const options = document.querySelectorAll('.review-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            options[index].classList.add('selected');
+            selectedReviewOption = index;
+            document.getElementById('reviewCheckBtn').disabled = false;
+        }
+
+        function checkReviewAnswer() {
+            const options = document.querySelectorAll('.review-option');
+            const selectedOpt = options[selectedReviewOption];
+            const isCorrect = selectedOpt.dataset.correct === 'true';
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt.dataset.correct === 'true') {
+                    opt.classList.add('reveal-correct');
+                }
+            });
+            
+            if (isCorrect) {
+                selectedOpt.classList.add('correct');
+                reviewScore++;
+            } else {
+                selectedOpt.classList.add('incorrect');
+            }
+            
+            const feedback = document.getElementById('reviewFeedback');
+            feedback.classList.remove('hidden', 'correct', 'incorrect');
+            feedback.classList.add(isCorrect ? 'correct' : 'incorrect');
+            feedback.textContent = isCorrect ? '✅ Great job! You got it!' : '❌ Not quite. The correct answer is highlighted.';
+            
+            document.getElementById('reviewCheckBtn').classList.add('hidden');
+            document.getElementById('reviewNextBtn').classList.remove('hidden');
+            document.getElementById('reviewNextBtn').textContent = 
+                currentReviewQuestion < reviewQuestions.length - 1 ? 'Next Question →' : 'See Results';
+        }
+
+        function nextReviewQuestion() {
+            currentReviewQuestion++;
+            if (currentReviewQuestion >= reviewQuestions.length) {
+                showReviewResults();
+            } else {
+                renderReviewQuestion();
+            }
+        }
+
+        function showReviewResults() {
+            document.getElementById('reviewProgress').classList.add('hidden');
+            document.getElementById('reviewQuestion').classList.add('hidden');
+            document.getElementById('reviewOptions').classList.add('hidden');
+            document.getElementById('reviewFeedback').classList.add('hidden');
+            document.getElementById('reviewCheckBtn').classList.add('hidden');
+            document.getElementById('reviewNextBtn').classList.add('hidden');
+            
+            const scoreDiv = document.getElementById('reviewScore');
+            scoreDiv.classList.remove('hidden');
+            
+            const percentage = Math.round((reviewScore / reviewQuestions.length) * 100);
+            document.getElementById('reviewScoreText').textContent = 
+                `You got ${reviewScore} out of ${reviewQuestions.length} correct (${percentage}%) on the review!`;
+        }
+
+        function restartQuiz() {
+            document.getElementById('resultsScreen').classList.add('hidden');
+            document.getElementById('flashcardsScreen').classList.remove('hidden');
+            document.getElementById('tabNav').classList.remove('hidden');
+            // Reset active tab
+            document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === 0);
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderFlashcards();
+            // Set up word count listener
+            document.getElementById('writingTextarea').addEventListener('input', updateWordCount);
+        });
+    </script>
+</body>
+</html>
