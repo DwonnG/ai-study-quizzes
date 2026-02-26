@@ -21,6 +21,7 @@ Try them now - no download needed!
 ### 📐 Math
 - 🔢 [Fractions Quiz (Unit 4a)](https://dwonng.github.io/ai-study-quizzes/math/fractions_quiz.html) - Spanish immersion math
 - 🔢 [Fractions & Decimals (Unit 4b)](https://dwonng.github.io/ai-study-quizzes/math/fractions_decimals_4b_quiz.html) - Ordering, comparing, converting
+- 📐 [Unit Circle & Trig Quiz](https://dwonng.github.io/ai-study-quizzes/math/trig_unit_circle_quiz.html) - Quadrants, trig values, arc length, sector area
 
 ### 🔬 Science
 - 💡 [Sound & Light Quiz](https://dwonng.github.io/ai-study-quizzes/science/science_sound_light_quiz.html) - Spanish immersion science
