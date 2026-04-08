@@ -1,0 +1,1767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDET Interview Training - 3 Day Course</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/theme/material-darker.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/mode/python/python.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-card: #1c2333;
+            --border: #30363d;
+            --text: #e6edf3;
+            --text-muted: #8b949e;
+            --accent: #58a6ff;
+            --accent2: #bc8cff;
+            --green: #3fb950;
+            --orange: #d29922;
+            --red: #f85149;
+            --code-bg: #0d1117;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* NAV */
+        .top-bar {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .top-bar h1 { font-size: 1.2em; color: var(--accent); }
+        .progress-summary { display: flex; align-items: center; gap: 12px; font-size: 0.9em; }
+        .progress-summary .pct { color: var(--green); font-weight: bold; font-size: 1.1em; }
+        .progress-bar-mini { width: 120px; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+        .progress-bar-mini-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--green)); border-radius: 3px; transition: width 0.5s; }
+        .btn-reset { background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8em; }
+        .btn-reset:hover { border-color: var(--red); color: var(--red); }
+
+        /* LAYOUT */
+        .layout { display: flex; min-height: calc(100vh - 50px); }
+        .sidebar {
+            width: 280px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 16px 0;
+            overflow-y: auto;
+            position: sticky;
+            top: 50px;
+            height: calc(100vh - 50px);
+            flex-shrink: 0;
+        }
+        .main-content {
+            flex: 1;
+            padding: 32px 40px;
+            max-width: 860px;
+            overflow-y: auto;
+        }
+
+        /* SIDEBAR NAV */
+        .day-group { margin-bottom: 8px; }
+        .day-header {
+            padding: 10px 20px;
+            font-weight: bold;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .day-header:hover { color: var(--text); }
+        .day-header .day-progress { font-size: 0.8em; color: var(--green); }
+        .day-topics { padding: 0; }
+        .day-topics.collapsed { display: none; }
+        .topic-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 20px 8px 28px;
+            cursor: pointer;
+            font-size: 0.88em;
+            color: var(--text-muted);
+            transition: all 0.15s;
+            border-left: 3px solid transparent;
+        }
+        .topic-link:hover { background: rgba(88,166,255,0.08); color: var(--text); }
+        .topic-link.active { background: rgba(88,166,255,0.12); color: var(--accent); border-left-color: var(--accent); }
+        .topic-link .check { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 0.7em; }
+        .topic-link .check.done { background: var(--green); border-color: var(--green); color: #fff; }
+
+        /* CONTENT */
+        .topic-content { display: none; }
+        .topic-content.active { display: block; }
+
+        .topic-title {
+            font-size: 1.8em;
+            margin-bottom: 8px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .topic-subtitle { color: var(--text-muted); margin-bottom: 28px; font-size: 1em; }
+        .day-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.75em; font-weight: bold; margin-bottom: 12px; }
+        .day-badge.day1 { background: rgba(88,166,255,0.15); color: var(--accent); }
+        .day-badge.day2 { background: rgba(188,140,255,0.15); color: var(--accent2); }
+        .day-badge.day3 { background: rgba(255,110,64,0.15); color: #ff6e40; }
+
+        /* SECTIONS */
+        .section { margin-bottom: 32px; }
+        .section h3 {
+            font-size: 1.15em;
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+        }
+        .section p, .section li { color: var(--text); line-height: 1.7; margin-bottom: 8px; }
+        .section ul, .section ol { padding-left: 24px; margin-bottom: 12px; }
+
+        /* CODE */
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px 20px;
+            overflow-x: auto;
+            font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: 0.88em;
+            line-height: 1.6;
+            margin: 12px 0;
+            color: #e6edf3;
+        }
+        code {
+            background: rgba(88,166,255,0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: var(--accent);
+        }
+        pre code { background: none; padding: 0; color: inherit; }
+        .kw { color: #ff7b72; }
+        .fn { color: #d2a8ff; }
+        .str { color: #a5d6ff; }
+        .cmt { color: #8b949e; font-style: italic; }
+        .num { color: #79c0ff; }
+
+        /* CALLOUTS */
+        .callout {
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 16px 0;
+            border-left: 4px solid;
+        }
+        .callout.tip { background: rgba(63,185,80,0.08); border-color: var(--green); }
+        .callout.tip::before { content: "KEY INSIGHT"; display: block; font-weight: bold; font-size: 0.75em; letter-spacing: 0.5px; color: var(--green); margin-bottom: 6px; }
+        .callout.warn { background: rgba(210,153,34,0.08); border-color: var(--orange); }
+        .callout.warn::before { content: "INTERVIEW TIP"; display: block; font-weight: bold; font-size: 0.75em; letter-spacing: 0.5px; color: var(--orange); margin-bottom: 6px; }
+        .callout.info { background: rgba(88,166,255,0.08); border-color: var(--accent); }
+        .callout.info::before { content: "REMEMBER"; display: block; font-weight: bold; font-size: 0.75em; letter-spacing: 0.5px; color: var(--accent); margin-bottom: 6px; }
+
+        /* BIG-O TABLE */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 0.92em;
+        }
+        th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { color: var(--accent); font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.5px; }
+        tr:hover td { background: rgba(88,166,255,0.04); }
+
+        /* PRACTICE */
+        .practice-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+        }
+        .practice-box h4 { color: var(--orange); margin-bottom: 12px; font-size: 1.05em; }
+        .practice-box .problem { margin-bottom: 16px; }
+
+        .btn-reveal {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: #fff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.92em;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-reveal:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(88,166,255,0.3); }
+
+        .solution {
+            display: none;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+        .solution.show { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* COMPLETE BTN */
+        .complete-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+        .btn-complete {
+            background: var(--green);
+            color: #fff;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-complete:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(63,185,80,0.3); }
+        .btn-complete.completed { background: var(--border); cursor: default; }
+        .btn-complete.completed:hover { transform: none; box-shadow: none; }
+        .btn-next-topic {
+            background: none;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 12px 28px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-next-topic:hover { background: rgba(88,166,255,0.1); }
+
+        /* WELCOME */
+        .welcome { text-align: center; padding: 60px 20px; }
+        .welcome h2 { font-size: 2em; margin-bottom: 16px; background: linear-gradient(90deg, var(--accent), var(--accent2), #ff6e40); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .welcome p { color: var(--text-muted); max-width: 500px; margin: 0 auto 24px; }
+        .day-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 32px; }
+        .day-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+        .day-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .day-card h3 { color: var(--accent); margin-bottom: 8px; }
+        .day-card p { color: var(--text-muted); font-size: 0.88em; }
+        .day-card .card-progress { margin-top: 12px; font-size: 0.85em; color: var(--green); }
+
+        /* CODE EDITOR */
+        .editor-widget { margin: 16px 0; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+        .editor-toolbar {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #1e1e2e; padding: 8px 14px; border-bottom: 1px solid var(--border);
+        }
+        .editor-toolbar span { font-size: 0.8em; color: var(--text-muted); font-family: monospace; }
+        .btn-run {
+            background: var(--green); color: #fff; border: none; padding: 6px 18px;
+            border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: 600;
+            transition: all 0.2s; display: flex; align-items: center; gap: 6px;
+        }
+        .btn-run:hover { box-shadow: 0 2px 8px rgba(63,185,80,0.4); }
+        .btn-run:disabled { opacity: 0.5; cursor: wait; }
+        .btn-run .run-icon { font-size: 1.1em; }
+        .editor-widget .CodeMirror {
+            height: auto; min-height: 120px; max-height: 400px;
+            font-size: 0.9em; line-height: 1.55; font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+        }
+        .output-panel {
+            background: #0d1117; border-top: 1px solid var(--border);
+            padding: 12px 16px; font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: 0.85em; line-height: 1.5; max-height: 200px; overflow-y: auto;
+            white-space: pre-wrap; color: #8b949e; display: none;
+        }
+        .output-panel.show { display: block; }
+        .output-panel.has-output { color: #e6edf3; }
+        .output-panel.has-error { color: #f85149; }
+        .pyodide-loading { color: var(--orange); font-style: italic; }
+
+        @media (max-width: 900px) {
+            .layout { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: static; display: flex; overflow-x: auto; padding: 8px; gap: 4px; border-right: none; border-bottom: 1px solid var(--border); }
+            .day-group { display: flex; gap: 4px; margin: 0; }
+            .day-header { display: none; }
+            .day-topics { display: flex !important; gap: 4px; }
+            .topic-link { padding: 6px 12px; white-space: nowrap; border-left: none; border-radius: 6px; font-size: 0.8em; }
+            .main-content { padding: 20px; }
+            .day-cards { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <h1>SDET Interview Training</h1>
+        <div class="progress-summary">
+            <span class="pct" id="global-pct">0%</span>
+            <div class="progress-bar-mini"><div class="progress-bar-mini-fill" id="global-bar" style="width:0%"></div></div>
+            <span id="global-count" style="color:var(--text-muted);font-size:0.85em">0/17 topics</span>
+            <button class="btn-reset" onclick="resetProgress()">Reset</button>
+        </div>
+    </div>
+    <div class="layout">
+        <nav class="sidebar" id="sidebar"></nav>
+        <div class="main-content" id="main-content"></div>
+    </div>
+
+<script>
+const STORAGE_KEY = 'sdet_interview_training_progress';
+
+const topics = [
+    // === DAY 1 ===
+    {
+        id: 'bigo', day: 1, title: 'Big-O Notation',
+        subtitle: 'Analyze time and space complexity of any algorithm',
+        content: `
+<div class="section">
+<h3>What Is Big-O?</h3>
+<p>Big-O describes how an algorithm's performance scales as input size <code>n</code> grows. It answers: "If I double the input, how much longer does this take?"</p>
+<table>
+<tr><th>Big-O</th><th>Name</th><th>n=1,000</th><th>Example</th></tr>
+<tr><td><code>O(1)</code></td><td>Constant</td><td>1 op</td><td>Dict lookup, array index</td></tr>
+<tr><td><code>O(log n)</code></td><td>Logarithmic</td><td>~10 ops</td><td>Binary search</td></tr>
+<tr><td><code>O(n)</code></td><td>Linear</td><td>1,000 ops</td><td>Single loop</td></tr>
+<tr><td><code>O(n log n)</code></td><td>Linearithmic</td><td>~10,000 ops</td><td>Sorting</td></tr>
+<tr><td><code>O(n&sup2;)</code></td><td>Quadratic</td><td>1,000,000 ops</td><td>Nested loops</td></tr>
+<tr><td><code>O(2&#x207F;)</code></td><td>Exponential</td><td>Way too many</td><td>Brute-force subsets</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>Rules for Counting</h3>
+<ol>
+<li><strong>Drop constants:</strong> O(2n) = O(n). O(500) = O(1).</li>
+<li><strong>Drop lower terms:</strong> O(n&sup2; + n) = O(n&sup2;). The biggest term wins.</li>
+<li><strong>Nested loops multiply:</strong> Loop inside a loop over n = O(n &times; n) = O(n&sup2;).</li>
+<li><strong>Sequential loops add:</strong> Two separate loops = O(n + n) = O(n).</li>
+<li><strong>Space complexity</strong> = extra memory used (not counting the input).</li>
+</ol>
+</div>
+
+<div class="section">
+<h3>Worked Example</h3>
+<pre><code><span class="kw">def</span> <span class="fn">find_common</span>(list_a, list_b):
+    set_b = <span class="fn">set</span>(list_b)       <span class="cmt"># O(m) time and space</span>
+    result = []
+    <span class="kw">for</span> item <span class="kw">in</span> list_a:        <span class="cmt"># O(n) loop</span>
+        <span class="kw">if</span> item <span class="kw">in</span> set_b:      <span class="cmt"># O(1) set lookup</span>
+            result.append(item)
+    <span class="kw">return</span> result</code></pre>
+<p><strong>Time:</strong> O(n + m) &mdash; build set is O(m), loop is O(n), each lookup is O(1).</p>
+<p><strong>Space:</strong> O(m) for the set.</p>
+<p>Without the set, <code>item in list_b</code> would be O(m) per check, making total O(n &times; m).</p>
+<div class="callout tip">The "trade space for time" pattern (build a set/dict for O(1) lookups) is the single most common optimization in coding interviews.</div>
+</div>
+`,
+        practice: {
+            problem: `What is the time and space complexity of each snippet?
+
+<pre><code><span class="cmt"># Snippet A</span>
+<span class="kw">def</span> <span class="fn">foo</span>(nums):
+    <span class="kw">return</span> nums[<span class="num">0</span>] + nums[-<span class="num">1</span>]
+
+<span class="cmt"># Snippet B</span>
+<span class="kw">def</span> <span class="fn">bar</span>(nums):
+    nums.sort()
+    <span class="kw">return</span> nums[<span class="num">0</span>]
+
+<span class="cmt"># Snippet C</span>
+<span class="kw">def</span> <span class="fn">baz</span>(nums):
+    seen = <span class="fn">set</span>()
+    <span class="kw">for</span> num <span class="kw">in</span> nums:
+        <span class="kw">if</span> num * <span class="num">2</span> <span class="kw">in</span> seen:
+            <span class="kw">return</span> <span class="kw">True</span>
+        seen.add(num)
+    <span class="kw">return</span> <span class="kw">False</span></code></pre>`,
+            solution: `<p><strong>Snippet A:</strong> Time O(1), Space O(1) &mdash; just two index accesses, constant work.</p>
+<p><strong>Snippet B:</strong> Time O(n log n), Space O(1)* &mdash; sort dominates. (*Timsort uses O(n) space internally, but in-place sort is often treated as O(1) extra space in interviews.)</p>
+<p><strong>Snippet C:</strong> Time O(n), Space O(n) &mdash; one pass through nums, set lookups are O(1), set grows to at most n elements.</p>`,
+            starterCode: `# Try running the snippets and testing with different inputs
+
+def foo(nums):
+    return nums[0] + nums[-1]
+
+def baz(nums):
+    seen = set()
+    for num in nums:
+        if num * 2 in seen:
+            return True
+        seen.add(num)
+    return False
+
+print("foo([10, 20, 30]):", foo([10, 20, 30]))
+print("baz([1, 2, 3, 4]):", baz([1, 2, 3, 4]))
+print("baz([1, 2, 4, 8]):", baz([1, 2, 4, 8]))
+`
+        }
+    },
+    {
+        id: 'arrays', day: 1, title: 'Arrays & Strings',
+        subtitle: 'Two pointers, sliding window, and common array patterns',
+        content: `
+<div class="section">
+<h3>Python List & String Essentials</h3>
+<ul>
+<li><code>len(arr)</code> &mdash; O(1)</li>
+<li><code>arr[i]</code> &mdash; O(1) index access</li>
+<li><code>arr.append(x)</code> &mdash; O(1) amortized</li>
+<li><code>arr.pop()</code> &mdash; O(1) from end; <code>arr.pop(0)</code> is O(n)!</li>
+<li><code>x in arr</code> &mdash; O(n) for lists; O(1) for sets</li>
+<li>Strings are immutable: <code>s + "x"</code> creates a new string each time</li>
+</ul>
+<div class="callout warn">When an interviewer says "optimize this," the first thing to consider is: can I use a hash set or dict to replace an O(n) scan with O(1) lookup?</div>
+</div>
+
+<div class="section">
+<h3>Pattern: Two Pointers</h3>
+<p>Use two indices that move toward each other (or in the same direction at different speeds).</p>
+<pre><code><span class="cmt"># Check if a string is a palindrome</span>
+<span class="kw">def</span> <span class="fn">is_palindrome</span>(s):
+    left, right = <span class="num">0</span>, <span class="fn">len</span>(s) - <span class="num">1</span>
+    <span class="kw">while</span> left < right:
+        <span class="kw">if</span> s[left] != s[right]:
+            <span class="kw">return</span> <span class="kw">False</span>
+        left += <span class="num">1</span>
+        right -= <span class="num">1</span>
+    <span class="kw">return</span> <span class="kw">True</span></code></pre>
+<p>Time: O(n), Space: O(1). No extra data structures needed.</p>
+</div>
+
+<div class="section">
+<h3>Pattern: Sliding Window</h3>
+<p>Maintain a window [left, right] that expands and shrinks as you scan.</p>
+<pre><code><span class="cmt"># Longest substring without repeating characters</span>
+<span class="kw">def</span> <span class="fn">length_of_longest</span>(s):
+    seen = <span class="fn">set</span>()
+    left = max_len = <span class="num">0</span>
+    <span class="kw">for</span> right <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(s)):
+        <span class="kw">while</span> s[right] <span class="kw">in</span> seen:
+            seen.remove(s[left])
+            left += <span class="num">1</span>
+        seen.add(s[right])
+        max_len = <span class="fn">max</span>(max_len, right - left + <span class="num">1</span>)
+    <span class="kw">return</span> max_len</code></pre>
+<p>Time: O(n) &mdash; each character is added and removed at most once.</p>
+</div>
+`,
+        practice: {
+            problem: `<strong>Two Sum:</strong> Given a list of integers <code>nums</code> and a <code>target</code>, return the indices of the two numbers that add up to target. Assume exactly one solution exists.
+<pre><code><span class="cmt"># Example:</span>
+<span class="cmt"># nums = [2, 7, 11, 15], target = 9</span>
+<span class="cmt"># Output: [0, 1]  (because 2 + 7 = 9)</span></code></pre>
+<p>Think about: What's the brute force? How do you optimize with a hash map?</p>`,
+            starterCode: `def two_sum(nums, target):
+    # Your solution here
+    pass
+
+# Test cases
+print(two_sum([2, 7, 11, 15], 9))   # Expected: [0, 1]
+print(two_sum([3, 2, 4], 6))         # Expected: [1, 2]
+print(two_sum([3, 3], 6))            # Expected: [0, 1]
+`,
+            solution: `<pre><code><span class="kw">def</span> <span class="fn">two_sum</span>(nums, target):
+    seen = {}  <span class="cmt"># value -> index</span>
+    <span class="kw">for</span> i, num <span class="kw">in</span> <span class="fn">enumerate</span>(nums):
+        complement = target - num
+        <span class="kw">if</span> complement <span class="kw">in</span> seen:
+            <span class="kw">return</span> [seen[complement], i]
+        seen[num] = i</code></pre>
+<p><strong>Time:</strong> O(n) &mdash; single pass. <strong>Space:</strong> O(n) &mdash; hash map.</p>
+<p><strong>Why it works:</strong> For each number, we check if the number we need (target - num) was already seen. If yes, we found our pair. If no, we store the current number for future checks.</p>
+<p><strong>Brute force</strong> would be nested loops checking all pairs: O(n&sup2;). The hash map brings it to O(n).</p>`
+        }
+    },
+    {
+        id: 'hashmaps', day: 1, title: 'Hash Maps & Sets',
+        subtitle: 'Frequency counting, deduplication, and O(1) lookups',
+        content: `
+<div class="section">
+<h3>When to Use a Hash Map</h3>
+<ul>
+<li><strong>Counting frequencies:</strong> "How many times does each element appear?"</li>
+<li><strong>Fast lookup:</strong> "Have I seen this before?" &mdash; use a set</li>
+<li><strong>Grouping:</strong> "Group items by some key"</li>
+<li><strong>Caching:</strong> "Store computed results for reuse" (memoization)</li>
+</ul>
+</div>
+
+<div class="section">
+<h3>Python Tools</h3>
+<pre><code><span class="kw">from</span> collections <span class="kw">import</span> Counter, defaultdict
+
+<span class="cmt"># Counter: instant frequency counting</span>
+counts = Counter([<span class="str">'a'</span>, <span class="str">'b'</span>, <span class="str">'a'</span>, <span class="str">'c'</span>, <span class="str">'a'</span>])
+<span class="cmt"># Counter({'a': 3, 'b': 1, 'c': 1})</span>
+counts.most_common(<span class="num">2</span>)  <span class="cmt"># [('a', 3), ('b', 1)]</span>
+
+<span class="cmt"># defaultdict: no KeyError, auto-creates default values</span>
+groups = defaultdict(<span class="fn">list</span>)
+groups[<span class="str">'fruits'</span>].append(<span class="str">'apple'</span>)  <span class="cmt"># no need to check if key exists</span>
+
+<span class="cmt"># set: O(1) membership, deduplication</span>
+unique = <span class="fn">set</span>([<span class="num">1</span>, <span class="num">2</span>, <span class="num">2</span>, <span class="num">3</span>])  <span class="cmt"># {1, 2, 3}</span></code></pre>
+<div class="callout info"><code>dict.get(key, default)</code> returns default if key is missing (no KeyError). <code>defaultdict</code> auto-creates on access. <code>Counter</code> is a dict that counts.</div>
+</div>
+
+<div class="section">
+<h3>Worked Example: Valid Anagram</h3>
+<pre><code><span class="kw">def</span> <span class="fn">is_anagram</span>(s, t):
+    <span class="kw">return</span> Counter(s) == Counter(t)</code></pre>
+<p>One line! Counter builds a frequency map for each string. If the maps match, they're anagrams. Time: O(n), Space: O(1) since alphabet size is fixed.</p>
+</div>
+`,
+        practice: {
+            problem: `<strong>First Unique Character:</strong> Given a string <code>s</code>, find the first non-repeating character and return its index. Return -1 if none exist.
+<pre><code><span class="cmt"># Example: s = "leetcode" -> return 0 ('l' appears once)</span>
+<span class="cmt"># Example: s = "aabb" -> return -1</span></code></pre>`,
+            starterCode: `from collections import Counter
+
+def first_uniq_char(s):
+    # Your solution here
+    pass
+
+# Test cases
+print(first_uniq_char("leetcode"))    # Expected: 0
+print(first_uniq_char("loveleetcode"))# Expected: 2
+print(first_uniq_char("aabb"))        # Expected: -1
+`,
+            solution: `<pre><code><span class="kw">def</span> <span class="fn">first_uniq_char</span>(s):
+    counts = Counter(s)
+    <span class="kw">for</span> i, char <span class="kw">in</span> <span class="fn">enumerate</span>(s):
+        <span class="kw">if</span> counts[char] == <span class="num">1</span>:
+            <span class="kw">return</span> i
+    <span class="kw">return</span> -<span class="num">1</span></code></pre>
+<p><strong>Time:</strong> O(n) &mdash; two passes (Counter builds in one pass, then we scan). <strong>Space:</strong> O(1) &mdash; at most 26 letters.</p>
+<p><strong>Pattern:</strong> Count first, then scan for the condition. This "count then query" pattern is extremely common.</p>`
+        }
+    },
+    {
+        id: 'sorting', day: 1, title: 'Sorting',
+        subtitle: 'Python sorting, custom keys, and the Merge Intervals pattern',
+        content: `
+<div class="section">
+<h3>Python Sorting</h3>
+<pre><code><span class="cmt"># sorted() returns a new list; .sort() modifies in-place</span>
+nums = [<span class="num">3</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">1</span>, <span class="num">5</span>]
+<span class="fn">sorted</span>(nums)                   <span class="cmt"># [1, 1, 3, 4, 5]</span>
+<span class="fn">sorted</span>(nums, reverse=<span class="kw">True</span>)    <span class="cmt"># [5, 4, 3, 1, 1]</span>
+
+<span class="cmt"># Custom key: sort tuples by second element</span>
+pairs = [(<span class="num">1</span>,<span class="num">3</span>), (<span class="num">2</span>,<span class="num">1</span>), (<span class="num">3</span>,<span class="num">2</span>)]
+<span class="fn">sorted</span>(pairs, key=<span class="kw">lambda</span> x: x[<span class="num">1</span>])  <span class="cmt"># [(2,1), (3,2), (1,3)]</span>
+
+<span class="cmt"># Sort strings by length</span>
+words = [<span class="str">'hi'</span>, <span class="str">'hello'</span>, <span class="str">'hey'</span>]
+<span class="fn">sorted</span>(words, key=<span class="fn">len</span>)        <span class="cmt"># ['hi', 'hey', 'hello']</span></code></pre>
+<p>Python's Timsort is <strong>O(n log n)</strong> and stable (preserves relative order of equal elements).</p>
+</div>
+
+<div class="section">
+<h3>Worked Example: Merge Intervals</h3>
+<pre><code><span class="kw">def</span> <span class="fn">merge</span>(intervals):
+    intervals.sort(key=<span class="kw">lambda</span> x: x[<span class="num">0</span>])
+    merged = [intervals[<span class="num">0</span>]]
+
+    <span class="kw">for</span> start, end <span class="kw">in</span> intervals[<span class="num">1</span>:]:
+        <span class="kw">if</span> start <= merged[-<span class="num">1</span>][<span class="num">1</span>]:
+            merged[-<span class="num">1</span>][<span class="num">1</span>] = <span class="fn">max</span>(merged[-<span class="num">1</span>][<span class="num">1</span>], end)
+        <span class="kw">else</span>:
+            merged.append([start, end])
+
+    <span class="kw">return</span> merged
+
+<span class="cmt"># merge([[1,3],[2,6],[8,10],[15,18]])</span>
+<span class="cmt"># => [[1,6],[8,10],[15,18]]</span></code></pre>
+<p><strong>Key insight:</strong> Sort by start time first. Then a single pass can merge overlapping intervals by comparing current start with previous end.</p>
+<div class="callout warn">When you see "intervals" or "ranges" in an interview, think: sort first, then scan.</div>
+</div>
+`,
+        practice: {
+            problem: `<strong>Meeting Rooms:</strong> Given a list of meeting time intervals <code>[[start, end], ...]</code>, determine if a person can attend all meetings (i.e., no overlaps).
+<pre><code><span class="cmt"># Example: [[0,30],[5,10],[15,20]] -> False (overlaps!)</span>
+<span class="cmt"># Example: [[7,10],[2,4]] -> True (no overlap)</span></code></pre>`,
+            starterCode: `def can_attend_all(intervals):
+    # Your solution here
+    pass
+
+# Test cases
+print(can_attend_all([[0,30],[5,10],[15,20]]))  # Expected: False
+print(can_attend_all([[7,10],[2,4]]))            # Expected: True
+print(can_attend_all([[1,5],[5,10]]))            # Expected: True
+print(can_attend_all([[1,5],[4,10]]))            # Expected: False
+`,
+            solution: `<pre><code><span class="kw">def</span> <span class="fn">can_attend_all</span>(intervals):
+    intervals.sort(key=<span class="kw">lambda</span> x: x[<span class="num">0</span>])
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="fn">len</span>(intervals)):
+        <span class="kw">if</span> intervals[i][<span class="num">0</span>] < intervals[i-<span class="num">1</span>][<span class="num">1</span>]:
+            <span class="kw">return</span> <span class="kw">False</span>
+    <span class="kw">return</span> <span class="kw">True</span></code></pre>
+<p><strong>Time:</strong> O(n log n) for sort + O(n) scan = O(n log n). <strong>Space:</strong> O(1) extra.</p>
+<p>After sorting by start time, just check if any meeting starts before the previous one ends.</p>`
+        }
+    },
+    {
+        id: 'binarysearch', day: 1, title: 'Binary Search',
+        subtitle: 'The template for searching sorted data in O(log n)',
+        content: `
+<div class="section">
+<h3>The Template</h3>
+<pre><code><span class="kw">def</span> <span class="fn">binary_search</span>(nums, target):
+    lo, hi = <span class="num">0</span>, <span class="fn">len</span>(nums) - <span class="num">1</span>
+
+    <span class="kw">while</span> lo <= hi:
+        mid = (lo + hi) // <span class="num">2</span>
+        <span class="kw">if</span> nums[mid] == target:
+            <span class="kw">return</span> mid
+        <span class="kw">elif</span> nums[mid] < target:
+            lo = mid + <span class="num">1</span>   <span class="cmt"># target is in right half</span>
+        <span class="kw">else</span>:
+            hi = mid - <span class="num">1</span>   <span class="cmt"># target is in left half</span>
+
+    <span class="kw">return</span> -<span class="num">1</span>  <span class="cmt"># not found</span></code></pre>
+<p><strong>Time:</strong> O(log n). Each iteration halves the search space.</p>
+<div class="callout tip">The key to binary search: you need a <strong>sorted</strong> input (or a monotonic condition) so you can safely eliminate half the candidates each step.</div>
+</div>
+
+<div class="section">
+<h3>Python's bisect Module</h3>
+<pre><code><span class="kw">import</span> bisect
+nums = [<span class="num">1</span>, <span class="num">3</span>, <span class="num">5</span>, <span class="num">7</span>, <span class="num">9</span>]
+bisect.bisect_left(nums, <span class="num">5</span>)   <span class="cmt"># 2 (index where 5 is)</span>
+bisect.bisect_left(nums, <span class="num">4</span>)   <span class="cmt"># 2 (index where 4 would be inserted)</span>
+bisect.insort(nums, <span class="num">4</span>)        <span class="cmt"># [1, 3, 4, 5, 7, 9]</span></code></pre>
+</div>
+`,
+        practice: {
+            problem: `<strong>Search Insert Position:</strong> Given a sorted array and a target, return the index if found. If not, return the index where it would be inserted.
+<pre><code><span class="cmt"># searchInsert([1,3,5,6], 5) -> 2</span>
+<span class="cmt"># searchInsert([1,3,5,6], 2) -> 1</span>
+<span class="cmt"># searchInsert([1,3,5,6], 7) -> 4</span></code></pre>`,
+            starterCode: `def search_insert(nums, target):
+    # Your solution here
+    pass
+
+# Test cases
+print(search_insert([1,3,5,6], 5))  # Expected: 2
+print(search_insert([1,3,5,6], 2))  # Expected: 1
+print(search_insert([1,3,5,6], 7))  # Expected: 4
+print(search_insert([1,3,5,6], 0))  # Expected: 0
+`,
+            solution: `<pre><code><span class="kw">def</span> <span class="fn">search_insert</span>(nums, target):
+    lo, hi = <span class="num">0</span>, <span class="fn">len</span>(nums) - <span class="num">1</span>
+    <span class="kw">while</span> lo <= hi:
+        mid = (lo + hi) // <span class="num">2</span>
+        <span class="kw">if</span> nums[mid] == target:
+            <span class="kw">return</span> mid
+        <span class="kw">elif</span> nums[mid] < target:
+            lo = mid + <span class="num">1</span>
+        <span class="kw">else</span>:
+            hi = mid - <span class="num">1</span>
+    <span class="kw">return</span> lo  <span class="cmt"># lo is the insertion point</span></code></pre>
+<p>When the loop ends without finding the target, <code>lo</code> is exactly where the target should be inserted to maintain sorted order. This is the same as <code>bisect_left</code>.</p>`
+        }
+    },
+    {
+        id: 'stacks', day: 1, title: 'Stacks & Queues',
+        subtitle: 'LIFO and FIFO patterns for matching, parsing, and BFS',
+        content: `
+<div class="section">
+<h3>Stack (LIFO) in Python</h3>
+<pre><code>stack = []
+stack.append(<span class="num">1</span>)   <span class="cmt"># push</span>
+stack.append(<span class="num">2</span>)
+stack.append(<span class="num">3</span>)
+stack.pop()        <span class="cmt"># 3 (last in, first out)</span>
+stack[-<span class="num">1</span>]          <span class="cmt"># 2 (peek at top without removing)</span></code></pre>
+</div>
+
+<div class="section">
+<h3>Queue (FIFO) in Python</h3>
+<pre><code><span class="kw">from</span> collections <span class="kw">import</span> deque
+queue = deque()
+queue.append(<span class="num">1</span>)    <span class="cmt"># enqueue to back</span>
+queue.append(<span class="num">2</span>)
+queue.popleft()    <span class="cmt"># 1 (first in, first out)</span></code></pre>
+<div class="callout info">Never use <code>list.pop(0)</code> for a queue &mdash; it's O(n) because it shifts all elements. <code>deque.popleft()</code> is O(1).</div>
+</div>
+
+<div class="section">
+<h3>Worked Example: Valid Parentheses</h3>
+<pre><code><span class="kw">def</span> <span class="fn">is_valid</span>(s):
+    stack = []
+    pairs = {<span class="str">')'</span>: <span class="str">'('</span>, <span class="str">'}'</span>: <span class="str">'{'</span>, <span class="str">']'</span>: <span class="str">'['</span>}
+
+    <span class="kw">for</span> char <span class="kw">in</span> s:
+        <span class="kw">if</span> char <span class="kw">in</span> pairs:
+            <span class="kw">if</span> <span class="kw">not</span> stack <span class="kw">or</span> stack.pop() != pairs[char]:
+                <span class="kw">return</span> <span class="kw">False</span>
+        <span class="kw">else</span>:
+            stack.append(char)
+
+    <span class="kw">return</span> <span class="fn">len</span>(stack) == <span class="num">0</span></code></pre>
+<p>Push openers. When you see a closer, pop and check if it matches. Stack empty at end = valid.</p>
+</div>
+`,
+        practice: {
+            problem: `<strong>Min Stack:</strong> Design a stack that supports push, pop, top, and retrieving the minimum element, all in O(1) time.
+<p>Hint: What extra information could you store alongside each element?</p>`,
+            starterCode: `class MinStack:
+    def __init__(self):
+        pass  # Your code here
+
+    def push(self, val):
+        pass  # Your code here
+
+    def pop(self):
+        pass  # Your code here
+
+    def top(self):
+        pass  # Your code here
+
+    def get_min(self):
+        pass  # Your code here
+
+# Test it
+ms = MinStack()
+ms.push(3)
+ms.push(1)
+ms.push(2)
+print("top:", ms.top())        # Expected: 2
+print("min:", ms.get_min())    # Expected: 1
+ms.pop()
+print("min:", ms.get_min())    # Expected: 1
+ms.pop()
+print("min:", ms.get_min())    # Expected: 3
+`,
+            solution: `<pre><code><span class="kw">class</span> <span class="fn">MinStack</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.stack = []  <span class="cmt"># stores (value, current_min)</span>
+
+    <span class="kw">def</span> <span class="fn">push</span>(self, val):
+        current_min = <span class="fn">min</span>(val, self.stack[-<span class="num">1</span>][<span class="num">1</span>] <span class="kw">if</span> self.stack <span class="kw">else</span> val)
+        self.stack.append((val, current_min))
+
+    <span class="kw">def</span> <span class="fn">pop</span>(self):
+        self.stack.pop()
+
+    <span class="kw">def</span> <span class="fn">top</span>(self):
+        <span class="kw">return</span> self.stack[-<span class="num">1</span>][<span class="num">0</span>]
+
+    <span class="kw">def</span> <span class="fn">get_min</span>(self):
+        <span class="kw">return</span> self.stack[-<span class="num">1</span>][<span class="num">1</span>]</code></pre>
+<p><strong>Trick:</strong> Each stack entry stores the value AND the minimum at that point. When you pop, the previous minimum is automatically restored. All operations O(1).</p>`
+        }
+    },
+
+    // === DAY 2 ===
+    {
+        id: 'trees', day: 2, title: 'Binary Trees',
+        subtitle: 'Traversals, recursion on trees, BFS vs DFS',
+        content: `
+<div class="section">
+<h3>Tree Node Structure</h3>
+<pre><code><span class="kw">class</span> <span class="fn">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, val=<span class="num">0</span>, left=<span class="kw">None</span>, right=<span class="kw">None</span>):
+        self.val = val
+        self.left = left
+        self.right = right</code></pre>
+</div>
+
+<div class="section">
+<h3>DFS Traversals (Recursive)</h3>
+<pre><code><span class="cmt"># Inorder: Left, Root, Right (gives sorted order on BST)</span>
+<span class="kw">def</span> <span class="fn">inorder</span>(node):
+    <span class="kw">if not</span> node: <span class="kw">return</span> []
+    <span class="kw">return</span> inorder(node.left) + [node.val] + inorder(node.right)
+
+<span class="cmt"># Preorder: Root, Left, Right</span>
+<span class="cmt"># Postorder: Left, Right, Root</span></code></pre>
+</div>
+
+<div class="section">
+<h3>BFS (Level-Order) with Queue</h3>
+<pre><code><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">level_order</span>(root):
+    <span class="kw">if not</span> root: <span class="kw">return</span> []
+    result, queue = [], deque([root])
+    <span class="kw">while</span> queue:
+        level = []
+        <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(queue)):
+            node = queue.popleft()
+            level.append(node.val)
+            <span class="kw">if</span> node.left:  queue.append(node.left)
+            <span class="kw">if</span> node.right: queue.append(node.right)
+        result.append(level)
+    <span class="kw">return</span> result</code></pre>
+<div class="callout tip">BFS = queue. DFS = stack (or recursion, which uses the call stack). Both visit all nodes in O(n).</div>
+</div>
+`,
+        practice: {
+            problem: `<strong>Max Depth of Binary Tree:</strong> Given a binary tree, find its maximum depth (number of nodes along the longest path from root to leaf).`,
+            starterCode: `class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def max_depth(root):
+    # Your solution here
+    pass
+
+# Test: build a tree
+#       1
+#      / \\
+#     2   3
+#    /
+#   4
+root = TreeNode(1, TreeNode(2, TreeNode(4)), TreeNode(3))
+print(max_depth(root))      # Expected: 3
+print(max_depth(None))       # Expected: 0
+print(max_depth(TreeNode(1)))# Expected: 1
+`,
+            solution: `<pre><code><span class="kw">def</span> <span class="fn">max_depth</span>(root):
+    <span class="kw">if not</span> root:
+        <span class="kw">return</span> <span class="num">0</span>
+    <span class="kw">return</span> <span class="num">1</span> + <span class="fn">max</span>(max_depth(root.left), max_depth(root.right))</code></pre>
+<p><strong>Base case:</strong> empty node has depth 0. <strong>Recursive case:</strong> depth is 1 + max of left/right subtree depths. Time: O(n), visits every node once.</p>`
+        }
+    },
+    {
+        id: 'recursion', day: 2, title: 'Recursion & DP',
+        subtitle: 'Base cases, recursive thinking, and memoization',
+        content: `
+<div class="section">
+<h3>Recursion Template</h3>
+<ol>
+<li><strong>Base case:</strong> When do you stop? (empty input, n=0, leaf node)</li>
+<li><strong>Recursive case:</strong> How do you make the problem smaller?</li>
+<li><strong>Trust the recursion:</strong> Assume the recursive call works correctly for smaller inputs.</li>
+</ol>
+</div>
+
+<div class="section">
+<h3>Fibonacci: Naive vs Memoized</h3>
+<pre><code><span class="cmt"># Naive: O(2^n) - exponentially slow!</span>
+<span class="kw">def</span> <span class="fn">fib</span>(n):
+    <span class="kw">if</span> n <= <span class="num">1</span>: <span class="kw">return</span> n
+    <span class="kw">return</span> fib(n-<span class="num">1</span>) + fib(n-<span class="num">2</span>)
+
+<span class="cmt"># Memoized: O(n) - each value computed once</span>
+<span class="kw">from</span> functools <span class="kw">import</span> lru_cache
+
+@lru_cache(maxsize=<span class="kw">None</span>)
+<span class="kw">def</span> <span class="fn">fib</span>(n):
+    <span class="kw">if</span> n <= <span class="num">1</span>: <span class="kw">return</span> n
+    <span class="kw">return</span> fib(n-<span class="num">1</span>) + fib(n-<span class="num">2</span>)
+
+<span class="cmt"># Bottom-up DP: O(n) time, O(1) space</span>
+<span class="kw">def</span> <span class="fn">fib</span>(n):
+    <span class="kw">if</span> n <= <span class="num">1</span>: <span class="kw">return</span> n
+    a, b = <span class="num">0</span>, <span class="num">1</span>
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>, n+<span class="num">1</span>):
+        a, b = b, a + b
+    <span class="kw">return</span> b</code></pre>
+<div class="callout tip">Recognize DP when: (1) the problem has overlapping subproblems, and (2) optimal substructure (optimal solution uses optimal sub-solutions). Climbing Stairs = Fibonacci in disguise.</div>
+</div>
+`,
+        practice: {
+            problem: `<strong>Climbing Stairs:</strong> You can climb 1 or 2 steps at a time. How many distinct ways to reach step n?
+<pre><code><span class="cmt"># n=2 -> 2 ways (1+1, 2)</span>
+<span class="cmt"># n=3 -> 3 ways (1+1+1, 1+2, 2+1)</span></code></pre>`,
+            starterCode: `def climb_stairs(n):
+    # Your solution here
+    pass
+
+# Test cases
+print(climb_stairs(2))   # Expected: 2
+print(climb_stairs(3))   # Expected: 3
+print(climb_stairs(5))   # Expected: 8
+print(climb_stairs(10))  # Expected: 89
+`,
+            solution: `<pre><code><span class="kw">def</span> <span class="fn">climb_stairs</span>(n):
+    <span class="kw">if</span> n <= <span class="num">2</span>: <span class="kw">return</span> n
+    a, b = <span class="num">1</span>, <span class="num">2</span>
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="num">3</span>, n+<span class="num">1</span>):
+        a, b = b, a + b
+    <span class="kw">return</span> b</code></pre>
+<p>ways(n) = ways(n-1) + ways(n-2). Same as Fibonacci! Bottom-up DP with O(1) space.</p>`
+        }
+    },
+    {
+        id: 'graphs', day: 2, title: 'Graphs (Light)',
+        subtitle: 'BFS and DFS on grids and adjacency lists',
+        content: `
+<div class="section">
+<h3>Graph Representations</h3>
+<pre><code><span class="cmt"># Adjacency list (most common in interviews)</span>
+graph = {
+    <span class="str">'A'</span>: [<span class="str">'B'</span>, <span class="str">'C'</span>],
+    <span class="str">'B'</span>: [<span class="str">'D'</span>],
+    <span class="str">'C'</span>: [<span class="str">'D'</span>],
+    <span class="str">'D'</span>: []
+}
+
+<span class="cmt"># Grid as implicit graph (each cell connects to neighbors)</span>
+grid = [
+    [<span class="num">1</span>, <span class="num">1</span>, <span class="num">0</span>],
+    [<span class="num">1</span>, <span class="num">0</span>, <span class="num">0</span>],
+    [<span class="num">0</span>, <span class="num">0</span>, <span class="num">1</span>]
+]</code></pre>
+</div>
+
+<div class="section">
+<h3>Number of Islands (Classic Grid BFS/DFS)</h3>
+<pre><code><span class="kw">def</span> <span class="fn">num_islands</span>(grid):
+    <span class="kw">if not</span> grid: <span class="kw">return</span> <span class="num">0</span>
+    rows, cols = <span class="fn">len</span>(grid), <span class="fn">len</span>(grid[<span class="num">0</span>])
+    count = <span class="num">0</span>
+
+    <span class="kw">def</span> <span class="fn">dfs</span>(r, c):
+        <span class="kw">if</span> r < <span class="num">0</span> <span class="kw">or</span> r >= rows <span class="kw">or</span> c < <span class="num">0</span> <span class="kw">or</span> c >= cols:
+            <span class="kw">return</span>
+        <span class="kw">if</span> grid[r][c] != <span class="num">1</span>:
+            <span class="kw">return</span>
+        grid[r][c] = <span class="num">0</span>  <span class="cmt"># mark visited</span>
+        dfs(r+<span class="num">1</span>, c); dfs(r-<span class="num">1</span>, c)
+        dfs(r, c+<span class="num">1</span>); dfs(r, c-<span class="num">1</span>)
+
+    <span class="kw">for</span> r <span class="kw">in</span> <span class="fn">range</span>(rows):
+        <span class="kw">for</span> c <span class="kw">in</span> <span class="fn">range</span>(cols):
+            <span class="kw">if</span> grid[r][c] == <span class="num">1</span>:
+                count += <span class="num">1</span>
+                dfs(r, c)
+    <span class="kw">return</span> count</code></pre>
+<div class="callout warn">Grid DFS is one of the most common interview patterns. The template: scan cells, when you find an unvisited target, DFS/BFS to mark the whole connected component, increment counter.</div>
+</div>
+`,
+        practice: {
+            problem: `<strong>Think through:</strong> In the Number of Islands code above, why do we set <code>grid[r][c] = 0</code> instead of using a separate <code>visited</code> set? What are the tradeoffs?`,
+            solution: `<p><strong>Modifying in-place</strong> (setting to 0) saves O(n*m) space &mdash; no visited set needed. But it <strong>destroys the input</strong>.</p>
+<p><strong>Using a visited set</strong> preserves the original grid but uses O(n*m) extra space.</p>
+<p>In an interview, mention both approaches. If the interviewer says "don't modify the input," use a visited set. Otherwise, in-place is cleaner.</p>
+<pre><code><span class="cmt"># With visited set instead:</span>
+visited = <span class="fn">set</span>()
+<span class="kw">def</span> <span class="fn">dfs</span>(r, c):
+    <span class="kw">if</span> (r, c) <span class="kw">in</span> visited: <span class="kw">return</span>
+    visited.add((r, c))
+    <span class="cmt"># ... recurse on neighbors</span></code></pre>`
+        }
+    },
+    {
+        id: 'parsing', day: 2, title: 'String Parsing & Regex',
+        subtitle: 'Python re module, log parsing, and data extraction',
+        content: `
+<div class="section">
+<h3>Essential Regex Patterns</h3>
+<pre><code><span class="kw">import</span> re
+
+<span class="cmt"># \\d+ = one or more digits</span>
+re.findall(<span class="str">r'\\d+'</span>, <span class="str">'abc123def456'</span>)  <span class="cmt"># ['123', '456']</span>
+
+<span class="cmt"># \\w+ = word characters (letters, digits, underscore)</span>
+re.findall(<span class="str">r'\\w+'</span>, <span class="str">'hello world!'</span>)  <span class="cmt"># ['hello', 'world']</span>
+
+<span class="cmt"># Groups with ()</span>
+m = re.search(<span class="str">r'(\\d{3})-(\\d{4})'</span>, <span class="str">'Call 555-1234'</span>)
+m.group(<span class="num">1</span>)  <span class="cmt"># '555'</span>
+m.group(<span class="num">2</span>)  <span class="cmt"># '1234'</span>
+
+<span class="cmt"># Common: extract key=value pairs from logs</span>
+log = <span class="str">'status=200 time=45ms user=admin'</span>
+<span class="fn">dict</span>(re.findall(<span class="str">r'(\\w+)=(\\w+)'</span>, log))
+<span class="cmt"># {'status': '200', 'time': '45ms', 'user': 'admin'}</span></code></pre>
+</div>
+
+<div class="section">
+<h3>Useful String Methods (No Regex Needed)</h3>
+<pre><code>s = <span class="str">"ERROR: Connection timeout at 10:45:30"</span>
+s.startswith(<span class="str">"ERROR"</span>)    <span class="cmt"># True</span>
+s.split(<span class="str">": "</span>)             <span class="cmt"># ['ERROR', 'Connection timeout at 10:45:30']</span>
+s.strip()                <span class="cmt"># Remove whitespace from ends</span>
+s.replace(<span class="str">"ERROR"</span>, <span class="str">"WARN"</span>)</code></pre>
+</div>
+`,
+        practice: {
+            problem: `<strong>Log Parser:</strong> Given a list of log lines like <code>"2024-01-15 ERROR: Database connection failed"</code>, write a function that returns only ERROR lines with their dates.
+<pre><code>logs = [
+    <span class="str">"2024-01-15 INFO: Server started"</span>,
+    <span class="str">"2024-01-15 ERROR: Database connection failed"</span>,
+    <span class="str">"2024-01-16 WARN: High memory usage"</span>,
+    <span class="str">"2024-01-16 ERROR: Timeout on request"</span>,
+]
+<span class="cmt"># Expected: [('2024-01-15', 'Database connection failed'),</span>
+<span class="cmt">#            ('2024-01-16', 'Timeout on request')]</span></code></pre>`,
+            starterCode: `import re
+
+def extract_errors(logs):
+    # Your solution here
+    pass
+
+# Test
+logs = [
+    "2024-01-15 INFO: Server started",
+    "2024-01-15 ERROR: Database connection failed",
+    "2024-01-16 WARN: High memory usage",
+    "2024-01-16 ERROR: Timeout on request",
+]
+
+result = extract_errors(logs)
+print(result)
+# Expected: [('2024-01-15', 'Database connection failed'),
+#            ('2024-01-16', 'Timeout on request')]
+`,
+            solution: `<pre><code><span class="kw">import</span> re
+
+<span class="kw">def</span> <span class="fn">extract_errors</span>(logs):
+    results = []
+    <span class="kw">for</span> line <span class="kw">in</span> logs:
+        match = re.search(<span class="str">r'(\\d{4}-\\d{2}-\\d{2}) ERROR: (.+)'</span>, line)
+        <span class="kw">if</span> match:
+            results.append((match.group(<span class="num">1</span>), match.group(<span class="num">2</span>)))
+    <span class="kw">return</span> results
+
+<span class="cmt"># Or as a one-liner with findall:</span>
+<span class="kw">def</span> <span class="fn">extract_errors</span>(logs):
+    <span class="kw">return</span> re.findall(<span class="str">r'(\\d{4}-\\d{2}-\\d{2}) ERROR: (.+)'</span>, <span class="str">'\\n'</span>.join(logs))</code></pre>`
+        }
+    },
+    {
+        id: 'api', day: 2, title: 'API Testing & JSON',
+        subtitle: 'Validating API responses, JSON parsing, assertion patterns',
+        content: `
+<div class="section">
+<h3>Parsing & Validating JSON Responses</h3>
+<pre><code><span class="kw">import</span> json, requests
+
+<span class="cmt"># Make a request and parse</span>
+response = requests.get(<span class="str">"https://api.example.com/users/1"</span>)
+<span class="kw">assert</span> response.status_code == <span class="num">200</span>
+
+data = response.json()
+<span class="cmt"># data is now a Python dict</span>
+
+<span class="cmt"># Validate structure</span>
+<span class="kw">assert</span> <span class="str">"id"</span> <span class="kw">in</span> data
+<span class="kw">assert</span> <span class="fn">isinstance</span>(data[<span class="str">"name"</span>], <span class="fn">str</span>)
+<span class="kw">assert</span> data[<span class="str">"email"</span>].endswith(<span class="str">"@example.com"</span>)
+
+<span class="cmt"># Validate list response</span>
+users = response.json()
+<span class="kw">assert</span> <span class="fn">len</span>(users) > <span class="num">0</span>
+<span class="kw">assert</span> <span class="fn">all</span>(<span class="str">"id"</span> <span class="kw">in</span> u <span class="kw">for</span> u <span class="kw">in</span> users)</code></pre>
+</div>
+
+<div class="section">
+<h3>Assertion Patterns in pytest</h3>
+<pre><code><span class="kw">import</span> pytest
+
+<span class="cmt"># Check for exceptions</span>
+<span class="kw">with</span> pytest.raises(ValueError):
+    int(<span class="str">"not_a_number"</span>)
+
+<span class="cmt"># Approximate comparison (for floats)</span>
+<span class="kw">assert</span> <span class="num">0.1</span> + <span class="num">0.2</span> == pytest.approx(<span class="num">0.3</span>)
+
+<span class="cmt"># Parametrized tests</span>
+@pytest.mark.parametrize(<span class="str">"input,expected"</span>, [
+    (<span class="num">1</span>, <span class="num">1</span>), (<span class="num">2</span>, <span class="num">4</span>), (<span class="num">3</span>, <span class="num">9</span>)
+])
+<span class="kw">def</span> <span class="fn">test_square</span>(input, expected):
+    <span class="kw">assert</span> input ** <span class="num">2</span> == expected</code></pre>
+</div>
+`,
+        practice: {
+            problem: `<strong>Write a Validator:</strong> Given a mock API response, write a function that validates it matches the expected schema.
+<pre><code>response = {
+    <span class="str">"status"</span>: <span class="str">"success"</span>,
+    <span class="str">"data"</span>: {
+        <span class="str">"users"</span>: [
+            {<span class="str">"id"</span>: <span class="num">1</span>, <span class="str">"name"</span>: <span class="str">"Alice"</span>, <span class="str">"email"</span>: <span class="str">"alice@test.com"</span>},
+            {<span class="str">"id"</span>: <span class="num">2</span>, <span class="str">"name"</span>: <span class="str">"Bob"</span>, <span class="str">"email"</span>: <span class="str">"bob@test.com"</span>}
+        ],
+        <span class="str">"total"</span>: <span class="num">2</span>
+    }
+}</code></pre>
+<p>Validate: status is "success", data.users is a list, each user has id (int), name (str), email (str containing @), and total matches len(users).</p>`,
+            starterCode: `def validate_users_response(resp):
+    # Your validation code here
+    # Use assert statements
+    pass
+
+# Test with valid response
+response = {
+    "status": "success",
+    "data": {
+        "users": [
+            {"id": 1, "name": "Alice", "email": "alice@test.com"},
+            {"id": 2, "name": "Bob", "email": "bob@test.com"}
+        ],
+        "total": 2
+    }
+}
+
+validate_users_response(response)
+print("Valid response passed!")
+
+# Test with bad response (should fail)
+try:
+    bad = {"status": "error", "data": {"users": [], "total": 0}}
+    validate_users_response(bad)
+    print("Bad response should have failed!")
+except AssertionError:
+    print("Correctly caught invalid response!")
+`,
+            solution: `<pre><code><span class="kw">def</span> <span class="fn">validate_users_response</span>(resp):
+    <span class="kw">assert</span> resp[<span class="str">"status"</span>] == <span class="str">"success"</span>
+    <span class="kw">assert</span> <span class="str">"data"</span> <span class="kw">in</span> resp
+
+    data = resp[<span class="str">"data"</span>]
+    users = data[<span class="str">"users"</span>]
+    <span class="kw">assert</span> <span class="fn">isinstance</span>(users, <span class="fn">list</span>)
+    <span class="kw">assert</span> data[<span class="str">"total"</span>] == <span class="fn">len</span>(users)
+
+    <span class="kw">for</span> user <span class="kw">in</span> users:
+        <span class="kw">assert</span> <span class="fn">isinstance</span>(user[<span class="str">"id"</span>], <span class="fn">int</span>)
+        <span class="kw">assert</span> <span class="fn">isinstance</span>(user[<span class="str">"name"</span>], <span class="fn">str</span>)
+        <span class="kw">assert</span> <span class="str">"@"</span> <span class="kw">in</span> user[<span class="str">"email"</span>]</code></pre>
+<p>In a real framework you'd use a schema validation library like <code>jsonschema</code> or <code>pydantic</code>, but knowing how to write manual checks shows you understand what to verify.</p>`
+        }
+    },
+    {
+        id: 'testdesign', day: 2, title: 'Test Design Thinking',
+        subtitle: 'Edge cases, equivalence partitioning, boundary analysis',
+        content: `
+<div class="section">
+<h3>Equivalence Partitioning</h3>
+<p>Divide inputs into classes where all values should produce the same behavior. Test one from each class.</p>
+<p><strong>Example: Testing a function that accepts age (0-120):</strong></p>
+<ul>
+<li>Negative numbers (invalid)</li>
+<li>Zero (boundary)</li>
+<li>1-17 (minor)</li>
+<li>18-120 (adult)</li>
+<li>>120 (invalid)</li>
+</ul>
+</div>
+
+<div class="section">
+<h3>Boundary Value Analysis</h3>
+<p>Bugs cluster at edges. For each partition boundary, test: the value just below, at, and just above.</p>
+<p><strong>For age 18+ validation:</strong> test 17, 18, 19, and also 0, -1, 120, 121.</p>
+</div>
+
+<div class="section">
+<h3>Edge Cases Checklist</h3>
+<ul>
+<li>Empty input ([], "", None, 0)</li>
+<li>Single element</li>
+<li>All same elements</li>
+<li>Already sorted / reverse sorted</li>
+<li>Very large input (performance)</li>
+<li>Negative numbers, zero</li>
+<li>Unicode / special characters in strings</li>
+<li>Concurrent access (if applicable)</li>
+</ul>
+<div class="callout warn">In SDET interviews, they often ask "How would you test this function?" Don't just test the happy path. Walk through: valid inputs, invalid inputs, boundary values, edge cases, error handling.</div>
+</div>
+`,
+        practice: {
+            problem: `<strong>"Write tests for this function":</strong>
+<pre><code><span class="kw">def</span> <span class="fn">is_valid_password</span>(password):
+    <span class="str">"""Password must be 8-20 chars, contain at least
+    one uppercase, one lowercase, and one digit."""</span>
+    <span class="kw">if not</span> <span class="num">8</span> <= <span class="fn">len</span>(password) <= <span class="num">20</span>:
+        <span class="kw">return</span> <span class="kw">False</span>
+    has_upper = <span class="fn">any</span>(c.isupper() <span class="kw">for</span> c <span class="kw">in</span> password)
+    has_lower = <span class="fn">any</span>(c.islower() <span class="kw">for</span> c <span class="kw">in</span> password)
+    has_digit = <span class="fn">any</span>(c.isdigit() <span class="kw">for</span> c <span class="kw">in</span> password)
+    <span class="kw">return</span> has_upper <span class="kw">and</span> has_lower <span class="kw">and</span> has_digit</code></pre>
+<p>List the test cases you'd write. Think partitions and boundaries.</p>`,
+            starterCode: `def is_valid_password(password):
+    """Password must be 8-20 chars, contain at least
+    one uppercase, one lowercase, and one digit."""
+    if not 8 <= len(password) <= 20:
+        return False
+    has_upper = any(c.isupper() for c in password)
+    has_lower = any(c.islower() for c in password)
+    has_digit = any(c.isdigit() for c in password)
+    return has_upper and has_lower and has_digit
+
+# Write your test cases here as assert statements
+# Example:
+# assert is_valid_password("Abcdefg1") == True, "valid password"
+
+# Happy path
+
+# Length boundaries (7, 8, 20, 21 chars)
+
+# Missing character types
+
+# Edge cases
+
+print("All tests passed!")
+`,
+            solution: `<pre><code><span class="kw">import</span> pytest
+
+<span class="cmt"># Happy path</span>
+<span class="kw">def</span> <span class="fn">test_valid_password</span>():
+    <span class="kw">assert</span> is_valid_password(<span class="str">"Abcdefg1"</span>) == <span class="kw">True</span>
+
+<span class="cmt"># Length boundaries</span>
+<span class="kw">def</span> <span class="fn">test_too_short</span>():
+    <span class="kw">assert</span> is_valid_password(<span class="str">"Ab1cdef"</span>) == <span class="kw">False</span>   <span class="cmt"># 7 chars</span>
+
+<span class="kw">def</span> <span class="fn">test_min_length</span>():
+    <span class="kw">assert</span> is_valid_password(<span class="str">"Ab1cdefg"</span>) == <span class="kw">True</span>  <span class="cmt"># exactly 8</span>
+
+<span class="kw">def</span> <span class="fn">test_max_length</span>():
+    <span class="kw">assert</span> is_valid_password(<span class="str">"Ab1"</span> + <span class="str">"x"</span>*<span class="num">17</span>) == <span class="kw">True</span>  <span class="cmt"># exactly 20</span>
+
+<span class="kw">def</span> <span class="fn">test_too_long</span>():
+    <span class="kw">assert</span> is_valid_password(<span class="str">"Ab1"</span> + <span class="str">"x"</span>*<span class="num">18</span>) == <span class="kw">False</span> <span class="cmt"># 21 chars</span>
+
+<span class="cmt"># Missing character types</span>
+<span class="kw">def</span> <span class="fn">test_no_uppercase</span>():
+    <span class="kw">assert</span> is_valid_password(<span class="str">"abcdefg1"</span>) == <span class="kw">False</span>
+
+<span class="kw">def</span> <span class="fn">test_no_lowercase</span>():
+    <span class="kw">assert</span> is_valid_password(<span class="str">"ABCDEFG1"</span>) == <span class="kw">False</span>
+
+<span class="kw">def</span> <span class="fn">test_no_digit</span>():
+    <span class="kw">assert</span> is_valid_password(<span class="str">"Abcdefgh"</span>) == <span class="kw">False</span>
+
+<span class="cmt"># Edge cases</span>
+<span class="kw">def</span> <span class="fn">test_empty_string</span>():
+    <span class="kw">assert</span> is_valid_password(<span class="str">""</span>) == <span class="kw">False</span>
+
+<span class="kw">def</span> <span class="fn">test_special_characters</span>():
+    <span class="kw">assert</span> is_valid_password(<span class="str">"Ab1!@#$%"</span>) == <span class="kw">True</span></code></pre>
+<p><strong>Pattern:</strong> Test happy path, each requirement independently, boundaries on both sides, and edge cases. This demonstrates systematic testing thinking that interviewers love.</p>`
+        }
+    },
+
+    // === DAY 3 ===
+    {
+        id: 'framework', day: 3, title: 'Test Framework Design',
+        subtitle: '"How would you design a test automation framework?"',
+        content: `
+<div class="section">
+<h3>Architecture Components</h3>
+<p>When asked to design a test framework, walk through these layers:</p>
+<ol>
+<li><strong>Test Layer:</strong> Test files organized by feature. Each test reads clearly.</li>
+<li><strong>Page Objects / API Clients:</strong> Abstractions that encapsulate interactions (clicks, API calls). Tests don't know about selectors or endpoints.</li>
+<li><strong>Utilities:</strong> Shared helpers (wait logic, data generators, assertions).</li>
+<li><strong>Configuration:</strong> Environment URLs, credentials (from env vars/secrets), timeouts.</li>
+<li><strong>Data Management:</strong> Test data setup/teardown, factories, fixtures.</li>
+<li><strong>Reporting:</strong> Results, screenshots on failure, logs, CI integration.</li>
+</ol>
+</div>
+
+<div class="section">
+<h3>Key Design Principles</h3>
+<ul>
+<li><strong>Separation of concerns:</strong> Tests describe WHAT, page objects describe HOW.</li>
+<li><strong>DRY but readable:</strong> Extract common patterns, but don't over-abstract. A test should be understandable without jumping to 5 other files.</li>
+<li><strong>Independent tests:</strong> Each test can run alone, in any order. No shared mutable state between tests.</li>
+<li><strong>Fast feedback:</strong> Tag tests by speed/type so you can run fast suites in CI and slow suites nightly.</li>
+</ul>
+<div class="callout warn">Talk through your answer like you're drawing on a whiteboard. Start high-level (boxes and arrows), then zoom into one area to show depth. Mention tradeoffs you've encountered.</div>
+</div>
+`,
+        practice: {
+            problem: `<strong>Design Exercise:</strong> An interviewer asks: "We have a REST API with 50 endpoints. How would you set up automated API regression testing?"
+
+Walk through your answer covering: folder structure, how tests are organized, how you handle auth, how you manage test data, and how it integrates with CI.`,
+            solution: `<p><strong>Sample answer structure:</strong></p>
+<ol>
+<li><strong>Tool choice:</strong> pytest + requests (Python). Simple, widely understood, great fixtures.</li>
+<li><strong>Structure:</strong>
+<pre><code>tests/
+  conftest.py          <span class="cmt"># shared fixtures (auth, base_url, cleanup)</span>
+  test_users.py        <span class="cmt"># organized by resource/domain</span>
+  test_orders.py
+api_client/
+  client.py            <span class="cmt"># thin wrapper around requests</span>
+  models.py            <span class="cmt"># response models/schemas</span>
+config/
+  environments.py      <span class="cmt"># URLs per environment</span></code></pre></li>
+<li><strong>Auth:</strong> Fixture that obtains a token once per session, passes it to API client. Credentials from environment variables, never hardcoded.</li>
+<li><strong>Test data:</strong> Tests create their own data (POST), verify it, then clean up (DELETE) in teardown fixtures. Factory pattern for generating test payloads.</li>
+<li><strong>Assertions:</strong> Validate status codes, response schema (jsonschema or pydantic), business logic, and error responses.</li>
+<li><strong>CI:</strong> Run on every PR. Smoke suite (critical paths) on merge. Full regression nightly. Parallel execution with pytest-xdist.</li>
+<li><strong>Reporting:</strong> JUnit XML for CI, plus custom HTML report. Slack notification on failures.</li>
+</ol>`
+        }
+    },
+    {
+        id: 'cicd', day: 3, title: 'CI/CD & Test Strategy',
+        subtitle: 'Test pyramid, when to run what, pipeline design',
+        content: `
+<div class="section">
+<h3>The Test Pyramid</h3>
+<pre><code>         /  E2E  \\        <- Few, slow, expensive, high confidence
+        / Integration \\    <- Moderate count, test service interactions
+       /    Unit Tests    \\ <- Many, fast, cheap, test logic in isolation</code></pre>
+<ul>
+<li><strong>Unit tests (~70%):</strong> Test a single function/class. Mock dependencies. Run in seconds.</li>
+<li><strong>Integration tests (~20%):</strong> Test how components work together (API + DB, service A calls service B).</li>
+<li><strong>E2E tests (~10%):</strong> Test full user workflows through the real UI/API. Slow but high confidence.</li>
+</ul>
+</div>
+
+<div class="section">
+<h3>What to Run When</h3>
+<table>
+<tr><th>Trigger</th><th>Tests</th><th>Why</th></tr>
+<tr><td>Pre-commit</td><td>Linting, fast unit tests</td><td>Catch obvious issues locally</td></tr>
+<tr><td>PR/MR</td><td>All unit + integration</td><td>Gate code quality before merge</td></tr>
+<tr><td>Merge to main</td><td>Smoke suite (critical E2E)</td><td>Verify deployment readiness</td></tr>
+<tr><td>Nightly</td><td>Full regression (all E2E)</td><td>Catch regressions across system</td></tr>
+<tr><td>Release</td><td>Full suite + performance</td><td>Final confidence check</td></tr>
+</table>
+<div class="callout tip">A good test strategy balances speed (fast feedback) with confidence (catching real bugs). Don't put everything in E2E &mdash; push testing as far down the pyramid as possible.</div>
+</div>
+`,
+        practice: {
+            problem: `<strong>Scenario:</strong> "Our E2E test suite takes 2 hours and fails 30% of the time due to flaky tests. Developers are ignoring test results. How would you fix this?"`,
+            solution: `<ol>
+<li><strong>Triage flaky tests:</strong> Quarantine consistently flaky tests (move to a separate nightly suite). Fix or delete them within a sprint.</li>
+<li><strong>Push tests down:</strong> Identify which E2E tests are really testing logic that could be covered by unit/integration tests. Convert them.</li>
+<li><strong>Parallelize:</strong> Run tests in parallel (pytest-xdist, Selenium Grid). Target: under 20 minutes.</li>
+<li><strong>Improve isolation:</strong> Each test creates its own data and cleans up. No shared state = fewer timing issues.</li>
+<li><strong>Add retries (carefully):</strong> Allow 1 retry for tests that failed, but track retry rate. High retry rate = still flaky.</li>
+<li><strong>Fast feedback loop:</strong> Run a smoke suite (~5 min) on every PR. Full suite nightly.</li>
+<li><strong>Dashboards:</strong> Track pass rate, flaky rate, and duration over time. Make the trend visible to the team.</li>
+</ol>
+<p><strong>Key message:</strong> Speed and reliability are more important than coverage. A fast, reliable suite that runs 50 tests is more valuable than a slow, flaky suite that runs 500.</p>`
+        }
+    },
+    {
+        id: 'star', day: 3, title: 'STAR Method & Behavioral',
+        subtitle: 'Structure your stories: Situation, Task, Action, Result',
+        content: `
+<div class="section">
+<h3>The STAR Framework</h3>
+<ul>
+<li><strong>Situation:</strong> Set the scene. What was the context? (1-2 sentences)</li>
+<li><strong>Task:</strong> What was your specific responsibility? (1 sentence)</li>
+<li><strong>Action:</strong> What did YOU do? Be specific. (2-4 sentences, this is the meat)</li>
+<li><strong>Result:</strong> What was the outcome? Quantify if possible. (1-2 sentences)</li>
+</ul>
+<div class="callout info">Keep each story under 2 minutes. Focus on YOUR actions, not the team's. Use "I" not "we." End with a measurable result.</div>
+</div>
+
+<div class="section">
+<h3>Common SDET Behavioral Questions</h3>
+<ol>
+<li>"Tell me about a critical bug you found through testing."</li>
+<li>"Describe a time you improved a testing process."</li>
+<li>"How do you handle disagreements about test coverage?"</li>
+<li>"Tell me about a time you had to learn a new tool quickly."</li>
+<li>"Describe a time you worked under a tight deadline."</li>
+<li>"How do you prioritize what to test?"</li>
+<li>"Tell me about a time automation saved significant time."</li>
+</ol>
+</div>
+
+<div class="section">
+<h3>Sample STAR Story</h3>
+<p><strong>Q: "Tell me about a time you improved a testing process."</strong></p>
+<p><strong>S:</strong> Our team's E2E test suite was taking 3 hours and had a 40% flaky failure rate. Developers stopped trusting it and merged without waiting for results.</p>
+<p><strong>T:</strong> I was asked to lead the effort to make the test suite reliable and fast enough to be a useful CI gate.</p>
+<p><strong>A:</strong> I analyzed failure logs for the past month and categorized tests into truly failing, flaky, and obsolete. I quarantined 30 flaky tests and fixed the root causes (mostly timing issues and shared test data). I converted 20 E2E tests that were really testing API logic into faster integration tests. I also parallelized the suite using Selenium Grid.</p>
+<p><strong>R:</strong> Suite runtime dropped from 3 hours to 25 minutes. Pass rate went from 60% to 97%. The team started using it as a merge gate again, and we caught 3 production bugs in the first month that would have shipped otherwise.</p>
+</div>
+`,
+        practice: {
+            problem: `<strong>Prepare your stories:</strong> Write STAR outlines for these 3 questions based on your actual experience:
+<ol>
+<li>"Tell me about a critical bug you found."</li>
+<li>"Describe a time you automated something that saved the team time."</li>
+<li>"Tell me about a time you had to push back or advocate for quality."</li>
+</ol>
+<p>Don't overthink it &mdash; bullet points are fine. You'll polish when you practice out loud.</p>`,
+            solution: `<p><strong>Template to fill in:</strong></p>
+<pre><code><span class="cmt">Story 1: Critical Bug</span>
+S: [What project/feature? What was at stake?]
+T: [What were you responsible for testing?]
+A: [How did you find it? What was the bug?
+    What did you do after finding it?]
+R: [What was the impact of catching it?
+    What would have happened if you missed it?]
+
+<span class="cmt">Story 2: Automation Win</span>
+S: [What manual process existed?]
+T: [Why did you decide to automate it?]
+A: [What did you build? What tools/approach?]
+R: [Time saved? Bugs caught? Team impact?]
+
+<span class="cmt">Story 3: Advocating for Quality</span>
+S: [What was the pressure? Ship fast vs test more?]
+T: [What did you believe needed to happen?]
+A: [How did you make your case? Data? Demo?]
+R: [What was the outcome? Did quality improve?]</code></pre>
+<p><strong>Pro tip:</strong> Practice saying these out loud. Time yourself. Keep under 2 minutes each. The more you rehearse, the more natural they'll feel in the interview.</p>`
+        }
+    },
+    {
+        id: 'mock', day: 3, title: 'Mock Interview Prep',
+        subtitle: 'Putting it all together: tips for the actual interview',
+        content: `
+<div class="section">
+<h3>During the Coding Problem</h3>
+<ol>
+<li><strong>Clarify:</strong> Repeat the problem. Ask about edge cases, input constraints, expected output format. (1-2 min)</li>
+<li><strong>Plan:</strong> Talk through your approach BEFORE coding. "I'm thinking of using a hash map because..." (2-3 min)</li>
+<li><strong>Code:</strong> Write clean code. Use meaningful variable names. Talk as you code. (10-15 min)</li>
+<li><strong>Test:</strong> Trace through with a small example. Check edge cases. (2-3 min)</li>
+<li><strong>Analyze:</strong> State time and space complexity without being asked.</li>
+</ol>
+</div>
+
+<div class="section">
+<h3>During System Design</h3>
+<ol>
+<li><strong>Requirements:</strong> Ask clarifying questions. What scale? What's most important?</li>
+<li><strong>High-level:</strong> Draw boxes and arrows. Name the components.</li>
+<li><strong>Deep dive:</strong> Pick one area and show depth (data model, API design, test strategy).</li>
+<li><strong>Tradeoffs:</strong> Discuss alternatives you considered and why you chose this approach.</li>
+</ol>
+</div>
+
+<div class="section">
+<h3>Common Mistakes to Avoid</h3>
+<ul>
+<li>Jumping into code without understanding the problem</li>
+<li>Silent coding &mdash; always talk through your thinking</li>
+<li>Ignoring edge cases until asked</li>
+<li>Not testing your solution with examples</li>
+<li>Getting stuck and not asking for hints (asking is fine!)</li>
+<li>Over-engineering when a simple solution works</li>
+</ul>
+<div class="callout warn">The interview is a conversation, not an exam. Think out loud. If you're stuck, say "I'm considering X and Y, I think X might work better because..." The interviewer wants to see HOW you think.</div>
+</div>
+`,
+        practice: {
+            problem: `<strong>Self-Assessment:</strong> Now that you've worked through all the material, rate yourself honestly on each area:
+<ul>
+<li>Big-O Analysis: Can I analyze any code snippet?</li>
+<li>Hash Map / Two Pointer patterns: Can I recognize when to use them?</li>
+<li>Binary Search: Can I write the template from memory?</li>
+<li>Trees/Recursion: Can I write a recursive tree solution?</li>
+<li>Python: Am I fluent with dicts, sets, list comprehensions, Counter?</li>
+<li>Test Design: Can I systematically list test cases for a function?</li>
+<li>System Design: Can I sketch a test framework architecture?</li>
+<li>STAR Stories: Do I have 3-4 polished stories ready?</li>
+</ul>
+<p>Go retake the quiz (<code>sdet_interview_prep_quiz.html</code>) to validate your knowledge. Focus study time on your weakest areas.</p>`,
+            solution: `<p><strong>Study Priority Guide:</strong></p>
+<ol>
+<li><strong>Highest ROI for SDET:</strong> Hash maps, test design, system design, STAR stories</li>
+<li><strong>Must-know:</strong> Big-O, arrays/strings, Python fluency, binary search</li>
+<li><strong>Nice-to-know:</strong> Trees, recursion, DP, graphs (lighter weight for SDET vs SWE)</li>
+</ol>
+<p>If you're short on time, prioritize the top two rows. Good luck &mdash; you've got this!</p>`
+        }
+    }
+];
+
+// === STATE MANAGEMENT ===
+function loadProgress() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : {};
+    } catch { return {}; }
+}
+
+function saveProgress(state) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function resetProgress() {
+    if (confirm('Reset all progress? This cannot be undone.')) {
+        localStorage.removeItem(STORAGE_KEY);
+        currentTopic = null;
+        render();
+    }
+}
+
+let currentTopic = null;
+
+// === RENDERING ===
+function render() {
+    const state = loadProgress();
+    renderSidebar(state);
+    renderContent(state);
+    renderGlobalProgress(state);
+}
+
+function renderGlobalProgress(state) {
+    const total = topics.length;
+    const done = topics.filter(t => state[t.id]).length;
+    const pct = Math.round((done / total) * 100);
+    document.getElementById('global-pct').textContent = pct + '%';
+    document.getElementById('global-bar').style.width = pct + '%';
+    document.getElementById('global-count').textContent = `${done}/${total} topics`;
+}
+
+function renderSidebar(state) {
+    const sidebar = document.getElementById('sidebar');
+    let html = '';
+    [1, 2, 3].forEach(day => {
+        const dayTopics = topics.filter(t => t.day === day);
+        const done = dayTopics.filter(t => state[t.id]).length;
+        html += `<div class="day-group">
+            <div class="day-header" onclick="toggleDay(${day})">
+                <span>Day ${day}</span>
+                <span class="day-progress">${done}/${dayTopics.length}</span>
+            </div>
+            <div class="day-topics" id="day-topics-${day}">
+                ${dayTopics.map(t => `
+                    <div class="topic-link ${currentTopic === t.id ? 'active' : ''}" onclick="selectTopic('${t.id}')">
+                        <span class="check ${state[t.id] ? 'done' : ''}">${state[t.id] ? '&#10003;' : ''}</span>
+                        <span>${t.title}</span>
+                    </div>
+                `).join('')}
+            </div>
+        </div>`;
+    });
+    sidebar.innerHTML = html;
+}
+
+function renderContent(state) {
+    const main = document.getElementById('main-content');
+
+    if (!currentTopic) {
+        const done = topics.filter(t => state[t.id]).length;
+        const nextTopic = topics.find(t => !state[t.id]);
+        main.innerHTML = `
+            <div class="welcome">
+                <h2>SDET Interview Training</h2>
+                <p>3 days of structured prep covering data structures, algorithms, Python, testing, system design, and behavioral questions.</p>
+                <p style="color:var(--green)">${done}/${topics.length} topics completed</p>
+                <div class="day-cards">
+                    ${[1,2,3].map(day => {
+                        const dt = topics.filter(t => t.day === day);
+                        const dd = dt.filter(t => state[t.id]).length;
+                        const titles = {1: 'DSA Foundations', 2: 'Trees + Practical', 3: 'Design + Behavioral'};
+                        const descs = {1: 'Big-O, arrays, hash maps, sorting, binary search, stacks', 2: 'Trees, recursion, DP, regex, API testing, test design', 3: 'Framework design, CI/CD strategy, STAR stories, mock prep'};
+                        return `<div class="day-card" onclick="selectTopic('${dt[0].id}')">
+                            <h3>Day ${day}: ${titles[day]}</h3>
+                            <p>${descs[day]}</p>
+                            <div class="card-progress">${dd}/${dt.length} complete</div>
+                        </div>`;
+                    }).join('')}
+                </div>
+                ${nextTopic ? `<br><button class="btn-reveal" onclick="selectTopic('${nextTopic.id}')" style="margin-top:16px">${done === 0 ? 'Start Training' : 'Continue Training'}</button>` : '<br><p style="color:var(--green);font-size:1.2em;margin-top:24px">All topics complete! You\'re ready. Go crush that interview.</p>'}
+            </div>`;
+        return;
+    }
+
+    const topic = topics.find(t => t.id === currentTopic);
+    if (!topic) return;
+
+    const dayClass = `day${topic.day}`;
+    const isComplete = state[topic.id];
+    const topicIdx = topics.indexOf(topic);
+    const nextT = topicIdx < topics.length - 1 ? topics[topicIdx + 1] : null;
+
+    main.innerHTML = `
+        <div class="topic-content active">
+            <span class="day-badge ${dayClass}">Day ${topic.day}</span>
+            <h2 class="topic-title">${topic.title}</h2>
+            <p class="topic-subtitle">${topic.subtitle}</p>
+
+            ${topic.content}
+
+            <div class="practice-box">
+                <h4>Practice Challenge</h4>
+                <div class="problem">${topic.practice.problem}</div>
+                ${topic.practice.starterCode ? `
+                <div class="editor-widget">
+                    <div class="editor-toolbar">
+                        <span>python</span>
+                        <button class="btn-run" id="run-btn-${topic.id}" onclick="runCode('${topic.id}')">
+                            <span class="run-icon">&#9654;</span> Run
+                        </button>
+                    </div>
+                    <textarea id="editor-${topic.id}">${topic.practice.starterCode.replace(/</g,'&lt;')}</textarea>
+                    <div class="output-panel" id="output-${topic.id}"></div>
+                </div>` : ''}
+                <button class="btn-reveal" onclick="revealSolution('${topic.id}')">Show Solution</button>
+                <div class="solution" id="solution-${topic.id}">${topic.practice.solution}</div>
+            </div>
+
+            <div class="complete-bar">
+                <button class="btn-complete ${isComplete ? 'completed' : ''}" onclick="markComplete('${topic.id}')" ${isComplete ? 'disabled' : ''}>
+                    ${isComplete ? 'Completed' : 'Mark Complete'}
+                </button>
+                ${nextT ? `<button class="btn-next-topic" onclick="selectTopic('${nextT.id}')">Next: ${nextT.title} &rarr;</button>` : '<span style="color:var(--green)">Last topic!</span>'}
+            </div>
+        </div>`;
+    main.scrollTop = 0;
+
+    if (topic && topic.practice.starterCode) {
+        initEditor(topic.id, topic.practice.starterCode);
+    }
+}
+
+// === CODE EDITOR ===
+let editors = {};
+let pyodideReady = null;
+
+function initEditor(topicId, code) {
+    const textarea = document.getElementById(`editor-${topicId}`);
+    if (!textarea) return;
+    const cm = CodeMirror.fromTextArea(textarea, {
+        mode: 'python',
+        theme: 'material-darker',
+        lineNumbers: true,
+        indentUnit: 4,
+        tabSize: 4,
+        indentWithTabs: false,
+        lineWrapping: true,
+        viewportMargin: Infinity,
+        extraKeys: {
+            'Tab': function(cm) {
+                cm.replaceSelection('    ', 'end');
+            },
+            'Shift-Enter': function(cm) {
+                runCode(topicId);
+            }
+        }
+    });
+    cm.setValue(code);
+    editors[topicId] = cm;
+}
+
+async function loadPyodide_() {
+    if (pyodideReady) return pyodideReady;
+    pyodideReady = (async () => {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/pyodide/v0.27.4/full/pyodide.js';
+        document.head.appendChild(script);
+        await new Promise((resolve, reject) => {
+            script.onload = resolve;
+            script.onerror = reject;
+        });
+        return await loadPyodide();
+    })();
+    return pyodideReady;
+}
+
+async function runCode(topicId) {
+    const cm = editors[topicId];
+    if (!cm) return;
+    const code = cm.getValue();
+    const outputEl = document.getElementById(`output-${topicId}`);
+    const runBtn = document.getElementById(`run-btn-${topicId}`);
+
+    outputEl.className = 'output-panel show';
+    outputEl.innerHTML = '<span class="pyodide-loading">Loading Python runtime...</span>';
+    runBtn.disabled = true;
+
+    try {
+        const pyodide = await loadPyodide_();
+
+        outputEl.innerHTML = '<span class="pyodide-loading">Running...</span>';
+
+        pyodide.runPython(`
+import sys, io
+sys.stdout = io.StringIO()
+sys.stderr = io.StringIO()
+`);
+
+        try {
+            pyodide.runPython(code);
+            const stdout = pyodide.runPython('sys.stdout.getvalue()');
+            const stderr = pyodide.runPython('sys.stderr.getvalue()');
+
+            if (stderr) {
+                outputEl.className = 'output-panel show has-error';
+                outputEl.textContent = stderr;
+            } else if (stdout) {
+                outputEl.className = 'output-panel show has-output';
+                outputEl.textContent = stdout;
+            } else {
+                outputEl.className = 'output-panel show';
+                outputEl.textContent = '(no output)';
+            }
+        } catch (err) {
+            outputEl.className = 'output-panel show has-error';
+            outputEl.textContent = err.message;
+        }
+    } catch (err) {
+        outputEl.className = 'output-panel show has-error';
+        outputEl.textContent = 'Failed to load Python: ' + err.message;
+    }
+
+    runBtn.disabled = false;
+}
+
+// === ACTIONS ===
+function selectTopic(id) {
+    currentTopic = id;
+    render();
+}
+
+function toggleDay(day) {
+    const el = document.getElementById(`day-topics-${day}`);
+    el.classList.toggle('collapsed');
+}
+
+function revealSolution(id) {
+    const el = document.getElementById(`solution-${id}`);
+    el.classList.add('show');
+}
+
+function markComplete(id) {
+    const state = loadProgress();
+    state[id] = true;
+    saveProgress(state);
+
+    const topicIdx = topics.findIndex(t => t.id === id);
+    const nextT = topicIdx < topics.length - 1 ? topics[topicIdx + 1] : null;
+    if (nextT) {
+        currentTopic = nextT.id;
+    }
+    render();
+}
+
+// === INIT ===
+render();
+</script>
+</body>
+</html>

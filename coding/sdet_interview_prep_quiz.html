@@ -1,0 +1,1899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDET Interview Prep Quiz</title>
+    <style>
+        :root {
+            --primary: #00bcd4;
+            --secondary: #7c4dff;
+            --accent: #ff6e40;
+            --success: #4CAF50;
+            --danger: #f44336;
+            --warning: #ff9800;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #1a2332 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .container { max-width: 900px; margin: 0 auto; }
+
+        header {
+            text-align: center;
+            padding: 25px 20px;
+            background: linear-gradient(135deg, rgba(0,188,212,0.2), rgba(124,77,255,0.2));
+            border-radius: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle { font-size: 1em; opacity: 0.9; }
+
+        .start-screen {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .start-screen h2 { color: #333; margin-bottom: 10px; }
+        .start-screen p { color: #666; margin-bottom: 20px; }
+
+        .vocab-section { margin: 25px 0; text-align: left; }
+        .vocab-section h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.3em;
+        }
+
+        .vocab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .vocab-card {
+            background: linear-gradient(135deg, #f5f5f5, #eeeeee);
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        .vocab-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+
+        .vocab-card .front, .vocab-card .back {
+            backface-visibility: hidden;
+            transition: transform 0.5s;
+        }
+
+        .vocab-card .back {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            transform: rotateY(180deg);
+            border-radius: 10px;
+        }
+
+        .vocab-card.flipped .front { transform: rotateY(180deg); }
+        .vocab-card.flipped .back { transform: rotateY(0deg); }
+
+        .vocab-card .term { font-weight: bold; color: #333; font-size: 1em; margin-bottom: 5px; }
+        .vocab-card .tap-hint { font-size: 0.75em; color: #999; margin-top: 5px; }
+        .vocab-card .definition { font-size: 0.85em; color: #555; line-height: 1.4; }
+        .vocab-card .example { font-size: 0.8em; color: #7b1fa2; font-style: italic; margin-top: 8px; }
+
+        .vocab-card.category1 { border-color: var(--primary); }
+        .vocab-card.category1 .back { background: linear-gradient(135deg, #e0f7fa, #b2ebf2); }
+        .vocab-card.category2 { border-color: var(--secondary); }
+        .vocab-card.category2 .back { background: linear-gradient(135deg, #ede7f6, #d1c4e9); }
+        .vocab-card.category3 { border-color: #ff6e40; }
+        .vocab-card.category3 .back { background: linear-gradient(135deg, #fbe9e7, #ffccbc); }
+        .vocab-card.category4 { border-color: #66bb6a; }
+        .vocab-card.category4 .back { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); }
+        .vocab-card.category5 { border-color: #ffa726; }
+        .vocab-card.category5 .back { background: linear-gradient(135deg, #fff3e0, #ffe0b2); }
+        .vocab-card.category6 { border-color: #ec407a; }
+        .vocab-card.category6 .back { background: linear-gradient(135deg, #fce4ec, #f8bbd0); }
+
+        .category-label {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.7em;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .category-label.category1 { background: linear-gradient(135deg, #00bcd4, #0097a7); }
+        .category-label.category2 { background: linear-gradient(135deg, #7c4dff, #651fff); }
+        .category-label.category3 { background: linear-gradient(135deg, #ff6e40, #e64a19); }
+        .category-label.category4 { background: linear-gradient(135deg, #66bb6a, #43a047); }
+        .category-label.category5 { background: linear-gradient(135deg, #ffa726, #f57c00); }
+        .category-label.category6 { background: linear-gradient(135deg, #ec407a, #c2185b); }
+
+        .btn-start {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 18px 50px;
+            font-size: 1.3em;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .btn-start:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 188, 212, 0.4);
+        }
+
+        .quiz-content { display: none; }
+        .quiz-content.active { display: block; }
+
+        .shuffle-notice {
+            background: linear-gradient(135deg, rgba(76,175,80,0.3), rgba(139,195,74,0.3));
+            border: 1px solid rgba(76,175,80,0.5);
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .shuffle-notice span { color: #8BC34A; font-weight: bold; }
+
+        .score-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.12);
+            padding: 12px 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            font-size: 1em;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .score-bar span { display: flex; align-items: center; gap: 6px; }
+
+        .timer-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.08);
+            padding: 10px 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+
+        .question-timer { display: flex; align-items: center; gap: 8px; font-size: 1.1em; font-weight: bold; }
+
+        .timer-circle {
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            background: conic-gradient(var(--primary) var(--timer-progress, 100%), rgba(255,255,255,0.2) 0%);
+            position: relative;
+        }
+
+        .timer-circle::before {
+            content: '';
+            position: absolute;
+            width: 36px; height: 36px;
+            background: #161b22;
+            border-radius: 50%;
+        }
+
+        .timer-circle span { position: relative; z-index: 1; }
+        .timer-circle.warning { background: conic-gradient(var(--warning) var(--timer-progress, 100%), rgba(255,255,255,0.2) 0%); }
+        .timer-circle.danger { background: conic-gradient(var(--danger) var(--timer-progress, 100%), rgba(255,255,255,0.2) 0%); animation: pulse 0.5s infinite; }
+
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+        .timer-progress-bar { flex: 1; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; overflow: hidden; }
+        .timer-progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 3px; transition: width 1s linear; width: 100%; }
+        .timer-progress-fill.warning { background: linear-gradient(90deg, var(--warning), #ffc107); }
+        .timer-progress-fill.danger { background: linear-gradient(90deg, var(--danger), var(--primary)); }
+
+        .total-timer { display: flex; align-items: center; gap: 6px; font-size: 1em; opacity: 0.9; }
+
+        .progress-container { width: 100%; height: 8px; background: rgba(255,255,255,0.2); border-radius: 8px; margin-bottom: 20px; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 8px; transition: width 0.5s ease; width: 0%; }
+
+        .question-card {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            display: none;
+            animation: slideIn 0.4s ease;
+        }
+
+        .question-card.active { display: block; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .question-number {
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            display: inline-block;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+
+        .question-number.category1 { background: linear-gradient(135deg, #00bcd4, #0097a7); }
+        .question-number.category2 { background: linear-gradient(135deg, #7c4dff, #651fff); }
+        .question-number.category3 { background: linear-gradient(135deg, #ff6e40, #e64a19); }
+        .question-number.category4 { background: linear-gradient(135deg, #66bb6a, #43a047); }
+        .question-number.category5 { background: linear-gradient(135deg, #ffa726, #f57c00); }
+        .question-number.category6 { background: linear-gradient(135deg, #ec407a, #c2185b); }
+
+        .question-text { font-size: 1.15em; margin-bottom: 20px; line-height: 1.6; color: #222; }
+        .question-text code {
+            background: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #c2185b;
+            font-size: 0.95em;
+        }
+        .question-text pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 14px 18px;
+            border-radius: 10px;
+            margin: 12px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.88em;
+            line-height: 1.5;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .options { display: flex; flex-direction: column; gap: 10px; }
+
+        .option {
+            padding: 15px 18px;
+            background: #f5f5f5;
+            border: 3px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.05em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .option:hover:not(.disabled) { background: #e0f7fa; border-color: var(--primary); transform: translateX(5px); }
+        .option.correct { background: #c8e6c9 !important; border-color: var(--success) !important; }
+        .option.incorrect { background: #ffcdd2 !important; border-color: var(--danger) !important; }
+        .option.disabled { cursor: not-allowed; opacity: 0.7; }
+
+        .option-letter {
+            width: 32px; height: 32px;
+            background: #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .option.correct .option-letter { background: var(--success); color: white; }
+        .option.incorrect .option-letter { background: var(--danger); color: white; }
+
+        .feedback { margin-top: 18px; padding: 18px; border-radius: 12px; display: none; animation: fadeIn 0.3s ease; line-height: 1.5; }
+        .feedback.show { display: block; }
+        .feedback.correct { background: linear-gradient(135deg, #c8e6c9, #a5d6a7); color: #1b5e20; }
+        .feedback.incorrect { background: linear-gradient(135deg, #ffcdd2, #ef9a9a); color: #b71c1c; }
+        .feedback.timeout { background: linear-gradient(135deg, #fff3e0, #ffe0b2); color: #e65100; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .btn { padding: 14px 30px; font-size: 1.05em; border: none; border-radius: 25px; cursor: pointer; transition: all 0.3s ease; font-weight: bold; margin-top: 15px; }
+        .btn-next { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; display: none; }
+        .btn-next.show { display: inline-block; }
+        .btn-next:hover { transform: scale(1.05); box-shadow: 0 5px 20px rgba(0, 188, 212, 0.4); }
+        .btn-restart { background: linear-gradient(135deg, var(--accent), #e64a19); color: white; }
+        .btn-restart:hover { transform: scale(1.05); }
+
+        .results { text-align: center; display: none; }
+        .results.show { display: block; }
+
+        .results-card {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .final-score {
+            font-size: 3.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .grade { font-size: 1.8em; margin: 15px 0; }
+        .emoji-result { font-size: 3.5em; margin: 15px 0; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0; }
+        .stat-box { background: #f5f5f5; padding: 12px; border-radius: 10px; }
+        .stat-box .stat-value { font-size: 1.6em; font-weight: bold; color: var(--primary); }
+        .stat-box .stat-label { font-size: 0.85em; color: #666; }
+
+        .review-section { margin: 25px 0; text-align: left; }
+        .review-section h3 { color: var(--danger); margin-bottom: 15px; text-align: center; font-size: 1.1em; }
+        .review-section.perfect h3 { color: var(--success); }
+        .review-topics { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+
+        .review-topic {
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .review-topic.category1 { background: linear-gradient(135deg, #00bcd4, #0097a7); }
+        .review-topic.category2 { background: linear-gradient(135deg, #7c4dff, #651fff); }
+        .review-topic.category3 { background: linear-gradient(135deg, #ff6e40, #e64a19); }
+        .review-topic.category4 { background: linear-gradient(135deg, #66bb6a, #43a047); }
+        .review-topic.category5 { background: linear-gradient(135deg, #ffa726, #f57c00); }
+        .review-topic.category6 { background: linear-gradient(135deg, #ec407a, #c2185b); }
+
+        .review-topic .miss-count { background: rgba(255,255,255,0.3); padding: 2px 8px; border-radius: 10px; font-size: 0.85em; }
+        .perfect-badge { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, var(--success), #8BC34A); color: white; padding: 12px 24px; border-radius: 25px; font-size: 1.1em; font-weight: bold; }
+
+        /* MISSED QUESTION REVIEW */
+        .missed-review { display: none; margin-top: 24px; }
+        .missed-review.show { display: block; }
+        .missed-review-card {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .missed-review-card h3 { text-align: center; margin-bottom: 16px; font-size: 1.2em; }
+        .review-progress-bar { width: 100%; height: 6px; background: #e0e0e0; border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
+        .review-progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--success)); border-radius: 3px; transition: width 0.4s; }
+        .review-info { text-align: center; color: #666; margin-bottom: 16px; font-size: 0.9em; }
+        .review-q-category { color: white; padding: 4px 12px; border-radius: 15px; font-size: 0.8em; display: inline-block; margin-bottom: 10px; font-weight: bold; }
+        .review-q-text { font-size: 1.1em; margin-bottom: 16px; line-height: 1.6; color: #222; }
+        .review-q-text code { background: #f0f0f0; padding: 2px 8px; border-radius: 4px; font-family: 'Courier New', monospace; color: #c2185b; }
+        .review-q-text pre { background: #1e1e1e; color: #d4d4d4; padding: 12px 16px; border-radius: 8px; margin: 10px 0; font-family: 'Courier New', monospace; font-size: 0.85em; line-height: 1.5; overflow-x: auto; white-space: pre; }
+        .review-options { display: flex; flex-direction: column; gap: 8px; }
+        .review-option {
+            padding: 13px 16px;
+            background: #f5f5f5;
+            border: 3px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.2s;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .review-option:hover:not(.r-disabled) { background: #e0f7fa; border-color: var(--primary); }
+        .review-option.r-selected { background: #e3f2fd; border-color: var(--primary); }
+        .review-option.r-correct { background: #c8e6c9 !important; border-color: var(--success) !important; }
+        .review-option.r-incorrect { background: #ffcdd2 !important; border-color: var(--danger) !important; }
+        .review-option.r-disabled { cursor: not-allowed; opacity: 0.7; }
+        .review-option .r-letter { width: 28px; height: 28px; background: #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 0.85em; }
+        .review-option.r-correct .r-letter { background: var(--success); color: white; }
+        .review-option.r-incorrect .r-letter { background: var(--danger); color: white; }
+        .review-feedback { margin-top: 14px; padding: 14px; border-radius: 10px; display: none; line-height: 1.5; font-size: 0.95em; }
+        .review-feedback.show { display: block; animation: fadeIn 0.3s; }
+        .review-feedback.r-correct-fb { background: linear-gradient(135deg, #c8e6c9, #a5d6a7); color: #1b5e20; }
+        .review-feedback.r-incorrect-fb { background: linear-gradient(135deg, #ffcdd2, #ef9a9a); color: #b71c1c; }
+        .btn-review-action { margin-top: 14px; display: none; }
+        .btn-review-action.show { display: inline-block; }
+        .btn-review-check {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer;
+            font-size: 0.95em; font-weight: 600; transition: all 0.2s;
+        }
+        .btn-review-check:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-review-check:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,188,212,0.3); }
+        .review-complete { text-align: center; padding: 20px 0; }
+        .review-complete h4 { font-size: 1.2em; margin-bottom: 10px; }
+        .review-complete p { color: #555; margin-bottom: 4px; }
+
+        .category-breakdown { margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 12px; }
+        .category-breakdown h4 { margin-bottom: 12px; color: #333; font-size: 1em; }
+        .breakdown-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; }
+        .breakdown-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: white; border-radius: 8px; font-size: 0.85em; }
+        .breakdown-item .cat-name { font-weight: 500; color: #555; }
+        .breakdown-item .cat-score { font-weight: bold; padding: 2px 8px; border-radius: 10px; }
+        .breakdown-item .cat-score.perfect { background: #c8e6c9; color: #2e7d32; }
+        .breakdown-item .cat-score.good { background: #fff3e0; color: #e65100; }
+        .breakdown-item .cat-score.needs-work { background: #ffcdd2; color: #c62828; }
+
+        @media (max-width: 600px) {
+            .score-bar, .timer-bar { flex-direction: column; text-align: center; }
+            .stats-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 1.6em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SDET Interview Prep</h1>
+            <p class="subtitle">Big-O &bull; Data Structures &bull; Algorithms &bull; Python &bull; Testing &bull; System Design</p>
+        </header>
+
+        <div class="start-screen" id="start-screen">
+            <h2>Review Key Concepts First!</h2>
+            <p>Tap each card to reveal the definition. Study these before you start the quiz.</p>
+
+            <div class="vocab-section">
+                <h3>Core Concepts</h3>
+                <div class="vocab-grid">
+                    <div class="vocab-card category1" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label category1">BIG-O</span>
+                                <div class="term">Big-O Notation</div>
+                                <div class="tap-hint">tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">Describes how an algorithm's runtime or memory grows relative to input size. Focuses on the worst-case upper bound.</div>
+                            <div class="example">O(n) = linear, O(n^2) = quadratic</div>
+                        </div>
+                    </div>
+                    <div class="vocab-card category1" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label category1">BIG-O</span>
+                                <div class="term">Time vs Space Complexity</div>
+                                <div class="tap-hint">tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">Time = how many operations. Space = how much extra memory. You often trade one for the other.</div>
+                            <div class="example">Using a set adds O(n) space but turns O(n) lookup into O(1)</div>
+                        </div>
+                    </div>
+                    <div class="vocab-card category2" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label category2">DATA STRUCTURES</span>
+                                <div class="term">Hash Map (dict)</div>
+                                <div class="tap-hint">tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">Key-value store with O(1) average lookup, insert, and delete. Python's dict and set use hash tables.</div>
+                            <div class="example">counts = {}; counts[x] = counts.get(x, 0) + 1</div>
+                        </div>
+                    </div>
+                    <div class="vocab-card category2" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label category2">DATA STRUCTURES</span>
+                                <div class="term">Two Pointers Pattern</div>
+                                <div class="tap-hint">tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">Use two indices moving through an array (often from both ends toward the middle, or both from start at different speeds) to solve problems in O(n).</div>
+                            <div class="example">Palindrome check, removing duplicates from sorted array</div>
+                        </div>
+                    </div>
+                    <div class="vocab-card category2" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label category2">DATA STRUCTURES</span>
+                                <div class="term">Sliding Window</div>
+                                <div class="tap-hint">tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">Maintain a "window" (subarray) that expands/shrinks as you scan. Avoids recomputing from scratch each step.</div>
+                            <div class="example">Max sum of k consecutive elements, longest substring without repeats</div>
+                        </div>
+                    </div>
+                    <div class="vocab-card category3" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label category3">SORT & SEARCH</span>
+                                <div class="term">Binary Search</div>
+                                <div class="tap-hint">tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">Repeatedly halve a sorted search space. O(log n) time. Requires sorted input or a monotonic condition.</div>
+                            <div class="example">lo, hi = 0, len(a)-1; mid = (lo+hi)//2</div>
+                        </div>
+                    </div>
+                    <div class="vocab-card category3" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label category3">SORT & SEARCH</span>
+                                <div class="term">Stack (LIFO)</div>
+                                <div class="tap-hint">tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">Last-In, First-Out. Push to top, pop from top. Great for matching brackets, undo, DFS, and expression evaluation.</div>
+                            <div class="example">Python list as stack: append() to push, pop() to pop</div>
+                        </div>
+                    </div>
+                    <div class="vocab-card category4" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label category4">TREES & RECURSION</span>
+                                <div class="term">BFS vs DFS</div>
+                                <div class="tap-hint">tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">BFS = level by level (uses queue). DFS = go deep first (uses stack/recursion). Both visit all nodes in O(n).</div>
+                            <div class="example">BFS for shortest path. DFS for exploring all paths.</div>
+                        </div>
+                    </div>
+                    <div class="vocab-card category4" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label category4">TREES & RECURSION</span>
+                                <div class="term">Dynamic Programming</div>
+                                <div class="tap-hint">tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">Break a problem into overlapping subproblems. Store results to avoid recomputation. Memoization (top-down) or tabulation (bottom-up).</div>
+                            <div class="example">Fibonacci: memo[n] = memo[n-1] + memo[n-2]</div>
+                        </div>
+                    </div>
+                    <div class="vocab-card category5" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label category5">PYTHON</span>
+                                <div class="term">List Comprehension</div>
+                                <div class="tap-hint">tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">Concise way to build lists. Syntax: [expr for item in iterable if condition]. Preferred over map/filter in Python.</div>
+                            <div class="example">[x**2 for x in range(10) if x % 2 == 0]</div>
+                        </div>
+                    </div>
+                    <div class="vocab-card category5" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label category5">PYTHON</span>
+                                <div class="term">collections.Counter</div>
+                                <div class="tap-hint">tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">Dict subclass for counting hashable objects. Instantly gives frequency counts. Has most_common() method.</div>
+                            <div class="example">Counter("banana") => {'a': 3, 'n': 2, 'b': 1}</div>
+                        </div>
+                    </div>
+                    <div class="vocab-card category6" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label category6">TESTING</span>
+                                <div class="term">Test Pyramid</div>
+                                <div class="tap-hint">tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">Many unit tests (fast, cheap), fewer integration tests, fewest E2E tests (slow, expensive). Guides test strategy investment.</div>
+                            <div class="example">70% unit / 20% integration / 10% E2E</div>
+                        </div>
+                    </div>
+                    <div class="vocab-card category6" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label category6">TESTING</span>
+                                <div class="term">Equivalence Partitioning</div>
+                                <div class="tap-hint">tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">Divide inputs into groups where all values in a group should behave the same. Test one from each group to reduce test cases.</div>
+                            <div class="example">Age field: negative, 0, 1-17, 18-120, >120</div>
+                        </div>
+                    </div>
+                    <div class="vocab-card category6" onclick="flipCard(this)">
+                        <div class="front">
+                            <div>
+                                <span class="category-label category6">TESTING</span>
+                                <div class="term">Boundary Value Analysis</div>
+                                <div class="tap-hint">tap to flip</div>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="definition">Test at the edges of equivalence partitions. Bugs cluster at boundaries (off-by-one, overflow, empty inputs).</div>
+                            <div class="example">For range 1-100: test 0, 1, 2, 99, 100, 101</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-start" onclick="startQuiz()">Start Quiz!</button>
+        </div>
+
+        <div class="quiz-content" id="quiz-content">
+            <div class="shuffle-notice">
+                <span>Questions AND answers shuffle every time!</span><br>
+                <span>All topics guaranteed:</span> Big-O &bull; Data Structures &bull; Sort/Search &bull; Trees/DP &bull; Python &bull; Testing
+            </div>
+
+            <div class="score-bar">
+                <span>Score: <strong id="current-score">0</strong></span>
+                <span>Question: <strong id="question-num">1</strong> / <strong id="total-questions">20</strong></span>
+                <span>Streak: <strong id="streak">0</strong></span>
+            </div>
+
+            <div class="timer-bar">
+                <div class="question-timer">
+                    <div class="timer-circle" id="timer-circle">
+                        <span id="question-time">45</span>
+                    </div>
+                    <span>sec</span>
+                </div>
+                <div class="timer-progress-bar">
+                    <div class="timer-progress-fill" id="timer-progress"></div>
+                </div>
+                <div class="total-timer">
+                    <span>Total:</span>
+                    <strong id="total-time">0:00</strong>
+                </div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+
+            <div id="quiz-container"></div>
+        </div>
+
+        <div class="results" id="results">
+            <div class="results-card">
+                <div class="emoji-result" id="result-emoji"></div>
+                <h2>Quiz Complete!</h2>
+                <div class="final-score" id="final-score">0%</div>
+                <div class="grade" id="grade"></div>
+
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-value" id="stat-correct">0</div>
+                        <div class="stat-label">Correct</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="stat-time">0:00</div>
+                        <div class="stat-label">Time</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="stat-avg">0s</div>
+                        <div class="stat-label">Avg/Question</div>
+                    </div>
+                </div>
+
+                <p id="result-message"></p>
+
+                <div class="review-section" id="review-section"></div>
+                <div class="category-breakdown" id="category-breakdown"></div>
+
+                <button class="btn btn-restart" onclick="restartQuiz()">Try Again</button>
+                <button class="btn btn-restart" onclick="reviewVocab()" style="background: linear-gradient(135deg, #009688, #00796b); margin-left: 10px;">Review Concepts</button>
+            </div>
+        </div>
+
+        <div class="missed-review" id="missed-review">
+            <div class="missed-review-card">
+                <h3 id="missed-review-header">Practice the Questions You Missed!</h3>
+                <div class="review-progress-bar"><div class="review-progress-fill" id="review-progress-fill" style="width:0%"></div></div>
+                <div class="review-info" id="review-info"></div>
+                <div id="review-q-container"></div>
+                <div class="review-complete" id="review-complete" style="display:none"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const allQuestions = [
+            // ===== BIG-O & COMPLEXITY (category1) =====
+            {
+                category: "Big-O & Complexity",
+                categoryClass: "category1",
+                question: "What is the time complexity of this code?<pre>for i in range(n):\n    for j in range(n):\n        print(i, j)</pre>",
+                options: ["O(n)", "O(n^2)", "O(2n)", "O(n log n)"],
+                correctAnswer: "O(n^2)",
+                explanation: "Two nested loops each running n times: n * n = n^2."
+            },
+            {
+                category: "Big-O & Complexity",
+                categoryClass: "category1",
+                question: "What is the time complexity of looking up a key in a Python <code>dict</code>?",
+                options: ["O(1) average", "O(n)", "O(log n)", "O(n^2)"],
+                correctAnswer: "O(1) average",
+                explanation: "Python dicts use hash tables, giving O(1) average-case lookup. Worst case is O(n) due to hash collisions, but this is rare."
+            },
+            {
+                category: "Big-O & Complexity",
+                categoryClass: "category1",
+                question: "What is the time complexity of Python's built-in <code>sorted()</code>?",
+                options: ["O(n)", "O(n log n)", "O(n^2)", "O(log n)"],
+                correctAnswer: "O(n log n)",
+                explanation: "Python uses Timsort, which is O(n log n) in the average and worst case. It's optimized for real-world data with partially sorted runs."
+            },
+            {
+                category: "Big-O & Complexity",
+                categoryClass: "category1",
+                question: "If a function has a loop of O(n) followed by another loop of O(n), the total is:",
+                options: ["O(n^2)", "O(n)", "O(2n)", "O(n + n)"],
+                correctAnswer: "O(n)",
+                explanation: "Sequential (not nested) loops add: O(n) + O(n) = O(2n), and we drop the constant, so it's O(n)."
+            },
+            {
+                category: "Big-O & Complexity",
+                categoryClass: "category1",
+                question: "What is the space complexity of creating a set from a list of n elements?",
+                options: ["O(1)", "O(log n)", "O(n)", "O(n^2)"],
+                correctAnswer: "O(n)",
+                explanation: "A set stores up to n unique elements, so it uses O(n) additional space."
+            },
+            {
+                category: "Big-O & Complexity",
+                categoryClass: "category1",
+                question: "What is the time complexity of this code?<pre>def foo(n):\n    i = n\n    while i > 1:\n        i = i // 2</pre>",
+                options: ["O(n)", "O(n^2)", "O(log n)", "O(1)"],
+                correctAnswer: "O(log n)",
+                explanation: "The value of i is halved each iteration. Halving n until it reaches 1 takes log2(n) steps."
+            },
+            {
+                category: "Big-O & Complexity",
+                categoryClass: "category1",
+                question: "What is the time complexity of checking <code>x in my_list</code> where <code>my_list</code> is a Python list?",
+                options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
+                correctAnswer: "O(n)",
+                explanation: "Lists are unsorted arrays. Python must scan each element linearly to check membership. Use a set for O(1) lookups."
+            },
+            {
+                category: "Big-O & Complexity",
+                categoryClass: "category1",
+                question: "Which of these operations on a Python list is O(1)?",
+                options: ["list.insert(0, val)", "list.pop(0)", "list.append(val)", "list.remove(val)"],
+                correctAnswer: "list.append(val)",
+                explanation: "append() adds to the end in amortized O(1). insert(0), pop(0), and remove() all require shifting elements, making them O(n)."
+            },
+            {
+                category: "Big-O & Complexity",
+                categoryClass: "category1",
+                question: "O(n^2 + n) simplifies to:",
+                options: ["O(n^2 + n)", "O(n^2)", "O(n)", "O(2n^2)"],
+                correctAnswer: "O(n^2)",
+                explanation: "In Big-O, we drop lower-order terms. n^2 dominates n as input grows, so O(n^2 + n) = O(n^2)."
+            },
+            {
+                category: "Big-O & Complexity",
+                categoryClass: "category1",
+                question: "What is the time complexity of accessing <code>my_list[i]</code> by index?",
+                options: ["O(1)", "O(n)", "O(log n)", "O(n^2)"],
+                correctAnswer: "O(1)",
+                explanation: "Python lists are arrays under the hood. Indexing is a direct memory offset calculation, which is constant time."
+            },
+
+            // ===== ARRAYS, STRINGS & HASH MAPS (category2) =====
+            {
+                category: "Arrays & Hash Maps",
+                categoryClass: "category2",
+                question: "You need to find two numbers in a list that add up to a target. What's the optimal approach?",
+                options: [
+                    "Sort the list, then use two pointers — O(n log n)",
+                    "Use a hash map to store complements — O(n)",
+                    "Check every pair with nested loops — O(n^2)",
+                    "Use binary search on each element — O(n log n)"
+                ],
+                correctAnswer: "Use a hash map to store complements — O(n)",
+                explanation: "For each number, check if (target - number) is in your hash map. If not, store it. One pass, O(n) time, O(n) space."
+            },
+            {
+                category: "Arrays & Hash Maps",
+                categoryClass: "category2",
+                question: "How do you check if two strings are anagrams of each other in O(n)?",
+                options: [
+                    "Sort both strings and compare",
+                    "Compare character frequency counts",
+                    "Check if they have the same length",
+                    "Use a nested loop to match characters"
+                ],
+                correctAnswer: "Compare character frequency counts",
+                explanation: "Build a Counter (frequency map) for each string and compare. If counts match, they're anagrams. Sorting also works but is O(n log n)."
+            },
+            {
+                category: "Arrays & Hash Maps",
+                categoryClass: "category2",
+                question: "What does this code return?<pre>Counter('racecar').most_common(1)</pre>",
+                options: [
+                    "[('r', 2)]",
+                    "[('c', 2)]",
+                    "It depends on insertion order",
+                    "Both ('r', 2) and ('c', 2) are valid since they tie"
+                ],
+                correctAnswer: "[('r', 2)]",
+                explanation: "Counter('racecar') counts: r=2, a=2, c=2, e=1. most_common(1) returns the first element with the highest count. With ties, insertion order is preserved, so 'r' comes first."
+            },
+            {
+                category: "Arrays & Hash Maps",
+                categoryClass: "category2",
+                question: "What is the output?<pre>s = 'hello'\nprint(s[::-1])</pre>",
+                options: ["'hello'", "'olleh'", "'olle'", "Error"],
+                correctAnswer: "'olleh'",
+                explanation: "s[::-1] reverses a string using slice notation. The -1 step traverses the string backwards."
+            },
+            {
+                category: "Arrays & Hash Maps",
+                categoryClass: "category2",
+                question: "To find the first non-repeating character in a string, the best approach is:",
+                options: [
+                    "Use a nested loop to check each character — O(n^2)",
+                    "Sort the string first — O(n log n)",
+                    "Use a Counter then scan the string — O(n)",
+                    "Use a stack — O(n)"
+                ],
+                correctAnswer: "Use a Counter then scan the string — O(n)",
+                explanation: "First pass: count frequencies. Second pass: return the first character with count == 1. Two passes of O(n) = O(n)."
+            },
+            {
+                category: "Arrays & Hash Maps",
+                categoryClass: "category2",
+                question: "What does <code>set()</code> NOT support in Python?",
+                options: ["O(1) membership testing", "Storing duplicate values", "Union and intersection operations", "Iteration over elements"],
+                correctAnswer: "Storing duplicate values",
+                explanation: "Sets automatically deduplicate. Adding a duplicate has no effect. That's exactly why they're useful for uniqueness checks."
+            },
+            {
+                category: "Arrays & Hash Maps",
+                categoryClass: "category2",
+                question: "You have a list of strings and need to group anagrams together. Which data structure is key?",
+                options: [
+                    "A list of lists",
+                    "A dict with sorted-string keys",
+                    "A set of tuples",
+                    "A binary search tree"
+                ],
+                correctAnswer: "A dict with sorted-string keys",
+                explanation: "Sort each string to get a canonical key (e.g., 'eat' -> 'aet'). Use that as the dict key, and append the original string to the value list."
+            },
+            {
+                category: "Arrays & Hash Maps",
+                categoryClass: "category2",
+                question: "What is the difference between <code>dict.get(key, default)</code> and <code>dict[key]</code>?",
+                options: [
+                    "No difference",
+                    "get() returns a default value if key is missing; [] raises KeyError",
+                    "[] is faster than get()",
+                    "get() modifies the dict; [] does not"
+                ],
+                correctAnswer: "get() returns a default value if key is missing; [] raises KeyError",
+                explanation: "dict.get(key, default) safely returns the default (None if unspecified) when the key doesn't exist. dict[key] raises a KeyError."
+            },
+            {
+                category: "Arrays & Hash Maps",
+                categoryClass: "category2",
+                question: "What does this return?<pre>list(zip([1,2,3], ['a','b','c']))</pre>",
+                options: [
+                    "[(1,'a'), (2,'b'), (3,'c')]",
+                    "[[1,'a'], [2,'b'], [3,'c']]",
+                    "{1:'a', 2:'b', 3:'c'}",
+                    "[1, 'a', 2, 'b', 3, 'c']"
+                ],
+                correctAnswer: "[(1,'a'), (2,'b'), (3,'c')]",
+                explanation: "zip() pairs elements from two iterables into tuples. Wrapping in list() materializes the zip object."
+            },
+            {
+                category: "Arrays & Hash Maps",
+                categoryClass: "category2",
+                question: "Which pattern solves 'find the longest substring without repeating characters'?",
+                options: ["Two pointers (converging)", "Sliding window with a set", "Binary search", "Dynamic programming"],
+                correctAnswer: "Sliding window with a set",
+                explanation: "Expand the window by moving the right pointer. When a duplicate is found, shrink from the left. A set tracks characters in the current window."
+            },
+
+            // ===== SORTING, SEARCHING & STACKS (category3) =====
+            {
+                category: "Sorting & Stacks",
+                categoryClass: "category3",
+                question: "Which is the correct way to sort a list of tuples by the second element in Python?",
+                options: [
+                    "sorted(lst, key=lambda x: x[1])",
+                    "sorted(lst, index=1)",
+                    "lst.sort(by=1)",
+                    "sorted(lst)[1]"
+                ],
+                correctAnswer: "sorted(lst, key=lambda x: x[1])",
+                explanation: "The key parameter takes a function that extracts the comparison value. lambda x: x[1] gets the second element of each tuple."
+            },
+            {
+                category: "Sorting & Stacks",
+                categoryClass: "category3",
+                question: "For the Merge Intervals problem, the first step is usually to:",
+                options: [
+                    "Remove duplicates",
+                    "Sort intervals by start time",
+                    "Use a hash map",
+                    "Build a graph"
+                ],
+                correctAnswer: "Sort intervals by start time",
+                explanation: "Sorting by start time lets you process intervals left-to-right and merge overlapping ones in a single pass. Total: O(n log n)."
+            },
+            {
+                category: "Sorting & Stacks",
+                categoryClass: "category3",
+                question: "In binary search, if <code>nums[mid] < target</code>, what do you do?",
+                options: [
+                    "Set hi = mid - 1",
+                    "Set lo = mid + 1",
+                    "Set lo = mid",
+                    "Return -1"
+                ],
+                correctAnswer: "Set lo = mid + 1",
+                explanation: "If the middle value is too small, the target must be in the right half. Move lo past mid to narrow the search space."
+            },
+            {
+                category: "Sorting & Stacks",
+                categoryClass: "category3",
+                question: "What does a stack help solve in the Valid Parentheses problem?",
+                options: [
+                    "Sorting brackets by type",
+                    "Matching each opening bracket with its corresponding closer",
+                    "Counting total brackets",
+                    "Finding the longest bracket sequence"
+                ],
+                correctAnswer: "Matching each opening bracket with its corresponding closer",
+                explanation: "Push opening brackets onto the stack. When you see a closer, pop and check if it matches. If the stack is empty at the end, it's valid."
+            },
+            {
+                category: "Sorting & Stacks",
+                categoryClass: "category3",
+                question: "What is the key difference between a stack and a queue?",
+                options: [
+                    "Stack is FIFO, queue is LIFO",
+                    "Stack is LIFO, queue is FIFO",
+                    "Stack uses a linked list, queue uses an array",
+                    "There is no difference"
+                ],
+                correctAnswer: "Stack is LIFO, queue is FIFO",
+                explanation: "Stack = Last-In, First-Out (like a stack of plates). Queue = First-In, First-Out (like a line at a store)."
+            },
+            {
+                category: "Sorting & Stacks",
+                categoryClass: "category3",
+                question: "What Python module provides an efficient queue (deque)?",
+                options: ["queue", "collections", "itertools", "heapq"],
+                correctAnswer: "collections",
+                explanation: "collections.deque provides O(1) append and popleft. Python's list.pop(0) is O(n), so deque is preferred for queues."
+            },
+            {
+                category: "Sorting & Stacks",
+                categoryClass: "category3",
+                question: "Binary search requires the input to be:",
+                options: ["Unique", "Sorted", "Non-negative", "A linked list"],
+                correctAnswer: "Sorted",
+                explanation: "Binary search only works on sorted data (or monotonic conditions). The sorted order is what allows us to eliminate half the search space each step."
+            },
+            {
+                category: "Sorting & Stacks",
+                categoryClass: "category3",
+                question: "What is the output?<pre>stack = []\nstack.append(1)\nstack.append(2)\nstack.append(3)\nprint(stack.pop())</pre>",
+                options: ["1", "2", "3", "Error"],
+                correctAnswer: "3",
+                explanation: "pop() removes and returns the last element (top of stack). 3 was added last, so it's popped first — that's LIFO."
+            },
+            {
+                category: "Sorting & Stacks",
+                categoryClass: "category3",
+                question: "What is the time complexity of binary search?",
+                options: ["O(n)", "O(n log n)", "O(log n)", "O(1)"],
+                correctAnswer: "O(log n)",
+                explanation: "Each comparison eliminates half the remaining elements. For n elements, you need at most log2(n) comparisons."
+            },
+            {
+                category: "Sorting & Stacks",
+                categoryClass: "category3",
+                question: "To sort a list in descending order in Python, you use:",
+                options: [
+                    "sorted(lst, reverse=True)",
+                    "sorted(lst, desc=True)",
+                    "lst.sort(order='desc')",
+                    "reversed(sorted(lst))"
+                ],
+                correctAnswer: "sorted(lst, reverse=True)",
+                explanation: "The reverse=True parameter sorts in descending order. reversed(sorted(lst)) also works but returns an iterator, not a list."
+            },
+
+            // ===== TREES, RECURSION & DP (category4) =====
+            {
+                category: "Trees & Recursion",
+                categoryClass: "category4",
+                question: "What is the maximum depth of a binary tree with 1 node?",
+                options: ["0", "1", "2", "Undefined"],
+                correctAnswer: "1",
+                explanation: "A single root node has depth 1. An empty tree has depth 0. The recursive formula is: max(depth(left), depth(right)) + 1."
+            },
+            {
+                category: "Trees & Recursion",
+                categoryClass: "category4",
+                question: "Which traversal visits nodes level by level (top to bottom, left to right)?",
+                options: ["Inorder (DFS)", "Preorder (DFS)", "Level-order (BFS)", "Postorder (DFS)"],
+                correctAnswer: "Level-order (BFS)",
+                explanation: "Level-order traversal uses a queue (BFS). Process all nodes at depth d before moving to depth d+1."
+            },
+            {
+                category: "Trees & Recursion",
+                categoryClass: "category4",
+                question: "Every recursive function needs:",
+                options: [
+                    "A loop and a counter",
+                    "A base case and a recursive case",
+                    "A stack data structure",
+                    "At least two parameters"
+                ],
+                correctAnswer: "A base case and a recursive case",
+                explanation: "The base case stops recursion (prevents infinite calls). The recursive case breaks the problem into a smaller subproblem."
+            },
+            {
+                category: "Trees & Recursion",
+                categoryClass: "category4",
+                question: "What is the time complexity of naive recursive Fibonacci?",
+                options: ["O(n)", "O(n^2)", "O(2^n)", "O(log n)"],
+                correctAnswer: "O(2^n)",
+                explanation: "Each call branches into two subcalls, creating an exponential tree. With memoization, it drops to O(n)."
+            },
+            {
+                category: "Trees & Recursion",
+                categoryClass: "category4",
+                question: "The Climbing Stairs problem (n stairs, take 1 or 2 steps) has the same structure as:",
+                options: ["Binary search", "Two Sum", "Fibonacci sequence", "Merge sort"],
+                correctAnswer: "Fibonacci sequence",
+                explanation: "ways(n) = ways(n-1) + ways(n-2), which is exactly the Fibonacci recurrence. Use DP to solve in O(n)."
+            },
+            {
+                category: "Trees & Recursion",
+                categoryClass: "category4",
+                question: "In a BFS traversal of a binary tree, which data structure do you use?",
+                options: ["Stack", "Queue", "Hash Map", "Heap"],
+                correctAnswer: "Queue",
+                explanation: "BFS processes nodes in FIFO order. Add children to the back of the queue, process from the front. Use collections.deque in Python."
+            },
+            {
+                category: "Trees & Recursion",
+                categoryClass: "category4",
+                question: "What is memoization?",
+                options: [
+                    "Storing computed results to avoid redundant work",
+                    "Converting recursion to iteration",
+                    "Using less memory in algorithms",
+                    "Memorizing the algorithm steps"
+                ],
+                correctAnswer: "Storing computed results to avoid redundant work",
+                explanation: "Memoization caches results of expensive function calls. When called again with the same inputs, it returns the cached result instead of recomputing."
+            },
+            {
+                category: "Trees & Recursion",
+                categoryClass: "category4",
+                question: "In a DFS traversal, what order does INORDER visit nodes?",
+                options: [
+                    "Root, Left, Right",
+                    "Left, Root, Right",
+                    "Left, Right, Root",
+                    "Right, Root, Left"
+                ],
+                correctAnswer: "Left, Root, Right",
+                explanation: "Inorder = Left, Root, Right. On a BST, inorder traversal gives nodes in sorted order. Preorder = Root, Left, Right. Postorder = Left, Right, Root."
+            },
+            {
+                category: "Trees & Recursion",
+                categoryClass: "category4",
+                question: "The Number of Islands problem is typically solved with:",
+                options: [
+                    "Binary search on a grid",
+                    "DFS/BFS from each unvisited land cell",
+                    "Sorting the grid",
+                    "Dynamic programming"
+                ],
+                correctAnswer: "DFS/BFS from each unvisited land cell",
+                explanation: "Scan the grid. When you find a '1' (land), run DFS/BFS to mark the entire connected island as visited. Count how many times you start a new search."
+            },
+            {
+                category: "Trees & Recursion",
+                categoryClass: "category4",
+                question: "What does <code>@functools.lru_cache</code> do in Python?",
+                options: [
+                    "Limits function call frequency",
+                    "Automatically memoizes function results",
+                    "Makes a function run in a separate thread",
+                    "Converts a function to a generator"
+                ],
+                correctAnswer: "Automatically memoizes function results",
+                explanation: "lru_cache is a decorator that caches return values based on arguments. LRU = Least Recently Used eviction policy. Great for recursive DP."
+            },
+
+            // ===== PYTHON & PRACTICAL CODING (category5) =====
+            {
+                category: "Python & Practical",
+                categoryClass: "category5",
+                question: "What does this regex match?<pre>import re\nre.findall(r'\\d+', 'abc123def456')</pre>",
+                options: [
+                    "['abc', 'def']",
+                    "['123', '456']",
+                    "['abc123def456']",
+                    "['1', '2', '3', '4', '5', '6']"
+                ],
+                correctAnswer: "['123', '456']",
+                explanation: "\\d+ matches one or more digits. findall returns all non-overlapping matches as a list of strings."
+            },
+            {
+                category: "Python & Practical",
+                categoryClass: "category5",
+                question: "What is the Pythonic way to check if a key exists in a dictionary?",
+                options: [
+                    "if key in dict:",
+                    "if dict.has_key(key):",
+                    "if dict.contains(key):",
+                    "if dict.exists(key):"
+                ],
+                correctAnswer: "if key in dict:",
+                explanation: "The 'in' operator checks for key membership in O(1) average time. has_key() was removed in Python 3."
+            },
+            {
+                category: "Python & Practical",
+                categoryClass: "category5",
+                question: "What does <code>json.loads()</code> do?",
+                options: [
+                    "Loads a JSON file from disk",
+                    "Parses a JSON string into a Python object",
+                    "Converts a Python object to a JSON string",
+                    "Validates JSON syntax"
+                ],
+                correctAnswer: "Parses a JSON string into a Python object",
+                explanation: "loads() = load string. It parses a JSON string into a dict/list. load() reads from a file object. dumps() converts Python to JSON string."
+            },
+            {
+                category: "Python & Practical",
+                categoryClass: "category5",
+                question: "What's wrong with this code?<pre>def add_item(item, lst=[]):\n    lst.append(item)\n    return lst</pre>",
+                options: [
+                    "Nothing, it works fine",
+                    "The mutable default argument is shared across calls",
+                    "append() doesn't work on default arguments",
+                    "You can't return a default parameter"
+                ],
+                correctAnswer: "The mutable default argument is shared across calls",
+                explanation: "Default mutable arguments (lists, dicts) are created once and reused. Each call modifies the same list. Fix: use None as default and create a new list inside."
+            },
+            {
+                category: "Python & Practical",
+                categoryClass: "category5",
+                question: "To read a file line by line efficiently in Python, you use:",
+                options: [
+                    "file.readlines() then loop",
+                    "for line in open(file):",
+                    "with open(file) as f: for line in f:",
+                    "file.read().split('\\n')"
+                ],
+                correctAnswer: "with open(file) as f: for line in f:",
+                explanation: "The 'with' statement ensures the file is properly closed. Iterating over the file object reads line by line without loading everything into memory."
+            },
+            {
+                category: "Python & Practical",
+                categoryClass: "category5",
+                question: "What does <code>enumerate()</code> provide?",
+                options: [
+                    "A sorted version of the iterable",
+                    "Both the index and the value during iteration",
+                    "A count of elements",
+                    "A reversed iterator"
+                ],
+                correctAnswer: "Both the index and the value during iteration",
+                explanation: "for i, val in enumerate(my_list) gives you the index and value without needing range(len()). More Pythonic and less error-prone."
+            },
+            {
+                category: "Python & Practical",
+                categoryClass: "category5",
+                question: "Which assertion checks that calling a function raises a specific exception in pytest?",
+                options: [
+                    "assert raises(ValueError)",
+                    "with pytest.raises(ValueError):",
+                    "pytest.assert_exception(ValueError)",
+                    "@pytest.expect_error(ValueError)"
+                ],
+                correctAnswer: "with pytest.raises(ValueError):",
+                explanation: "pytest.raises() is a context manager. Code inside the 'with' block is expected to raise the specified exception. The test fails if it doesn't."
+            },
+            {
+                category: "Python & Practical",
+                categoryClass: "category5",
+                question: "What is the output?<pre>x = [1, 2, 3]\ny = x\ny.append(4)\nprint(x)</pre>",
+                options: ["[1, 2, 3]", "[1, 2, 3, 4]", "[4]", "Error"],
+                correctAnswer: "[1, 2, 3, 4]",
+                explanation: "y = x doesn't copy the list — both variables reference the same object. Modifying y also modifies x. Use y = x.copy() or y = x[:] for a shallow copy."
+            },
+            {
+                category: "Python & Practical",
+                categoryClass: "category5",
+                question: "How do you make an HTTP GET request in Python?",
+                options: [
+                    "http.get('url')",
+                    "requests.get('url')",
+                    "urllib.get('url')",
+                    "socket.get('url')"
+                ],
+                correctAnswer: "requests.get('url')",
+                explanation: "The requests library is the standard for HTTP in Python. response = requests.get(url), then check response.status_code and response.json()."
+            },
+            {
+                category: "Python & Practical",
+                categoryClass: "category5",
+                question: "What does <code>*args</code> do in a function definition?",
+                options: [
+                    "Requires all arguments to be named",
+                    "Collects extra positional arguments into a tuple",
+                    "Unpacks a dictionary",
+                    "Makes all parameters optional"
+                ],
+                correctAnswer: "Collects extra positional arguments into a tuple",
+                explanation: "*args collects variable positional arguments into a tuple. **kwargs collects variable keyword arguments into a dict. Both are common in Python functions."
+            },
+
+            // ===== TESTING & SYSTEM DESIGN (category6) =====
+            {
+                category: "Testing & Design",
+                categoryClass: "category6",
+                question: "The Test Pyramid recommends which distribution?",
+                options: [
+                    "Many E2E tests, few unit tests",
+                    "Equal amounts of each type",
+                    "Many unit tests, fewer integration, fewest E2E",
+                    "Only unit tests"
+                ],
+                correctAnswer: "Many unit tests, fewer integration, fewest E2E",
+                explanation: "Unit tests are fast, cheap, and reliable. E2E tests are slow and flaky. The pyramid: lots of unit tests at the base, integration in the middle, few E2E at the top."
+            },
+            {
+                category: "Testing & Design",
+                categoryClass: "category6",
+                question: "What is a flaky test?",
+                options: [
+                    "A test that runs too slowly",
+                    "A test that passes and fails intermittently without code changes",
+                    "A test that has too many assertions",
+                    "A test that doesn't cover enough code"
+                ],
+                correctAnswer: "A test that passes and fails intermittently without code changes",
+                explanation: "Flaky tests erode trust in the test suite. Common causes: timing/race conditions, external dependencies, shared state, non-deterministic data."
+            },
+            {
+                category: "Testing & Design",
+                categoryClass: "category6",
+                question: "In equivalence partitioning, you divide inputs into groups where:",
+                options: [
+                    "Each group has equal size",
+                    "All values in a group should produce the same behavior",
+                    "Each group represents a different error type",
+                    "Groups are sorted by priority"
+                ],
+                correctAnswer: "All values in a group should produce the same behavior",
+                explanation: "If testing a function that accepts ages 0-120, you'd partition into: negative, 0, valid range, above 120. Test one value from each partition."
+            },
+            {
+                category: "Testing & Design",
+                categoryClass: "category6",
+                question: "What is the main benefit of contract testing (e.g., Pact)?",
+                options: [
+                    "It replaces all integration tests",
+                    "It verifies API producer-consumer agreements without running both services",
+                    "It tests UI rendering",
+                    "It measures code coverage"
+                ],
+                correctAnswer: "It verifies API producer-consumer agreements without running both services",
+                explanation: "Contract tests ensure the API provider honors the contract the consumer expects. Each side can test independently, catching breaking changes early."
+            },
+            {
+                category: "Testing & Design",
+                categoryClass: "category6",
+                question: "Which is NOT a common test automation framework design pattern?",
+                options: [
+                    "Page Object Model",
+                    "Screenplay Pattern",
+                    "Singleton Test Runner",
+                    "Data-Driven Testing"
+                ],
+                correctAnswer: "Singleton Test Runner",
+                explanation: "Page Object Model encapsulates page interactions. Screenplay focuses on actors and tasks. Data-Driven uses external data to parameterize tests. 'Singleton Test Runner' is not a standard pattern."
+            },
+            {
+                category: "Testing & Design",
+                categoryClass: "category6",
+                question: "Boundary value analysis focuses on testing:",
+                options: [
+                    "Random inputs from each partition",
+                    "The middle value of each range",
+                    "Values at the edges of equivalence partitions",
+                    "Only invalid inputs"
+                ],
+                correctAnswer: "Values at the edges of equivalence partitions",
+                explanation: "Bugs cluster at boundaries (off-by-one errors, overflow). For a range of 1-100, test 0, 1, 2, 99, 100, and 101."
+            },
+            {
+                category: "Testing & Design",
+                categoryClass: "category6",
+                question: "In CI/CD, what should happen when a test fails in the pipeline?",
+                options: [
+                    "Deploy anyway and fix later",
+                    "The build should be blocked and the team notified",
+                    "Automatically skip the failing test",
+                    "Retry the test 10 times"
+                ],
+                correctAnswer: "The build should be blocked and the team notified",
+                explanation: "A red pipeline means something is broken. Block the deployment, notify the team, and fix the issue. Auto-skipping failures defeats the purpose of CI."
+            },
+            {
+                category: "Testing & Design",
+                categoryClass: "category6",
+                question: "What is the purpose of a test fixture (setup/teardown)?",
+                options: [
+                    "To measure test performance",
+                    "To establish a known state before tests and clean up after",
+                    "To fix broken tests automatically",
+                    "To generate test reports"
+                ],
+                correctAnswer: "To establish a known state before tests and clean up after",
+                explanation: "Fixtures set up preconditions (create test data, configure state) and tear down afterwards (clean up). This ensures tests are isolated and repeatable."
+            },
+            {
+                category: "Testing & Design",
+                categoryClass: "category6",
+                question: "When designing a test automation framework, which principle is most important?",
+                options: [
+                    "Use the newest technology available",
+                    "Maximize test count",
+                    "Maintainability and readability",
+                    "Run all tests in parallel"
+                ],
+                correctAnswer: "Maintainability and readability",
+                explanation: "A framework that's hard to maintain will be abandoned. Clear abstractions, good naming, DRY principles, and readable tests matter more than fancy features."
+            },
+            {
+                category: "Testing & Design",
+                categoryClass: "category6",
+                question: "What is a mock in testing?",
+                options: [
+                    "A copy of the production database",
+                    "An object that simulates the behavior of a real dependency",
+                    "A test that runs in production",
+                    "A report of test failures"
+                ],
+                correctAnswer: "An object that simulates the behavior of a real dependency",
+                explanation: "Mocks replace real dependencies (APIs, databases, services) with controlled stand-ins. This isolates the code under test and makes tests fast and deterministic."
+            }
+        ];
+
+        const categoryQuotas = {
+            "Big-O & Complexity": 4,
+            "Arrays & Hash Maps": 4,
+            "Sorting & Stacks": 3,
+            "Trees & Recursion": 3,
+            "Python & Practical": 3,
+            "Testing & Design": 3
+        };
+
+        const QUESTION_TIME = 45;
+
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function prepareQuestion(q) {
+            const shuffledOptions = shuffleArray([...q.options]);
+            return { ...q, options: shuffledOptions, correct: shuffledOptions.indexOf(q.correctAnswer) };
+        }
+
+        function selectBalancedQuestions() {
+            const selected = [];
+            const byCategory = {};
+
+            allQuestions.forEach(q => {
+                if (!byCategory[q.category]) byCategory[q.category] = [];
+                byCategory[q.category].push(q);
+            });
+
+            for (const [category, quota] of Object.entries(categoryQuotas)) {
+                const categoryQuestions = byCategory[category] || [];
+                const shuffled = shuffleArray(categoryQuestions);
+                selected.push(...shuffled.slice(0, quota));
+            }
+
+            return shuffleArray(selected);
+        }
+
+        let questionTimer = QUESTION_TIME;
+        let questionTimerInterval = null;
+        let totalTimeElapsed = 0;
+        let totalTimerInterval = null;
+        let currentQuestions = [];
+        let currentQuestion = 0;
+        let score = 0;
+        let streak = 0;
+        let answered = false;
+        let categoryStats = {};
+        let missedQuestions = [];
+
+        let reviewQuestions = [];
+        let currentReviewQ = 0;
+        let reviewScore = 0;
+        let reviewAnswered = false;
+
+        function initCategoryStats() {
+            categoryStats = {};
+            for (const category of Object.keys(categoryQuotas)) {
+                const sample = allQuestions.find(q => q.category === category);
+                categoryStats[category] = {
+                    correct: 0,
+                    total: 0,
+                    class: sample ? sample.categoryClass : "category1"
+                };
+            }
+        }
+
+        function recordAnswer(category, isCorrect) {
+            if (categoryStats[category]) {
+                categoryStats[category].total++;
+                if (isCorrect) categoryStats[category].correct++;
+            }
+        }
+
+        function initQuiz() {
+            initCategoryStats();
+            missedQuestions = [];
+            currentQuestions = selectBalancedQuestions().map(prepareQuestion);
+            document.getElementById('total-questions').textContent = currentQuestions.length;
+            startTotalTimer();
+            renderQuestion();
+        }
+
+        function startTotalTimer() {
+            totalTimeElapsed = 0;
+            totalTimerInterval = setInterval(() => {
+                totalTimeElapsed++;
+                const m = Math.floor(totalTimeElapsed / 60);
+                const s = totalTimeElapsed % 60;
+                document.getElementById('total-time').textContent = `${m}:${s.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function startQuestionTimer() {
+            questionTimer = QUESTION_TIME;
+            updateTimerDisplay();
+            questionTimerInterval = setInterval(() => {
+                questionTimer--;
+                updateTimerDisplay();
+                if (questionTimer <= 0) { clearInterval(questionTimerInterval); timeOut(); }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            document.getElementById('question-time').textContent = questionTimer;
+            const progress = (questionTimer / QUESTION_TIME) * 100;
+            document.getElementById('timer-progress').style.width = progress + '%';
+            document.getElementById('timer-circle').style.setProperty('--timer-progress', progress + '%');
+
+            const circle = document.getElementById('timer-circle');
+            const bar = document.getElementById('timer-progress');
+            circle.classList.remove('warning', 'danger');
+            bar.classList.remove('warning', 'danger');
+
+            if (questionTimer <= 10) { circle.classList.add('danger'); bar.classList.add('danger'); }
+            else if (questionTimer <= 20) { circle.classList.add('warning'); bar.classList.add('warning'); }
+        }
+
+        function stopQuestionTimer() {
+            if (questionTimerInterval) { clearInterval(questionTimerInterval); questionTimerInterval = null; }
+        }
+
+        function timeOut() {
+            if (answered) return;
+            answered = true;
+            const q = currentQuestions[currentQuestion];
+            recordAnswer(q.category, false);
+            missedQuestions.push(q);
+            document.querySelectorAll('.option').forEach((opt, i) => {
+                opt.classList.add('disabled');
+                if (i === q.correct) opt.classList.add('correct');
+            });
+            streak = 0;
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback show timeout';
+            feedback.innerHTML = `<strong>Time's Up!</strong> Answer: <strong>${q.correctAnswer}</strong>. ${q.explanation}`;
+            document.getElementById('next-btn').classList.add('show');
+            updateScore();
+        }
+
+        function renderQuestion() {
+            stopQuestionTimer();
+            const q = currentQuestions[currentQuestion];
+            document.getElementById('quiz-container').innerHTML = `
+                <div class="question-card active">
+                    <span class="question-number ${q.categoryClass}">${q.category}</span>
+                    <p class="question-text">${q.question}</p>
+                    <div class="options">
+                        ${q.options.map((opt, i) => `
+                            <div class="option" onclick="selectAnswer(${i})">
+                                <span class="option-letter">${String.fromCharCode(65 + i)}</span>
+                                <span>${opt}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback"></div>
+                    <button class="btn btn-next" id="next-btn" onclick="nextQuestion()">
+                        ${currentQuestion < currentQuestions.length - 1 ? 'Next Question' : 'See Results'}
+                    </button>
+                </div>
+            `;
+            answered = false;
+            updateProgress();
+            startQuestionTimer();
+        }
+
+        function selectAnswer(index) {
+            if (answered) return;
+            answered = true;
+            stopQuestionTimer();
+            const q = currentQuestions[currentQuestion];
+            const isCorrect = index === q.correct;
+            recordAnswer(q.category, isCorrect);
+
+            document.querySelectorAll('.option').forEach((opt, i) => {
+                opt.classList.add('disabled');
+                if (i === q.correct) opt.classList.add('correct');
+                else if (i === index) opt.classList.add('incorrect');
+            });
+
+            const feedback = document.getElementById('feedback');
+            if (isCorrect) {
+                score++; streak++;
+                const bonus = questionTimer >= 35 ? ' <span style="color:#4CAF50;font-weight:bold;">Fast!</span>' : '';
+                feedback.className = 'feedback show correct';
+                feedback.innerHTML = `<strong>Correct!</strong>${bonus} ${q.explanation}`;
+            } else {
+                streak = 0;
+                missedQuestions.push(q);
+                feedback.className = 'feedback show incorrect';
+                feedback.innerHTML = `<strong>Incorrect.</strong> Answer: <strong>${q.correctAnswer}</strong>. ${q.explanation}`;
+            }
+            document.getElementById('next-btn').classList.add('show');
+            updateScore();
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < currentQuestions.length) renderQuestion();
+            else showResults();
+        }
+
+        function updateScore() {
+            document.getElementById('current-score').textContent = score;
+            document.getElementById('streak').textContent = streak;
+        }
+
+        function updateProgress() {
+            document.getElementById('question-num').textContent = currentQuestion + 1;
+            document.getElementById('progress-bar').style.width = ((currentQuestion) / currentQuestions.length) * 100 + '%';
+        }
+
+        function showResults() {
+            stopQuestionTimer();
+            clearInterval(totalTimerInterval);
+            document.getElementById('quiz-container').innerHTML = '';
+            document.getElementById('results').classList.add('show');
+
+            const pct = Math.round((score / currentQuestions.length) * 100);
+            document.getElementById('final-score').textContent = pct + '%';
+            document.getElementById('stat-correct').textContent = `${score}/${currentQuestions.length}`;
+
+            const m = Math.floor(totalTimeElapsed / 60), s = totalTimeElapsed % 60;
+            document.getElementById('stat-time').textContent = `${m}:${s.toString().padStart(2, '0')}`;
+            document.getElementById('stat-avg').textContent = `${Math.round(totalTimeElapsed / currentQuestions.length)}s`;
+
+            let emoji, grade, msg;
+            if (pct >= 90) { emoji = ''; grade = 'A - Outstanding!'; msg = 'You\'re interview ready!'; }
+            else if (pct >= 80) { emoji = ''; grade = 'B - Great Job!'; msg = 'Almost there, sharpen the weak spots!'; }
+            else if (pct >= 70) { emoji = ''; grade = 'C - Good Progress!'; msg = 'Review the missed topics and try again.'; }
+            else if (pct >= 60) { emoji = ''; grade = 'D - Keep Studying!'; msg = 'Focus on the red categories below.'; }
+            else { emoji = ''; grade = 'Keep Going!'; msg = 'Practice makes perfect. Review the concepts and retake!'; }
+
+            document.getElementById('result-emoji').textContent = emoji;
+            document.getElementById('grade').textContent = grade;
+            document.getElementById('result-message').textContent = msg;
+            document.getElementById('progress-bar').style.width = '100%';
+
+            generateReviewSection();
+            generateCategoryBreakdown();
+
+            const missedReviewEl = document.getElementById('missed-review');
+            if (missedQuestions.length > 0) {
+                missedReviewEl.classList.add('show');
+                startMissedReview();
+            } else {
+                missedReviewEl.classList.remove('show');
+            }
+        }
+
+        function generateReviewSection() {
+            const reviewSection = document.getElementById('review-section');
+            const needsReview = [];
+
+            for (const [category, stats] of Object.entries(categoryStats)) {
+                if (stats.total > 0) {
+                    const missed = stats.total - stats.correct;
+                    if (missed > 0) {
+                        needsReview.push({ category, missed, total: stats.total, cssClass: stats.class });
+                    }
+                }
+            }
+
+            needsReview.sort((a, b) => b.missed - a.missed);
+
+            if (needsReview.length === 0) {
+                reviewSection.className = 'review-section perfect';
+                reviewSection.innerHTML = `
+                    <h3>Topics to Review</h3>
+                    <div class="review-topics">
+                        <div class="perfect-badge">Perfect! No topics need review!</div>
+                    </div>
+                `;
+            } else {
+                reviewSection.className = 'review-section';
+                reviewSection.innerHTML = `
+                    <h3>Topics to Review</h3>
+                    <div class="review-topics">
+                        ${needsReview.map(item => `
+                            <div class="review-topic ${item.cssClass}">
+                                ${item.category}
+                                <span class="miss-count">${item.missed} missed</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+        }
+
+        function generateCategoryBreakdown() {
+            const breakdownSection = document.getElementById('category-breakdown');
+            const items = [];
+
+            for (const [category, stats] of Object.entries(categoryStats)) {
+                if (stats.total > 0) {
+                    const pct = Math.round((stats.correct / stats.total) * 100);
+                    let scoreClass = 'needs-work';
+                    if (pct === 100) scoreClass = 'perfect';
+                    else if (pct >= 50) scoreClass = 'good';
+
+                    items.push({ category, correct: stats.correct, total: stats.total, pct, scoreClass });
+                }
+            }
+
+            breakdownSection.innerHTML = `
+                <h4>Score by Category</h4>
+                <div class="breakdown-grid">
+                    ${items.map(item => `
+                        <div class="breakdown-item">
+                            <span class="cat-name">${item.category}</span>
+                            <span class="cat-score ${item.scoreClass}">${item.correct}/${item.total}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0; score = 0; streak = 0; answered = false; totalTimeElapsed = 0;
+            initCategoryStats();
+            document.getElementById('results').classList.remove('show');
+            document.getElementById('missed-review').classList.remove('show');
+            updateScore();
+            initQuiz();
+        }
+
+        function flipCard(card) {
+            card.classList.toggle('flipped');
+        }
+
+        function startQuiz() {
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('quiz-content').classList.add('active');
+            initQuiz();
+        }
+
+        function reviewVocab() {
+            currentQuestion = 0; score = 0; streak = 0; answered = false; totalTimeElapsed = 0;
+            initCategoryStats();
+            document.getElementById('results').classList.remove('show');
+            document.getElementById('missed-review').classList.remove('show');
+            document.getElementById('quiz-content').classList.remove('active');
+            document.getElementById('start-screen').style.display = 'block';
+            document.getElementById('progress-bar').style.width = '0%';
+            updateScore();
+
+            document.querySelectorAll('.vocab-card').forEach(card => {
+                card.classList.remove('flipped');
+            });
+        }
+
+        // === MISSED QUESTION REVIEW MODE ===
+        function startMissedReview() {
+            reviewQuestions = missedQuestions.map(q => {
+                const shuffledOpts = shuffleArray([...q.options]);
+                return { ...q, reviewOptions: shuffledOpts, reviewCorrect: shuffledOpts.indexOf(q.correctAnswer) };
+            });
+            currentReviewQ = 0;
+            reviewScore = 0;
+            reviewAnswered = false;
+            document.getElementById('review-complete').style.display = 'none';
+            document.getElementById('review-q-container').style.display = 'block';
+            document.getElementById('missed-review-header').textContent =
+                `Practice the ${reviewQuestions.length} Question${reviewQuestions.length > 1 ? 's' : ''} You Missed!`;
+            renderReviewQuestion();
+        }
+
+        function renderReviewQuestion() {
+            const q = reviewQuestions[currentReviewQ];
+            reviewAnswered = false;
+            const total = reviewQuestions.length;
+            const pct = (currentReviewQ / total) * 100;
+            document.getElementById('review-progress-fill').style.width = pct + '%';
+            document.getElementById('review-info').textContent = `Question ${currentReviewQ + 1} of ${total}`;
+
+            const isLast = currentReviewQ >= total - 1;
+
+            document.getElementById('review-q-container').innerHTML = `
+                <span class="review-q-category question-number ${q.categoryClass}">${q.category}</span>
+                <p class="review-q-text">${q.question}</p>
+                <div class="review-options">
+                    ${q.reviewOptions.map((opt, i) => `
+                        <div class="review-option" onclick="selectReviewAnswer(this, ${i})">
+                            <span class="r-letter">${String.fromCharCode(65 + i)}</span>
+                            <span>${opt}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="review-feedback" id="review-feedback"></div>
+                <button class="btn-review-check" id="review-check-btn" onclick="checkReviewAnswer()" disabled>Check Answer</button>
+                <button class="btn-review-check btn-review-action" id="review-next-btn" onclick="nextReviewQuestion()">
+                    ${isLast ? 'See Review Results' : 'Next'}
+                </button>
+            `;
+        }
+
+        let selectedReviewIdx = null;
+
+        function selectReviewAnswer(el, idx) {
+            if (reviewAnswered) return;
+            document.querySelectorAll('.review-option').forEach(o => o.classList.remove('r-selected'));
+            el.classList.add('r-selected');
+            selectedReviewIdx = idx;
+            document.getElementById('review-check-btn').disabled = false;
+        }
+
+        function checkReviewAnswer() {
+            if (reviewAnswered) return;
+            reviewAnswered = true;
+            const q = reviewQuestions[currentReviewQ];
+            const isCorrect = selectedReviewIdx === q.reviewCorrect;
+            if (isCorrect) reviewScore++;
+
+            document.querySelectorAll('.review-option').forEach((opt, i) => {
+                opt.classList.add('r-disabled');
+                if (i === q.reviewCorrect) opt.classList.add('r-correct');
+                else if (i === selectedReviewIdx && !isCorrect) opt.classList.add('r-incorrect');
+            });
+
+            const fb = document.getElementById('review-feedback');
+            fb.className = 'review-feedback show ' + (isCorrect ? 'r-correct-fb' : 'r-incorrect-fb');
+            fb.innerHTML = isCorrect
+                ? `<strong>Correct!</strong> ${q.explanation}`
+                : `<strong>Incorrect.</strong> Answer: <strong>${q.correctAnswer}</strong>. ${q.explanation}`;
+
+            document.getElementById('review-check-btn').style.display = 'none';
+            document.getElementById('review-next-btn').classList.add('show');
+        }
+
+        function nextReviewQuestion() {
+            currentReviewQ++;
+            if (currentReviewQ < reviewQuestions.length) {
+                renderReviewQuestion();
+            } else {
+                showReviewResults();
+            }
+        }
+
+        function showReviewResults() {
+            document.getElementById('review-progress-fill').style.width = '100%';
+            document.getElementById('review-info').textContent = '';
+            document.getElementById('review-q-container').style.display = 'none';
+
+            const total = reviewQuestions.length;
+            const pct = Math.round((reviewScore / total) * 100);
+            let msg, color;
+            if (pct === 100) { msg = 'Perfect on the review! You nailed every missed question.'; color = '#4CAF50'; }
+            else if (pct >= 70) { msg = 'Great improvement! You got most of them on the second try.'; color = '#00bcd4'; }
+            else { msg = 'Keep studying these topics and try the quiz again.'; color = '#ff9800'; }
+
+            const completeEl = document.getElementById('review-complete');
+            completeEl.style.display = 'block';
+            completeEl.innerHTML = `
+                <h4>Review Complete!</h4>
+                <p style="font-size:2em;font-weight:bold;color:${color}">${reviewScore}/${total} (${pct}%)</p>
+                <p>${msg}</p>
+            `;
+        }
+    </script>
+</body>
+</html>

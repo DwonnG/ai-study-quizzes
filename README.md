@@ -49,6 +49,10 @@ Try them now - no download needed!
 - 🧠 [Daily Brain Boost](https://dwonng.github.io/ai-study-quizzes/games/daily_brain_boost.html) - Multiplication + Vocabulary
 - 🏀 [Basketball Rebounding](https://dwonng.github.io/ai-study-quizzes/games/basketball_rebound_game.html) - Reaction training game
 
+### 💻 Coding & Interview Prep
+- 🧠 [SDET Interview Training](https://dwonng.github.io/ai-study-quizzes/coding/sdet_interview_training.html) - 3-day interactive course: DSA, Python, testing, system design, behavioral (with embedded Python editor)
+- 📝 [SDET Interview Quiz](https://dwonng.github.io/ai-study-quizzes/coding/sdet_interview_prep_quiz.html) - 60+ questions across 6 categories with missed-question review
+
 ### 📖 Study Guides & Tools
 - 📏 [Printable Ruler](https://dwonng.github.io/ai-study-quizzes/math/printable_ruler.html) - Print your own inch/cm ruler
 - 📖 [Metric System Study Guide](https://dwonng.github.io/ai-study-quizzes/math/metric_system_study_guide_english.html) - English translation of study guide
