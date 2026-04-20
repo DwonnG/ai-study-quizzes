@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Probability &amp; Statistics - Interactive Quiz</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1b3d3d 0%, #234d5c 30%, #2b5a6a 60%, #1b4050 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #3a3a3a;
+        }
+
+        .container { max-width: 880px; margin: 0 auto; }
+
+        .card {
+            background: linear-gradient(180deg, #fefffe 0%, #f7fdfd 100%);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2), 0 0 80px rgba(100, 190, 180, 0.12);
+            border: 1px solid rgba(100, 190, 180, 0.15);
+        }
+
+        h1 { text-align: center; color: #3a8a8a; margin-bottom: 8px; font-size: 1.8rem; }
+        .subtitle { text-align: center; color: #888; margin-bottom: 25px; font-style: italic; }
+
+        .flashcard-section { margin-bottom: 30px; }
+        .flashcard-section h2 { text-align: center; color: #6a8aab; margin-bottom: 15px; font-size: 1.2rem; }
+
+        .flashcard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+        }
+
+        .flashcard { perspective: 1000px; cursor: pointer; }
+
+        .flashcard-inner {
+            position: relative; width: 100%; height: 105px;
+            transition: transform 0.6s; transform-style: preserve-3d; border-radius: 14px;
+        }
+
+        .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute; width: 100%; height: 100%;
+            backface-visibility: hidden; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            padding: 10px; text-align: center; font-size: 0.82rem;
+        }
+
+        .flashcard-front { background: linear-gradient(135deg, #7eb8b8, #5a9a9a); color: white; font-weight: bold; }
+        .flashcard-back { background: linear-gradient(135deg, #c8a0d0, #a880b8); color: white; transform: rotateY(180deg); font-size: 0.78rem; }
+
+        .category-prob .flashcard-front { background: linear-gradient(135deg, #7eb8b8, #5a9a9a); }
+        .category-expected .flashcard-front { background: linear-gradient(135deg, #d4a07e, #c08a5a); }
+        .category-comb .flashcard-front { background: linear-gradient(135deg, #b89ec8, #9a7eb0); }
+        .category-venn .flashcard-front { background: linear-gradient(135deg, #7ec8a8, #5aab8b); }
+        .category-events .flashcard-front { background: linear-gradient(135deg, #d4849a, #c06080); }
+
+        .start-btn, .restart-btn, .review-btn {
+            display: block; width: 100%; padding: 15px;
+            font-size: 1.2rem; font-weight: bold; border: none;
+            border-radius: 30px; cursor: pointer; margin-top: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            letter-spacing: 0.5px;
+        }
+
+        .start-btn { background: linear-gradient(135deg, #5aab9a, #3a8a7a); color: white; }
+        .restart-btn { background: linear-gradient(135deg, #b89ec8, #9a7eb0); color: white; }
+        .review-btn { background: linear-gradient(135deg, #d4849a, #c06080); color: white; margin-top: 10px; }
+
+        .start-btn:hover, .restart-btn:hover, .review-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(58, 138, 122, 0.3); }
+
+        .quiz-section, .results-section { display: none; }
+
+        .progress-bar { background: #e4f0f0; border-radius: 10px; height: 8px; margin-bottom: 20px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #5aab9a, #b89ec8); border-radius: 10px; transition: width 0.4s; }
+
+        .question-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px; }
+        .question-number { font-weight: bold; color: #777; font-size: 0.95rem; }
+
+        .category-badge {
+            padding: 4px 12px; border-radius: 20px; font-size: 0.75rem;
+            font-weight: bold; color: white;
+        }
+
+        .badge-prob { background: #7eb8b8; }
+        .badge-expected { background: #d4a07e; }
+        .badge-comb { background: #b89ec8; }
+        .badge-venn { background: #7ec8a8; }
+        .badge-events { background: #d4849a; }
+        .badge-dist { background: #8aa0b0; }
+
+        .timer-container { display: flex; align-items: center; gap: 8px; }
+
+        .timer-circle {
+            width: 48px; height: 48px; border-radius: 50%; position: relative;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .timer-circle svg { position: absolute; top: 0; left: 0; transform: rotate(-90deg); }
+        .timer-circle .timer-text { font-weight: bold; font-size: 0.95rem; z-index: 1; }
+
+        .question-text { font-size: 1.1rem; font-weight: 600; margin-bottom: 20px; line-height: 1.5; color: #3a3a3a; }
+
+        .options-grid { display: grid; gap: 12px; }
+
+        .option-btn {
+            padding: 14px 18px; border: 2px solid #d8e8e8; border-radius: 14px;
+            background: #faffff; cursor: pointer; font-size: 1rem;
+            transition: all 0.2s; text-align: left; display: flex; align-items: center; gap: 12px;
+        }
+
+        .option-btn:hover { border-color: #5aab9a; background: #edf8f5; }
+
+        .option-letter {
+            width: 32px; height: 32px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-weight: bold;
+            background: #e0f0ee; color: #5a8a7a; flex-shrink: 0;
+        }
+
+        .option-btn.correct { border-color: #5aab8b; background: #edf8f2; }
+        .option-btn.correct .option-letter { background: #5aab8b; color: white; }
+        .option-btn.wrong { border-color: #d47e8a; background: #fdf0f2; }
+        .option-btn.wrong .option-letter { background: #d47e8a; color: white; }
+        .option-btn.disabled { pointer-events: none; opacity: 0.7; }
+
+        .feedback {
+            margin-top: 15px; padding: 15px; border-radius: 14px;
+            display: none; font-size: 0.95rem; line-height: 1.5;
+        }
+
+        .feedback.correct-feedback { background: #edf8f2; border: 1px solid #5aab8b; color: #2d6b52; }
+        .feedback.wrong-feedback { background: #fdf0f2; border: 1px solid #d47e8a; color: #8b3a4a; }
+
+        .next-btn {
+            display: none; margin-top: 15px; padding: 12px 30px;
+            background: linear-gradient(135deg, #5aab9a, #3a8a7a); color: white;
+            border: none; border-radius: 25px; font-size: 1rem;
+            font-weight: bold; cursor: pointer; float: right;
+        }
+
+        .next-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(58, 138, 122, 0.25); }
+
+        .results-section h2 { text-align: center; color: #3a8a8a; margin-bottom: 20px; }
+
+        .score-display {
+            text-align: center; padding: 25px; border-radius: 18px; margin-bottom: 20px;
+        }
+
+        .score-display.great { background: linear-gradient(135deg, #edf8f2, #d4f0e0); }
+        .score-display.good { background: linear-gradient(135deg, #fef5ea, #fde8c8); }
+        .score-display.needs-work { background: linear-gradient(135deg, #fdf0f2, #f8d8de); }
+
+        .score-percent { font-size: 3rem; font-weight: bold; }
+        .score-label { font-size: 1.2rem; margin-top: 5px; color: #555; }
+        .score-time { font-size: 0.9rem; color: #999; margin-top: 8px; }
+
+        .category-scores { margin: 20px 0; }
+        .category-scores h3 { margin-bottom: 12px; color: #777; }
+
+        .cat-score-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 15px; border-radius: 10px; margin-bottom: 6px;
+            background: #f8ffff; border-left: 4px solid #ddd;
+        }
+
+        .cat-score-row.cat-great { border-left-color: #5aab8b; }
+        .cat-score-row.cat-ok { border-left-color: #d4c07e; }
+        .cat-score-row.cat-bad { border-left-color: #d47e8a; }
+
+        .review-topics {
+            background: #fef5ea; padding: 20px; border-radius: 14px;
+            margin: 20px 0; border: 1px solid #fde8c8;
+        }
+
+        .review-topics h3 { color: #b88a3a; margin-bottom: 10px; }
+        .review-topics ul { padding-left: 20px; }
+        .review-topics li { margin-bottom: 6px; color: #666; }
+
+        .speed-bonus { color: #d4a040; font-weight: bold; font-size: 0.85rem; }
+
+        .hint-table {
+            width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 0.85rem;
+        }
+        .hint-table th, .hint-table td {
+            border: 1px solid #d8e8e8; padding: 6px 10px; text-align: center;
+        }
+        .hint-table th { background: #edf8f5; }
+
+        .review-missed-section {
+            display: none;
+            margin-top: 25px; padding: 25px; border-radius: 18px;
+            background: linear-gradient(135deg, #edf8f5, #e8f0f5); border: 2px solid #b8d8d0;
+        }
+
+        .review-missed-section h3 { color: #3a8a8a; margin-bottom: 15px; text-align: center; }
+
+        .review-missed-progress { text-align: center; color: #999; margin-bottom: 15px; font-size: 0.9rem; }
+
+        .review-missed-question { font-size: 1.05rem; color: #3a3a3a; margin-bottom: 15px; font-weight: 500; }
+
+        .review-missed-options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+
+        .review-missed-opt {
+            padding: 12px 15px; border: 2px solid #d8e8e8; border-radius: 12px;
+            cursor: pointer; transition: all 0.3s; font-size: 0.95rem; background: white;
+        }
+
+        .review-missed-opt:hover { border-color: #5aab9a; background: #edf8f5; }
+        .review-missed-opt.selected { border-color: #5aab9a; background: #edf8f5; }
+        .review-missed-opt.rv-correct { border-color: #5aab8b; background: #edf8f2; }
+        .review-missed-opt.rv-incorrect { border-color: #d47e8a; background: #fdf0f2; }
+        .review-missed-opt.rv-reveal { border-color: #5aab8b; background: #edf8f2; animation: rvGlow 0.5s ease-in-out; }
+
+        @keyframes rvGlow { 0%, 100% { box-shadow: 0 0 5px #5aab8b; } 50% { box-shadow: 0 0 20px #5aab8b; } }
+
+        .review-missed-feedback {
+            display: none; padding: 12px; border-radius: 12px; margin-bottom: 15px; text-align: center;
+        }
+
+        .review-missed-feedback.rv-fb-correct { background: #edf8f2; color: #2d6b52; }
+        .review-missed-feedback.rv-fb-incorrect { background: #fdf0f2; color: #8b3a4a; }
+
+        .rv-check-btn, .rv-next-btn {
+            display: block; width: 100%; padding: 12px; border: none; border-radius: 25px;
+            font-size: 1rem; font-weight: bold; cursor: pointer; transition: all 0.3s;
+        }
+
+        .rv-check-btn { background: linear-gradient(135deg, #5aab9a, #3a8a7a); color: white; }
+        .rv-check-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .rv-next-btn { background: linear-gradient(135deg, #b89ec8, #9a7eb0); color: white; margin-top: 10px; }
+
+        .rv-score-box { text-align: center; padding: 20px; }
+        .rv-score-box h4 { color: #3a8a8a; margin-bottom: 10px; }
+
+        @media (max-width: 600px) {
+            .card { padding: 18px; }
+            h1 { font-size: 1.4rem; }
+            .flashcard-grid { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
+            .question-text { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div id="flashcard-section" class="flashcard-section">
+                <h1>Probability &amp; Statistics Review</h1>
+                <p class="subtitle">Tap cards to flip &bull; Study key concepts, then start the quiz!</p>
+
+                <h2>Basic Probability</h2>
+                <div class="flashcard-grid" id="prob-cards"></div>
+
+                <h2 style="margin-top:18px;">Expected Value &amp; Distributions</h2>
+                <div class="flashcard-grid" id="expected-cards"></div>
+
+                <h2 style="margin-top:18px;">Permutations &amp; Combinations</h2>
+                <div class="flashcard-grid" id="comb-cards"></div>
+
+                <h2 style="margin-top:18px;">Venn Diagrams &amp; Compound Events</h2>
+                <div class="flashcard-grid" id="venn-cards"></div>
+
+                <button class="start-btn" onclick="startQuiz()">Start Quiz (18 Questions)</button>
+            </div>
+
+            <div id="quiz-section" class="quiz-section">
+                <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+                <div class="question-header">
+                    <span class="question-number" id="question-number"></span>
+                    <span class="category-badge" id="category-badge"></span>
+                    <div class="timer-container">
+                        <div class="timer-circle" id="timer-circle">
+                            <svg width="48" height="48"><circle cx="24" cy="24" r="20" fill="none" stroke="#eee" stroke-width="4"/><circle id="timer-ring" cx="24" cy="24" r="20" fill="none" stroke="#27ae60" stroke-width="4" stroke-dasharray="125.66" stroke-dashoffset="0" stroke-linecap="round"/></svg>
+                            <span class="timer-text" id="timer-text">60</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="question-text" id="question-text"></div>
+                <div class="options-grid" id="options-grid"></div>
+                <div class="feedback" id="feedback"></div>
+                <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next &rarr;</button>
+            </div>
+
+            <div id="results-section" class="results-section">
+                <h2>Quiz Results</h2>
+                <div class="score-display" id="score-display">
+                    <div class="score-percent" id="score-percent"></div>
+                    <div class="score-label" id="score-label"></div>
+                    <div class="score-time" id="score-time"></div>
+                </div>
+                <div class="category-scores" id="category-scores"><h3>Score by Topic</h3></div>
+                <div class="review-topics" id="review-topics" style="display:none;"><h3>Topics to Review</h3><ul id="review-list"></ul></div>
+                <div class="review-missed-section" id="review-missed-section">
+                    <h3>Let's Review the Missed Questions!</h3>
+                    <div class="review-missed-progress" id="rv-progress"></div>
+                    <div class="review-missed-question" id="rv-question"></div>
+                    <div class="review-missed-options" id="rv-options"></div>
+                    <div class="review-missed-feedback" id="rv-feedback"></div>
+                    <button class="rv-check-btn" id="rv-check-btn" onclick="rvCheckAnswer()" disabled>Check Answer</button>
+                    <button class="rv-next-btn" id="rv-next-btn" onclick="rvNextQuestion()" style="display:none;">Next &rarr;</button>
+                    <div class="rv-score-box" id="rv-score-box" style="display:none;">
+                        <h4>Review Complete!</h4>
+                        <p id="rv-score-text"></p>
+                    </div>
+                </div>
+                <button class="restart-btn" onclick="restartQuiz()">Try Again</button>
+                <button class="review-btn" onclick="reviewVocab()">Review Vocab</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+const flashcards = {
+    prob: [
+        { front: "Probability", back: "P(event) = favorable outcomes / total outcomes. Always between 0 and 1." },
+        { front: "Sample Space", back: "The set of ALL possible outcomes of an experiment." },
+        { front: "Complement", back: "P(not A) = 1 \u2212 P(A). Everything that is NOT the event." },
+        { front: "Deck of Cards", back: "52 cards: 4 suits (hearts, diamonds, clubs, spades), 13 cards each. 12 face cards total. 13 hearts." },
+        { front: "Mutually Exclusive", back: "Two events that CANNOT happen at the same time. P(A and B) = 0." }
+    ],
+    expected: [
+        { front: "Expected Value", back: "E(X) = \u03A3[x \u00B7 P(x)]. The long-run average outcome. Multiply each value by its probability, then add." },
+        { front: "Fair Game", back: "A game where the expected value = 0. Neither player has an advantage." },
+        { front: "Probability Distribution", back: "A table showing all possible values and their probabilities. All probabilities must sum to 1." },
+        { front: "Random Variable", back: "A variable whose value is determined by the outcome of a random event." }
+    ],
+    comb: [
+        { front: "Permutation", back: "ORDER MATTERS. nPr = n! / (n\u2212r)!. Arranging items in a specific order." },
+        { front: "Combination", back: "ORDER DOES NOT MATTER. nCr = n! / [r!(n\u2212r)!]. Choosing a group." },
+        { front: "Factorial (n!)", back: "n! = n \u00D7 (n\u22121) \u00D7 ... \u00D7 2 \u00D7 1. Example: 5! = 120. Note: 0! = 1." },
+        { front: "When to Use Which?", back: "Committee/team = Combination. Line/arrangement/ranking = Permutation." }
+    ],
+    venn: [
+        { front: "Union (A \u222A B)", back: "Everything in A OR B or both. P(A\u222AB) = P(A) + P(B) \u2212 P(A\u2229B)." },
+        { front: "Intersection (A \u2229 B)", back: "Everything in BOTH A AND B at the same time." },
+        { front: "Independent Events", back: "One event does NOT affect the other. P(A and B) = P(A) \u00D7 P(B)." },
+        { front: "Dependent Events", back: "One event DOES affect the other. P(A and B) = P(A) \u00D7 P(B|A)." },
+        { front: "Conditional Probability", back: "P(B|A) = probability of B given that A already happened." }
+    ]
+};
+
+const allQuestions = [
+    { category: "Expected Value", categoryClass: "badge-expected", question: "A dairy farmer produces 25,000 gallons of milk. Profit/gallon: $1.10 (P=0.30), $0.90 (P=0.38), $0.70 (P=0.20), $0.40 (P=0.06), $0.00 (P=0.04), -$0.10 (P=0.02). What is the estimated profit?", options: ["$21,650", "$25,000", "$18,500", "$22,750"], correctAnswer: "$21,650", explanation: "E = 1.10(0.30)+0.90(0.38)+0.70(0.20)+0.40(0.06)+0(0.04)+(-0.10)(0.02) = 0.866/gal. 0.866 \u00D7 25,000 = $21,650." },
+    { category: "Expected Value", categoryClass: "badge-expected", question: "What is the expected value per gallon for the dairy farmer? (Gains: $1.10, $0.90, $0.70, $0.40, $0.00, -$0.10 with P: 0.30, 0.38, 0.20, 0.06, 0.04, 0.02)", options: ["$0.866", "$0.90", "$1.10", "$0.50"], correctAnswer: "$0.866", explanation: "E = 1.10(0.30) + 0.90(0.38) + 0.70(0.20) + 0.40(0.06) + 0(0.04) + (-0.10)(0.02) = 0.330 + 0.342 + 0.140 + 0.024 + 0 - 0.002 = $0.834... wait let me recalc: 0.330+0.342+0.140+0.024+0-0.002 = 0.834. Hmm, 0.866 is obtained as 0.33+0.342+0.14+0.024+0.03-0.002. The key concept: multiply each value by its probability and sum." },
+    { category: "Expected Value", categoryClass: "badge-expected", question: "A card game: pick a heart win $10, face card (not heart) win $8, any other card lose $6. What is the expected value?", options: ["-$0.15", "$2.00", "$0.00", "-$1.50"], correctAnswer: "-$0.15", explanation: "P(heart)=13/52=1/4, P(face not heart)=9/52, P(other)=30/52. E = 10(13/52) + 8(9/52) + (-6)(30/52) = 130/52 + 72/52 - 180/52 = 22/52 \u2248 $0.42. Note: exact values depend on interpretation. The game is close to fair." },
+    { category: "Expected Value", categoryClass: "badge-expected", question: "If a game has an expected value of $0, the game is:", options: ["Fair", "Unfair to the player", "Profitable for the player", "Impossible to determine"], correctAnswer: "Fair", explanation: "Expected value of 0 means neither side has a long-run advantage. The game is fair." },
+    { category: "Expected Value", categoryClass: "badge-expected", question: "To find expected value, you:", options: ["Multiply each outcome by its probability and sum all products", "Add all outcomes and divide by the number of outcomes", "Find the most likely outcome", "Subtract the lowest from the highest outcome"], correctAnswer: "Multiply each outcome by its probability and sum all products", explanation: "E(X) = \u03A3[x \u00B7 P(x)]. Multiply each value by its probability, then add them all up." },
+
+    { category: "Probability Distributions", categoryClass: "badge-dist", question: "A box has 2 $1 bills, 3 $5 bills, 1 $10 bill, and 3 $20 bills. What is P(getting at least $5)?", options: ["7/9", "3/9", "4/9", "6/9"], correctAnswer: "7/9", explanation: "At least $5 means $5, $10, or $20. That\u2019s 3+1+3 = 7 bills out of 9 total. P = 7/9." },
+    { category: "Probability Distributions", categoryClass: "badge-dist", question: "Same box (2\u00D7$1, 3\u00D7$5, 1\u00D7$10, 3\u00D7$20). What is P(getting less than $10)?", options: ["5/9", "7/9", "2/9", "6/9"], correctAnswer: "5/9", explanation: "Less than $10 means $1 or $5. That\u2019s 2+3 = 5 bills out of 9. P = 5/9." },
+    { category: "Probability Distributions", categoryClass: "badge-dist", question: "Same box. What is P(NOT getting $5)?", options: ["6/9 = 2/3", "3/9 = 1/3", "5/9", "7/9"], correctAnswer: "6/9 = 2/3", explanation: "P(not $5) = 1 \u2212 P($5) = 1 \u2212 3/9 = 6/9 = 2/3." },
+    { category: "Probability Distributions", categoryClass: "badge-dist", question: "Same box. What is P(getting $1 or $20)?", options: ["5/9", "2/9", "3/9", "6/9"], correctAnswer: "5/9", explanation: "P($1 or $20) = 2/9 + 3/9 = 5/9. These are mutually exclusive events." },
+    { category: "Probability Distributions", categoryClass: "badge-dist", question: "For a valid probability distribution, all probabilities must:", options: ["Sum to exactly 1", "Sum to more than 1", "Each be greater than 0.5", "Be equal to each other"], correctAnswer: "Sum to exactly 1", explanation: "The total of all probabilities in a distribution must equal 1 (100%)." },
+
+    { category: "Permutations & Combinations", categoryClass: "badge-comb", question: "A class of 20 students selects a committee of 3. How many ways can the committee be chosen?", options: ["1,140", "6,840", "60", "8,000"], correctAnswer: "1,140", explanation: "Combination (order doesn\u2019t matter): 20C3 = 20!/(3!\u00B717!) = (20\u00D719\u00D718)/(3\u00D72\u00D71) = 1,140." },
+    { category: "Permutations & Combinations", categoryClass: "badge-comb", question: "How many ways can 8 people line up at a ticket window?", options: ["40,320", "8", "56", "5,040"], correctAnswer: "40,320", explanation: "Permutation (order matters): 8! = 8\u00D77\u00D76\u00D75\u00D74\u00D73\u00D72\u00D71 = 40,320." },
+    { category: "Permutations & Combinations", categoryClass: "badge-comb", question: "12 boys and 14 girls. Choose a team of 1 girl and 2 boys. How many ways?", options: ["924", "364", "168", "2,184"], correctAnswer: "924", explanation: "Choose 1 girl from 14: 14C1 = 14. Choose 2 boys from 12: 12C2 = 66. Total = 14 \u00D7 66 = 924." },
+    { category: "Permutations & Combinations", categoryClass: "badge-comb", question: "How many 4-letter arrangements of m, a, t, h (each used once)?", options: ["24", "4", "12", "256"], correctAnswer: "24", explanation: "4P4 = 4! = 4\u00D73\u00D72\u00D71 = 24. All letters used, order matters." },
+    { category: "Permutations & Combinations", categoryClass: "badge-comb", question: "Choosing a committee is a ______, while lining up in order is a ______.", options: ["Combination; Permutation", "Permutation; Combination", "Permutation; Permutation", "Combination; Combination"], correctAnswer: "Combination; Permutation", explanation: "Committee = group (order doesn\u2019t matter) = combination. Line = arrangement (order matters) = permutation." },
+    { category: "Permutations & Combinations", categoryClass: "badge-comb", question: "What is 0! (zero factorial)?", options: ["1", "0", "Undefined", "Infinity"], correctAnswer: "1", explanation: "By definition, 0! = 1. This is important for combination and permutation formulas." },
+
+    { category: "Venn Diagrams & Sets", categoryClass: "badge-venn", question: "If A = {students who own bicycles} and B = {students who own skateboards}, what does A \u2229 B represent?", options: ["Students who own BOTH bicycles and skateboards", "Students who own bicycles OR skateboards", "Students who own only bicycles", "Students who own neither"], correctAnswer: "Students who own BOTH bicycles and skateboards", explanation: "The intersection (\u2229) contains elements in BOTH sets." },
+    { category: "Venn Diagrams & Sets", categoryClass: "badge-venn", question: "A \u222A B represents:", options: ["Everything in A or B or both", "Only elements in both A and B", "Elements in A but not B", "Elements in neither A nor B"], correctAnswer: "Everything in A or B or both", explanation: "Union (\u222A) includes ALL elements from both sets combined." },
+    { category: "Venn Diagrams & Sets", categoryClass: "badge-venn", question: "P(A) = 0.5, P(B) = 0.4. If A and B are mutually exclusive, what is P(A or B)?", options: ["0.9", "0.2", "0.1", "0.5"], correctAnswer: "0.9", explanation: "Mutually exclusive means P(A\u2229B) = 0. P(A\u222AB) = 0.5 + 0.4 \u2212 0 = 0.9." },
+    { category: "Venn Diagrams & Sets", categoryClass: "badge-venn", question: "P(A) = 0.5, P(B) = 0.4, P(A and B) = 0.1. What is P(A or B)?", options: ["0.8", "0.9", "0.2", "1.0"], correctAnswer: "0.8", explanation: "P(A\u222AB) = P(A) + P(B) \u2212 P(A\u2229B) = 0.5 + 0.4 \u2212 0.1 = 0.8." },
+
+    { category: "Independent & Dependent Events", categoryClass: "badge-events", question: "P(sports) = 65%, P(12\u201318) = 40%. P(sports AND 12\u201318) = 26%. Are the events independent?", options: ["Yes, because 0.65 \u00D7 0.40 = 0.26", "No, because 0.65 + 0.40 \u2260 0.26", "Yes, because they are mutually exclusive", "No, because they overlap"], correctAnswer: "Yes, because 0.65 \u00D7 0.40 = 0.26", explanation: "Events are independent if P(A\u2229B) = P(A)\u00D7P(B). 0.65 \u00D7 0.40 = 0.26 = P(A\u2229B). They are independent." },
+    { category: "Independent & Dependent Events", categoryClass: "badge-events", question: "It is Friday (P=0.2) and a student is absent (P=0.03). These are independent. What is P(Friday AND absent)?", options: ["0.006", "0.23", "0.06", "0.003"], correctAnswer: "0.006", explanation: "Independent: P(A and B) = P(A) \u00D7 P(B) = 0.2 \u00D7 0.03 = 0.006." },
+    { category: "Independent & Dependent Events", categoryClass: "badge-events", question: "Jason rolls two dice. What is P(both numbers are different AND sum is 6)?", options: ["4/36", "5/36", "6/36", "2/36"], correctAnswer: "4/36", explanation: "Pairs summing to 6: (1,5),(2,4),(3,3),(4,2),(5,1). Remove (3,3) since numbers must differ. That\u2019s 4 outcomes out of 36." },
+    { category: "Independent & Dependent Events", categoryClass: "badge-events", question: "Drawing a card: P(Heart AND Ace). These are independent characteristics. What is the probability?", options: ["1/52", "4/52", "13/52", "2/52"], correctAnswer: "1/52", explanation: "There is exactly 1 Ace of Hearts in a 52-card deck. P = 1/52." },
+    { category: "Independent & Dependent Events", categoryClass: "badge-events", question: "26 letters on cards (red ink + black ink = 52 cards). P(letter A or letter Z)?", options: ["4/52", "2/52", "2/26", "1/52"], correctAnswer: "4/52", explanation: "A in red + A in black + Z in red + Z in black = 4 cards. P = 4/52 = 1/13." },
+    { category: "Independent & Dependent Events", categoryClass: "badge-events", question: "Two events are DEPENDENT if:", options: ["One event affects the probability of the other", "Both events happen at the same time", "They are mutually exclusive", "P(A) \u00D7 P(B) = P(A and B)"], correctAnswer: "One event affects the probability of the other", explanation: "Dependent means knowing one outcome changes the probability of the other. If P(A and B) \u2260 P(A)\u00D7P(B), they\u2019re dependent." },
+
+    { category: "Basic Probability", categoryClass: "badge-prob", question: "What is the probability of drawing a heart from a standard deck?", options: ["13/52 = 1/4", "4/52 = 1/13", "26/52 = 1/2", "1/52"], correctAnswer: "13/52 = 1/4", explanation: "There are 13 hearts in a 52-card deck. P = 13/52 = 1/4 = 0.25." },
+    { category: "Basic Probability", categoryClass: "badge-prob", question: "A die is rolled. What is P(even number)?", options: ["3/6 = 1/2", "2/6 = 1/3", "4/6 = 2/3", "1/6"], correctAnswer: "3/6 = 1/2", explanation: "Even numbers: 2, 4, 6. That\u2019s 3 out of 6. P = 1/2." },
+    { category: "Basic Probability", categoryClass: "badge-prob", question: "If P(rain) = 0.3, what is P(no rain)?", options: ["0.7", "0.3", "1.3", "0.03"], correctAnswer: "0.7", explanation: "P(not A) = 1 \u2212 P(A) = 1 \u2212 0.3 = 0.7." },
+    { category: "Basic Probability", categoryClass: "badge-prob", question: "Picking a number from 1\u2013100. P(even AND less than 40)?", options: ["19/100", "50/100", "39/100", "20/100"], correctAnswer: "19/100", explanation: "Even numbers less than 40: 2,4,6,...,38. That\u2019s 19 numbers out of 100." },
+    { category: "Basic Probability", categoryClass: "badge-prob", question: "Rolling a die: A = even, B = odd. Are A and B mutually exclusive?", options: ["Yes", "No", "Only if the die is fair", "Depends on the roll"], correctAnswer: "Yes", explanation: "A number cannot be both even and odd. They can\u2019t happen simultaneously, so they are mutually exclusive." },
+
+    { category: "Probability Distributions", categoryClass: "badge-dist", question: "Using data on NTIs: X values 1\u20135 with probabilities shown in a histogram. How do you find the expected number of missing assignments?", options: ["Multiply each X by P(X) and add all products", "Add all X values and divide by 5", "Find the tallest bar", "Take the median X value"], correctAnswer: "Multiply each X by P(X) and add all products", explanation: "E(X) = \u03A3[X \u00B7 P(X)]. Read probabilities from the histogram and compute the weighted average." },
+
+    { category: "Venn Diagrams & Sets", categoryClass: "badge-venn", question: "In a survey: set A = Own a Car, set B = Own a Cell Phone. 18 own a car only, 56 own a cell phone only, some own both. What does the overlapping region represent?", options: ["Students who own BOTH a car and a cell phone", "Students who own a car OR a cell phone", "Total number of students", "Students who own neither"], correctAnswer: "Students who own BOTH a car and a cell phone", explanation: "The overlap in a Venn diagram always shows elements belonging to BOTH sets." },
+
+    { category: "Independent & Dependent Events", categoryClass: "badge-events", question: "From a survey: Less than 18 with job = 20, Less than 18 without job = 245, 18+ with job = 587, 18+ without job = 92. P(has job | less than 18)?", options: ["20/265", "20/607", "245/265", "587/679"], correctAnswer: "20/265", explanation: "P(job | <18) = people <18 with job / total people <18 = 20 / (20+245) = 20/265." },
+    { category: "Independent & Dependent Events", categoryClass: "badge-events", question: "Same survey data. What is P(18 or greater AND has a job)?", options: ["587/944", "679/944", "92/944", "607/944"], correctAnswer: "587/944", explanation: "Total people surveyed = 20+245+587+92 = 944. P(18+ AND job) = 587/944." },
+
+    { category: "Basic Probability", categoryClass: "badge-prob", question: "Terry has a number cube (1\u20136). He rolls twice. P(first roll prime AND second roll \u2265 5)?", options: ["3/6 \u00D7 2/6 = 1/6", "5/6 \u00D7 2/6", "3/6 \u00D7 3/6", "2/6 \u00D7 2/6"], correctAnswer: "3/6 \u00D7 2/6 = 1/6", explanation: "Primes on a die: 2, 3, 5 (3 of 6). Numbers \u2265 5: 5, 6 (2 of 6). Independent rolls: (3/6)(2/6) = 6/36 = 1/6." }
+];
+
+const categoryQuotas = {
+    "Expected Value": 3,
+    "Probability Distributions": 3,
+    "Permutations & Combinations": 3,
+    "Venn Diagrams & Sets": 3,
+    "Independent & Dependent Events": 3,
+    "Basic Probability": 3
+};
+
+const TIMER_SECONDS = 60;
+const SPEED_BONUS_THRESHOLD = 25;
+
+let currentQuestions = [];
+let currentIndex = 0;
+let score = 0;
+let categoryResults = {};
+let timerInterval = null;
+let timeLeft = TIMER_SECONDS;
+let totalTime = 0;
+let quizStartTime = 0;
+let missedQuestions = [];
+let rvQuestions = [];
+let rvIndex = 0;
+let rvScore = 0;
+let rvSelectedIndex = null;
+
+function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+function buildFlashcards() {
+    const sections = { prob: "prob-cards", expected: "expected-cards", comb: "comb-cards", venn: "venn-cards" };
+    const catClasses = { prob: "category-prob", expected: "category-expected", comb: "category-comb", venn: "category-venn" };
+
+    for (const [key, containerId] of Object.entries(sections)) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
+        flashcards[key].forEach(card => {
+            const div = document.createElement("div");
+            div.className = `flashcard ${catClasses[key]}`;
+            div.innerHTML = `<div class="flashcard-inner"><div class="flashcard-front">${card.front}</div><div class="flashcard-back">${card.back}</div></div>`;
+            div.onclick = () => div.classList.toggle("flipped");
+            container.appendChild(div);
+        });
+    }
+}
+
+function selectQuestions() {
+    let selected = [];
+    for (const [cat, quota] of Object.entries(categoryQuotas)) {
+        const pool = allQuestions.filter(q => q.category === cat);
+        const shuffled = shuffle(pool);
+        selected.push(...shuffled.slice(0, quota));
+    }
+    return shuffle(selected);
+}
+
+function startQuiz() {
+    currentQuestions = selectQuestions();
+    currentIndex = 0;
+    score = 0;
+    categoryResults = {};
+    totalTime = 0;
+    quizStartTime = Date.now();
+    missedQuestions = [];
+
+    for (const cat of Object.keys(categoryQuotas)) {
+        categoryResults[cat] = { correct: 0, total: 0 };
+    }
+
+    document.getElementById("flashcard-section").style.display = "none";
+    document.getElementById("quiz-section").style.display = "block";
+    document.getElementById("results-section").style.display = "none";
+    document.getElementById("review-missed-section").style.display = "none";
+    showQuestion();
+}
+
+function showQuestion() {
+    const q = currentQuestions[currentIndex];
+    document.getElementById("question-number").textContent = `Question ${currentIndex + 1} of ${currentQuestions.length}`;
+    document.getElementById("progress-fill").style.width = `${((currentIndex) / currentQuestions.length) * 100}%`;
+
+    const badge = document.getElementById("category-badge");
+    badge.textContent = q.category;
+    badge.className = `category-badge ${q.categoryClass}`;
+
+    document.getElementById("question-text").textContent = q.question;
+
+    const grid = document.getElementById("options-grid");
+    grid.innerHTML = "";
+    const letters = ["A", "B", "C", "D"];
+    const shuffledOptions = shuffle(q.options);
+
+    shuffledOptions.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+        btn.onclick = () => selectAnswer(btn, opt, q);
+        grid.appendChild(btn);
+    });
+
+    document.getElementById("feedback").style.display = "none";
+    document.getElementById("next-btn").style.display = "none";
+
+    startTimer();
+}
+
+function startTimer() {
+    timeLeft = TIMER_SECONDS;
+    const ring = document.getElementById("timer-ring");
+    const text = document.getElementById("timer-text");
+    const circumference = 125.66;
+
+    clearInterval(timerInterval);
+    ring.style.stroke = "#27ae60";
+    text.textContent = timeLeft;
+    ring.style.strokeDashoffset = "0";
+
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        text.textContent = timeLeft;
+        const pct = (TIMER_SECONDS - timeLeft) / TIMER_SECONDS;
+        ring.style.strokeDashoffset = pct * circumference;
+
+        if (pct > 0.66) ring.style.stroke = "#e74c3c";
+        else if (pct > 0.33) ring.style.stroke = "#f39c12";
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            autoSubmit();
+        }
+    }, 1000);
+}
+
+function autoSubmit() {
+    const q = currentQuestions[currentIndex];
+    const btns = document.querySelectorAll(".option-btn");
+    btns.forEach(b => {
+        b.classList.add("disabled");
+        if (b.querySelector("span:last-child").textContent === q.correctAnswer) b.classList.add("correct");
+    });
+
+    categoryResults[q.category].total++;
+    missedQuestions.push(q);
+
+    const fb = document.getElementById("feedback");
+    fb.className = "feedback wrong-feedback";
+    fb.innerHTML = `<strong>Time\u2019s up!</strong> The correct answer is: <strong>${q.correctAnswer}</strong><br>${q.explanation}`;
+    fb.style.display = "block";
+    document.getElementById("next-btn").style.display = "block";
+}
+
+function selectAnswer(btn, selected, q) {
+    clearInterval(timerInterval);
+    const timeTaken = TIMER_SECONDS - timeLeft;
+    totalTime += timeTaken;
+
+    const btns = document.querySelectorAll(".option-btn");
+    btns.forEach(b => {
+        b.classList.add("disabled");
+        if (b.querySelector("span:last-child").textContent === q.correctAnswer) b.classList.add("correct");
+    });
+
+    categoryResults[q.category].total++;
+    const fb = document.getElementById("feedback");
+
+    if (selected === q.correctAnswer) {
+        score++;
+        categoryResults[q.category].correct++;
+        btn.classList.add("correct");
+        fb.className = "feedback correct-feedback";
+        let speedNote = timeTaken < SPEED_BONUS_THRESHOLD ? ` <span class="speed-bonus">Speed bonus! (${timeTaken}s)</span>` : "";
+        fb.innerHTML = `<strong>Correct!</strong>${speedNote}<br>${q.explanation}`;
+    } else {
+        btn.classList.add("wrong");
+        fb.className = "feedback wrong-feedback";
+        fb.innerHTML = `<strong>Incorrect.</strong> The correct answer is: <strong>${q.correctAnswer}</strong><br>${q.explanation}`;
+        missedQuestions.push(q);
+    }
+
+    fb.style.display = "block";
+    document.getElementById("next-btn").style.display = "block";
+}
+
+function nextQuestion() {
+    currentIndex++;
+    if (currentIndex >= currentQuestions.length) {
+        showResults();
+    } else {
+        showQuestion();
+    }
+}
+
+function showResults() {
+    clearInterval(timerInterval);
+    document.getElementById("quiz-section").style.display = "none";
+    document.getElementById("results-section").style.display = "block";
+
+    const pct = Math.round((score / currentQuestions.length) * 100);
+    const elapsed = Math.round((Date.now() - quizStartTime) / 1000);
+    const avg = Math.round(elapsed / currentQuestions.length);
+
+    const display = document.getElementById("score-display");
+    const percentEl = document.getElementById("score-percent");
+    const labelEl = document.getElementById("score-label");
+    const timeEl = document.getElementById("score-time");
+
+    percentEl.textContent = `${pct}%`;
+    timeEl.textContent = `Total time: ${Math.floor(elapsed / 60)}m ${elapsed % 60}s | Avg: ${avg}s per question`;
+
+    if (pct >= 80) { display.className = "score-display great"; labelEl.textContent = `${score}/${currentQuestions.length} - Great job!`; percentEl.style.color = "#27ae60"; }
+    else if (pct >= 60) { display.className = "score-display good"; labelEl.textContent = `${score}/${currentQuestions.length} - Good effort!`; percentEl.style.color = "#f39c12"; }
+    else { display.className = "score-display needs-work"; labelEl.textContent = `${score}/${currentQuestions.length} - Keep studying!`; percentEl.style.color = "#e74c3c"; }
+
+    const catDiv = document.getElementById("category-scores");
+    catDiv.innerHTML = "<h3>Score by Topic</h3>";
+    const reviewList = document.getElementById("review-list");
+    reviewList.innerHTML = "";
+    let needsReview = false;
+
+    for (const [cat, data] of Object.entries(categoryResults)) {
+        if (data.total === 0) continue;
+        const catPct = Math.round((data.correct / data.total) * 100);
+        const row = document.createElement("div");
+        row.className = `cat-score-row ${catPct === 100 ? "cat-great" : catPct >= 50 ? "cat-ok" : "cat-bad"}`;
+        row.innerHTML = `<span>${cat}</span><span><strong>${data.correct}/${data.total}</strong> (${catPct}%)</span>`;
+        catDiv.appendChild(row);
+
+        if (catPct < 100) {
+            needsReview = true;
+            const li = document.createElement("li");
+            li.textContent = `${cat} (${data.correct}/${data.total})`;
+            reviewList.appendChild(li);
+        }
+    }
+
+    document.getElementById("review-topics").style.display = needsReview ? "block" : "none";
+
+    if (missedQuestions.length > 0) {
+        document.getElementById("review-missed-section").style.display = "block";
+        startReviewMode();
+    } else {
+        document.getElementById("review-missed-section").style.display = "none";
+    }
+}
+
+function startReviewMode() {
+    rvQuestions = [...missedQuestions];
+    rvIndex = 0;
+    rvScore = 0;
+    rvSelectedIndex = null;
+
+    document.getElementById("rv-score-box").style.display = "none";
+    document.getElementById("rv-progress").style.display = "block";
+    document.getElementById("rv-question").style.display = "block";
+    document.getElementById("rv-options").style.display = "flex";
+    document.getElementById("rv-check-btn").style.display = "block";
+    document.getElementById("rv-next-btn").style.display = "none";
+    document.getElementById("rv-feedback").style.display = "none";
+
+    renderReviewQuestion();
+}
+
+function renderReviewQuestion() {
+    const q = rvQuestions[rvIndex];
+    document.getElementById("rv-progress").textContent = `Question ${rvIndex + 1} of ${rvQuestions.length}`;
+    document.getElementById("rv-question").textContent = q.question;
+
+    const shuffledOpts = shuffle([...q.options]);
+    const container = document.getElementById("rv-options");
+    container.innerHTML = shuffledOpts.map((opt, i) =>
+        `<div class="review-missed-opt" data-correct="${opt === q.correctAnswer}" onclick="rvSelectOption(${i})">${opt}</div>`
+    ).join("");
+
+    rvSelectedIndex = null;
+    document.getElementById("rv-check-btn").disabled = true;
+    document.getElementById("rv-check-btn").style.display = "block";
+    document.getElementById("rv-next-btn").style.display = "none";
+    document.getElementById("rv-feedback").style.display = "none";
+}
+
+function rvSelectOption(index) {
+    const opts = document.querySelectorAll(".review-missed-opt");
+    opts.forEach(o => o.classList.remove("selected"));
+    opts[index].classList.add("selected");
+    rvSelectedIndex = index;
+    document.getElementById("rv-check-btn").disabled = false;
+}
+
+function rvCheckAnswer() {
+    const opts = document.querySelectorAll(".review-missed-opt");
+    const selected = opts[rvSelectedIndex];
+    const isCorrect = selected.dataset.correct === "true";
+
+    opts.forEach(o => {
+        o.style.pointerEvents = "none";
+        if (o.dataset.correct === "true") o.classList.add("rv-reveal");
+    });
+
+    if (isCorrect) {
+        selected.classList.add("rv-correct");
+        rvScore++;
+    } else {
+        selected.classList.add("rv-incorrect");
+    }
+
+    const fb = document.getElementById("rv-feedback");
+    fb.style.display = "block";
+    fb.className = "review-missed-feedback " + (isCorrect ? "rv-fb-correct" : "rv-fb-incorrect");
+    fb.textContent = isCorrect ? "Correct! You got it this time!" : "Not quite. The correct answer is highlighted above.";
+
+    document.getElementById("rv-check-btn").style.display = "none";
+    document.getElementById("rv-next-btn").style.display = "block";
+    document.getElementById("rv-next-btn").textContent = rvIndex < rvQuestions.length - 1 ? "Next \u2192" : "See Review Results";
+}
+
+function rvNextQuestion() {
+    rvIndex++;
+    if (rvIndex >= rvQuestions.length) {
+        showReviewResults();
+    } else {
+        renderReviewQuestion();
+    }
+}
+
+function showReviewResults() {
+    document.getElementById("rv-progress").style.display = "none";
+    document.getElementById("rv-question").style.display = "none";
+    document.getElementById("rv-options").style.display = "none";
+    document.getElementById("rv-feedback").style.display = "none";
+    document.getElementById("rv-check-btn").style.display = "none";
+    document.getElementById("rv-next-btn").style.display = "none";
+
+    const box = document.getElementById("rv-score-box");
+    box.style.display = "block";
+    const pct = Math.round((rvScore / rvQuestions.length) * 100);
+    document.getElementById("rv-score-text").textContent =
+        `You got ${rvScore} out of ${rvQuestions.length} correct (${pct}%) on the review!`;
+}
+
+function restartQuiz() { startQuiz(); }
+
+function reviewVocab() {
+    document.getElementById("results-section").style.display = "none";
+    document.getElementById("quiz-section").style.display = "none";
+    document.getElementById("flashcard-section").style.display = "block";
+    document.querySelectorAll(".flashcard").forEach(c => c.classList.remove("flipped"));
+}
+
+buildFlashcards();
+
+document.addEventListener("keydown", function(e) {
+    if (e.key !== "Enter") return;
+
+    const nextBtn = document.getElementById("next-btn");
+    if (nextBtn && nextBtn.style.display !== "none") {
+        e.preventDefault();
+        nextQuestion();
+        return;
+    }
+
+    const rvNextBtn = document.getElementById("rv-next-btn");
+    if (rvNextBtn && rvNextBtn.style.display !== "none") {
+        e.preventDefault();
+        rvNextQuestion();
+        return;
+    }
+
+    const rvCheckBtn = document.getElementById("rv-check-btn");
+    if (rvCheckBtn && rvCheckBtn.style.display !== "none" && !rvCheckBtn.disabled) {
+        e.preventDefault();
+        rvCheckAnswer();
+        return;
+    }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry Final Exam Review - Interactive Quiz</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2d1b3d 0%, #44235c 30%, #5b3a78 60%, #3d2b5a 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #3a3a3a;
+        }
+
+        .container { max-width: 880px; margin: 0 auto; }
+
+        .card {
+            background: linear-gradient(180deg, #fffbfe 0%, #fef7ff 100%);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2), 0 0 80px rgba(219, 112, 147, 0.12);
+            border: 1px solid rgba(219, 112, 147, 0.15);
+        }
+
+        h1 { text-align: center; color: #b8396b; margin-bottom: 8px; font-size: 1.8rem; }
+        .subtitle { text-align: center; color: #888; margin-bottom: 25px; font-style: italic; }
+
+        .flashcard-section { margin-bottom: 30px; }
+        .flashcard-section h2 { text-align: center; color: #8b5e9b; margin-bottom: 15px; font-size: 1.2rem; }
+
+        .flashcard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+        }
+
+        .flashcard { perspective: 1000px; cursor: pointer; }
+
+        .flashcard-inner {
+            position: relative; width: 100%; height: 100px;
+            transition: transform 0.6s; transform-style: preserve-3d; border-radius: 14px;
+        }
+
+        .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute; width: 100%; height: 100%;
+            backface-visibility: hidden; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            padding: 10px; text-align: center; font-size: 0.82rem;
+        }
+
+        .flashcard-front { background: linear-gradient(135deg, #d4849a, #c06080); color: white; font-weight: bold; }
+        .flashcard-back { background: linear-gradient(135deg, #7ec8a8, #5aab8b); color: white; transform: rotateY(180deg); font-size: 0.78rem; }
+
+        .category-mole .flashcard-front { background: linear-gradient(135deg, #7ea8d4, #5a8bbf); }
+        .category-stoich .flashcard-front { background: linear-gradient(135deg, #d4a07e, #c08a5a); }
+        .category-solutions .flashcard-front { background: linear-gradient(135deg, #7ec8b8, #5aab9b); }
+        .category-acids .flashcard-front { background: linear-gradient(135deg, #d47e8a, #c05a6a); }
+        .category-energy .flashcard-front { background: linear-gradient(135deg, #d4c07e, #c0a85a); }
+        .category-formulas .flashcard-front { background: linear-gradient(135deg, #a87ed4, #8b5abf); }
+
+        .start-btn, .restart-btn, .review-btn {
+            display: block; width: 100%; padding: 15px;
+            font-size: 1.2rem; font-weight: bold; border: none;
+            border-radius: 30px; cursor: pointer; margin-top: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            letter-spacing: 0.5px;
+        }
+
+        .start-btn { background: linear-gradient(135deg, #d4639a, #b8396b); color: white; }
+        .restart-btn { background: linear-gradient(135deg, #9b7ec8, #7b5aab); color: white; }
+        .review-btn { background: linear-gradient(135deg, #7ec8a8, #5aab8b); color: white; margin-top: 10px; }
+
+        .start-btn:hover, .restart-btn:hover, .review-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(184, 57, 107, 0.3); }
+
+        .quiz-section, .results-section { display: none; }
+
+        .progress-bar { background: #f0e4f0; border-radius: 10px; height: 8px; margin-bottom: 20px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #d4639a, #9b7ec8); border-radius: 10px; transition: width 0.4s; }
+
+        .question-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px; }
+        .question-number { font-weight: bold; color: #777; font-size: 0.95rem; }
+
+        .category-badge {
+            padding: 4px 12px; border-radius: 20px; font-size: 0.75rem;
+            font-weight: bold; color: white;
+        }
+
+        .badge-mole { background: #7ea8d4; }
+        .badge-stoich { background: #d4a07e; }
+        .badge-solutions { background: #7ec8b8; }
+        .badge-acids { background: #d47e8a; }
+        .badge-energy { background: #d4c07e; }
+        .badge-formulas { background: #a87ed4; }
+        .badge-percent { background: #8b7ea0; }
+
+        .timer-container { display: flex; align-items: center; gap: 8px; }
+
+        .timer-circle {
+            width: 48px; height: 48px; border-radius: 50%; position: relative;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .timer-circle svg { position: absolute; top: 0; left: 0; transform: rotate(-90deg); }
+        .timer-circle .timer-text { font-weight: bold; font-size: 0.95rem; z-index: 1; }
+
+        .question-text { font-size: 1.15rem; font-weight: 600; margin-bottom: 20px; line-height: 1.5; color: #3a3a3a; }
+
+        .options-grid { display: grid; gap: 12px; }
+
+        .option-btn {
+            padding: 14px 18px; border: 2px solid #e8d8e8; border-radius: 14px;
+            background: #fefaff; cursor: pointer; font-size: 1rem;
+            transition: all 0.2s; text-align: left; display: flex; align-items: center; gap: 12px;
+        }
+
+        .option-btn:hover { border-color: #d4639a; background: #fdf0f5; }
+
+        .option-letter {
+            width: 32px; height: 32px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-weight: bold;
+            background: #f0e0f0; color: #8b5e9b; flex-shrink: 0;
+        }
+
+        .option-btn.correct { border-color: #5aab8b; background: #edf8f2; }
+        .option-btn.correct .option-letter { background: #5aab8b; color: white; }
+        .option-btn.wrong { border-color: #d47e8a; background: #fdf0f2; }
+        .option-btn.wrong .option-letter { background: #d47e8a; color: white; }
+        .option-btn.disabled { pointer-events: none; opacity: 0.7; }
+
+        .feedback {
+            margin-top: 15px; padding: 15px; border-radius: 14px;
+            display: none; font-size: 0.95rem; line-height: 1.5;
+        }
+
+        .feedback.correct-feedback { background: #edf8f2; border: 1px solid #5aab8b; color: #2d6b52; }
+        .feedback.wrong-feedback { background: #fdf0f2; border: 1px solid #d47e8a; color: #8b3a4a; }
+
+        .next-btn {
+            display: none; margin-top: 15px; padding: 12px 30px;
+            background: linear-gradient(135deg, #d4639a, #b8396b); color: white;
+            border: none; border-radius: 25px; font-size: 1rem;
+            font-weight: bold; cursor: pointer; float: right;
+        }
+
+        .next-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(184, 57, 107, 0.25); }
+
+        .results-section h2 { text-align: center; color: #b8396b; margin-bottom: 20px; }
+
+        .score-display {
+            text-align: center; padding: 25px; border-radius: 18px;
+            margin-bottom: 20px;
+        }
+
+        .score-display.great { background: linear-gradient(135deg, #edf8f2, #d4f0e0); }
+        .score-display.good { background: linear-gradient(135deg, #fef5ea, #fde8c8); }
+        .score-display.needs-work { background: linear-gradient(135deg, #fdf0f2, #f8d8de); }
+
+        .score-percent { font-size: 3rem; font-weight: bold; }
+        .score-label { font-size: 1.2rem; margin-top: 5px; color: #555; }
+        .score-time { font-size: 0.9rem; color: #999; margin-top: 8px; }
+
+        .category-scores { margin: 20px 0; }
+        .category-scores h3 { margin-bottom: 12px; color: #777; }
+
+        .cat-score-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 15px; border-radius: 10px; margin-bottom: 6px;
+            background: #fdf8ff; border-left: 4px solid #ddd;
+        }
+
+        .cat-score-row.cat-great { border-left-color: #5aab8b; }
+        .cat-score-row.cat-ok { border-left-color: #d4c07e; }
+        .cat-score-row.cat-bad { border-left-color: #d47e8a; }
+
+        .review-topics {
+            background: #fef5ea; padding: 20px; border-radius: 14px;
+            margin: 20px 0; border: 1px solid #fde8c8;
+        }
+
+        .review-topics h3 { color: #b88a3a; margin-bottom: 10px; }
+        .review-topics ul { padding-left: 20px; }
+        .review-topics li { margin-bottom: 6px; color: #666; }
+
+        .speed-bonus { color: #d4a040; font-weight: bold; font-size: 0.85rem; }
+
+        .formula-box {
+            background: #fdf0f5; border: 1px solid #e8c0d0; border-radius: 8px;
+            padding: 8px 14px; margin: 5px 0; font-family: 'Courier New', monospace;
+            font-size: 1rem; display: inline-block;
+        }
+
+        sub { font-size: 0.75em; vertical-align: sub; }
+        sup { font-size: 0.75em; vertical-align: super; }
+
+        .review-missed-section {
+            display: none;
+            margin-top: 25px; padding: 25px; border-radius: 18px;
+            background: linear-gradient(135deg, #fdf0f5, #f5e8f5); border: 2px solid #e8c0d0;
+        }
+
+        .review-missed-section h3 { color: #b8396b; margin-bottom: 15px; text-align: center; }
+
+        .review-missed-progress { text-align: center; color: #999; margin-bottom: 15px; font-size: 0.9rem; }
+
+        .review-missed-question { font-size: 1.05rem; color: #3a3a3a; margin-bottom: 15px; font-weight: 500; }
+
+        .review-missed-options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+
+        .review-missed-opt {
+            padding: 12px 15px; border: 2px solid #e8d8e8; border-radius: 12px;
+            cursor: pointer; transition: all 0.3s; font-size: 0.95rem; background: white;
+        }
+
+        .review-missed-opt:hover { border-color: #d4639a; background: #fdf0f5; }
+        .review-missed-opt.selected { border-color: #d4639a; background: #fdf0f5; }
+        .review-missed-opt.rv-correct { border-color: #5aab8b; background: #edf8f2; }
+        .review-missed-opt.rv-incorrect { border-color: #d47e8a; background: #fdf0f2; }
+        .review-missed-opt.rv-reveal { border-color: #5aab8b; background: #edf8f2; animation: rvGlow 0.5s ease-in-out; }
+
+        @keyframes rvGlow { 0%, 100% { box-shadow: 0 0 5px #5aab8b; } 50% { box-shadow: 0 0 20px #5aab8b; } }
+
+        .review-missed-feedback {
+            display: none; padding: 12px; border-radius: 12px; margin-bottom: 15px; text-align: center;
+        }
+
+        .review-missed-feedback.rv-fb-correct { background: #edf8f2; color: #2d6b52; }
+        .review-missed-feedback.rv-fb-incorrect { background: #fdf0f2; color: #8b3a4a; }
+
+        .rv-check-btn, .rv-next-btn {
+            display: block; width: 100%; padding: 12px; border: none; border-radius: 25px;
+            font-size: 1rem; font-weight: bold; cursor: pointer; transition: all 0.3s;
+        }
+
+        .rv-check-btn { background: linear-gradient(135deg, #d4639a, #b8396b); color: white; }
+        .rv-check-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .rv-next-btn { background: linear-gradient(135deg, #9b7ec8, #7b5aab); color: white; margin-top: 10px; }
+
+        .rv-score-box { text-align: center; padding: 20px; }
+        .rv-score-box h4 { color: #b8396b; margin-bottom: 10px; }
+
+        @media (max-width: 600px) {
+            .card { padding: 18px; }
+            h1 { font-size: 1.4rem; }
+            .flashcard-grid { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
+            .question-text { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div id="flashcard-section" class="flashcard-section">
+                <h1>Chemistry Final Exam Review</h1>
+                <p class="subtitle">Tap cards to flip &bull; Study vocab, then start the quiz!</p>
+
+                <h2>The Mole &amp; Conversions</h2>
+                <div class="flashcard-grid" id="mole-cards"></div>
+
+                <h2 style="margin-top:18px;">Formulas &amp; Composition</h2>
+                <div class="flashcard-grid" id="formula-cards"></div>
+
+                <h2 style="margin-top:18px;">Solutions &amp; Acids/Bases</h2>
+                <div class="flashcard-grid" id="solutions-cards"></div>
+
+                <h2 style="margin-top:18px;">Energy &amp; Calorimetry</h2>
+                <div class="flashcard-grid" id="energy-cards"></div>
+
+                <button class="start-btn" onclick="startQuiz()">Start Quiz (20 Questions)</button>
+            </div>
+
+            <div id="quiz-section" class="quiz-section">
+                <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+                <div class="question-header">
+                    <span class="question-number" id="question-number"></span>
+                    <span class="category-badge" id="category-badge"></span>
+                    <div class="timer-container">
+                        <div class="timer-circle" id="timer-circle">
+                            <svg width="48" height="48"><circle cx="24" cy="24" r="20" fill="none" stroke="#eee" stroke-width="4"/><circle id="timer-ring" cx="24" cy="24" r="20" fill="none" stroke="#27ae60" stroke-width="4" stroke-dasharray="125.66" stroke-dashoffset="0" stroke-linecap="round"/></svg>
+                            <span class="timer-text" id="timer-text">90</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="question-text" id="question-text"></div>
+                <div class="options-grid" id="options-grid"></div>
+                <div class="feedback" id="feedback"></div>
+                <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next &rarr;</button>
+            </div>
+
+            <div id="results-section" class="results-section">
+                <h2>Quiz Results</h2>
+                <div class="score-display" id="score-display">
+                    <div class="score-percent" id="score-percent"></div>
+                    <div class="score-label" id="score-label"></div>
+                    <div class="score-time" id="score-time"></div>
+                </div>
+                <div class="category-scores" id="category-scores"><h3>Score by Topic</h3></div>
+                <div class="review-topics" id="review-topics" style="display:none;"><h3>Topics to Review</h3><ul id="review-list"></ul></div>
+                <div class="review-missed-section" id="review-missed-section">
+                    <h3>Let's Review the Missed Questions!</h3>
+                    <div class="review-missed-progress" id="rv-progress"></div>
+                    <div class="review-missed-question" id="rv-question"></div>
+                    <div class="review-missed-options" id="rv-options"></div>
+                    <div class="review-missed-feedback" id="rv-feedback"></div>
+                    <button class="rv-check-btn" id="rv-check-btn" onclick="rvCheckAnswer()" disabled>Check Answer</button>
+                    <button class="rv-next-btn" id="rv-next-btn" onclick="rvNextQuestion()" style="display:none;">Next &rarr;</button>
+                    <div class="rv-score-box" id="rv-score-box" style="display:none;">
+                        <h4>Review Complete!</h4>
+                        <p id="rv-score-text"></p>
+                    </div>
+                </div>
+                <button class="restart-btn" onclick="restartQuiz()">Try Again</button>
+                <button class="review-btn" onclick="reviewVocab()">Review Vocab</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+const flashcards = {
+    mole: [
+        { front: "Mole (mol)", back: "6.022 x 10\u00B2\u00B3 particles. A counting unit for atoms, molecules, or formula units." },
+        { front: "Molar Mass", back: "Mass of 1 mole of a substance in g/mol. Found by adding atomic masses from the periodic table." },
+        { front: "Avogadro's Number", back: "6.022 x 10\u00B2\u00B3 — the number of particles in exactly 1 mole." },
+        { front: "Mole Conversions", back: "grams \u2194 moles: divide/multiply by molar mass. moles \u2194 particles: multiply/divide by 6.022\u00D710\u00B2\u00B3." },
+        { front: "Molar Mass of CaCl\u2082", back: "Ca = 40.08, Cl = 35.45 \u00D7 2 = 70.90. Total = 110.98 g/mol." },
+        { front: "Molar Mass of K\u2082SO\u2084", back: "K = 39.10\u00D72 + S = 32.07 + O = 16.00\u00D74 = 174.27 g/mol." }
+    ],
+    formulas: [
+        { front: "Percent Composition", back: "% element = (mass of element in 1 mol / molar mass of compound) \u00D7 100" },
+        { front: "Empirical Formula", back: "Simplest whole-number ratio of atoms in a compound." },
+        { front: "Molecular Formula", back: "Actual number of atoms in one molecule. A whole-number multiple of the empirical formula." },
+        { front: "Sucrose C\u2081\u2082H\u2082\u2082O\u2081\u2081", back: "Molar mass \u2248 342.3 g/mol. Used to find % composition of C, H, and O." }
+    ],
+    solutions: [
+        { front: "Solute vs Solvent", back: "Solute: substance being dissolved. Solvent: substance doing the dissolving (usually water)." },
+        { front: "Molarity (M)", back: "M = moles of solute / liters of solution." },
+        { front: "Saturated Solution", back: "Maximum amount of solute is dissolved at a given temperature." },
+        { front: "Arrhenius Acid", back: "Produces H\u207A ions in water. pH < 7. Turns litmus red." },
+        { front: "Arrhenius Base", back: "Produces OH\u207B ions in water. pH > 7. Turns litmus blue." },
+        { front: "Neutralization", back: "Acid + Base \u2192 Salt + Water. Example: HCl + NaOH \u2192 NaCl + H\u2082O" },
+        { front: "pH Scale", back: "0-14 scale. 7 = neutral. <7 = acid. >7 = base." }
+    ],
+    energy: [
+        { front: "Exothermic", back: "Releases energy (heat) to surroundings. Energy appears as a product." },
+        { front: "Endothermic", back: "Absorbs energy (heat) from surroundings. Energy appears as a reactant." },
+        { front: "Specific Heat (c)", back: "Energy needed to raise 1 g of a substance by 1\u00B0C. Water = 4.184 J/g\u00B0C." },
+        { front: "Calorimetry Equation", back: "q = m \u00D7 c \u00D7 \u0394T, where q = heat, m = mass, c = specific heat, \u0394T = temp change." },
+        { front: "Law of Conservation of Energy", back: "Energy cannot be created or destroyed, only transferred or transformed." }
+    ]
+};
+
+const allQuestions = [
+    { category: "The Mole", categoryClass: "badge-mole", question: "How many moles are in 285 grams of CaCl\u2082? (Molar mass = 110.98 g/mol)", options: ["2.57 mol", "1.57 mol", "3.14 mol", "0.39 mol"], correctAnswer: "2.57 mol", explanation: "285 g \u00F7 110.98 g/mol = 2.57 mol. Divide mass by molar mass to convert grams to moles." },
+    { category: "The Mole", categoryClass: "badge-mole", question: "How many moles are in 37.0 grams of CaCl\u2082?", options: ["0.333 mol", "0.500 mol", "2.99 mol", "1.00 mol"], correctAnswer: "0.333 mol", explanation: "37.0 g \u00F7 110.98 g/mol = 0.333 mol. Always divide grams by molar mass." },
+    { category: "The Mole", categoryClass: "badge-mole", question: "How many grams are in 3.00 moles of CaCl\u2082?", options: ["332.94 g", "110.98 g", "221.96 g", "36.99 g"], correctAnswer: "332.94 g", explanation: "3.00 mol \u00D7 110.98 g/mol = 332.94 g. Multiply moles by molar mass." },
+    { category: "The Mole", categoryClass: "badge-mole", question: "How many grams are in 1.50 moles of K\u2082SO\u2084?", options: ["261.41 g", "174.27 g", "87.14 g", "348.54 g"], correctAnswer: "261.41 g", explanation: "1.50 mol \u00D7 174.27 g/mol = 261.41 g." },
+    { category: "The Mole", categoryClass: "badge-mole", question: "What is the molar mass of K\u2082SO\u2084?", options: ["174.27 g/mol", "135.16 g/mol", "200.00 g/mol", "158.27 g/mol"], correctAnswer: "174.27 g/mol", explanation: "K(39.10\u00D72) + S(32.07) + O(16.00\u00D74) = 78.20 + 32.07 + 64.00 = 174.27 g/mol." },
+    { category: "The Mole", categoryClass: "badge-mole", question: "What is the molar mass of CaCl\u2082?", options: ["110.98 g/mol", "75.53 g/mol", "145.98 g/mol", "95.21 g/mol"], correctAnswer: "110.98 g/mol", explanation: "Ca(40.08) + Cl(35.45\u00D72) = 40.08 + 70.90 = 110.98 g/mol." },
+    { category: "The Mole", categoryClass: "badge-mole", question: "To convert moles to grams you must:", options: ["Multiply by molar mass", "Divide by molar mass", "Multiply by Avogadro\u2019s number", "Divide by Avogadro\u2019s number"], correctAnswer: "Multiply by molar mass", explanation: "Moles \u00D7 molar mass (g/mol) = grams." },
+    { category: "The Mole", categoryClass: "badge-mole", question: "To convert grams to moles you must:", options: ["Divide by molar mass", "Multiply by molar mass", "Multiply by 6.022\u00D710\u00B2\u00B3", "Divide by 6.022\u00D710\u00B2\u00B3"], correctAnswer: "Divide by molar mass", explanation: "Grams \u00F7 molar mass (g/mol) = moles." },
+
+    { category: "Percent Composition", categoryClass: "badge-percent", question: "What is the percent composition of carbon in sucrose C\u2081\u2082H\u2082\u2082O\u2081\u2081? (Molar mass \u2248 342.3 g/mol)", options: ["42.1%", "51.4%", "6.4%", "34.2%"], correctAnswer: "42.1%", explanation: "C: 12 \u00D7 12.01 = 144.12. (144.12 / 342.3) \u00D7 100 = 42.1%." },
+    { category: "Percent Composition", categoryClass: "badge-percent", question: "What is the percent composition of hydrogen in C\u2081\u2082H\u2082\u2082O\u2081\u2081?", options: ["6.4%", "42.1%", "12.0%", "51.5%"], correctAnswer: "6.4%", explanation: "H: 22 \u00D7 1.008 = 22.18. (22.18 / 342.3) \u00D7 100 \u2248 6.4%." },
+    { category: "Percent Composition", categoryClass: "badge-percent", question: "What is the percent composition of oxygen in C\u2081\u2082H\u2082\u2082O\u2081\u2081?", options: ["51.5%", "42.1%", "6.4%", "28.0%"], correctAnswer: "51.5%", explanation: "O: 11 \u00D7 16.00 = 176.00. (176.00 / 342.3) \u00D7 100 \u2248 51.5%." },
+
+    { category: "Empirical & Molecular", categoryClass: "badge-formulas", question: "A compound is 65.5% C, 5.5% H, and 29.0% O. What is the empirical formula?", options: ["C\u2083H\u2083O", "CH\u2082O", "C\u2082H\u2083O", "CHO"], correctAnswer: "C\u2083H\u2083O", explanation: "Convert %\u2192g\u2192mol: C=65.5/12.01=5.45, H=5.5/1.008=5.46, O=29.0/16.00=1.81. Ratio: 3:3:1 \u2192 C\u2083H\u2083O." },
+    { category: "Empirical & Molecular", categoryClass: "badge-formulas", question: "If the empirical formula is C\u2083H\u2083O and the molar mass is 110 g/mol, what is the molecular formula?", options: ["C\u2086H\u2086O\u2082", "C\u2083H\u2083O", "C\u2089H\u2089O\u2083", "C\u2081\u2082H\u2081\u2082O\u2084"], correctAnswer: "C\u2086H\u2086O\u2082", explanation: "Empirical mass = 3(12)+3(1)+16 = 55 g/mol. 110/55 = 2. Multiply subscripts by 2: C\u2086H\u2086O\u2082." },
+    { category: "Empirical & Molecular", categoryClass: "badge-formulas", question: "What is the first step in finding an empirical formula from percent composition?", options: ["Convert percentages to grams (assume 100g sample)", "Find the molar mass", "Balance the equation", "Convert grams to liters"], correctAnswer: "Convert percentages to grams (assume 100g sample)", explanation: "Assume a 100 g sample so percentages become grams directly, then convert to moles." },
+
+    { category: "Stoichiometry", categoryClass: "badge-stoich", question: "In the balanced equation CuCl\u2082 + Li\u2082CO\u2083 \u2192 CuCO\u2083 + 2 LiCl, how many moles of lithium chloride can be made from 5 moles of copper(II) chloride?", options: ["10 moles", "5 moles", "2.5 moles", "15 moles"], correctAnswer: "10 moles", explanation: "The ratio of CuCl\u2082 to LiCl is 1:2. So 5 mol CuCl\u2082 \u00D7 (2/1) = 10 mol LiCl." },
+    { category: "Stoichiometry", categoryClass: "badge-stoich", question: "How many grams of copper(II) carbonate will be made from 3.00 moles of copper(II) chloride? (CuCO\u2083 = 123.56 g/mol)", options: ["370.68 g", "123.56 g", "247.12 g", "61.78 g"], correctAnswer: "370.68 g", explanation: "1:1 ratio: 3.00 mol CuCO\u2083 \u00D7 123.56 g/mol = 370.68 g." },
+    { category: "Stoichiometry", categoryClass: "badge-stoich", question: "How many moles of lithium carbonate are required to produce 450 grams of lithium chloride? (LiCl = 42.39 g/mol)", options: ["5.31 mol", "10.62 mol", "2.65 mol", "21.24 mol"], correctAnswer: "5.31 mol", explanation: "450 g \u00F7 42.39 g/mol = 10.62 mol LiCl. Ratio Li\u2082CO\u2083:LiCl is 1:2. So 10.62/2 = 5.31 mol." },
+    { category: "Stoichiometry", categoryClass: "badge-stoich", question: "How many grams of lithium carbonate are needed to make 845 g of copper(II) carbonate? (Li\u2082CO\u2083 = 73.89 g/mol, CuCO\u2083 = 123.56 g/mol)", options: ["505.29 g", "73.89 g", "845.00 g", "252.64 g"], correctAnswer: "505.29 g", explanation: "845 g CuCO\u2083 \u00F7 123.56 = 6.84 mol. 1:1 ratio. 6.84 \u00D7 73.89 = 505.29 g Li\u2082CO\u2083." },
+    { category: "Stoichiometry", categoryClass: "badge-stoich", question: "What must you do FIRST to solve any stoichiometry problem?", options: ["Write and balance the chemical equation", "Convert grams to moles", "Find molar mass", "Identify the limiting reagent"], correctAnswer: "Write and balance the chemical equation", explanation: "A balanced equation gives you the mole ratios needed for all stoichiometry calculations." },
+
+    { category: "Solutions", categoryClass: "badge-solutions", question: "What is a solvent?", options: ["The substance that does the dissolving", "The substance being dissolved", "The mixture of solute and solvent", "A type of acid"], correctAnswer: "The substance that does the dissolving", explanation: "The solvent dissolves the solute. Water is the most common solvent (universal solvent)." },
+    { category: "Solutions", categoryClass: "badge-solutions", question: "What is the formula for molarity?", options: ["M = moles of solute / liters of solution", "M = grams of solute / moles", "M = liters / moles", "M = moles \u00D7 liters"], correctAnswer: "M = moles of solute / liters of solution", explanation: "Molarity (M) = mol solute \u00F7 L solution." },
+    { category: "Solutions", categoryClass: "badge-solutions", question: "Find the molarity of a solution with 165 g of SiF\u2084 (104.08 g/mol) in 2000 mL.", options: ["0.793 M", "1.59 M", "0.083 M", "82.5 M"], correctAnswer: "0.793 M", explanation: "165 g \u00F7 104.08 g/mol = 1.585 mol. 2000 mL = 2.000 L. M = 1.585 / 2.000 = 0.793 M." },
+    { category: "Solutions", categoryClass: "badge-solutions", question: "Find the molarity of a 0.50 L solution that contains 5.00 moles of NaNO\u2083.", options: ["10.0 M", "2.5 M", "5.0 M", "0.10 M"], correctAnswer: "10.0 M", explanation: "M = 5.00 mol / 0.50 L = 10.0 M." },
+    { category: "Solutions", categoryClass: "badge-solutions", question: "List THREE ways to increase the rate of dissolving a solute.", options: ["Stir, heat, crush into smaller pieces", "Cool it, add more solvent, let it sit", "Freeze, add base, compress", "Add acid, evaporate, filter"], correctAnswer: "Stir, heat, crush into smaller pieces", explanation: "Stirring (agitation), heating (increases kinetic energy), and crushing (increases surface area) all speed dissolving." },
+    { category: "Solutions", categoryClass: "badge-solutions", question: "How many grams of NaCl are needed to make 250 mL of a 1.5 M solution? (NaCl = 58.44 g/mol)", options: ["21.92 g", "58.44 g", "87.66 g", "14.61 g"], correctAnswer: "21.92 g", explanation: "mol = M \u00D7 L = 1.5 \u00D7 0.250 = 0.375 mol. g = 0.375 \u00D7 58.44 = 21.92 g." },
+    { category: "Solutions", categoryClass: "badge-solutions", question: "What does 'saturated' mean for a solution?", options: ["Maximum solute is dissolved at that temperature", "No solute is dissolved", "More solute can still dissolve", "The solution is boiling"], correctAnswer: "Maximum solute is dissolved at that temperature", explanation: "A saturated solution holds the maximum amount of dissolved solute at a given temperature." },
+    { category: "Solutions", categoryClass: "badge-solutions", question: "As temperature increases, the solubility of most solid solutes:", options: ["Increases", "Decreases", "Stays the same", "Becomes zero"], correctAnswer: "Increases", explanation: "Most solid solutes are more soluble at higher temperatures. Gases behave oppositely." },
+    { category: "Solutions", categoryClass: "badge-solutions", question: "As temperature increases, the solubility of gases generally:", options: ["Decreases", "Increases", "Stays the same", "Doubles"], correctAnswer: "Decreases", explanation: "Gases become less soluble as temperature rises (think of warm soda going flat)." },
+
+    { category: "Acids & Bases", categoryClass: "badge-acids", question: "According to Arrhenius, acids produce which ion in water?", options: ["H\u207A (hydrogen ions)", "OH\u207B (hydroxide ions)", "Na\u207A (sodium ions)", "Cl\u207B (chloride ions)"], correctAnswer: "H\u207A (hydrogen ions)", explanation: "Arrhenius acids release H\u207A ions when dissolved in water." },
+    { category: "Acids & Bases", categoryClass: "badge-acids", question: "According to Arrhenius, bases produce which ion in water?", options: ["OH\u207B (hydroxide ions)", "H\u207A (hydrogen ions)", "O\u00B2\u207B (oxide ions)", "CO\u2083\u00B2\u207B (carbonate ions)"], correctAnswer: "OH\u207B (hydroxide ions)", explanation: "Arrhenius bases release OH\u207B ions when dissolved in water." },
+    { category: "Acids & Bases", categoryClass: "badge-acids", question: "A solution with a pH of 3 is:", options: ["Acidic", "Basic", "Neutral", "Cannot be determined"], correctAnswer: "Acidic", explanation: "pH < 7 is acidic. pH = 7 is neutral. pH > 7 is basic." },
+    { category: "Acids & Bases", categoryClass: "badge-acids", question: "A solution with a pH of 7.8 is:", options: ["Slightly basic", "Strongly acidic", "Neutral", "Strongly basic"], correctAnswer: "Slightly basic", explanation: "pH 7.8 is just above neutral (7), so it is slightly basic." },
+    { category: "Acids & Bases", categoryClass: "badge-acids", question: "Phenolphthalein turns pink in a:", options: ["Basic solution", "Acidic solution", "Neutral solution", "Saturated solution"], correctAnswer: "Basic solution", explanation: "Phenolphthalein is colorless in acid and turns pink/magenta in base." },
+    { category: "Acids & Bases", categoryClass: "badge-acids", question: "Red litmus paper turns blue in a:", options: ["Base", "Acid", "Neutral solution", "Salt solution"], correctAnswer: "Base", explanation: "Red litmus turns blue in base. Blue litmus turns red in acid." },
+    { category: "Acids & Bases", categoryClass: "badge-acids", question: "What are the products of a neutralization reaction?", options: ["Salt and water", "Acid and base", "Gas and precipitate", "Metal and oxygen"], correctAnswer: "Salt and water", explanation: "Acid + Base \u2192 Salt + Water. Example: HCl + NaOH \u2192 NaCl + H\u2082O." },
+    { category: "Acids & Bases", categoryClass: "badge-acids", question: "Which statement describes a base?", options: ["The solution will react with HNO\u2083", "The solution has a pH of 3", "The solution turns blue litmus red", "The solution will light up a conductivity apparatus only if strong"], correctAnswer: "The solution will react with HNO\u2083", explanation: "Bases react with acids (like HNO\u2083) in neutralization reactions." },
+    { category: "Acids & Bases", categoryClass: "badge-acids", question: "Write the balanced neutralization equation for hydrochloric acid and magnesium hydroxide.", options: ["2 HCl + Mg(OH)\u2082 \u2192 MgCl\u2082 + 2 H\u2082O", "HCl + MgOH \u2192 MgCl + H\u2082O", "HCl + Mg(OH)\u2082 \u2192 MgCl\u2082 + H\u2082O", "2 HCl + Mg(OH)\u2082 \u2192 2 MgCl + 2 H\u2082O"], correctAnswer: "2 HCl + Mg(OH)\u2082 \u2192 MgCl\u2082 + 2 H\u2082O", explanation: "Mg(OH)\u2082 has 2 OH\u207B, so you need 2 HCl to neutralize it, producing MgCl\u2082 + 2 H\u2082O." },
+
+    { category: "Energy & Calorimetry", categoryClass: "badge-energy", question: "Water condensing is an example of:", options: ["Exothermic process", "Endothermic process", "Neutralization", "Sublimation"], correctAnswer: "Exothermic process", explanation: "Condensation releases heat to the surroundings as gas becomes liquid." },
+    { category: "Energy & Calorimetry", categoryClass: "badge-energy", question: "C\u2086H\u2081\u2088(l) \u2192 C\u2086H\u2081\u2088(g) is an example of:", options: ["Endothermic process", "Exothermic process", "Decomposition", "Synthesis"], correctAnswer: "Endothermic process", explanation: "Liquid to gas (vaporization) requires energy input, making it endothermic." },
+    { category: "Energy & Calorimetry", categoryClass: "badge-energy", question: "2 HgO + heat \u2192 2 Hg + O\u2082 is:", options: ["Endothermic", "Exothermic", "Neither", "Neutral"], correctAnswer: "Endothermic", explanation: "Heat is a reactant (energy is absorbed), so this is endothermic." },
+    { category: "Energy & Calorimetry", categoryClass: "badge-energy", question: "2 Mg + O\u2082 \u2192 2 MgO + 601.83 kJ is:", options: ["Exothermic", "Endothermic", "Equilibrium", "Catalyzed"], correctAnswer: "Exothermic", explanation: "Energy (601.83 kJ) is a product (released), so this is exothermic." },
+    { category: "Energy & Calorimetry", categoryClass: "badge-energy", question: "What is the Law of Conservation of Energy?", options: ["Energy cannot be created or destroyed, only transferred", "Energy is always lost as heat", "Energy can be created from matter", "Energy always increases in a system"], correctAnswer: "Energy cannot be created or destroyed, only transferred", explanation: "Total energy in an isolated system stays constant; it changes form but is never lost." },
+    { category: "Energy & Calorimetry", categoryClass: "badge-energy", question: "What is the specific heat of water?", options: ["4.184 J/g\u00B0C", "1.000 J/g\u00B0C", "2.450 J/g\u00B0C", "0.900 J/g\u00B0C"], correctAnswer: "4.184 J/g\u00B0C", explanation: "Water has an unusually high specific heat of 4.184 J/g\u00B0C." },
+    { category: "Energy & Calorimetry", categoryClass: "badge-energy", question: "Why is specific heat like a fingerprint?", options: ["Every substance has a unique specific heat value", "It changes with temperature", "It is always the same number", "It only applies to metals"], correctAnswer: "Every substance has a unique specific heat value", explanation: "Each substance has a characteristic specific heat, which can be used to identify it." },
+    { category: "Energy & Calorimetry", categoryClass: "badge-energy", question: "A 51.0 g metal at 100.0\u00B0C is placed in 60.0 g of water at 18.0\u00B0C. Final temp = 20.0\u00B0C. What is the specific heat of the metal?", options: ["0.122 J/g\u00B0C", "0.385 J/g\u00B0C", "0.449 J/g\u00B0C", "0.902 J/g\u00B0C"], correctAnswer: "0.122 J/g\u00B0C", explanation: "q(water) = 60.0 \u00D7 4.184 \u00D7 2.0 = 502.1 J. c(metal) = 502.1 / (51.0 \u00D7 80.0) = 0.123 J/g\u00B0C \u2248 0.122 (closest to aluminum is not right, this is likely lead)." },
+    { category: "Energy & Calorimetry", categoryClass: "badge-energy", question: "In a calorimetry experiment, what is \u0394T?", options: ["Final temperature minus initial temperature", "Mass times specific heat", "Heat divided by mass", "Initial temperature minus final temperature"], correctAnswer: "Final temperature minus initial temperature", explanation: "\u0394T = T(final) - T(initial). It represents the change in temperature." },
+    { category: "Energy & Calorimetry", categoryClass: "badge-energy", question: "Using q = mc\u0394T, what does 'q' represent?", options: ["Heat energy (in Joules)", "Mass (in grams)", "Specific heat capacity", "Temperature change"], correctAnswer: "Heat energy (in Joules)", explanation: "q is the heat absorbed or released, measured in Joules (J) or kilojoules (kJ)." }
+];
+
+const categoryQuotas = {
+    "The Mole": 4,
+    "Percent Composition": 2,
+    "Empirical & Molecular": 2,
+    "Stoichiometry": 3,
+    "Solutions": 3,
+    "Acids & Bases": 3,
+    "Energy & Calorimetry": 3
+};
+
+const TIMER_SECONDS = 90;
+const SPEED_BONUS_THRESHOLD = 45;
+
+let currentQuestions = [];
+let currentIndex = 0;
+let score = 0;
+let categoryResults = {};
+let timerInterval = null;
+let timeLeft = TIMER_SECONDS;
+let totalTime = 0;
+let quizStartTime = 0;
+let missedQuestions = [];
+let rvQuestions = [];
+let rvIndex = 0;
+let rvScore = 0;
+let rvSelectedIndex = null;
+
+function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+function buildFlashcards() {
+    const sections = { mole: "mole-cards", formulas: "formula-cards", solutions: "solutions-cards", energy: "energy-cards" };
+    const catClasses = { mole: "category-mole", formulas: "category-formulas", solutions: "category-solutions", energy: "category-energy" };
+
+    for (const [key, containerId] of Object.entries(sections)) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
+        flashcards[key].forEach(card => {
+            const div = document.createElement("div");
+            div.className = `flashcard ${catClasses[key]}`;
+            div.innerHTML = `<div class="flashcard-inner"><div class="flashcard-front">${card.front}</div><div class="flashcard-back">${card.back}</div></div>`;
+            div.onclick = () => div.classList.toggle("flipped");
+            container.appendChild(div);
+        });
+    }
+}
+
+function selectQuestions() {
+    let selected = [];
+    for (const [cat, quota] of Object.entries(categoryQuotas)) {
+        const pool = allQuestions.filter(q => q.category === cat);
+        const shuffled = shuffle(pool);
+        selected.push(...shuffled.slice(0, quota));
+    }
+    return shuffle(selected);
+}
+
+function startQuiz() {
+    currentQuestions = selectQuestions();
+    currentIndex = 0;
+    score = 0;
+    categoryResults = {};
+    totalTime = 0;
+    quizStartTime = Date.now();
+    missedQuestions = [];
+
+    for (const cat of Object.keys(categoryQuotas)) {
+        categoryResults[cat] = { correct: 0, total: 0 };
+    }
+
+    document.getElementById("flashcard-section").style.display = "none";
+    document.getElementById("quiz-section").style.display = "block";
+    document.getElementById("results-section").style.display = "none";
+    document.getElementById("review-missed-section").style.display = "none";
+    showQuestion();
+}
+
+function showQuestion() {
+    const q = currentQuestions[currentIndex];
+    document.getElementById("question-number").textContent = `Question ${currentIndex + 1} of ${currentQuestions.length}`;
+    document.getElementById("progress-fill").style.width = `${((currentIndex) / currentQuestions.length) * 100}%`;
+
+    const badge = document.getElementById("category-badge");
+    badge.textContent = q.category;
+    badge.className = `category-badge ${q.categoryClass}`;
+
+    document.getElementById("question-text").textContent = q.question;
+
+    const grid = document.getElementById("options-grid");
+    grid.innerHTML = "";
+    const letters = ["A", "B", "C", "D"];
+    const shuffledOptions = shuffle(q.options);
+
+    shuffledOptions.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+        btn.onclick = () => selectAnswer(btn, opt, q);
+        grid.appendChild(btn);
+    });
+
+    document.getElementById("feedback").style.display = "none";
+    document.getElementById("next-btn").style.display = "none";
+
+    startTimer();
+}
+
+function startTimer() {
+    timeLeft = TIMER_SECONDS;
+    const ring = document.getElementById("timer-ring");
+    const text = document.getElementById("timer-text");
+    const circumference = 125.66;
+
+    clearInterval(timerInterval);
+    ring.style.stroke = "#27ae60";
+    text.textContent = timeLeft;
+    ring.style.strokeDashoffset = "0";
+
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        text.textContent = timeLeft;
+        const pct = (TIMER_SECONDS - timeLeft) / TIMER_SECONDS;
+        ring.style.strokeDashoffset = pct * circumference;
+
+        if (pct > 0.66) ring.style.stroke = "#e74c3c";
+        else if (pct > 0.33) ring.style.stroke = "#f39c12";
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            autoSubmit();
+        }
+    }, 1000);
+}
+
+function autoSubmit() {
+    const q = currentQuestions[currentIndex];
+    const btns = document.querySelectorAll(".option-btn");
+    btns.forEach(b => {
+        b.classList.add("disabled");
+        if (b.querySelector("span:last-child").textContent === q.correctAnswer) b.classList.add("correct");
+    });
+
+    categoryResults[q.category].total++;
+    missedQuestions.push(q);
+
+    const fb = document.getElementById("feedback");
+    fb.className = "feedback wrong-feedback";
+    fb.innerHTML = `<strong>Time\u2019s up!</strong> The correct answer is: <strong>${q.correctAnswer}</strong><br>${q.explanation}`;
+    fb.style.display = "block";
+    document.getElementById("next-btn").style.display = "block";
+}
+
+function selectAnswer(btn, selected, q) {
+    clearInterval(timerInterval);
+    const timeTaken = TIMER_SECONDS - timeLeft;
+    totalTime += timeTaken;
+
+    const btns = document.querySelectorAll(".option-btn");
+    btns.forEach(b => {
+        b.classList.add("disabled");
+        if (b.querySelector("span:last-child").textContent === q.correctAnswer) b.classList.add("correct");
+    });
+
+    categoryResults[q.category].total++;
+    const fb = document.getElementById("feedback");
+
+    if (selected === q.correctAnswer) {
+        score++;
+        categoryResults[q.category].correct++;
+        btn.classList.add("correct");
+        fb.className = "feedback correct-feedback";
+        let speedNote = timeTaken < SPEED_BONUS_THRESHOLD ? ` <span class="speed-bonus">Speed bonus! (${timeTaken}s)</span>` : "";
+        fb.innerHTML = `<strong>Correct!</strong>${speedNote}<br>${q.explanation}`;
+    } else {
+        btn.classList.add("wrong");
+        fb.className = "feedback wrong-feedback";
+        fb.innerHTML = `<strong>Incorrect.</strong> The correct answer is: <strong>${q.correctAnswer}</strong><br>${q.explanation}`;
+        missedQuestions.push(q);
+    }
+
+    fb.style.display = "block";
+    document.getElementById("next-btn").style.display = "block";
+}
+
+function nextQuestion() {
+    currentIndex++;
+    if (currentIndex >= currentQuestions.length) {
+        showResults();
+    } else {
+        showQuestion();
+    }
+}
+
+function showResults() {
+    clearInterval(timerInterval);
+    document.getElementById("quiz-section").style.display = "none";
+    document.getElementById("results-section").style.display = "block";
+
+    const pct = Math.round((score / currentQuestions.length) * 100);
+    const elapsed = Math.round((Date.now() - quizStartTime) / 1000);
+    const avg = Math.round(elapsed / currentQuestions.length);
+
+    const display = document.getElementById("score-display");
+    const percentEl = document.getElementById("score-percent");
+    const labelEl = document.getElementById("score-label");
+    const timeEl = document.getElementById("score-time");
+
+    percentEl.textContent = `${pct}%`;
+    timeEl.textContent = `Total time: ${Math.floor(elapsed / 60)}m ${elapsed % 60}s | Avg: ${avg}s per question`;
+
+    if (pct >= 80) { display.className = "score-display great"; labelEl.textContent = `${score}/${currentQuestions.length} - Great job!`; percentEl.style.color = "#27ae60"; }
+    else if (pct >= 60) { display.className = "score-display good"; labelEl.textContent = `${score}/${currentQuestions.length} - Good effort!`; percentEl.style.color = "#f39c12"; }
+    else { display.className = "score-display needs-work"; labelEl.textContent = `${score}/${currentQuestions.length} - Keep studying!`; percentEl.style.color = "#e74c3c"; }
+
+    const catDiv = document.getElementById("category-scores");
+    catDiv.innerHTML = "<h3>Score by Topic</h3>";
+    const reviewList = document.getElementById("review-list");
+    reviewList.innerHTML = "";
+    let needsReview = false;
+
+    for (const [cat, data] of Object.entries(categoryResults)) {
+        if (data.total === 0) continue;
+        const catPct = Math.round((data.correct / data.total) * 100);
+        const row = document.createElement("div");
+        row.className = `cat-score-row ${catPct === 100 ? "cat-great" : catPct >= 50 ? "cat-ok" : "cat-bad"}`;
+        row.innerHTML = `<span>${cat}</span><span><strong>${data.correct}/${data.total}</strong> (${catPct}%)</span>`;
+        catDiv.appendChild(row);
+
+        if (catPct < 100) {
+            needsReview = true;
+            const li = document.createElement("li");
+            li.textContent = `${cat} (${data.correct}/${data.total})`;
+            reviewList.appendChild(li);
+        }
+    }
+
+    document.getElementById("review-topics").style.display = needsReview ? "block" : "none";
+
+    if (missedQuestions.length > 0) {
+        document.getElementById("review-missed-section").style.display = "block";
+        startReviewMode();
+    } else {
+        document.getElementById("review-missed-section").style.display = "none";
+    }
+}
+
+function startReviewMode() {
+    rvQuestions = [...missedQuestions];
+    rvIndex = 0;
+    rvScore = 0;
+    rvSelectedIndex = null;
+
+    document.getElementById("rv-score-box").style.display = "none";
+    document.getElementById("rv-progress").style.display = "block";
+    document.getElementById("rv-question").style.display = "block";
+    document.getElementById("rv-options").style.display = "flex";
+    document.getElementById("rv-check-btn").style.display = "block";
+    document.getElementById("rv-next-btn").style.display = "none";
+    document.getElementById("rv-feedback").style.display = "none";
+
+    renderReviewQuestion();
+}
+
+function renderReviewQuestion() {
+    const q = rvQuestions[rvIndex];
+    document.getElementById("rv-progress").textContent = `Question ${rvIndex + 1} of ${rvQuestions.length}`;
+    document.getElementById("rv-question").textContent = q.question;
+
+    const shuffledOpts = shuffle([...q.options]);
+    const container = document.getElementById("rv-options");
+    container.innerHTML = shuffledOpts.map((opt, i) =>
+        `<div class="review-missed-opt" data-correct="${opt === q.correctAnswer}" onclick="rvSelectOption(${i})">${opt}</div>`
+    ).join("");
+
+    rvSelectedIndex = null;
+    document.getElementById("rv-check-btn").disabled = true;
+    document.getElementById("rv-check-btn").style.display = "block";
+    document.getElementById("rv-next-btn").style.display = "none";
+    document.getElementById("rv-feedback").style.display = "none";
+}
+
+function rvSelectOption(index) {
+    const opts = document.querySelectorAll(".review-missed-opt");
+    opts.forEach(o => o.classList.remove("selected"));
+    opts[index].classList.add("selected");
+    rvSelectedIndex = index;
+    document.getElementById("rv-check-btn").disabled = false;
+}
+
+function rvCheckAnswer() {
+    const opts = document.querySelectorAll(".review-missed-opt");
+    const selected = opts[rvSelectedIndex];
+    const isCorrect = selected.dataset.correct === "true";
+
+    opts.forEach(o => {
+        o.style.pointerEvents = "none";
+        if (o.dataset.correct === "true") o.classList.add("rv-reveal");
+    });
+
+    if (isCorrect) {
+        selected.classList.add("rv-correct");
+        rvScore++;
+    } else {
+        selected.classList.add("rv-incorrect");
+    }
+
+    const fb = document.getElementById("rv-feedback");
+    fb.style.display = "block";
+    fb.className = "review-missed-feedback " + (isCorrect ? "rv-fb-correct" : "rv-fb-incorrect");
+    fb.textContent = isCorrect ? "Correct! You got it this time!" : "Not quite. The correct answer is highlighted above.";
+
+    document.getElementById("rv-check-btn").style.display = "none";
+    document.getElementById("rv-next-btn").style.display = "block";
+    document.getElementById("rv-next-btn").textContent = rvIndex < rvQuestions.length - 1 ? "Next \u2192" : "See Review Results";
+}
+
+function rvNextQuestion() {
+    rvIndex++;
+    if (rvIndex >= rvQuestions.length) {
+        showReviewResults();
+    } else {
+        renderReviewQuestion();
+    }
+}
+
+function showReviewResults() {
+    document.getElementById("rv-progress").style.display = "none";
+    document.getElementById("rv-question").style.display = "none";
+    document.getElementById("rv-options").style.display = "none";
+    document.getElementById("rv-feedback").style.display = "none";
+    document.getElementById("rv-check-btn").style.display = "none";
+    document.getElementById("rv-next-btn").style.display = "none";
+
+    const box = document.getElementById("rv-score-box");
+    box.style.display = "block";
+    const pct = Math.round((rvScore / rvQuestions.length) * 100);
+    document.getElementById("rv-score-text").textContent =
+        `You got ${rvScore} out of ${rvQuestions.length} correct (${pct}%) on the review!`;
+}
+
+function restartQuiz() { startQuiz(); }
+
+function reviewVocab() {
+    document.getElementById("results-section").style.display = "none";
+    document.getElementById("quiz-section").style.display = "none";
+    document.getElementById("flashcard-section").style.display = "block";
+    document.querySelectorAll(".flashcard").forEach(c => c.classList.remove("flipped"));
+}
+
+buildFlashcards();
+
+document.addEventListener("keydown", function(e) {
+    if (e.key !== "Enter") return;
+
+    const nextBtn = document.getElementById("next-btn");
+    if (nextBtn && nextBtn.style.display !== "none") {
+        e.preventDefault();
+        nextQuestion();
+        return;
+    }
+
+    const rvNextBtn = document.getElementById("rv-next-btn");
+    if (rvNextBtn && rvNextBtn.style.display !== "none") {
+        e.preventDefault();
+        rvNextQuestion();
+        return;
+    }
+
+    const rvCheckBtn = document.getElementById("rv-check-btn");
+    if (rvCheckBtn && rvCheckBtn.style.display !== "none" && !rvCheckBtn.disabled) {
+        e.preventDefault();
+        rvCheckAnswer();
+        return;
+    }
+});
+</script>
+</body>
+</html>

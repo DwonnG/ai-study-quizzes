@@ -26,6 +26,7 @@ Try them now - no download needed!
 - 📐 [Angles Quiz (Unit 5)](https://dwonng.github.io/ai-study-quizzes/math/angles_quiz.html) - Angle types, protractor reading, missing angles
 - 📐 [Unit Circle & Trig Quiz](https://dwonng.github.io/ai-study-quizzes/math/trig_unit_circle_quiz.html) - Quadrants, trig values, arc length, sector area
 - 📐 [Shapes & Geometry Quiz (Unit 6)](https://dwonng.github.io/ai-study-quizzes/math/shapes_quiz.html) - Perimeter, area, parallel/perpendicular lines, symmetry, triangles
+- 🎲 [Probability & Statistics Quiz](https://dwonng.github.io/ai-study-quizzes/math/probability_statistics_quiz.html) - Expected value, permutations/combinations, Venn diagrams, independent events
 
 ### 🔬 Science
 - 💡 [Sound & Light Quiz](https://dwonng.github.io/ai-study-quizzes/science/science_sound_light_quiz.html) - Spanish immersion science
@@ -35,6 +36,7 @@ Try them now - no download needed!
 - 🧪 [Solutions & Solubility Quiz](https://dwonng.github.io/ai-study-quizzes/science/solutions_quiz.html) - Molarity, solubility curves, colligative properties
 - 💧 [Water Cycle Quiz](https://dwonng.github.io/ai-study-quizzes/science/water_cycle_quiz.html) - Evaporation, condensation, precipitation, accumulation
 - 🧪 [Acids & Bases Quiz](https://dwonng.github.io/ai-study-quizzes/science/acids_bases_quiz.html) - pH scale, neutralization, Arrhenius vs Brønsted-Lowry theories
+- 🧪 [Chemistry Final Exam Review](https://dwonng.github.io/ai-study-quizzes/science/chemistry_final_review_quiz.html) - The Mole, stoichiometry, solutions, acids/bases, calorimetry, percent composition
 
 ### 📚 Language Arts
 - 📝 [Grammar Quiz](https://dwonng.github.io/ai-study-quizzes/language-arts/grammar_quiz.html) - Irregular verbs, homophones, plurals
