@@ -46,6 +46,7 @@ Try them now - no download needed!
 - 🏛️ [Social Studies Quiz](https://dwonng.github.io/ai-study-quizzes/social-studies/social_studies_quiz.html) - Bill of Rights, 3 Branches
 - 🗺️ [Westward Expansion Quiz](https://dwonng.github.io/ai-study-quizzes/social-studies/westward_expansion_quiz.html) - Interactive map labeling, Louisiana Purchase, War of 1812
 - ✊ [Reformers Quiz](https://dwonng.github.io/ai-study-quizzes/social-studies/reformers_quiz.html) - Abolitionists, suffragists, reform movements
+- ⚔️ [Civil War Quiz](https://dwonng.github.io/ai-study-quizzes/social-studies/civil_war_quiz.html) - Causes, battles, key people, effects + open-ended responses
 
 ### 🎮 Games
 - 🧠 [Daily Brain Boost](https://dwonng.github.io/ai-study-quizzes/games/daily_brain_boost.html) - Multiplication + Vocabulary

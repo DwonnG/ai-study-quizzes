@@ -1,0 +1,1785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Civil War Study Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .hidden { display: none !important; }
+
+        .quiz-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 750px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            color: #5b4a9e;
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+        }
+
+        .exam-date {
+            background: #FF6B6B;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        /* Flashcard Styles */
+        .flashcard-section {
+            margin-bottom: 25px;
+        }
+
+        .flashcard-section h3 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .flashcard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px;
+        }
+
+        .flashcard {
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .flashcard:hover .flashcard-inner {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 90px;
+            transition: transform 0.6s, box-shadow 0.3s;
+            transform-style: preserve-3d;
+            border-radius: 8px;
+        }
+
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.7rem;
+            line-height: 1.3;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .flashcard-front {
+            background: #ffffff;
+            color: #1a1a1a;
+            font-weight: bold;
+            border: 2px solid #333;
+        }
+
+        .flashcard-back {
+            background: linear-gradient(135deg, #e8edff, #f0f4ff);
+            color: #1a1a1a;
+            transform: rotateY(180deg);
+            border: 2px solid #667eea;
+        }
+
+        /* Category colors */
+        .cat-causes { background: linear-gradient(135deg, #FF6B6B, #ee5a24); }
+        .cat-battles { background: linear-gradient(135deg, #54a0ff, #2e86de); }
+        .cat-people { background: linear-gradient(135deg, #a55eea, #8854d0); }
+        .cat-effects { background: linear-gradient(135deg, #2ed573, #20bf6b); }
+
+        /* Quiz Styles */
+        .progress {
+            background: #ecf0f1;
+            border-radius: 10px;
+            height: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.4s;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .timer-container {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .timer {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .timer.warning { color: #e74c3c; animation: pulse 0.5s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .category-badge {
+            display: inline-block;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
+
+        .question {
+            font-size: 1.15rem;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            padding: 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: scale(1.02);
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #e8edff, #f0f4ff);
+        }
+
+        .option.correct {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+        }
+
+        .option.incorrect {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-submit:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #2ed573, #20bf6b);
+            color: white;
+        }
+
+        .btn-restart {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            color: white;
+            font-size: 0.9rem;
+            padding: 12px 25px;
+        }
+
+        .restart-separator {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px dashed #ccc;
+        }
+
+        .restart-separator p {
+            color: #7f8c8d;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+
+        .feedback {
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+
+        .feedback.correct {
+            background: #e8f5e9;
+            border: 2px solid #4CAF50;
+        }
+
+        .feedback.incorrect {
+            background: #ffebee;
+            border: 2px solid #f44336;
+        }
+
+        .feedback h3 { margin-bottom: 8px; }
+        .feedback.correct h3 { color: #2e7d32; }
+        .feedback.incorrect h3 { color: #c62828; }
+
+        /* Results */
+        .results-container {
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            color: white;
+        }
+
+        .score-circle .score { font-size: 2.5rem; font-weight: bold; }
+        .score-circle .label { font-size: 0.9rem; opacity: 0.9; }
+
+        .category-scores {
+            text-align: left;
+            margin: 20px 0;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .category-scores h3 {
+            text-align: center;
+            margin-bottom: 12px;
+            color: #5b4a9e;
+        }
+
+        .cat-score-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cat-score-row:last-child { border-bottom: none; }
+
+        .cat-score-bar {
+            flex: 1;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            margin: 0 12px;
+            overflow: hidden;
+        }
+
+        .cat-score-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.6s;
+        }
+
+        .cat-score-fill.perfect { background: #27ae60; }
+        .cat-score-fill.good { background: #f39c12; }
+        .cat-score-fill.needs-work { background: #e74c3c; }
+
+        .review-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .review-section h3 {
+            color: #e74c3c;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .review-progress {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .review-question {
+            font-size: 1.05rem;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .review-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .review-option {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .review-option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .review-option.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .review-option.correct {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+        }
+
+        .review-option.incorrect {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        .review-option.reveal-correct {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+            animation: glow 0.5s ease-in-out;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px #4CAF50; }
+            50% { box-shadow: 0 0 20px #4CAF50; }
+        }
+
+        .review-feedback {
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .review-feedback.correct {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .review-feedback.incorrect {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .review-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .review-btn-check {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .review-btn-next {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+
+        .review-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .review-score {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .review-score h4 {
+            color: #27ae60;
+            margin-bottom: 10px;
+        }
+
+        .review-score p {
+            color: #7f8c8d;
+        }
+
+        /* Open-Ended Questions */
+        .oe-section {
+            margin-bottom: 20px;
+        }
+
+        .oe-progress-text {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .oe-prompt {
+            font-size: 1.15rem;
+            color: #333;
+            margin-bottom: 15px;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .oe-hint {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .oe-textarea {
+            width: 100%;
+            min-height: 120px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 14px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            resize: vertical;
+            transition: border-color 0.3s;
+            line-height: 1.5;
+        }
+
+        .oe-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .oe-grading {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .oe-grading .oe-grade-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .oe-grading .oe-grade-label {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .oe-grading .oe-grade-score {
+            font-weight: bold;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            color: white;
+        }
+
+        .oe-grading.excellent { background: #e8f5e9; border: 2px solid #4CAF50; }
+        .oe-grading.excellent .oe-grade-label { color: #2e7d32; }
+        .oe-grading.excellent .oe-grade-score { background: #4CAF50; }
+
+        .oe-grading.good { background: #fff8e1; border: 2px solid #FF9800; }
+        .oe-grading.good .oe-grade-label { color: #e65100; }
+        .oe-grading.good .oe-grade-score { background: #FF9800; }
+
+        .oe-grading.needs-work { background: #ffebee; border: 2px solid #f44336; }
+        .oe-grading.needs-work .oe-grade-label { color: #c62828; }
+        .oe-grading.needs-work .oe-grade-score { background: #f44336; }
+
+        .oe-keyword-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .oe-keyword {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .oe-keyword.found {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+
+        .oe-keyword.missing {
+            background: #ffcdd2;
+            color: #c62828;
+            text-decoration: line-through;
+        }
+
+        .oe-sample-answer {
+            margin-top: 12px;
+            padding: 10px 14px;
+            background: #f5f0ff;
+            border-left: 4px solid #667eea;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .oe-sample-answer strong {
+            color: #5b4a9e;
+        }
+
+        .oe-total-score {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .oe-total-score h3 {
+            color: #5b4a9e;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 500px) {
+            .quiz-container { padding: 20px; }
+            .header h1 { font-size: 1.3rem; }
+            .question { font-size: 1rem; }
+            .flashcard-grid { grid-template-columns: repeat(2, 1fr); }
+            .flashcard-inner { height: 80px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <!-- Start Screen -->
+        <div id="startScreen">
+            <div class="header">
+                <h1>The Civil War</h1>
+                <p>Causes, Battles, Key People & Effects</p>
+            </div>
+
+            <div class="flashcard-section">
+                <h3>Study Cards - Click to flip!</h3>
+                <div class="flashcard-grid" id="flashcardGrid"></div>
+            </div>
+
+            <button class="btn btn-submit" onclick="startQuiz()">
+                Start Quiz
+            </button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quizScreen" class="hidden">
+            <div class="progress">
+                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+            </div>
+            <div class="progress-text" id="progressText">Question 1 of 20</div>
+
+            <div class="timer-container">
+                <div class="timer" id="timer">0:45</div>
+            </div>
+
+            <div class="category-badge" id="categoryBadge">Category</div>
+            <div class="question" id="questionText">Question text here</div>
+            <div class="options" id="optionsContainer"></div>
+
+            <button class="btn btn-submit hidden" id="submitBtn" onclick="submitAnswer()" disabled>
+                Submit Answer
+            </button>
+            <button class="btn btn-next hidden" id="nextBtn" onclick="nextQuestion()">
+                Next Question
+            </button>
+
+            <div class="feedback hidden" id="feedback">
+                <h3 id="feedbackTitle"></h3>
+                <p id="feedbackText"></p>
+            </div>
+        </div>
+
+        <!-- Open-Ended Screen -->
+        <div id="openEndedScreen" class="hidden">
+            <div class="header">
+                <h1>Written Response Questions</h1>
+                <p>Answer in your own words. Include as many key details as you can!</p>
+            </div>
+
+            <div class="oe-progress-text" id="oeProgress">Question 1 of 2</div>
+
+            <div class="oe-section" id="oeSection">
+                <div class="category-badge cat-effects">Effects</div>
+                <div class="oe-prompt" id="oePrompt"></div>
+                <div class="oe-hint" id="oeHint"></div>
+                <textarea class="oe-textarea" id="oeTextarea" placeholder="Type your answer here..."></textarea>
+                <div class="oe-grading hidden" id="oeGrading"></div>
+            </div>
+
+            <button class="btn btn-submit" id="oeSubmitBtn" onclick="gradeOpenEnded()">
+                Check My Answer
+            </button>
+            <button class="btn btn-next hidden" id="oeNextBtn" onclick="nextOpenEnded()">
+                Next Question
+            </button>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="hidden">
+            <div class="results-container">
+                <h2>Quiz Complete!</h2>
+                <div class="score-circle">
+                    <span class="score" id="finalScore">0%</span>
+                    <span class="label">Correct</span>
+                </div>
+                <p id="scoreMessage"></p>
+
+                <div class="category-scores" id="categoryScores"></div>
+
+                <div class="category-scores hidden" id="oeScoreSummary">
+                    <h3>Written Response Scores</h3>
+                    <div id="oeScoreRows"></div>
+                </div>
+
+                <div class="review-section hidden" id="reviewSection">
+                    <h3>Let's Practice the Missed Questions!</h3>
+                    <div class="review-progress" id="reviewProgress">Question 1 of 3</div>
+                    <div class="review-question" id="reviewQuestion"></div>
+                    <div class="review-options" id="reviewOptions"></div>
+                    <div class="review-feedback hidden" id="reviewFeedback"></div>
+                    <button class="review-btn review-btn-check hidden" id="reviewCheckBtn" onclick="checkReviewAnswer()" disabled>Check Answer</button>
+                    <button class="review-btn review-btn-next hidden" id="reviewNextBtn" onclick="nextReviewQuestion()">Next Question</button>
+                    <div class="review-score hidden" id="reviewScore">
+                        <h4>Review Complete!</h4>
+                        <p id="reviewScoreText"></p>
+                    </div>
+                </div>
+
+                <div class="restart-separator">
+                    <p>Done reviewing? Try a new quiz:</p>
+                </div>
+                <button class="btn btn-submit" onclick="backToStart()" style="margin-bottom:10px;">
+                    Review Vocab
+                </button>
+                <button class="btn btn-restart" onclick="restartQuiz()">
+                    Try Again
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let questions = [];
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedOption = null;
+        let missedQuestions = [];
+        let timerInterval = null;
+        let timeLeft = 45;
+        let categoryStats = {};
+
+        let reviewQuestions = [];
+        let currentReviewQuestion = 0;
+        let reviewScore = 0;
+        let selectedReviewOption = null;
+
+        const QUESTIONS_PER_QUIZ = 20;
+
+        let currentOE = 0;
+        let oeResults = [];
+
+        const openEndedQuestions = [
+            {
+                prompt: 'Describe the effects of the Civil War on the North.',
+                hint: 'Think about the economy, slavery, families, and feelings toward the South.',
+                keywords: [
+                    { term: 'economy improved', aliases: ['economy got better', 'economic growth', 'economy grew'] },
+                    { term: 'factories', aliases: ['factory', 'manufacturing', 'industrial'] },
+                    { term: 'slavery was abolished', aliases: ['slavery ended', 'abolished slavery', 'end of slavery', 'freed slaves', 'slaves were freed'] },
+                    { term: 'lives were lost', aliases: ['lives lost', 'people died', 'soldiers died', 'deaths', 'many died'] },
+                    { term: 'families were torn apart', aliases: ['families torn apart', 'families destroyed', 'families separated', 'family torn'] },
+                    { term: 'bitter toward the South', aliases: ['bitter', 'angry at the south', 'blamed the south', 'resented the south', 'break up the union'] }
+                ],
+                sampleAnswer: 'In the North, the economy improved due to the increased number of factories. Slavery was abolished. Many lives were lost and families were torn apart. Some Northerners were bitter toward the South for attempting to break up the Union.'
+            },
+            {
+                prompt: 'Describe the effects of the Civil War on the South.',
+                hint: 'Think about the economy, slavery, military rule, families, and feelings toward the North.',
+                keywords: [
+                    { term: 'economy was crushed', aliases: ['economy crushed', 'economy destroyed', 'economy ruined', 'economic ruin', 'economy collapsed'] },
+                    { term: 'poverty', aliases: ['poor', 'lived in poverty', 'many were poor'] },
+                    { term: 'slavery was abolished', aliases: ['slavery ended', 'abolished slavery', 'end of slavery', 'freed slaves', 'slaves were freed'] },
+                    { term: 'military rule', aliases: ['under military rule', 'military control', 'occupied by military', 'army controlled'] },
+                    { term: 'rejoin the Union', aliases: ['rejoin union', 'agreed to rejoin', 'come back to the union', 'return to the union'] },
+                    { term: 'blamed the North', aliases: ['blamed north', 'angry at the north', 'resented the north', 'fault of the north'] },
+                    { term: 'invading their land', aliases: ['invaded', 'invading', 'invasion', 'destroying their land'] },
+                    { term: 'destroying their economy', aliases: ['destroyed economy', 'ruined economy', 'wrecked economy'] },
+                    { term: 'lives were lost', aliases: ['lives lost', 'people died', 'soldiers died', 'deaths', 'many died'] },
+                    { term: 'families were torn apart', aliases: ['families torn apart', 'families destroyed', 'families separated', 'family torn'] }
+                ],
+                sampleAnswer: 'The southern economy was crushed and many lived in poverty. Slavery was abolished, and southern states were placed under military rule until they agreed to rejoin the Union. The South blamed the North for invading their land and destroying their economy. Many lives were lost and families were torn apart.'
+            }
+        ];
+
+        const categoryClasses = {
+            'Causes': 'cat-causes',
+            'Battles & Events': 'cat-battles',
+            'Key People': 'cat-people',
+            'Effects': 'cat-effects'
+        };
+
+        const categoryQuotas = {
+            'Causes': 5,
+            'Battles & Events': 7,
+            'Key People': 5,
+            'Effects': 3
+        };
+
+        const flashcards = [
+            { front: 'Uncle Tom\'s Cabin', back: 'Book by Harriet Beecher Stowe about the cruelty of slavery - sold 300,000+ copies in 1 year' },
+            { front: 'John Brown', back: 'Abolitionist who attacked Harper\'s Ferry in 1859 - captured and hanged for treason' },
+            { front: 'States\' Rights', back: 'Belief that states can ignore federal laws they don\'t like' },
+            { front: 'Secede', back: 'To formally leave the Union - southern states did this after Lincoln\'s election' },
+            { front: 'Fort Sumter', back: 'First battle of the Civil War - Confederates won, 34 hours, no lives lost' },
+            { front: 'Gettysburg', back: 'Turning point of the Civil War - 3 day battle, North won, Lincoln gave Gettysburg Address' },
+            { front: 'Atlanta Campaign', back: 'Sherman captured & burned Atlanta to cut off Confederate supply lines' },
+            { front: 'Sherman\'s March', back: '60,000 troops marched Atlanta to Savannah using "total war" tactics' },
+            { front: 'Total War', back: 'Destroying enemy resources: animals, supplies, railroads, factories' },
+            { front: 'Appomattox', back: 'Lee surrendered to Grant here on April 4, 1865 - ended the Civil War' },
+            { front: 'Abraham Lincoln', back: '16th president, led the North, issued Emancipation Proclamation' },
+            { front: 'Jefferson Davis', back: 'U.S. Senator from Mississippi, elected President of the Confederacy' },
+            { front: 'Ulysses S. Grant', back: 'Union General promoted by Lincoln to lead the entire Union Army' },
+            { front: 'Robert E. Lee', back: 'Confederate General of Virginia - brilliant but outnumbered, surrendered at Appomattox' },
+            { front: 'William T. Sherman', back: 'Union General under Grant - burned Atlanta, March to the Sea' },
+            { front: 'Stonewall Jackson', back: 'Confederate General - earned nickname when troops stood like a "stonewall" at Bull Run' },
+            { front: 'Emancipation Proclamation', back: '1863 order by Lincoln freeing slaves in Confederate States' },
+            { front: '13th Amendment', back: 'Freed ALL slaves in the United States' },
+            { front: 'Abolitionist', back: 'Person who wanted to end (abolish) slavery' },
+            { front: '620,000', back: 'Number of lives lost in the Civil War - deadliest war in American history' },
+        ];
+
+        const questionBank = [
+            // === CAUSES ===
+            {
+                category: 'Causes',
+                question: 'Who wrote the book Uncle Tom\'s Cabin?',
+                options: ['Sojourner Truth', 'Harriet Beecher Stowe', 'Frederick Douglass', 'Harriet Tubman'],
+                correct: 1,
+                explanation: 'Harriet Beecher Stowe wrote Uncle Tom\'s Cabin, which sold over 300,000 copies in one year and helped grow the abolitionist movement.'
+            },
+            {
+                category: 'Causes',
+                question: 'What was the main impact of Uncle Tom\'s Cabin?',
+                options: [
+                    'It convinced the South to end slavery',
+                    'It grew the abolitionist movement and increased tensions',
+                    'It led directly to the start of the Civil War',
+                    'It was banned in all states'
+                ],
+                correct: 1,
+                explanation: 'The book pointed out that slavery was a national issue, not just a southern one, growing the abolitionist movement and increasing tensions.'
+            },
+            {
+                category: 'Causes',
+                question: 'Uncle Tom\'s Cabin pointed out that slavery was:',
+                options: ['Only a southern issue', 'A national issue', 'Only about money', 'Not a real problem'],
+                correct: 1,
+                explanation: 'Stowe\'s book showed that slavery was a national issue, not just a southern one.'
+            },
+            {
+                category: 'Causes',
+                question: 'In 1859, John Brown led a rebellion by attacking an army post at:',
+                options: ['Fort Sumter', 'Gettysburg', 'Harper\'s Ferry', 'Bull Run'],
+                correct: 2,
+                explanation: 'John Brown attacked an army post at Harper\'s Ferry in 1859. He was captured, charged with treason, and hanged.'
+            },
+            {
+                category: 'Causes',
+                question: 'What happened to John Brown after his raid on Harper\'s Ferry?',
+                options: ['He escaped to Canada', 'He was captured, found guilty, and hanged', 'He became a senator', 'He was pardoned by Lincoln'],
+                correct: 1,
+                explanation: 'John Brown was quickly captured, charged with treason, found guilty, and hanged.'
+            },
+            {
+                category: 'Causes',
+                question: 'How did northerners and southerners view John Brown differently?',
+                options: [
+                    'Both considered him a criminal',
+                    'Northerners thought he was a hero; southerners thought he wanted to destroy their way of life',
+                    'Southerners praised him; northerners condemned him',
+                    'Neither side paid attention to his actions'
+                ],
+                correct: 1,
+                explanation: 'Northerners viewed Brown as a hero for fighting slavery, while southerners saw him as a threat to their way of life.'
+            },
+            {
+                category: 'Causes',
+                question: 'What are "states\' rights"?',
+                options: [
+                    'The right of states to declare war',
+                    'The belief that states should be able to ignore federal laws they do not like',
+                    'The right of states to print their own currency',
+                    'The right of states to elect their own presidents'
+                ],
+                correct: 1,
+                explanation: 'States\' rights is the belief that states should be able to ignore federal laws they do not like.'
+            },
+            {
+                category: 'Causes',
+                question: 'Why did southern states depend on slavery?',
+                options: [
+                    'They needed soldiers for war',
+                    'Cotton production increased their dependency on slave labor',
+                    'The government required it',
+                    'They had no other workers available'
+                ],
+                correct: 1,
+                explanation: 'With cotton production booming, wealthy slave owners did not want slavery abolished.'
+            },
+            {
+                category: 'Causes',
+                question: 'Abraham Lincoln was the only _____ candidate in the 1860 election.',
+                options: ['Pro-war', 'Anti-slavery', 'Southern', 'Independent'],
+                correct: 1,
+                explanation: 'Abraham Lincoln was the only anti-slavery candidate in the 1860 election.'
+            },
+            {
+                category: 'Causes',
+                question: 'Why did southern states begin to secede after Lincoln\'s election?',
+                options: [
+                    'They wanted to join Canada',
+                    'They feared slavery would be abolished',
+                    'Lincoln raised taxes on cotton',
+                    'Lincoln declared war on the South immediately'
+                ],
+                correct: 1,
+                explanation: 'Southern states seceded out of fear that slavery would be abolished under Lincoln\'s presidency.'
+            },
+            {
+                category: 'Causes',
+                question: 'Northern states believed that:',
+                options: [
+                    'States could ignore any federal law',
+                    'Federal laws were supreme over a state\'s wants and needs',
+                    'Slavery should expand westward',
+                    'The government had too much power'
+                ],
+                correct: 1,
+                explanation: 'Northern states felt that federal laws were supreme to a state\'s wants and needs.'
+            },
+
+            // === BATTLES & EVENTS ===
+            {
+                category: 'Battles & Events',
+                question: 'Which battle was the FIRST battle of the Civil War?',
+                options: ['Battle of Gettysburg', 'Battle of Fort Sumter', 'Battle of Bull Run', 'Battle of Atlanta'],
+                correct: 1,
+                explanation: 'The Battle of Fort Sumter was the first battle of the Civil War. The Confederates attacked the fort.'
+            },
+            {
+                category: 'Battles & Events',
+                question: 'How long did the Battle of Fort Sumter last?',
+                options: ['3 days', '34 hours', '1 week', '2 hours'],
+                correct: 1,
+                explanation: 'The Battle of Fort Sumter lasted 34 hours. The Confederates won and no lives were lost.'
+            },
+            {
+                category: 'Battles & Events',
+                question: 'How many lives were lost at the Battle of Fort Sumter?',
+                options: ['Hundreds', 'Thousands', 'None', 'About 50'],
+                correct: 2,
+                explanation: 'No lives were lost at the Battle of Fort Sumter, even though it lasted 34 hours.'
+            },
+            {
+                category: 'Battles & Events',
+                question: 'Which battle is known as the TURNING POINT of the Civil War?',
+                options: ['Fort Sumter', 'Appomattox Court House', 'Gettysburg', 'Sherman\'s March to the Sea'],
+                correct: 2,
+                explanation: 'The Battle of Gettysburg was the turning point. After this three-day battle, the Confederates were on the defensive for the rest of the war.'
+            },
+            {
+                category: 'Battles & Events',
+                question: 'Who won the Battle of Gettysburg?',
+                options: ['The Confederacy (South)', 'The Union (North)', 'It was a draw', 'Neither side claimed victory'],
+                correct: 1,
+                explanation: 'The North won the Battle of Gettysburg. Afterward, President Lincoln gave the Gettysburg Address.'
+            },
+            {
+                category: 'Battles & Events',
+                question: 'How long did the Battle of Gettysburg last?',
+                options: ['34 hours', 'One day', 'Three days', 'One week'],
+                correct: 2,
+                explanation: 'The extremely bloody Battle of Gettysburg lasted three days.'
+            },
+            {
+                category: 'Battles & Events',
+                question: 'What famous speech did President Lincoln give after the Battle of Gettysburg?',
+                options: ['The Emancipation Proclamation', 'The Gettysburg Address', 'The State of the Union', 'The Farewell Address'],
+                correct: 1,
+                explanation: 'After the Union won at Gettysburg, President Lincoln gave the famous Gettysburg Address.'
+            },
+            {
+                category: 'Battles & Events',
+                question: 'Why was Atlanta an important target for Union General Sherman?',
+                options: [
+                    'It was the Confederate capital',
+                    'It was a major supply center because of the railroad',
+                    'Jefferson Davis lived there',
+                    'It had the largest slave population'
+                ],
+                correct: 1,
+                explanation: 'Atlanta was becoming a major supply center for the Confederacy because of the railroad. Sherman intended to cut off the supply line.'
+            },
+            {
+                category: 'Battles & Events',
+                question: 'What did Sherman do to the city of Atlanta?',
+                options: ['He surrendered it', 'He burned much of the city', 'He built a fort there', 'He left it untouched'],
+                correct: 1,
+                explanation: 'Sherman burned much of the city of Atlanta to destroy the Confederate supply center.'
+            },
+            {
+                category: 'Battles & Events',
+                question: 'What tactic did Sherman\'s troops use during the March to the Sea?',
+                options: ['Guerrilla warfare', 'Blockade running', 'Total war', 'Trench warfare'],
+                correct: 2,
+                explanation: '"Total war" calls for the destruction of the enemy\'s resources such as animals, supplies, railroads, and factories.'
+            },
+            {
+                category: 'Battles & Events',
+                question: 'Sherman\'s March to the Sea went from Atlanta to which city?',
+                options: ['Richmond', 'Charleston', 'Savannah', 'New Orleans'],
+                correct: 2,
+                explanation: 'Sherman and 60,000 troops marched from Atlanta to Savannah, arriving on December 21, 1864.'
+            },
+            {
+                category: 'Battles & Events',
+                question: 'Sherman presented the city of Savannah as a _____ to President Lincoln.',
+                options: ['Victory trophy', 'Christmas gift', 'New capital', 'Peace offering'],
+                correct: 1,
+                explanation: 'The Union soldiers arrived in Savannah on Dec. 21, 1864 and presented the city as a Christmas gift to President Lincoln.'
+            },
+            {
+                category: 'Battles & Events',
+                question: 'Where did General Lee surrender to General Grant, ending the Civil War?',
+                options: ['Gettysburg, PA', 'Fort Sumter, SC', 'Atlanta, GA', 'Appomattox Court House, VA'],
+                correct: 3,
+                explanation: 'On April 4, 1865, General Lee surrendered to General Grant at Appomattox Court House in Virginia.'
+            },
+            {
+                category: 'Battles & Events',
+                question: 'What did the Emancipation Proclamation do?',
+                options: [
+                    'Freed all slaves in every U.S. state',
+                    'Freed the slaves in the Confederate States',
+                    'Ended the Civil War',
+                    'Gave women the right to vote'
+                ],
+                correct: 1,
+                explanation: 'In 1863, Lincoln issued the Emancipation Proclamation, an order that freed the slaves in the Confederate States.'
+            },
+            {
+                category: 'Battles & Events',
+                question: 'Which amendment freed ALL slaves in the United States?',
+                options: ['12th Amendment', '13th Amendment', '14th Amendment', '15th Amendment'],
+                correct: 1,
+                explanation: 'The 13th Amendment freed all slaves in the United States.'
+            },
+
+            // === KEY PEOPLE ===
+            {
+                category: 'Key People',
+                question: 'Abraham Lincoln served as the _____ president of the United States.',
+                options: ['14th', '15th', '16th', '17th'],
+                correct: 2,
+                explanation: 'Abraham Lincoln was the 16th president. He led the country during the Civil War.'
+            },
+            {
+                category: 'Key People',
+                question: 'How did Lincoln help keep the country united?',
+                options: [
+                    'He surrendered to the South',
+                    'His leadership helped the North defeat the South, keeping the country united',
+                    'He moved the capital to the South',
+                    'He gave the South everything they wanted'
+                ],
+                correct: 1,
+                explanation: 'Lincoln\'s leadership in the North helped the country remain strong and defeat the South, keeping the country united.'
+            },
+            {
+                category: 'Key People',
+                question: 'Who was elected President of the Confederate States of America?',
+                options: ['Robert E. Lee', 'Stonewall Jackson', 'Jefferson Davis', 'John Brown'],
+                correct: 2,
+                explanation: 'Jefferson Davis, a U.S. Senator from Mississippi, was elected President of the Confederate States.'
+            },
+            {
+                category: 'Key People',
+                question: 'Jefferson Davis was a U.S. Senator from which state?',
+                options: ['Virginia', 'South Carolina', 'Mississippi', 'Georgia'],
+                correct: 2,
+                explanation: 'Jefferson Davis was a U.S. Senator from Mississippi before becoming President of the Confederacy.'
+            },
+            {
+                category: 'Key People',
+                question: 'Who was promoted by Lincoln to lead the entire Union Army?',
+                options: ['William Sherman', 'Ulysses S. Grant', 'Stonewall Jackson', 'Robert E. Lee'],
+                correct: 1,
+                explanation: 'After winning major victories, Grant was promoted by President Lincoln to lead the entire Union Army.'
+            },
+            {
+                category: 'Key People',
+                question: 'Robert E. Lee led the Confederate Army of which state?',
+                options: ['Georgia', 'South Carolina', 'Virginia', 'Mississippi'],
+                correct: 2,
+                explanation: 'Robert E. Lee led the Confederate Army of Virginia throughout the Civil War.'
+            },
+            {
+                category: 'Key People',
+                question: 'Despite being outnumbered, Robert E. Lee was known for:',
+                options: ['Surrendering quickly', 'Being a brilliant commander who won many battles', 'Switching to the Union side', 'Avoiding all battles'],
+                correct: 1,
+                explanation: 'Lee was a brilliant commander who won many battles while being greatly outnumbered.'
+            },
+            {
+                category: 'Key People',
+                question: 'How did General Thomas "Stonewall" Jackson earn his nickname?',
+                options: [
+                    'He built stone walls around camps',
+                    'His soldiers held firmly against a fierce Union attack at Bull Run',
+                    'He was known for his stone-faced expression',
+                    'He defended a stone wall at Gettysburg'
+                ],
+                correct: 1,
+                explanation: 'Jackson earned his nickname when his soldiers held firmly against a fierce Union attack near Bull Run, standing like a "stonewall."'
+            },
+            {
+                category: 'Key People',
+                question: 'General Sherman served under which Union commander?',
+                options: ['Abraham Lincoln directly', 'Robert E. Lee', 'Ulysses S. Grant', 'Stonewall Jackson'],
+                correct: 2,
+                explanation: 'General Sherman served under the leadership of Union commander Ulysses S. Grant.'
+            },
+            {
+                category: 'Key People',
+                question: 'Match the correct side: Sherman (___), Lee (___), Grant (___), Jackson (___)',
+                options: [
+                    'Union, Confederate, Union, Confederate',
+                    'Confederate, Union, Confederate, Union',
+                    'Union, Union, Confederate, Confederate',
+                    'Confederate, Confederate, Union, Union'
+                ],
+                correct: 0,
+                explanation: 'Sherman (Union), Lee (Confederate), Grant (Union), Jackson (Confederate).'
+            },
+
+            // === EFFECTS ===
+            {
+                category: 'Effects',
+                question: 'The Civil War was the deadliest war in American history. How many lives were lost?',
+                options: ['About 50,000', 'About 200,000', 'More than 620,000', 'About 1 million'],
+                correct: 2,
+                explanation: 'The Civil War was the deadliest war in American history with more than 620,000 lives lost.'
+            },
+            {
+                category: 'Effects',
+                question: 'What happened to the northern economy after the Civil War?',
+                options: [
+                    'It collapsed into a depression',
+                    'It improved due to the increased number of factories',
+                    'It stayed exactly the same',
+                    'It became dependent on agriculture'
+                ],
+                correct: 1,
+                explanation: 'The northern economy improved due to the increased number of factories.'
+            },
+            {
+                category: 'Effects',
+                question: 'What happened to the southern economy after the war?',
+                options: [
+                    'It improved greatly',
+                    'It was crushed and many lived in poverty',
+                    'It stayed the same',
+                    'It switched to manufacturing'
+                ],
+                correct: 1,
+                explanation: 'The southern economy was crushed and many lived in poverty after the war.'
+            },
+            {
+                category: 'Effects',
+                question: 'What happened to southern states after the Civil War?',
+                options: [
+                    'They immediately rejoined the Union with full rights',
+                    'They were placed under military rule until they agreed to rejoin the Union',
+                    'They formed a new independent nation',
+                    'They were given extra representation in Congress'
+                ],
+                correct: 1,
+                explanation: 'Southern states were placed under military rule until they agreed to rejoin the Union.'
+            },
+            {
+                category: 'Effects',
+                question: 'What was a shared effect of the war for BOTH the North and South?',
+                options: [
+                    'Their economies improved',
+                    'Many lives were lost and families were torn apart',
+                    'Slavery continued',
+                    'Nothing changed'
+                ],
+                correct: 1,
+                explanation: 'Both North and South lost many lives and had families torn apart by the war.'
+            },
+            {
+                category: 'Effects',
+                question: 'How did the South feel about the North after the war?',
+                options: [
+                    'They were grateful for being freed',
+                    'They blamed the North for invading their land and destroying their economy',
+                    'They wanted to become one nation again right away',
+                    'They had no feelings at all'
+                ],
+                correct: 1,
+                explanation: 'The South blamed the North for invading their land and destroying their economy.'
+            },
+            {
+                category: 'Effects',
+                question: 'How did some northerners feel about the South after the war?',
+                options: [
+                    'They wanted to help rebuild immediately',
+                    'They were bitter toward the South for attempting to break up the Union',
+                    'They wanted to join the Confederacy',
+                    'They felt nothing'
+                ],
+                correct: 1,
+                explanation: 'Some northerners were bitter toward the South for attempting to break up the Union.'
+            },
+            {
+                category: 'Effects',
+                question: 'What happened to slavery as a result of the Civil War?',
+                options: [
+                    'It continued in some states',
+                    'It was abolished throughout the entire United States',
+                    'It was only abolished in the North',
+                    'It was replaced by a different system right away'
+                ],
+                correct: 1,
+                explanation: 'Slavery was abolished throughout the United States as a result of the Civil War and the 13th Amendment.'
+            }
+        ];
+
+        function shuffle(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function selectByQuota() {
+            const selected = [];
+            for (const [cat, quota] of Object.entries(categoryQuotas)) {
+                const pool = shuffle(
+                    questionBank.filter(q => q.category === cat)
+                );
+                selected.push(...pool.slice(0, quota));
+            }
+            return shuffle(selected);
+        }
+
+        function renderFlashcards() {
+            const grid = document.getElementById('flashcardGrid');
+            grid.innerHTML = flashcards.map(card => `
+                <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">${card.front}</div>
+                        <div class="flashcard-back">${card.back}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function startQuiz() {
+            questions = selectByQuota();
+            currentQuestion = 0;
+            score = 0;
+            missedQuestions = [];
+            categoryStats = {};
+
+            for (const cat of Object.keys(categoryQuotas)) {
+                categoryStats[cat] = { total: 0, correct: 0 };
+            }
+
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('quizScreen').classList.remove('hidden');
+
+            renderQuestion();
+            startTimer();
+        }
+
+        function startTimer() {
+            timeLeft = 45;
+            updateTimerDisplay();
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    autoSubmit();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const timer = document.getElementById('timer');
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            timer.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+            timer.classList.toggle('warning', timeLeft <= 10);
+        }
+
+        function autoSubmit() {
+            if (selectedOption === null) selectedOption = -1;
+            submitAnswer();
+        }
+
+        function renderQuestion() {
+            const q = questions[currentQuestion];
+
+            document.getElementById('progressBar').style.width =
+                ((currentQuestion + 1) / questions.length * 100) + '%';
+            document.getElementById('progressText').textContent =
+                `Question ${currentQuestion + 1} of ${questions.length}`;
+
+            const badge = document.getElementById('categoryBadge');
+            badge.textContent = q.category;
+            badge.className = 'category-badge ' +
+                (categoryClasses[q.category] || '');
+
+            document.getElementById('questionText').textContent = q.question;
+
+            const shuffledOptions = q.options.map((opt, i) => ({
+                text: opt, originalIndex: i
+            }));
+            shuffle(shuffledOptions);
+
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = shuffledOptions.map((opt, i) => `
+                <div class="option" data-original="${opt.originalIndex}"
+                     onclick="selectOption(${i}, ${opt.originalIndex})">
+                    ${opt.text}
+                </div>
+            `).join('');
+
+            selectedOption = null;
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').classList.add('hidden');
+            document.getElementById('nextBtn').classList.add('hidden');
+            document.getElementById('feedback').classList.add('hidden');
+        }
+
+        function selectOption(displayIndex, originalIndex) {
+            if (selectedOption !== null) return;
+            const options = document.querySelectorAll('.option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            options[displayIndex].classList.add('selected');
+            selectedOption = originalIndex;
+            submitAnswer();
+        }
+
+        function submitAnswer() {
+            clearInterval(timerInterval);
+
+            const q = questions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            const isCorrect = selectedOption === q.correct;
+
+            categoryStats[q.category].total++;
+
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                const origIdx = parseInt(opt.dataset.original);
+                if (origIdx === q.correct) opt.classList.add('correct');
+                if (origIdx === selectedOption && !isCorrect)
+                    opt.classList.add('incorrect');
+            });
+
+            if (isCorrect) {
+                score++;
+                categoryStats[q.category].correct++;
+            } else {
+                missedQuestions.push({
+                    question: q.question,
+                    yourAnswer: selectedOption >= 0
+                        ? q.options[selectedOption] : 'No answer',
+                    correctAnswer: q.options[q.correct],
+                    explanation: q.explanation
+                });
+            }
+
+            const feedback = document.getElementById('feedback');
+            feedback.classList.remove('hidden', 'correct', 'incorrect');
+            feedback.classList.add(isCorrect ? 'correct' : 'incorrect');
+            document.getElementById('feedbackTitle').textContent =
+                isCorrect ? 'Correct!' : 'Incorrect';
+            document.getElementById('feedbackText').textContent =
+                q.explanation;
+
+            document.getElementById('submitBtn').classList.add('hidden');
+            document.getElementById('nextBtn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion >= questions.length) {
+                startOpenEnded();
+            } else {
+                renderQuestion();
+                startTimer();
+            }
+        }
+
+        function showResults() {
+            clearInterval(timerInterval);
+
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('resultsScreen').classList.remove('hidden');
+
+            const percentage = Math.round((score / questions.length) * 100);
+            document.getElementById('finalScore').textContent = percentage + '%';
+
+            let msg;
+            if (percentage >= 90) msg = 'Excellent work!';
+            else if (percentage >= 70) msg = 'Good effort! Review the topics below.';
+            else if (percentage >= 50) msg = 'Keep studying! Focus on the red categories.';
+            else msg = 'Don\'t give up! Review the flashcards and try again.';
+
+            document.getElementById('scoreMessage').textContent =
+                `${msg} (${score}/${questions.length})`;
+
+            renderCategoryScores();
+            renderOEScoreSummary();
+
+            const reviewSection = document.getElementById('reviewSection');
+            if (missedQuestions.length > 0) {
+                reviewSection.classList.remove('hidden');
+                startReviewMode();
+            } else {
+                reviewSection.classList.add('hidden');
+            }
+        }
+
+        function renderOEScoreSummary() {
+            if (oeResults.length === 0) return;
+
+            const container = document.getElementById('oeScoreSummary');
+            container.classList.remove('hidden');
+
+            let html = '';
+            oeResults.forEach(r => {
+                const pct = r.pct;
+                const cls = pct >= 80
+                    ? 'perfect' : pct >= 50 ? 'good' : 'needs-work';
+                const shortPrompt = r.prompt.length > 40
+                    ? r.prompt.substring(0, 37) + '...' : r.prompt;
+
+                html += `
+                    <div class="cat-score-row">
+                        <span style="min-width:120px;font-size:0.85rem">
+                            ${shortPrompt}
+                        </span>
+                        <div class="cat-score-bar">
+                            <div class="cat-score-fill ${cls}"
+                                 style="width:${pct}%"></div>
+                        </div>
+                        <span style="min-width:50px;text-align:right;
+                               font-size:0.85rem;font-weight:600;
+                               color:${pct >= 80 ? '#27ae60'
+                                       : pct >= 50 ? '#f39c12'
+                                       : '#e74c3c'}">
+                            ${r.hitCount}/${r.total}
+                        </span>
+                    </div>`;
+            });
+
+            document.getElementById('oeScoreRows').innerHTML = html;
+        }
+
+        function renderCategoryScores() {
+            const container = document.getElementById('categoryScores');
+            let html = '<h3>Score by Topic</h3>';
+
+            for (const [cat, stats] of Object.entries(categoryStats)) {
+                if (stats.total === 0) continue;
+                const pct = Math.round(
+                    (stats.correct / stats.total) * 100
+                );
+                const cls = pct === 100
+                    ? 'perfect' : pct >= 50 ? 'good' : 'needs-work';
+
+                html += `
+                    <div class="cat-score-row">
+                        <span style="min-width:120px;font-size:0.9rem">
+                            ${cat}
+                        </span>
+                        <div class="cat-score-bar">
+                            <div class="cat-score-fill ${cls}"
+                                 style="width:${pct}%"></div>
+                        </div>
+                        <span style="min-width:50px;text-align:right;
+                               font-size:0.85rem;font-weight:600;
+                               color:${pct === 100 ? '#27ae60'
+                                       : pct >= 50 ? '#f39c12'
+                                       : '#e74c3c'}">
+                            ${stats.correct}/${stats.total}
+                        </span>
+                    </div>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function startReviewMode() {
+            reviewQuestions = [...missedQuestions];
+            currentReviewQuestion = 0;
+            reviewScore = 0;
+            selectedReviewOption = null;
+
+            document.getElementById('reviewScore').classList.add('hidden');
+            document.getElementById('reviewProgress')
+                .classList.remove('hidden');
+            document.getElementById('reviewQuestion')
+                .classList.remove('hidden');
+            document.getElementById('reviewOptions')
+                .classList.remove('hidden');
+            document.getElementById('reviewCheckBtn')
+                .classList.add('hidden');
+
+            renderReviewQuestion();
+        }
+
+        function renderReviewQuestion() {
+            const q = reviewQuestions[currentReviewQuestion];
+
+            document.getElementById('reviewProgress').textContent =
+                `Question ${currentReviewQuestion + 1} of ${reviewQuestions.length}`;
+            document.getElementById('reviewQuestion').textContent =
+                q.question;
+
+            let allOptions = [q.correctAnswer];
+            const originalQ = questionBank.find(
+                qb => qb.question === q.question
+            );
+            if (originalQ) {
+                originalQ.options.forEach(opt => {
+                    if (opt !== q.correctAnswer && allOptions.length < 4) {
+                        allOptions.push(opt);
+                    }
+                });
+            }
+            allOptions = shuffle(allOptions);
+
+            const container = document.getElementById('reviewOptions');
+            container.innerHTML = allOptions.map((opt, i) => `
+                <div class="review-option"
+                     data-correct="${opt === q.correctAnswer}"
+                     onclick="selectReviewOption(${i})">
+                    ${opt}
+                </div>
+            `).join('');
+
+            selectedReviewOption = null;
+            document.getElementById('reviewCheckBtn').disabled = true;
+            document.getElementById('reviewCheckBtn')
+                .classList.add('hidden');
+            document.getElementById('reviewNextBtn')
+                .classList.add('hidden');
+            document.getElementById('reviewFeedback')
+                .classList.add('hidden');
+        }
+
+        function selectReviewOption(index) {
+            if (selectedReviewOption !== null) return;
+            const options = document.querySelectorAll('.review-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            options[index].classList.add('selected');
+            selectedReviewOption = index;
+            checkReviewAnswer();
+        }
+
+        function checkReviewAnswer() {
+            const options = document.querySelectorAll('.review-option');
+            const selectedOpt = options[selectedReviewOption];
+            const isCorrect = selectedOpt.dataset.correct === 'true';
+
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt.dataset.correct === 'true') {
+                    opt.classList.add('reveal-correct');
+                }
+            });
+
+            if (isCorrect) {
+                selectedOpt.classList.add('correct');
+                reviewScore++;
+            } else {
+                selectedOpt.classList.add('incorrect');
+            }
+
+            const feedback = document.getElementById('reviewFeedback');
+            feedback.classList.remove('hidden', 'correct', 'incorrect');
+            feedback.classList.add(isCorrect ? 'correct' : 'incorrect');
+            feedback.textContent = isCorrect
+                ? 'Great job! You got it!'
+                : 'Not quite. The correct answer is highlighted.';
+
+            document.getElementById('reviewCheckBtn')
+                .classList.add('hidden');
+            document.getElementById('reviewNextBtn')
+                .classList.remove('hidden');
+            document.getElementById('reviewNextBtn').textContent =
+                currentReviewQuestion < reviewQuestions.length - 1
+                    ? 'Next Question' : 'See Results';
+        }
+
+        function nextReviewQuestion() {
+            currentReviewQuestion++;
+            if (currentReviewQuestion >= reviewQuestions.length) {
+                showReviewResults();
+            } else {
+                renderReviewQuestion();
+            }
+        }
+
+        function showReviewResults() {
+            document.getElementById('reviewProgress')
+                .classList.add('hidden');
+            document.getElementById('reviewQuestion')
+                .classList.add('hidden');
+            document.getElementById('reviewOptions')
+                .classList.add('hidden');
+            document.getElementById('reviewFeedback')
+                .classList.add('hidden');
+            document.getElementById('reviewCheckBtn')
+                .classList.add('hidden');
+            document.getElementById('reviewNextBtn')
+                .classList.add('hidden');
+
+            const scoreDiv = document.getElementById('reviewScore');
+            scoreDiv.classList.remove('hidden');
+
+            const pct = Math.round(
+                (reviewScore / reviewQuestions.length) * 100
+            );
+            document.getElementById('reviewScoreText').textContent =
+                `You got ${reviewScore} out of ${reviewQuestions.length} correct (${pct}%) on the review!`;
+        }
+
+        function startOpenEnded() {
+            clearInterval(timerInterval);
+            currentOE = 0;
+            oeResults = [];
+
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('openEndedScreen').classList.remove('hidden');
+
+            renderOpenEnded();
+        }
+
+        function renderOpenEnded() {
+            const q = openEndedQuestions[currentOE];
+
+            document.getElementById('oeProgress').textContent =
+                `Question ${currentOE + 1} of ${openEndedQuestions.length}`;
+            document.getElementById('oePrompt').textContent = q.prompt;
+            document.getElementById('oeHint').textContent = q.hint;
+            document.getElementById('oeTextarea').value = '';
+            document.getElementById('oeTextarea').disabled = false;
+            document.getElementById('oeGrading').classList.add('hidden');
+            document.getElementById('oeSubmitBtn').classList.remove('hidden');
+            document.getElementById('oeNextBtn').classList.add('hidden');
+        }
+
+        function gradeOpenEnded() {
+            const q = openEndedQuestions[currentOE];
+            const answer = document.getElementById('oeTextarea').value.toLowerCase().trim();
+
+            if (answer.length < 5) {
+                alert('Please write a longer answer before submitting!');
+                return;
+            }
+
+            document.getElementById('oeTextarea').disabled = true;
+
+            let matched = [];
+            let missed = [];
+
+            q.keywords.forEach(kw => {
+                const allTerms = [kw.term, ...kw.aliases];
+                const found = allTerms.some(t => answer.includes(t.toLowerCase()));
+                if (found) {
+                    matched.push(kw.term);
+                } else {
+                    missed.push(kw.term);
+                }
+            });
+
+            const total = q.keywords.length;
+            const hitCount = matched.length;
+            const pct = Math.round((hitCount / total) * 100);
+
+            let gradeClass, gradeLabel;
+            if (pct >= 80) { gradeClass = 'excellent'; gradeLabel = 'Great Job!'; }
+            else if (pct >= 50) { gradeClass = 'good'; gradeLabel = 'Good Effort!'; }
+            else { gradeClass = 'needs-work'; gradeLabel = 'Keep Practicing!'; }
+
+            oeResults.push({ prompt: q.prompt, hitCount, total, pct });
+
+            const gradingDiv = document.getElementById('oeGrading');
+            gradingDiv.className = `oe-grading ${gradeClass}`;
+            gradingDiv.classList.remove('hidden');
+
+            let keywordHtml = '<div class="oe-keyword-list">';
+            matched.forEach(k => {
+                keywordHtml += `<span class="oe-keyword found">${k}</span>`;
+            });
+            missed.forEach(k => {
+                keywordHtml += `<span class="oe-keyword missing">${k}</span>`;
+            });
+            keywordHtml += '</div>';
+
+            gradingDiv.innerHTML = `
+                <div class="oe-grade-header">
+                    <span class="oe-grade-label">${gradeLabel}</span>
+                    <span class="oe-grade-score">${hitCount}/${total} key points</span>
+                </div>
+                <p style="font-size:0.85rem;color:#555;margin-bottom:8px;">
+                    <span style="color:#2e7d32">Green</span> = mentioned &nbsp;
+                    <span style="color:#c62828">Red</span> = missing from your answer
+                </p>
+                ${keywordHtml}
+                <div class="oe-sample-answer">
+                    <strong>Sample answer:</strong> ${q.sampleAnswer}
+                </div>
+            `;
+
+            document.getElementById('oeSubmitBtn').classList.add('hidden');
+            document.getElementById('oeNextBtn').classList.remove('hidden');
+            document.getElementById('oeNextBtn').textContent =
+                currentOE < openEndedQuestions.length - 1
+                    ? 'Next Question' : 'See My Results';
+        }
+
+        function nextOpenEnded() {
+            currentOE++;
+            if (currentOE >= openEndedQuestions.length) {
+                document.getElementById('openEndedScreen').classList.add('hidden');
+                showResults();
+            } else {
+                renderOpenEnded();
+            }
+        }
+
+        function restartQuiz() {
+            document.getElementById('resultsScreen').classList.add('hidden');
+            document.getElementById('openEndedScreen').classList.add('hidden');
+            document.getElementById('oeScoreSummary').classList.add('hidden');
+            document.getElementById('quizScreen').classList.remove('hidden');
+            startQuiz();
+        }
+
+        function backToStart() {
+            document.getElementById('resultsScreen').classList.add('hidden');
+            document.getElementById('openEndedScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+        }
+
+        document.addEventListener('DOMContentLoaded', renderFlashcards);
+    </script>
+</body>
+</html>
