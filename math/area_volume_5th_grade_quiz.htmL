@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📦 5th Grade Area & Volume Quiz</title>
+
+<style>
+:root {
+  --primary: #2196F3;
+  --secondary: #FF9800;
+  --accent: #4CAF50;
+  --purple: #9C27B0;
+  --danger: #f44336;
+  --warning: #ff9800;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #1a237e 0%, #283593 50%, #3949ab 100%);
+  min-height: 100vh;
+  padding: 20px;
+  color: #fff;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+header {
+  text-align: center;
+  padding: 25px 20px;
+  background: linear-gradient(
+    135deg,
+    rgba(33,150,243,.3),
+    rgba(255,152,0,.3)
+  );
+  border-radius: 20px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255,255,255,.1);
+}
+
+h1 {
+  font-size: 2.2em;
+  margin-bottom: 8px;
+  background: linear-gradient(90deg, #64B5F6, #FFB74D, #81C784);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  opacity: .9;
+}
+
+.panel {
+  background: rgba(255,255,255,.96);
+  color: #333;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 10px 40px rgba(0,0,0,.3);
+}
+
+.start-screen h2 {
+  color: #1a237e;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.start-screen > p {
+  text-align: center;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.vocab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.vocab-card {
+  min-height: 120px;
+  background: linear-gradient(135deg, #f5f5f5, #eee);
+  border-radius: 14px;
+  padding: 15px;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: 2px solid transparent;
+  transition: .3s;
+}
+
+.vocab-card:hover {
+  transform: translateY(-3px);
+}
+
+.vocab-card.base {
+  border-color: #2196F3;
+}
+
+.vocab-card.volume {
+  border-color: #4CAF50;
+}
+
+.vocab-card.dimensions {
+  border-color: #FF9800;
+}
+
+.vocab-card.cubes {
+  border-color: #9C27B0;
+}
+
+.back {
+  display: none;
+  font-size: .9em;
+  line-height: 1.35;
+  color: #555;
+}
+
+.vocab-card.flipped .front {
+  display: none;
+}
+
+.vocab-card.flipped .back {
+  display: block;
+}
+
+.term {
+  font-weight: 700;
+  color: #333;
+}
+
+.hint {
+  font-size: .75em;
+  color: #999;
+  margin-top: 8px;
+}
+
+.btn {
+  border: 0;
+  border-radius: 28px;
+  padding: 14px 28px;
+  font-size: 1.05em;
+  font-weight: 700;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.btn:hover {
+  transform: scale(1.03);
+}
+
+.btn-start {
+  display: block;
+  margin: 22px auto 0;
+  background: linear-gradient(135deg, #2196F3, #FF9800);
+  color: #fff;
+}
+
+.quiz-content,
+.results {
+  display: none;
+}
+
+.quiz-content.active,
+.results.active {
+  display: block;
+}
+
+.score-bar,
+.timer-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: rgba(255,255,255,.12);
+  padding: 12px 18px;
+  border-radius: 15px;
+  margin-bottom: 14px;
+}
+
+.progress-container {
+  height: 8px;
+  background: rgba(255,255,255,.2);
+  border-radius: 8px;
+  margin-bottom: 18px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #2196F3, #FF9800);
+  transition: .3s;
+}
+
+.timer-circle {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  background: #2196F3;
+}
+
+.timer-circle.warning {
+  background: #ff9800;
+}
+
+.timer-circle.danger {
+  background: #f44336;
+}
+
+.question-card {
+  background: rgba(255,255,255,.97);
+  color: #333;
+  border-radius: 20px;
+  padding: 26px;
+  box-shadow: 0 10px 40px rgba(0,0,0,.3);
+}
+
+.question-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.badge {
+  display: inline-block;
+  color: #fff;
+  padding: 5px 11px;
+  border-radius: 14px;
+  font-size: .78em;
+  font-weight: 700;
+}
+
+.badge.base {
+  background: #2196F3;
+}
+
+.badge.volume {
+  background: #4CAF50;
+}
+
+.badge.dimensions {
+  background: #FF9800;
+}
+
+.badge.cubes {
+  background: #9C27B0;
+}
+
+.question {
+  font-size: 1.2em;
+  line-height: 1.5;
+  margin-bottom: 18px;
+  font-weight: 600;
+}
+
+.diagram {
+  display: flex;
+  justify-content: center;
+  margin: 12px 0 20px;
+}
+
+.diagram svg {
+  max-width: 100%;
+  height: auto;
+  background: #f8fbff;
+  border-radius: 12px;
+  padding: 8px;
+}
+
+.options {
+  display: grid;
+  gap: 10px;
+}
+
+.option {
+  width: 100%;
+  text-align: left;
+  padding: 14px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 1em;
+  transition: .2s;
+}
+
+.option:hover:not(:disabled) {
+  border-color: #2196F3;
+  background: #f2f8ff;
+}
+
+.option.correct {
+  border-color: #4CAF50;
+  background: #e8f5e9;
+}
+
+.option.wrong {
+  border-color: #f44336;
+  background: #ffebee;
+}
+
+.feedback {
+  display: none;
+  margin-top: 18px;
+  padding: 15px;
+  border-radius: 12px;
+  line-height: 1.45;
+}
+
+.feedback.show {
+  display: block;
+}
+
+.feedback.good {
+  background: #e8f5e9;
+  color: #1b5e20;
+}
+
+.feedback.bad {
+  background: #ffebee;
+  color: #b71c1c;
+}
+
+.next-btn {
+  display: none;
+  margin: 18px auto 0;
+  background: #1a237e;
+  color: #fff;
+}
+
+.results .panel {
+  text-align: center;
+}
+
+.big-score {
+  font-size: 3em;
+  font-weight: 800;
+  color: #1a237e;
+  margin: 10px 0;
+}
+
+.breakdown {
+  text-align: left;
+  margin-top: 20px;
+}
+
+.breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.review-box {
+  text-align: left;
+  background: #fff3e0;
+  padding: 15px;
+  border-radius: 12px;
+  margin: 18px 0;
+}
+
+.result-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.secondary {
+  background: #eee;
+  color: #333;
+}
+
+.primary {
+  background: linear-gradient(135deg, #2196F3, #FF9800);
+  color: #fff;
+}
+
+@media (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 1.7em;
+  }
+
+  .panel,
+  .question-card {
+    padding: 18px;
+  }
+
+  .question {
+    font-size: 1.08em;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+  <h1>📦 Area & Volume Challenge</h1>
+  <div class="subtitle">
+    5th Grade Math • Rectangular Prisms • Unit Cubes
+  </div>
+</header>
+
+<section id="start" class="start-screen panel">
+  <h2>Quick Review Before You Start</h2>
+
+  <p>
+    Tap each card to flip it. Every quiz gives you a fresh mix of problems.
+  </p>
+
+  <div class="vocab-grid">
+
+    <div class="vocab-card base"
+         onclick="this.classList.toggle('flipped')">
+
+      <div class="front">
+        <div class="term">Area of the Base</div>
+        <div class="hint">Tap to flip</div>
+      </div>
+
+      <div class="back">
+        <b>Length × Width</b><br>
+        It tells how many square units fit in one layer.
+        <br><br>
+        Example: 4 × 3 = 12 square units.
+      </div>
+    </div>
+
+    <div class="vocab-card volume"
+         onclick="this.classList.toggle('flipped')">
+
+      <div class="front">
+        <div class="term">Volume</div>
+        <div class="hint">Tap to flip</div>
+      </div>
+
+      <div class="back">
+        <b>Length × Width × Height</b><br>
+        or<br>
+        <b>Base Area × Height</b>
+        <br><br>
+        Volume is measured in cubic units.
+      </div>
+    </div>
+
+    <div class="vocab-card dimensions"
+         onclick="this.classList.toggle('flipped')">
+
+      <div class="front">
+        <div class="term">Dimensions</div>
+        <div class="hint">Tap to flip</div>
+      </div>
+
+      <div class="back">
+        The length, width, and height of a rectangular prism.
+        Different dimensions can sometimes make the same volume.
+      </div>
+    </div>
+
+    <div class="vocab-card cubes"
+         onclick="this.classList.toggle('flipped')">
+
+      <div class="front">
+        <div class="term">Unit Cube</div>
+        <div class="hint">Tap to flip</div>
+      </div>
+
+      <div class="back">
+        A cube that is 1 unit long, 1 unit wide,
+        and 1 unit high.
+        It has a volume of 1 cubic unit.
+      </div>
+    </div>
+
+  </div>
+
+  <button class="btn btn-start" onclick="startQuiz()">
+    Start 15-Question Quiz 🚀
+  </button>
+</section>
+
+<section id="quiz" class="quiz-content">
+
+  <div class="score-bar">
+    <span>✅ Score: <b id="score">0</b></span>
+    <span>Question <b id="qnum">1</b>/15</span>
+    <span>⏱ Total: <b id="elapsed">0:00</b></span>
+  </div>
+
+  <div class="timer-bar">
+    <span>Time for this question</span>
+
+    <span class="timer-circle" id="timerCircle">
+      <span id="timer">120</span>
+    </span>
+  </div>
+
+  <div class="progress-container">
+    <div id="progress" class="progress-bar"></div>
+  </div>
+
+  <div class="question-card">
+
+    <div class="question-top">
+      <span id="badge" class="badge"></span>
+      <span id="speed"></span>
+    </div>
+
+    <div id="question" class="question"></div>
+
+    <div id="diagram" class="diagram"></div>
+
+    <div id="options" class="options"></div>
+
+    <div id="feedback" class="feedback"></div>
+
+    <button id="nextBtn"
+            class="btn next-btn"
+            onclick="nextQuestion()">
+      Next Question →
+    </button>
+
+  </div>
+</section>
+
+<section id="results" class="results">
+
+  <div class="panel">
+
+    <h2>Quiz Complete! 🎉</h2>
+
+    <div id="bigScore" class="big-score"></div>
+
+    <div id="grade"></div>
+
+    <p id="timeResult"
+       style="margin-top:8px;color:#666"></p>
+
+    <div id="reviewBox" class="review-box"></div>
+
+    <div class="breakdown">
+      <h3>Score by Topic</h3>
+      <div id="breakdown"></div>
+    </div>
+
+    <div class="result-buttons">
+
+      <button class="btn primary"
+              onclick="startQuiz()">
+        Try Again 🔄
+      </button>
+
+      <button class="btn secondary"
+              onclick="reviewVocab()">
+        Review Vocab 📚
+      </button>
+
+    </div>
+
+  </div>
+</section>
+
+</div>
+
+<script>
+
+const svgPrism = (l, w, h) => `
+<svg viewBox="0 0 360 190"
+     width="360"
+     aria-label="rectangular prism diagram">
+
+  <polygon
+    points="70,65 220,65 285,30 135,30"
+    fill="#e3f2fd"
+    stroke="#29434e"
+    stroke-width="2"
+  />
+
+  <polygon
+    points="220,65 285,30 285,125 220,160"
+    fill="#bbdefb"
+    stroke="#29434e"
+    stroke-width="2"
+  />
+
+  <polygon
+    points="70,65 220,65 220,160 70,160"
+    fill="#fff"
+    stroke="#29434e"
+    stroke-width="2"
+  />
+
+  <text x="140"
+        y="181"
+        font-size="16"
+        fill="#333">
+    ${l} units
+  </text>
+
+  <text x="287"
+        y="95"
+        font-size="16"
+        fill="#333">
+    ${h} units
+  </text>
+
+  <text x="245"
+        y="26"
+        font-size="16"
+        fill="#333">
+    ${w} units
+  </text>
+
+</svg>
+`;
+
+const svgLayers = (perLayer, layers) => `
+<svg viewBox="0 0 360 180"
+     width="360"
+     aria-label="stacked cube layers">
+
+  <rect
+    x="70"
+    y="35"
+    width="210"
+    height="110"
+    rx="8"
+    fill="#fff"
+    stroke="#29434e"
+    stroke-width="2"
+  />
+
+  ${
+    Array.from(
+      { length: layers - 1 },
+      (_, i) =>
+        `<line
+          x1="70"
+          x2="280"
+          y1="${35 + (i + 1) * 110 / layers}"
+          y2="${35 + (i + 1) * 110 / layers}"
+          stroke="#90a4ae"
+          stroke-width="2"
+        />`
+    ).join("")
+  }
+
+  <text
+    x="145"
+    y="95"
+    font-size="18"
+    fill="#333">
+    ${perLayer} cubes per layer
+  </text>
+
+  <text
+    x="287"
+    y="95"
+    font-size="16"
+    fill="#333">
+    ${layers} layers
+  </text>
+
+</svg>
+`;
+
+const make = (
+  category,
+  question,
+  options,
+  correct,
+  explanation,
+  diagram = ""
+) => ({
+  category,
+  categoryClass: category.toLowerCase().replaceAll(" ", "-"),
+  question,
+  options,
+  correctAnswer: String(correct),
+  explanation,
+  diagram
+});
+
+const bank = [
+
+  make(
+    "Volume",
+    "A rectangular prism is 5 cm long, 2 cm wide, and 3 cm high. What is its volume?",
+    ["10 cm³", "15 cm³", "30 cm³", "20 cm³"],
+    "30 cm³",
+    "Multiply all three dimensions: 5 × 2 × 3 = 30 cm³.",
+    svgPrism(5, 2, 3)
+  ),
+
+  make(
+    "Volume",
+    "A prism measures 6 units by 3 units by 4 units. What is the volume?",
+    ["72 cubic units", "24 cubic units", "18 cubic units", "54 cubic units"],
+    "72 cubic units",
+    "6 × 3 × 4 = 72 cubic units.",
+    svgPrism(6, 3, 4)
+  ),
+
+  make(
+    "Volume",
+    "A box is 8 in long, 2 in wide, and 5 in high. Find its volume.",
+    ["80 in³", "40 in³", "15 in³", "64 in³"],
+    "80 in³",
+    "8 × 2 × 5 = 80 in³.",
+    svgPrism(8, 2, 5)
+  ),
+
+  make(
+    "Volume",
+    "What is the volume of a 4 × 4 × 4 cube?",
+    ["16 cubic units", "48 cubic units", "64 cubic units", "12 cubic units"],
+    "64 cubic units",
+    "4 × 4 × 4 = 64 cubic units.",
+    svgPrism(4, 4, 4)
+  ),
+
+  make(
+    "Volume",
+    "A prism has base area 9 square units and height 6 units. What is its volume?",
+    ["15 cubic units", "54 cubic units", "45 cubic units", "63 cubic units"],
+    "54 cubic units",
+    "Volume = base area × height = 9 × 6 = 54."
+  ),
+
+  make(
+    "Volume",
+    "A prism has base area 14 cm² and height 3 cm. What is its volume?",
+    ["17 cm³", "42 cm³", "28 cm³", "56 cm³"],
+    "42 cm³",
+    "14 × 3 = 42 cm³."
+  ),
+
+  make(
+    "Volume",
+    "A storage box measures 7 ft × 2 ft × 3 ft. What is its volume?",
+    ["12 ft³", "42 ft³", "21 ft³", "35 ft³"],
+    "42 ft³",
+    "7 × 2 × 3 = 42 ft³.",
+    svgPrism(7, 2, 3)
+  ),
+
+  make(
+    "Volume",
+    "A rectangular prism has 10 cubes in each layer and 4 layers. What is its volume?",
+    ["14 cubic units", "40 cubic units", "30 cubic units", "50 cubic units"],
+    "40 cubic units",
+    "10 cubes per layer × 4 layers = 40 cubic units.",
+    svgLayers(10, 4)
+  ),
+
+  make(
+    "Volume",
+    "A prism measures 9 cm × 2 cm × 2 cm. Find its volume.",
+    ["18 cm³", "26 cm³", "36 cm³", "40 cm³"],
+    "36 cm³",
+    "9 × 2 × 2 = 36 cm³.",
+    svgPrism(9, 2, 2)
+  ),
+
+  make(
+    "Volume",
+    "A prism measures 3 m × 5 m × 6 m. Find its volume.",
+    ["14 m³", "30 m³", "60 m³", "90 m³"],
+    "90 m³",
+    "3 × 5 × 6 = 90 m³.",
+    svgPrism(3, 5, 6)
+  ),
+
+  make(
+    "Volume",
+    "A prism has base area 20 square units and height 3 units. Find volume.",
+    ["23", "40", "60", "80"],
+    "60",
+    "20 × 3 = 60 cubic units."
+  ),
+
+  make(
+    "Volume",
+    "A prism is 10 units long, 3 units wide, and 2 units high. What is its volume?",
+    ["30", "50", "60", "80"],
+    "60",
+    "10 × 3 × 2 = 60 cubic units.",
+    svgPrism(10, 3, 2)
+  ),
+
+  make(
+    "Area of Base",
+    "A rectangular base is 4 units long and 3 units wide. What is its area?",
+    ["7 square units", "12 square units", "14 square units", "24 square units"],
+    "12 square units",
+    "Area = length × width = 4 × 3 = 12 square units."
+  ),
+
+  make(
+    "Area of Base",
+    "A prism has a base that measures 6 cm by 5 cm. Find the base area.",
+    ["11 cm²", "30 cm²", "60 cm²", "25 cm²"],
+    "30 cm²",
+    "6 × 5 = 30 cm²."
+  ),
+
+  make(
+    "Area of Base",
+    "The base of a rectangular prism is 8 in by 2 in. What is the base area?",
+    ["10 in²", "16 in²", "20 in²", "32 in²"],
+    "16 in²",
+    "8 × 2 = 16 in²."
+  ),
+
+  make(
+    "Area of Base",
+    "A prism has a volume of 36 cubic units and a height of 4 units. What is the area of its base?",
+    ["8 square units", "9 square units", "12 square units", "18 square units"],
+    "9 square units",
+    "Base area = volume ÷ height = 36 ÷ 4 = 9."
+  ),
+
+  make(
+    "Area of Base",
+    "A prism has volume 56 cm³ and height 7 cm. Find the base area.",
+    ["8 cm²", "7 cm²", "14 cm²", "49 cm²"],
+    "8 cm²",
+    "56 ÷ 7 = 8 cm²."
+  ),
+
+  make(
+    "Area of Base",
+    "A prism has volume 45 cubic units and height 5 units. What is its base area?",
+    ["5 square units", "8 square units", "9 square units", "10 square units"],
+    "9 square units",
+    "45 ÷ 5 = 9 square units."
+  ),
+
+  make(
+    "Area of Base",
+    "One layer is 3 cubes long and 6 cubes wide. How many cubes are in one layer?",
+    ["9", "18", "12", "21"],
+    "18",
+    "3 × 6 = 18 cubes in one layer."
+  ),
+
+  make(
+    "Area of Base",
+    "A base is 7 units by 4 units. What is the area?",
+    ["11", "21", "28", "35"],
+    "28",
+    "7 × 4 = 28 square units."
+  ),
+
+  make(
+    "Area of Base",
+    "A prism has volume 96 cubic units and height 8. Find the base area.",
+    ["10", "12", "14", "16"],
+    "12",
+    "96 ÷ 8 = 12 square units."
+  ),
+
+  make(
+    "Area of Base",
+    "The bottom of a box is 9 ft by 3 ft. What is its area?",
+    ["12 ft²", "18 ft²", "27 ft²", "36 ft²"],
+    "27 ft²",
+    "9 × 3 = 27 ft²."
+  ),
+
+  make(
+    "Dimensions",
+    "A box is 6 in long and 4 in wide. Its volume is 72 in³. What is its height?",
+    ["2 in", "3 in", "4 in", "6 in"],
+    "3 in",
+    "Base area = 6 × 4 = 24. Then 72 ÷ 24 = 3 inches."
+  ),
+
+  make(
+    "Dimensions",
+    "A prism is 5 cm long and 3 cm wide. Its volume is 60 cm³. What is its height?",
+    ["2 cm", "3 cm", "4 cm", "5 cm"],
+    "4 cm",
+    "Base area = 5 × 3 = 15. Then 60 ÷ 15 = 4 cm."
+  ),
+
+  make(
+    "Dimensions",
+    "A prism has volume 48 cubic units. Its base is 4 units by 3 units. Find the height.",
+    ["2 units", "3 units", "4 units", "6 units"],
+    "4 units",
+    "Base area = 12. Then 48 ÷ 12 = 4."
+  ),
+
+  make(
+    "Dimensions",
+    "Which dimensions make a prism with volume 36 cubic units?",
+    ["2 × 3 × 5", "3 × 3 × 4", "2 × 4 × 4", "3 × 4 × 4"],
+    "3 × 3 × 4",
+    "3 × 3 × 4 = 36."
+  ),
+
+  make(
+    "Dimensions",
+    "Which dimensions make a volume of 48 cubic units?",
+    ["2 × 4 × 6", "2 × 3 × 6", "3 × 4 × 5", "4 × 4 × 4"],
+    "2 × 4 × 6",
+    "2 × 4 × 6 = 48."
+  ),
+
+  make(
+    "Dimensions",
+    "Prism A is 4 × 4 × 3. Which prism has the SAME volume?",
+    ["2 × 3 × 6", "2 × 4 × 6", "3 × 4 × 5", "4 × 4 × 4"],
+    "2 × 4 × 6",
+    "Prism A has volume 48. 2 × 4 × 6 also equals 48."
+  ),
+
+  make(
+    "Dimensions",
+    "A prism has volume 90 cm³. Its length is 5 cm and width is 6 cm. What is the height?",
+    ["2 cm", "3 cm", "4 cm", "5 cm"],
+    "3 cm",
+    "5 × 6 = 30, and 90 ÷ 30 = 3."
+  ),
+
+  make(
+    "Dimensions",
+    "A prism has volume 72 cubic units and base area 18 square units. What is its height?",
+    ["2", "3", "4", "6"],
+    "4",
+    "72 ÷ 18 = 4 units."
+  ),
+
+  make(
+    "Dimensions",
+    "A rectangular prism is 3 units high and has volume 42 cubic units. What must its base area be?",
+    ["12", "14", "15", "18"],
+    "14",
+    "42 ÷ 3 = 14 square units."
+  ),
+
+  make(
+    "Dimensions",
+    "A prism has base area 15 square units and volume 75 cubic units. Find its height.",
+    ["3", "4", "5", "6"],
+    "5",
+    "75 ÷ 15 = 5 units."
+  ),
+
+  make(
+    "Dimensions",
+    "Which prism has volume 24 cubic units?",
+    ["2 × 2 × 6", "2 × 3 × 5", "3 × 3 × 3", "4 × 4 × 2"],
+    "2 × 2 × 6",
+    "2 × 2 × 6 = 24."
+  ),
+
+  make(
+    "Dimensions",
+    "A box has volume 120 cm³ and base area 30 cm². Find height.",
+    ["3 cm", "4 cm", "5 cm", "6 cm"],
+    "4 cm",
+    "120 ÷ 30 = 4 cm."
+  ),
+
+  make(
+    "Unit Cubes",
+    "A complete 3 × 3 × 3 cube contains how many unit cubes?",
+    ["9", "18", "27", "36"],
+    "27",
+    "3 × 3 × 3 = 27 unit cubes."
+  ),
+
+  make(
+    "Unit Cubes",
+    "A 3 × 3 × 3 cube should have 27 cubes. If 22 are already there, how many are missing?",
+    ["3", "4", "5", "6"],
+    "5",
+    "27 − 22 = 5 cubes."
+  ),
+
+  make(
+    "Unit Cubes",
+    "A prism has 12 cubes in each layer and 5 layers. What is its volume?",
+    ["17", "50", "60", "72"],
+    "60",
+    "12 × 5 = 60 cubic units.",
+    svgLayers(12, 5)
+  ),
+
+  make(
+    "Unit Cubes",
+    "A prism has 8 cubes in each layer and 6 layers. How many unit cubes are there?",
+    ["14", "42", "48", "56"],
+    "48",
+    "8 × 6 = 48 cubes.",
+    svgLayers(8, 6)
+  ),
+
+  make(
+    "Unit Cubes",
+    "A model has 4 rows of 5 cubes in each layer and 3 layers. What is the volume?",
+    ["20", "40", "60", "75"],
+    "60",
+    "Each layer has 4 × 5 = 20 cubes. 20 × 3 = 60."
+  ),
+
+  make(
+    "Unit Cubes",
+    "A box is filled with 2 layers of 24 unit cubes. What is the total volume?",
+    ["26", "36", "48", "52"],
+    "48",
+    "24 × 2 = 48 cubic units.",
+    svgLayers(24, 2)
+  ),
+
+  make(
+    "Unit Cubes",
+    "A prism contains 30 unit cubes total. If there are 5 equal layers, how many cubes are in each layer?",
+    ["5", "6", "10", "25"],
+    "6",
+    "30 ÷ 5 = 6 cubes per layer."
+  ),
+
+  make(
+    "Unit Cubes",
+    "A prism has 36 cubes total with 9 cubes per layer. How many layers are there?",
+    ["3", "4", "5", "6"],
+    "4",
+    "36 ÷ 9 = 4 layers."
+  ),
+
+  make(
+    "Unit Cubes",
+    "A rectangular prism has 7 cubes in each layer and 4 layers. How many cubes total?",
+    ["11", "21", "28", "35"],
+    "28",
+    "7 × 4 = 28 cubes.",
+    svgLayers(7, 4)
+  ),
+
+  make(
+    "Unit Cubes",
+    "A cube model should contain 64 unit cubes. If 59 are present, how many are missing?",
+    ["4", "5", "6", "7"],
+    "5",
+    "64 − 59 = 5."
+  ),
+
+  make(
+    "Unit Cubes",
+    "There are 18 cubes in each layer. How many cubes are in 3 layers?",
+    ["21", "36", "54", "72"],
+    "54",
+    "18 × 3 = 54 cubes.",
+    svgLayers(18, 3)
+  )
+
+];
+
+const quotas = {
+  "Volume": 4,
+  "Area of Base": 4,
+  "Dimensions": 4,
+  "Unit Cubes": 3
+};
+
+let quiz = [];
+let idx = 0;
+let score = 0;
+let answered = false;
+let qTime = 120;
+let timerInt;
+let totalStart = 0;
+let totalInt;
+let stats = {};
+
+const shuffle = arr =>
+  arr
+    .map(v => [Math.random(), v])
+    .sort((a, b) => a[0] - b[0])
+    .map(x => x[1]);
+
+function startQuiz() {
+
+  document.getElementById("start").style.display = "none";
+
+  document
+    .getElementById("results")
+    .classList.remove("active");
+
+  document
+    .getElementById("quiz")
+    .classList.add("active");
+
+  quiz = [];
+
+  Object.entries(quotas).forEach(([cat, n]) => {
+    quiz.push(
+      ...shuffle(
+        bank.filter(q => q.category === cat)
+      ).slice(0, n)
+    );
+  });
+
+  quiz = shuffle(quiz);
+
+  idx = 0;
+  score = 0;
+  answered = false;
+  stats = {};
+
+  Object.keys(quotas).forEach(k => {
+    stats[k] = {
+      right: 0,
+      total: 0
+    };
+  });
+
+  totalStart = Date.now();
+
+  clearInterval(totalInt);
+
+  totalInt = setInterval(
+    updateElapsed,
+    1000
+  );
+
+  showQuestion();
+}
+
+function showQuestion() {
+
+  answered = false;
+
+  clearInterval(timerInt);
+
+  qTime = 120;
+
+  const q = quiz[idx];
+
+  document.getElementById("qnum").textContent =
+    idx + 1;
+
+  document.getElementById("score").textContent =
+    score;
+
+  document.getElementById("progress").style.width =
+    `${idx / quiz.length * 100}%`;
+
+  const badge =
+    document.getElementById("badge");
+
+  badge.textContent =
+    q.category;
+
+  badge.className =
+    "badge " +
+    (
+      q.category === "Area of Base"
+        ? "base"
+        : q.category === "Unit Cubes"
+        ? "cubes"
+        : q.category.toLowerCase()
+    );
+
+  document.getElementById("question").textContent =
+    q.question;
+
+  document.getElementById("diagram").innerHTML =
+    q.diagram || "";
+
+  document.getElementById("feedback").className =
+    "feedback";
+
+  document.getElementById("feedback").innerHTML =
+    "";
+
+  document.getElementById("nextBtn").style.display =
+    "none";
+
+  document.getElementById("speed").textContent =
+    "";
+
+  const opts =
+    shuffle(q.options.slice());
+
+  const wrap =
+    document.getElementById("options");
+
+  wrap.innerHTML = "";
+
+  opts.forEach(o => {
+
+    const b =
+      document.createElement("button");
+
+    b.className =
+      "option";
+
+    b.textContent =
+      o;
+
+    b.onclick = () =>
+      answer(o, b);
+
+    wrap.appendChild(b);
+  });
+
+  renderTimer();
+
+  timerInt =
+    setInterval(() => {
+
+      qTime--;
+
+      renderTimer();
+
+      if (qTime <= 0) {
+        clearInterval(timerInt);
+        timeoutAnswer();
+      }
+
+    }, 1000);
+}
+
+function renderTimer() {
+
+  document.getElementById("timer").textContent =
+    qTime;
+
+  const c =
+    document.getElementById("timerCircle");
+
+  c.className =
+    "timer-circle" +
+    (
+      qTime <= 30
+        ? " danger"
+        : qTime <= 60
+        ? " warning"
+        : ""
+    );
+}
+
+function answer(value, button) {
+
+  if (answered) return;
+
+  answered = true;
+
+  clearInterval(timerInt);
+
+  const q =
+    quiz[idx];
+
+  stats[q.category].total++;
+
+  const good =
+    value === q.correctAnswer;
+
+  if (good) {
+
+    score++;
+
+    stats[q.category].right++;
+
+    button.classList.add("correct");
+
+    if (qTime > 60) {
+      document.getElementById("speed").textContent =
+        "⚡ Speed bonus!";
+    }
+
+  } else {
+
+    button.classList.add("wrong");
+
+    const correctButton =
+      [...document.querySelectorAll(".option")]
+        .find(
+          b =>
+            b.textContent === q.correctAnswer
+        );
+
+    if (correctButton) {
+      correctButton.classList.add("correct");
+    }
+  }
+
+  [...document.querySelectorAll(".option")]
+    .forEach(b => {
+      b.disabled = true;
+    });
+
+  const f =
+    document.getElementById("feedback");
+
+  f.className =
+    "feedback show " +
+    (good ? "good" : "bad");
+
+  f.innerHTML =
+    `<b>${good ? "Correct! ✅" : "Not quite."}</b><br>
+    ${q.explanation}`;
+
+  document.getElementById("score").textContent =
+    score;
+
+  document.getElementById("nextBtn").style.display =
+    "block";
+}
+
+function timeoutAnswer() {
+
+  if (answered) return;
+
+  answered = true;
+
+  const q =
+    quiz[idx];
+
+  stats[q.category].total++;
+
+  [...document.querySelectorAll(".option")]
+    .forEach(b => {
+
+      b.disabled = true;
+
+      if (
+        b.textContent === q.correctAnswer
+      ) {
+        b.classList.add("correct");
+      }
+
+    });
+
+  const f =
+    document.getElementById("feedback");
+
+  f.className =
+    "feedback show bad";
+
+  f.innerHTML =
+    `<b>Time's up. ⏰</b><br>
+    ${q.explanation}`;
+
+  document.getElementById("nextBtn").style.display =
+    "block";
+}
+
+function nextQuestion() {
+
+  idx++;
+
+  if (idx >= quiz.length) {
+    finish();
+  } else {
+    showQuestion();
+  }
+}
+
+function updateElapsed() {
+
+  const s =
+    Math.floor(
+      (Date.now() - totalStart) / 1000
+    );
+
+  document.getElementById("elapsed").textContent =
+    `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+}
+
+function finish() {
+
+  clearInterval(timerInt);
+  clearInterval(totalInt);
+
+  document
+    .getElementById("quiz")
+    .classList.remove("active");
+
+  document
+    .getElementById("results")
+    .classList.add("active");
+
+  const pct =
+    Math.round(
+      score / quiz.length * 100
+    );
+
+  document.getElementById("bigScore").textContent =
+    `${score}/${quiz.length} • ${pct}%`;
+
+  document.getElementById("grade").textContent =
+    pct >= 90
+      ? "Excellent work! 🌟"
+      : pct >= 80
+      ? "Great job! 👏"
+      : pct >= 70
+      ? "Good effort — almost there! 💪"
+      : "Keep practicing — you can do it! 📚";
+
+  const secs =
+    Math.floor(
+      (Date.now() - totalStart) / 1000
+    );
+
+  document.getElementById("timeResult").textContent =
+    `Total time: ${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, "0")} • Average: ${Math.round(secs / quiz.length)} sec/question`;
+
+  const b =
+    document.getElementById("breakdown");
+
+  b.innerHTML =
+    "";
+
+  Object.entries(stats)
+    .forEach(([cat, s]) => {
+
+      const row =
+        document.createElement("div");
+
+      row.className =
+        "breakdown-row";
+
+      const p =
+        s.total
+          ? Math.round(
+              s.right / s.total * 100
+            )
+          : 0;
+
+      row.innerHTML =
+        `<span>${cat}</span>
+         <b>${s.right}/${s.total} (${p}%)</b>`;
+
+      b.appendChild(row);
+    });
+
+  const needs =
+    Object.entries(stats)
+      .filter(
+        ([, s]) =>
+          s.right < s.total
+      )
+      .sort(
+        (a, b) =>
+          (a[1].right / a[1].total) -
+          (b[1].right / b[1].total)
+      )
+      .map(([k]) => k);
+
+  document.getElementById("reviewBox").innerHTML =
+    needs.length
+      ? `<b>Topics to Review:</b><br>${needs.join(" • ")}`
+      : `<b>Perfect coverage!</b> You got every topic correct. 🎉`;
+}
+
+function reviewVocab() {
+
+  document
+    .getElementById("results")
+    .classList.remove("active");
+
+  document.getElementById("start").style.display =
+    "block";
+}
+
+</script>
+</body>
+</html>
