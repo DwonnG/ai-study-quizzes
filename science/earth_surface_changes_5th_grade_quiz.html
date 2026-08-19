@@ -1,0 +1,3382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Cambios en la superficie de la Tierra | 5.º Grado DLI</title>
+
+<style>
+:root {
+  --blue: #2196f3;
+  --dark-blue: #0d47a1;
+  --green: #4caf50;
+  --orange: #ff9800;
+  --purple: #9c27b0;
+  --red: #f44336;
+  --teal: #009688;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(
+    135deg,
+    #0d47a1 0%,
+    #1565c0 48%,
+    #2e7d32 100%
+  );
+  min-height: 100vh;
+  padding: 20px;
+  color: white;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+}
+
+header {
+  text-align: center;
+  padding: 24px;
+  background: rgba(255,255,255,.1);
+  border-radius: 20px;
+  margin-bottom: 18px;
+  border: 1px solid rgba(255,255,255,.12);
+}
+
+h1 {
+  margin: 0 0 8px;
+  font-size: 2.1rem;
+}
+
+.subtitle {
+  opacity: .92;
+}
+
+.panel,
+.question-card {
+  background: rgba(255,255,255,.97);
+  color: #333;
+  border-radius: 20px;
+  padding: 26px;
+  box-shadow: 0 10px 35px rgba(0,0,0,.28);
+}
+
+.panel h2 {
+  text-align: center;
+  color: var(--dark-blue);
+}
+
+.intro {
+  text-align: center;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* ---------------------------------
+   Translation instructions
+---------------------------------- */
+
+.tip {
+  background: #e3f2fd;
+  border-left: 5px solid var(--blue);
+  padding: 14px;
+  border-radius: 10px;
+  margin: 15px 0;
+  color: #234;
+  line-height: 1.5;
+}
+
+/* ---------------------------------
+   Vocabulary
+---------------------------------- */
+
+.vocab-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.vocab-card {
+  min-height: 130px;
+  background: #f5f5f5;
+  border: 2px solid #ddd;
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.vocab-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--blue);
+}
+
+.vocab-card .back {
+  display: none;
+  color: #555;
+  line-height: 1.4;
+}
+
+.vocab-card.flipped .front {
+  display: none;
+}
+
+.vocab-card.flipped .back {
+  display: block;
+}
+
+.term {
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+
+.hint {
+  font-size: .75rem;
+  color: #888;
+  margin-top: 7px;
+}
+
+/* ---------------------------------
+   Buttons
+---------------------------------- */
+
+.btn {
+  border: 0;
+  border-radius: 28px;
+  padding: 13px 25px;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.btn:hover {
+  transform: scale(1.02);
+}
+
+.start-btn,
+.primary {
+  background: linear-gradient(
+    135deg,
+    var(--blue),
+    var(--green)
+  );
+  color: white;
+}
+
+.start-btn {
+  display: block;
+  margin: 20px auto 0;
+}
+
+.secondary {
+  background: #eee;
+  color: #333;
+}
+
+/* ---------------------------------
+   Quiz layout
+---------------------------------- */
+
+.quiz,
+.results {
+  display: none;
+}
+
+.quiz.active,
+.results.active {
+  display: block;
+}
+
+.scorebar,
+.timerbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: rgba(255,255,255,.13);
+  padding: 11px 16px;
+  border-radius: 14px;
+  margin-bottom: 12px;
+}
+
+.progress {
+  height: 8px;
+  background: rgba(255,255,255,.22);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.progress > div {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--blue),
+    var(--green)
+  );
+  width: 0;
+  transition: width .3s ease;
+}
+
+.qtop {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.badge {
+  padding: 5px 11px;
+  border-radius: 14px;
+  background: var(--purple);
+  color: white;
+  font-size: .78rem;
+  font-weight: 800;
+}
+
+.question {
+  font-size: 1.18rem;
+  line-height: 1.55;
+  font-weight: 650;
+  margin-bottom: 16px;
+}
+
+/* ---------------------------------
+   FULL TRANSLATION TOOL
+---------------------------------- */
+
+.translate-box {
+  position: relative;
+  cursor: help;
+}
+
+.question-translate {
+  display: inline-block;
+  border-bottom: 2px dotted #78909c;
+}
+
+.translation-hint {
+  margin-top: 7px;
+  font-size: .74rem;
+  color: #888;
+  font-weight: 500;
+}
+
+.translation-popup {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: calc(100% + 8px);
+  z-index: 999;
+
+  min-width: 250px;
+  max-width: 520px;
+
+  padding: 11px 13px;
+
+  background: #263238;
+  color: white;
+
+  border-radius: 9px;
+
+  font-size: .9rem;
+  font-weight: 500;
+  line-height: 1.45;
+
+  box-shadow:
+    0 6px 20px rgba(0,0,0,.35);
+}
+
+.translate-box:hover
+.translation-popup,
+
+.translate-box:focus
+.translation-popup,
+
+.translate-box.show-translation
+.translation-popup {
+  display: block;
+}
+
+/* ---------------------------------
+   Diagram
+---------------------------------- */
+
+.diagram {
+  text-align: center;
+  margin: 10px 0 18px;
+}
+
+.diagram svg {
+  max-width: 100%;
+  height: auto;
+  background: #f8fbff;
+  border-radius: 12px;
+  padding: 8px;
+}
+
+/* ---------------------------------
+   Answers
+---------------------------------- */
+
+.options {
+  display: grid;
+  gap: 11px;
+}
+
+.option {
+  position: relative;
+
+  text-align: left;
+
+  padding: 14px 16px;
+
+  border: 2px solid #ddd;
+  border-radius: 12px;
+
+  background: white;
+
+  font-size: 1rem;
+
+  cursor: pointer;
+
+  transition: .2s;
+
+  overflow: visible;
+}
+
+.option:hover:not(:disabled) {
+  border-color: var(--blue);
+  background: #f3f9ff;
+}
+
+.option.correct {
+  border-color: var(--green);
+  background: #e8f5e9;
+}
+
+.option.wrong {
+  border-color: var(--red);
+  background: #ffebee;
+}
+
+.answer-spanish {
+  font-weight: 600;
+}
+
+.answer-translation {
+  display: none;
+
+  margin-top: 9px;
+
+  padding: 9px 11px;
+
+  background: #263238;
+  color: white;
+
+  border-radius: 8px;
+
+  font-size: .87rem;
+  font-weight: 500;
+
+  line-height: 1.4;
+}
+
+.option:hover .answer-translation,
+.option.translation-open
+.answer-translation {
+  display: block;
+}
+
+.answer-help {
+  font-size: .72rem;
+  color: #999;
+  margin-top: 5px;
+}
+
+/* ---------------------------------
+   Feedback
+---------------------------------- */
+
+.feedback {
+  display: none;
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 12px;
+  line-height: 1.5;
+}
+
+.feedback.show {
+  display: block;
+}
+
+.feedback.good {
+  background: #e8f5e9;
+  color: #1b5e20;
+}
+
+.feedback.bad {
+  background: #ffebee;
+  color: #9b1c1c;
+}
+
+.explanation {
+  color: #555;
+  margin-top: 8px;
+}
+
+.next {
+  display: none;
+  margin: 16px auto 0;
+  background: var(--dark-blue);
+  color: white;
+}
+
+.timer {
+  font-weight: 800;
+}
+
+.danger {
+  color: #ffccbc;
+}
+
+/* ---------------------------------
+   Results
+---------------------------------- */
+
+.results .panel {
+  text-align: center;
+}
+
+.big {
+  font-size: 2.8rem;
+  font-weight: 900;
+  color: var(--dark-blue);
+}
+
+.breakdown {
+  text-align: left;
+  margin-top: 18px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #eee;
+  padding: 9px;
+}
+
+.review {
+  background: #fff3e0;
+  text-align: left;
+  padding: 13px;
+  border-radius: 12px;
+  margin: 15px 0;
+  line-height: 1.5;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ---------------------------------
+   Mobile
+---------------------------------- */
+
+@media(max-width:600px) {
+
+  body {
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  .panel,
+  .question-card {
+    padding: 18px;
+  }
+
+  .translation-popup {
+    min-width: 220px;
+    max-width: 82vw;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+
+  <h1>
+    🌎 Cambios en la superficie de la Tierra
+  </h1>
+
+  <div class="subtitle">
+    Ciencias de 5.º grado • DLI
+    • Procesos constructivos y destructivos
+  </div>
+
+</header>
+
+
+<!-- =========================
+     START SCREEN
+========================== -->
+
+<section id="start" class="panel">
+
+  <h2>Repaso rápido</h2>
+
+  <p class="intro">
+    Primero repasa el vocabulario.
+    Después completa una prueba de
+    15 preguntas seleccionadas al azar.
+  </p>
+
+  <div class="tip">
+
+    <b>🌐 Ayuda con el inglés:</b>
+
+    <br>
+
+    Las preguntas y respuestas están
+    en español.
+
+    <br><br>
+
+    <b>Computadora:</b>
+    pasa el cursor sobre una pregunta
+    o respuesta para ver la traducción.
+
+    <br>
+
+    <b>Teléfono/tableta:</b>
+    toca una pregunta o respuesta
+    para mostrar el inglés.
+
+  </div>
+
+
+  <div class="vocab-grid">
+
+    <div
+      class="vocab-card"
+      onclick="this.classList.toggle('flipped')"
+    >
+
+      <div class="front">
+
+        <div class="term">
+          Proceso constructivo
+        </div>
+
+        <div class="hint">
+          Toca para voltear
+        </div>
+
+      </div>
+
+      <div class="back">
+
+        Construye o crea características
+        de la superficie de la Tierra.
+
+        <br><br>
+
+        <b>English:</b>
+        Constructive process —
+        builds up or creates Earth's surface.
+
+      </div>
+
+    </div>
+
+
+    <div
+      class="vocab-card"
+      onclick="this.classList.toggle('flipped')"
+    >
+
+      <div class="front">
+
+        <div class="term">
+          Proceso destructivo
+        </div>
+
+        <div class="hint">
+          Toca para voltear
+        </div>
+
+      </div>
+
+      <div class="back">
+
+        Desgasta, rompe o elimina
+        partes de la superficie.
+
+        <br><br>
+
+        <b>English:</b>
+        Destructive process —
+        wears away or breaks down
+        Earth's surface.
+
+      </div>
+
+    </div>
+
+
+    <div
+      class="vocab-card"
+      onclick="this.classList.toggle('flipped')"
+    >
+
+      <div class="front">
+
+        <div class="term">
+          Meteorización
+        </div>
+
+        <div class="hint">
+          Toca para voltear
+        </div>
+
+      </div>
+
+      <div class="back">
+
+        Rompe las rocas en pedazos
+        más pequeños.
+
+        <br><br>
+
+        <b>English:</b>
+        Weathering —
+        breaks rocks into smaller pieces.
+
+      </div>
+
+    </div>
+
+
+    <div
+      class="vocab-card"
+      onclick="this.classList.toggle('flipped')"
+    >
+
+      <div class="front">
+
+        <div class="term">
+          Erosión
+        </div>
+
+        <div class="hint">
+          Toca para voltear
+        </div>
+
+      </div>
+
+      <div class="back">
+
+        Mueve material meteorizado
+        por medio del agua,
+        viento o hielo.
+
+        <br><br>
+
+        <b>English:</b>
+        Erosion —
+        moves weathered material.
+
+      </div>
+
+    </div>
+
+
+    <div
+      class="vocab-card"
+      onclick="this.classList.toggle('flipped')"
+    >
+
+      <div class="front">
+
+        <div class="term">
+          Deposición
+        </div>
+
+        <div class="hint">
+          Toca para voltear
+        </div>
+
+      </div>
+
+      <div class="back">
+
+        Ocurre cuando los sedimentos
+        se dejan o acumulan
+        en un lugar nuevo.
+
+        <br><br>
+
+        <b>English:</b>
+        Deposition —
+        sediment is dropped
+        in a new place.
+
+      </div>
+
+    </div>
+
+
+    <div
+      class="vocab-card"
+      onclick="this.classList.toggle('flipped')"
+    >
+
+      <div class="front">
+
+        <div class="term">
+          Accidentes geográficos
+        </div>
+
+        <div class="hint">
+          Toca para voltear
+        </div>
+
+      </div>
+
+      <div class="back">
+
+        Características de la superficie:
+        montañas, cañones, volcanes,
+        deltas, dunas y arcos marinos.
+
+        <br><br>
+
+        <b>English:</b>
+        Landforms.
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <button
+    class="btn start-btn"
+    onclick="startQuiz()"
+  >
+
+    Comenzar prueba de 15 preguntas 🚀
+
+  </button>
+
+</section>
+
+
+<!-- =========================
+     QUIZ
+========================== -->
+
+<section id="quiz" class="quiz">
+
+  <div class="scorebar">
+
+    <span>
+      ✅ Puntuación:
+      <b id="score">0</b>
+    </span>
+
+    <span>
+      Pregunta
+      <b id="qnum">1</b>/15
+    </span>
+
+    <span>
+      ⏱ Total:
+      <b id="elapsed">0:00</b>
+    </span>
+
+  </div>
+
+
+  <div class="timerbar">
+
+    <span>
+      Tiempo para esta pregunta
+    </span>
+
+    <span class="timer">
+      <span id="timer">75</span> s
+    </span>
+
+  </div>
+
+
+  <div class="progress">
+    <div id="progress"></div>
+  </div>
+
+
+  <div class="question-card">
+
+    <div class="qtop">
+
+      <span
+        id="badge"
+        class="badge"
+      ></span>
+
+      <span id="speed"></span>
+
+    </div>
+
+
+    <div
+      id="question"
+      class="question"
+    ></div>
+
+
+    <div
+      id="diagram"
+      class="diagram"
+    ></div>
+
+
+    <div
+      id="options"
+      class="options"
+    ></div>
+
+
+    <div
+      id="feedback"
+      class="feedback"
+    ></div>
+
+
+    <button
+      id="next"
+      class="btn next"
+      onclick="nextQuestion()"
+    >
+
+      Siguiente pregunta →
+
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     RESULTS
+========================== -->
+
+<section id="results" class="results">
+
+  <div class="panel">
+
+    <h2>
+      ¡Prueba terminada! 🎉
+    </h2>
+
+    <div
+      id="big"
+      class="big"
+    ></div>
+
+    <div id="grade"></div>
+
+    <p id="timeResult"></p>
+
+
+    <div
+      id="review"
+      class="review"
+    ></div>
+
+
+    <div class="breakdown">
+
+      <h3>
+        Resultados por tema
+      </h3>
+
+      <div id="breakdown"></div>
+
+    </div>
+
+
+    <div class="buttons">
+
+      <button
+        class="btn primary"
+        onclick="startQuiz()"
+      >
+
+        Intentar de nuevo 🔄
+
+      </button>
+
+
+      <button
+        class="btn secondary"
+        onclick="reviewVocab()"
+      >
+
+        Repasar vocabulario 📚
+
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+</div>
+
+
+<script>
+
+/* =========================================
+   QUESTION CREATOR
+========================================= */
+
+const make = (
+  category,
+  spanishQuestion,
+  englishQuestion,
+  spanishAnswers,
+  englishAnswers,
+  correct,
+  explanation,
+  diagram = ""
+) => ({
+  category,
+  spanishQuestion,
+  englishQuestion,
+  spanishAnswers,
+  englishAnswers,
+  correct,
+  explanation,
+  diagram
+});
+
+
+/* =========================================
+   DIAGRAMS
+========================================= */
+
+const delta = `
+<svg viewBox="0 0 420 210" width="420">
+
+  <rect
+    width="420"
+    height="210"
+    fill="#e3f2fd"
+  />
+
+  <path
+    d="
+      M35 20
+      C90 70 145 90 210 120
+      C250 138 275 145 300 155
+    "
+    stroke="#1976d2"
+    stroke-width="25"
+    fill="none"
+  />
+
+  <path
+    d="M295 155 L385 130"
+    stroke="#1976d2"
+    stroke-width="13"
+  />
+
+  <path
+    d="M295 155 L390 160"
+    stroke="#1976d2"
+    stroke-width="13"
+  />
+
+  <path
+    d="M295 155 L375 195"
+    stroke="#1976d2"
+    stroke-width="13"
+  />
+
+  <ellipse
+    cx="330"
+    cy="160"
+    rx="65"
+    ry="35"
+    fill="#d7b56d"
+    opacity=".8"
+  />
+
+  <text
+    x="32"
+    y="18"
+    font-size="16"
+  >
+    río
+  </text>
+
+  <text
+    x="265"
+    y="105"
+    font-size="15"
+  >
+    sedimento
+  </text>
+
+</svg>
+`;
+
+
+const canyon = `
+<svg viewBox="0 0 420 210" width="420">
+
+  <rect
+    width="420"
+    height="210"
+    fill="#fff3e0"
+  />
+
+  <polygon
+    points="0,15 160,15 120,175 0,210"
+    fill="#a1887f"
+  />
+
+  <polygon
+    points="420,15 260,15 300,175 420,210"
+    fill="#8d6e63"
+  />
+
+  <path
+    d="
+      M120 185
+      C180 165 240 165 300 185
+    "
+    stroke="#1976d2"
+    stroke-width="17"
+    fill="none"
+  />
+
+  <text
+    x="145"
+    y="205"
+    font-size="15"
+  >
+    agua corriente
+  </text>
+
+</svg>
+`;
+
+
+const mountain = `
+<svg viewBox="0 0 420 210" width="420">
+
+  <rect
+    width="420"
+    height="210"
+    fill="#e3f2fd"
+  />
+
+  <polygon
+    points="135,170 210,45 285,170"
+    fill="#78909c"
+  />
+
+  <line
+    x1="30"
+    y1="185"
+    x2="170"
+    y2="185"
+    stroke="#6d4c41"
+    stroke-width="17"
+  />
+
+  <line
+    x1="390"
+    y1="185"
+    x2="250"
+    y2="185"
+    stroke="#6d4c41"
+    stroke-width="17"
+  />
+
+  <polygon
+    points="170,176 190,185 170,194"
+  />
+
+  <polygon
+    points="250,176 230,185 250,194"
+  />
+
+  <text
+    x="60"
+    y="160"
+    font-size="15"
+  >
+    placa
+  </text>
+
+  <text
+    x="315"
+    y="160"
+    font-size="15"
+  >
+    placa
+  </text>
+
+</svg>
+`;
+
+
+const arch = `
+<svg viewBox="0 0 420 210" width="420">
+
+  <rect
+    width="420"
+    height="210"
+    fill="#bbdefb"
+  />
+
+  <rect
+    y="155"
+    width="420"
+    height="55"
+    fill="#42a5f5"
+  />
+
+  <path
+    d="
+      M65 35
+      H350
+      V165
+      H280
+      C280 110 245 85 210 85
+      C175 85 140 110 140 165
+      H65 Z
+    "
+    fill="#795548"
+  />
+
+  <path
+    d="
+      M15 170
+      Q70 150 125 170
+
+      M295 170
+      Q350 150 405 170
+    "
+    stroke="#fff"
+    stroke-width="5"
+    fill="none"
+  />
+
+</svg>
+`;
+
+
+const dune = `
+<svg viewBox="0 0 420 210" width="420">
+
+  <rect
+    width="420"
+    height="210"
+    fill="#fff8e1"
+  />
+
+  <path
+    d="
+      M10 185
+      Q110 65 215 185
+      Q300 90 410 185
+    "
+    fill="#e6c36a"
+  />
+
+  <line
+    x1="35"
+    y1="50"
+    x2="170"
+    y2="50"
+    stroke="#78909c"
+    stroke-width="4"
+  />
+
+  <polygon
+    points="170,50 150,40 150,60"
+    fill="#78909c"
+  />
+
+  <text
+    x="35"
+    y="32"
+    font-size="15"
+  >
+    viento
+  </text>
+
+</svg>
+`;
+
+
+const volcano = `
+<svg viewBox="0 0 420 210" width="420">
+
+  <rect
+    width="420"
+    height="210"
+    fill="#f3e5f5"
+  />
+
+  <polygon
+    points="95,190 210,50 325,190"
+    fill="#6d4c41"
+  />
+
+  <path
+    d="M210 62 L210 160"
+    stroke="#f44336"
+    stroke-width="15"
+  />
+
+  <ellipse
+    cx="210"
+    cy="52"
+    rx="28"
+    ry="11"
+    fill="#ff5722"
+  />
+
+  <circle
+    cx="195"
+    cy="28"
+    r="11"
+    fill="#9e9e9e"
+  />
+
+  <circle
+    cx="220"
+    cy="20"
+    r="14"
+    fill="#9e9e9e"
+  />
+
+</svg>
+`;
+
+
+/* =========================================
+   QUESTION BANK
+========================================= */
+
+const bank = [
+
+make(
+  "Procesos",
+
+  "¿Cuál describe mejor un proceso constructivo?",
+
+  "Which best describes a constructive process?",
+
+  [
+    "Construye o crea características de la superficie de la Tierra",
+    "Desgasta y elimina la superficie",
+    "Solo ocurre bajo el agua",
+    "Solo ocurre durante tormentas"
+  ],
+
+  [
+    "It builds or creates features on Earth's surface",
+    "It wears away and removes Earth's surface",
+    "It only happens underwater",
+    "It only happens during storms"
+  ],
+
+  "Construye o crea características de la superficie de la Tierra",
+
+  "A constructive process builds up or creates Earth's surface."
+),
+
+
+make(
+  "Procesos",
+
+  "¿Cuál describe mejor un proceso destructivo?",
+
+  "Which best describes a destructive process?",
+
+  [
+    "Desgasta o rompe la superficie de la Tierra",
+    "Siempre crea tierra nueva",
+    "Solo forma montañas",
+    "Siempre deposita sedimentos"
+  ],
+
+  [
+    "It wears away or breaks down Earth's surface",
+    "It always creates new land",
+    "It only forms mountains",
+    "It always deposits sediment"
+  ],
+
+  "Desgasta o rompe la superficie de la Tierra",
+
+  "A destructive process wears away or breaks down Earth's surface."
+),
+
+
+make(
+  "Procesos",
+
+  "¿Qué es la meteorización?",
+
+  "What is weathering?",
+
+  [
+    "La ruptura de las rocas en pedazos más pequeños",
+    "El movimiento de sedimentos",
+    "La acumulación de sedimentos",
+    "La formación de magma"
+  ],
+
+  [
+    "Breaking rocks into smaller pieces",
+    "The movement of sediment",
+    "The buildup of sediment",
+    "The formation of magma"
+  ],
+
+  "La ruptura de las rocas en pedazos más pequeños",
+
+  "Weathering breaks rock into smaller pieces."
+),
+
+
+make(
+  "Procesos",
+
+  "¿Qué es la erosión?",
+
+  "What is erosion?",
+
+  [
+    "El movimiento de material meteorizado",
+    "La creación de magma",
+    "La acumulación de sedimentos solamente",
+    "La colisión de placas"
+  ],
+
+  [
+    "The movement of weathered material",
+    "The creation of magma",
+    "Only the buildup of sediment",
+    "The collision of tectonic plates"
+  ],
+
+  "El movimiento de material meteorizado",
+
+  "Erosion moves weathered material from one place to another."
+),
+
+
+make(
+  "Procesos",
+
+  "¿Qué es la deposición?",
+
+  "What is deposition?",
+
+  [
+    "Cuando los sedimentos se dejan en un lugar nuevo",
+    "Cuando una roca se rompe",
+    "Cuando las placas chocan",
+    "Cuando el magma sube"
+  ],
+
+  [
+    "When sediment is dropped in a new place",
+    "When a rock breaks apart",
+    "When tectonic plates collide",
+    "When magma rises"
+  ],
+
+  "Cuando los sedimentos se dejan en un lugar nuevo",
+
+  "Deposition happens when sediment is dropped in a new place."
+),
+
+
+make(
+  "Procesos",
+
+  "El viento, el agua y el hielo pueden causar principalmente ¿qué proceso?",
+
+  "Wind, water, and ice can mainly cause which process?",
+
+  [
+    "Erosión",
+    "Formación de magma",
+    "Formación de montañas",
+    "Erupciones volcánicas"
+  ],
+
+  [
+    "Erosion",
+    "Magma formation",
+    "Mountain formation",
+    "Volcanic eruptions"
+  ],
+
+  "Erosión",
+
+  "Wind, water, and ice can carry weathered material, causing erosion."
+),
+
+
+make(
+  "Procesos",
+
+  "¿Cuál afirmación sobre los volcanes y los terremotos es correcta?",
+
+  "Which statement about volcanoes and earthquakes is correct?",
+
+  [
+    "Pueden ser constructivos o destructivos según lo que ocurra",
+    "Siempre son constructivos",
+    "Siempre son destructivos",
+    "Nunca cambian la superficie"
+  ],
+
+  [
+    "They can be constructive or destructive depending on what happens",
+    "They are always constructive",
+    "They are always destructive",
+    "They never change Earth's surface"
+  ],
+
+  "Pueden ser constructivos o destructivos según lo que ocurra",
+
+  "Volcanoes and earthquakes can build new land or destroy existing land depending on their effects."
+),
+
+
+make(
+  "Formas terrestres",
+
+  "¿Cómo se forman las dunas de arena?",
+
+  "How are sand dunes formed?",
+
+  [
+    "El viento mueve y deposita sedimentos",
+    "Las placas tectónicas chocan",
+    "El magma se enfría",
+    "Los ríos cortan acantilados"
+  ],
+
+  [
+    "Wind moves and deposits sediment",
+    "Tectonic plates collide",
+    "Magma cools",
+    "Rivers cut through cliffs"
+  ],
+
+  "El viento mueve y deposita sedimentos",
+
+  "Sand dunes form when wind transports and deposits sand.",
+
+  dune
+),
+
+
+make(
+  "Formas terrestres",
+
+  "¿Dónde se encuentran comúnmente las dunas de arena?",
+
+  "Where are sand dunes commonly found?",
+
+  [
+    "En desiertos y algunas costas",
+    "Solo en el fondo del océano",
+    "Solo en las cimas de montañas",
+    "Solo en ríos"
+  ],
+
+  [
+    "In deserts and along some coastlines",
+    "Only on the ocean floor",
+    "Only on mountain tops",
+    "Only in rivers"
+  ],
+
+  "En desiertos y algunas costas",
+
+  "Sand dunes are common in deserts and along some coastlines.",
+
+  dune
+),
+
+
+make(
+  "Formas terrestres",
+
+  "¿Por qué cambian de forma las dunas con el tiempo?",
+
+  "Why do sand dunes change shape over time?",
+
+  [
+    "Porque el viento sigue moviendo la arena",
+    "Porque las placas chocan todos los días",
+    "Porque el magma sube",
+    "Porque el hielo crece dentro de ellas"
+  ],
+
+  [
+    "Because wind continues moving the sand",
+    "Because tectonic plates collide every day",
+    "Because magma rises",
+    "Because ice grows inside them"
+  ],
+
+  "Porque el viento sigue moviendo la arena",
+
+  "Wind continually moves and redistributes the sand.",
+
+  dune
+),
+
+
+make(
+  "Formas terrestres",
+
+  "¿Cómo se forman las montañas?",
+
+  "How are mountains formed?",
+
+  [
+    "Las placas tectónicas chocan y empujan la tierra hacia arriba",
+    "Los ríos depositan sedimentos",
+    "El viento amontona arena",
+    "Las olas forman un delta"
+  ],
+
+  [
+    "Tectonic plates collide and push land upward",
+    "Rivers deposit sediment",
+    "Wind piles up sand",
+    "Waves form a delta"
+  ],
+
+  "Las placas tectónicas chocan y empujan la tierra hacia arriba",
+
+  "Mountains can form when tectonic plates collide and push Earth's crust upward.",
+
+  mountain
+),
+
+
+make(
+  "Formas terrestres",
+
+  "La formación de montañas normalmente ocurre…",
+
+  "Mountain formation normally happens…",
+
+  [
+    "Muy lentamente durante muchísimo tiempo",
+    "En unos minutos",
+    "Solo durante tormentas",
+    "En pocos días"
+  ],
+
+  [
+    "Very slowly over a very long time",
+    "In a few minutes",
+    "Only during storms",
+    "In a few days"
+  ],
+
+  "Muy lentamente durante muchísimo tiempo",
+
+  "Mountain building is a very slow process that can take millions of years.",
+
+  mountain
+),
+
+
+make(
+  "Formas terrestres",
+
+  "¿Qué accidente geográfico es una garganta profunda entre acantilados?",
+
+  "Which landform is a deep gorge between cliffs?",
+
+  [
+    "Cañón",
+    "Delta",
+    "Duna",
+    "Volcán"
+  ],
+
+  [
+    "Canyon",
+    "Delta",
+    "Sand dune",
+    "Volcano"
+  ],
+
+  "Cañón",
+
+  "A canyon is a deep gorge between cliffs.",
+
+  canyon
+),
+
+
+make(
+  "Formas terrestres",
+
+  "¿Qué procesos trabajan juntos para formar un cañón?",
+
+  "Which processes work together to form a canyon?",
+
+  [
+    "Meteorización y erosión",
+    "Deposición y actividad volcánica",
+    "Deposición solamente",
+    "Formación de montañas solamente"
+  ],
+
+  [
+    "Weathering and erosion",
+    "Deposition and volcanic activity",
+    "Deposition only",
+    "Mountain formation only"
+  ],
+
+  "Meteorización y erosión",
+
+  "Weathering breaks rock down and erosion carries the pieces away.",
+
+  canyon
+),
+
+
+make(
+  "Formas terrestres",
+
+  "¿Qué fuerza tuvo un papel importante en la formación del Gran Cañón?",
+
+  "Which force played an important role in forming the Grand Canyon?",
+
+  [
+    "El agua corriente de un río",
+    "Solo el viento",
+    "La lava volcánica",
+    "Solo la deposición"
+  ],
+
+  [
+    "Flowing river water",
+    "Wind only",
+    "Volcanic lava",
+    "Deposition only"
+  ],
+
+  "El agua corriente de un río",
+
+  "Flowing river water weathered and eroded the land over a very long period of time.",
+
+  canyon
+),
+
+
+make(
+  "Formas terrestres",
+
+  "¿Cómo se forma un arco marino?",
+
+  "How is a sea arch formed?",
+
+  [
+    "Las olas erosionan repetidamente roca débil de un acantilado",
+    "Un río deposita sedimentos",
+    "Las placas tectónicas chocan",
+    "El viento deposita arena"
+  ],
+
+  [
+    "Waves repeatedly erode weak rock in a cliff",
+    "A river deposits sediment",
+    "Tectonic plates collide",
+    "Wind deposits sand"
+  ],
+
+  "Las olas erosionan repetidamente roca débil de un acantilado",
+
+  "Sea arches form as waves weather and erode weak rock in coastal cliffs.",
+
+  arch
+),
+
+
+make(
+  "Formas terrestres",
+
+  "¿Dónde es más probable encontrar un arco marino?",
+
+  "Where are you most likely to find a sea arch?",
+
+  [
+    "En acantilados a lo largo de la costa",
+    "En la cima de una montaña",
+    "En un delta de río",
+    "En el centro de un desierto"
+  ],
+
+  [
+    "In cliffs along a coastline",
+    "On top of a mountain",
+    "In a river delta",
+    "In the middle of a desert"
+  ],
+
+  "En acantilados a lo largo de la costa",
+
+  "Sea arches are coastal landforms created by wave erosion.",
+
+  arch
+),
+
+
+make(
+  "Formas terrestres",
+
+  "¿Cómo se forma un volcán?",
+
+  "How is a volcano formed?",
+
+  [
+    "El magma sube desde debajo de la superficie y puede hacer erupción",
+    "El viento acumula arena",
+    "Un río corta un acantilado",
+    "Los sedimentos se depositan en la desembocadura de un río"
+  ],
+
+  [
+    "Magma rises from below Earth's surface and can erupt",
+    "Wind piles up sand",
+    "A river cuts through a cliff",
+    "Sediment is deposited at a river mouth"
+  ],
+
+  "El magma sube desde debajo de la superficie y puede hacer erupción",
+
+  "A volcano forms when magma rises from below Earth's surface and erupts.",
+
+  volcano
+),
+
+
+make(
+  "Formas terrestres",
+
+  "Cuando un volcán hace erupción muchas veces, ¿qué puede ocurrir?",
+
+  "When a volcano erupts many times, what can happen?",
+
+  [
+    "Los depósitos de lava y ceniza pueden hacerlo más grande",
+    "Siempre se hace más pequeño",
+    "Se convierte en un delta",
+    "Se convierte en un cañón"
+  ],
+
+  [
+    "Deposits of lava and ash can make it larger",
+    "It always becomes smaller",
+    "It becomes a delta",
+    "It becomes a canyon"
+  ],
+
+  "Los depósitos de lava y ceniza pueden hacerlo más grande",
+
+  "Repeated lava and ash deposits can build up a volcano.",
+
+  volcano
+),
+
+
+make(
+  "Deposición",
+
+  "¿Qué ocurre cuando los sedimentos transportados por un río se asientan en su desembocadura?",
+
+  "What happens when sediment carried by a river settles at its mouth?",
+
+  [
+    "Ocurre deposición",
+    "La erosión aumenta",
+    "Se forma un volcán",
+    "Se forma una montaña"
+  ],
+
+  [
+    "Deposition occurs",
+    "Erosion increases",
+    "A volcano forms",
+    "A mountain forms"
+  ],
+
+  "Ocurre deposición",
+
+  "Sediment being dropped at a river mouth is deposition.",
+
+  delta
+),
+
+
+make(
+  "Deposición",
+
+  "¿Qué forma terrestre se crea cuando se acumulan sedimentos donde un río entra en una masa de agua más grande?",
+
+  "Which landform forms when sediment builds up where a river enters a larger body of water?",
+
+  [
+    "Delta de río",
+    "Arco marino",
+    "Cañón",
+    "Montaña"
+  ],
+
+  [
+    "River delta",
+    "Sea arch",
+    "Canyon",
+    "Mountain"
+  ],
+
+  "Delta de río",
+
+  "A river delta forms when sediment is deposited at the mouth of a river.",
+
+  delta
+),
+
+
+make(
+  "Deposición",
+
+  "Un delta de río es principalmente un ejemplo de un proceso…",
+
+  "A river delta is mainly an example of what kind of process?",
+
+  [
+    "Constructivo",
+    "Destructivo",
+    "Volcánico",
+    "De meteorización solamente"
+  ],
+
+  [
+    "Constructive",
+    "Destructive",
+    "Volcanic",
+    "Weathering only"
+  ],
+
+  "Constructivo",
+
+  "A river delta builds new land through deposition, so it is constructive.",
+
+  delta
+),
+
+
+make(
+  "Deposición",
+
+  "¿Por qué un delta se considera constructivo?",
+
+  "Why is a delta considered constructive?",
+
+  [
+    "Porque los sedimentos depositados construyen tierra nueva",
+    "Porque desgasta montañas",
+    "Porque rompe las rocas",
+    "Porque destruye playas"
+  ],
+
+  [
+    "Because deposited sediment builds new land",
+    "Because it wears away mountains",
+    "Because it breaks rocks",
+    "Because it destroys beaches"
+  ],
+
+  "Porque los sedimentos depositados construyen tierra nueva",
+
+  "Deposition adds sediment and builds new land.",
+
+  delta
+),
+
+
+make(
+  "Aplicación",
+
+  "Un río lleva sedimentos río abajo y luego los deja donde entra al océano. ¿Qué ocurre primero y después?",
+
+  "A river carries sediment downstream and then drops it where it enters the ocean. What happens first and then?",
+
+  [
+    "Primero erosión, después deposición",
+    "Primero deposición, después erosión",
+    "Primero volcán, después erosión",
+    "Primero montaña, después meteorización"
+  ],
+
+  [
+    "First erosion, then deposition",
+    "First deposition, then erosion",
+    "First volcanic activity, then erosion",
+    "First mountain formation, then weathering"
+  ],
+
+  "Primero erosión, después deposición",
+
+  "The river transports sediment by erosion and then drops it by deposition.",
+
+  delta
+),
+
+
+make(
+  "Aplicación",
+
+  "Un estudiante dice: “Un delta es destructivo porque hay agua en movimiento”. ¿Cuál es la mejor corrección?",
+
+  "A student says, 'A delta is destructive because moving water is involved.' What is the best correction?",
+
+  [
+    "El delta es constructivo porque los sedimentos depositados construyen tierra nueva",
+    "Todo movimiento de agua es destructivo",
+    "Un delta no es constructivo ni destructivo",
+    "Los deltas se forman por volcanes"
+  ],
+
+  [
+    "The delta is constructive because deposited sediment builds new land",
+    "All moving water is destructive",
+    "A delta is neither constructive nor destructive",
+    "Deltas are formed by volcanoes"
+  ],
+
+  "El delta es constructivo porque los sedimentos depositados construyen tierra nueva",
+
+  "Water can cause erosion, but the delta itself forms through deposition that builds new land.",
+
+  delta
+),
+
+
+make(
+  "Aplicación",
+
+  "Un estudiante clasificó un arco marino como constructivo. ¿Qué debe cambiar?",
+
+  "A student classified a sea arch as constructive. What should be changed?",
+
+  [
+    "Moverlo a destructivo porque las olas erosionan la roca",
+    "Dejarlo como constructivo porque crece",
+    "Moverlo a constructivo porque el viento deposita arena",
+    "Clasificarlo como volcánico"
+  ],
+
+  [
+    "Move it to destructive because waves erode the rock",
+    "Keep it constructive because it grows",
+    "Move it to constructive because wind deposits sand",
+    "Classify it as volcanic"
+  ],
+
+  "Moverlo a destructivo porque las olas erosionan la roca",
+
+  "Sea arches are mainly formed by weathering and erosion, which are destructive.",
+
+  arch
+),
+
+
+make(
+  "Aplicación",
+
+  "Un estudiante clasificó un cañón como constructivo. ¿Qué corrección debe hacer?",
+
+  "A student classified a canyon as constructive. What correction should be made?",
+
+  [
+    "Moverlo a destructivo porque la erosión elimina roca",
+    "Dejarlo como constructivo",
+    "Moverlo a constructivo porque los ríos agregan tierra",
+    "Decir que solo se forma por deposición"
+  ],
+
+  [
+    "Move it to destructive because erosion removes rock",
+    "Keep it constructive",
+    "Move it to constructive because rivers add land",
+    "Say it forms only through deposition"
+  ],
+
+  "Moverlo a destructivo porque la erosión elimina roca",
+
+  "Canyons form as weathering and erosion remove material over time.",
+
+  canyon
+),
+
+
+make(
+  "Aplicación",
+
+  "¿Cuál cambio es constructivo?",
+
+  "Which change is constructive?",
+
+  [
+    "Los sedimentos construyen tierra nueva en la desembocadura de un río",
+    "El viento elimina la capa superior del suelo",
+    "Un río corta más profundamente un cañón",
+    "Las olas desgastan un acantilado"
+  ],
+
+  [
+    "Sediment builds new land at a river mouth",
+    "Wind removes topsoil",
+    "A river cuts deeper into a canyon",
+    "Waves wear away a cliff"
+  ],
+
+  "Los sedimentos construyen tierra nueva en la desembocadura de un río",
+
+  "Building new land through deposition is constructive."
+),
+
+
+make(
+  "Aplicación",
+
+  "¿Cuál cambio es destructivo?",
+
+  "Which change is destructive?",
+
+  [
+    "El viento elimina tierra de un campo",
+    "Los sedimentos forman un delta",
+    "La lava crea tierra nueva",
+    "Las placas levantan una montaña"
+  ],
+
+  [
+    "Wind removes soil from a field",
+    "Sediment forms a delta",
+    "Lava creates new land",
+    "Tectonic plates lift a mountain"
+  ],
+
+  "El viento elimina tierra de un campo",
+
+  "Wind erosion removes material, so it is destructive."
+),
+
+
+make(
+  "Aplicación",
+
+  "¿Cuál oración compara mejor la meteorización y la erosión?",
+
+  "Which sentence best compares weathering and erosion?",
+
+  [
+    "La meteorización rompe la roca; la erosión mueve los pedazos",
+    "La meteorización mueve sedimentos; la erosión crea magma",
+    "Significan exactamente lo mismo",
+    "La meteorización forma volcanes"
+  ],
+
+  [
+    "Weathering breaks rock; erosion moves the pieces",
+    "Weathering moves sediment; erosion creates magma",
+    "They mean exactly the same thing",
+    "Weathering forms volcanoes"
+  ],
+
+  "La meteorización rompe la roca; la erosión mueve los pedazos",
+
+  "Weathering breaks material down while erosion transports it."
+),
+
+
+make(
+  "Aplicación",
+
+  "¿Cuál secuencia explica mejor la formación de un cañón?",
+
+  "Which sequence best explains the formation of a canyon?",
+
+  [
+    "La roca se meteoriza y después el agua erosiona y transporta los pedazos",
+    "Los sedimentos se depositan y luego las montañas bajan",
+    "El viento deposita arena y luego sale magma",
+    "Las placas chocan y forman un delta"
+  ],
+
+  [
+    "Rock weathers, then water erodes and carries away the pieces",
+    "Sediment is deposited and then mountains become lower",
+    "Wind deposits sand and then magma erupts",
+    "Tectonic plates collide and form a delta"
+  ],
+
+  "La roca se meteoriza y después el agua erosiona y transporta los pedazos",
+
+  "Weathering breaks the rock and erosion removes the pieces.",
+
+  canyon
+),
+
+
+make(
+  "Aplicación",
+
+  "¿Cuál secuencia explica mejor la formación de un delta?",
+
+  "Which sequence best explains the formation of a delta?",
+
+  [
+    "Los sedimentos son transportados río abajo y luego se depositan en la desembocadura",
+    "La roca se derrite y luego la lava se enfría",
+    "Las placas chocan y luego se forma un cañón",
+    "Las olas erosionan y luego se forma una montaña"
+  ],
+
+  [
+    "Sediment is carried downstream and then deposited at the river mouth",
+    "Rock melts and then lava cools",
+    "Tectonic plates collide and then a canyon forms",
+    "Waves erode and then a mountain forms"
+  ],
+
+  "Los sedimentos son transportados río abajo y luego se depositan en la desembocadura",
+
+  "Sediment is transported by water and then deposited at the river mouth.",
+
+  delta
+),
+
+
+make(
+  "Aplicación",
+
+  "¿Qué forma terrestre es más probable que se forme donde las olas golpean repetidamente una parte débil de un acantilado?",
+
+  "Which landform is most likely to form where waves repeatedly hit a weak section of a cliff?",
+
+  [
+    "Arco marino",
+    "Delta",
+    "Montaña",
+    "Duna"
+  ],
+
+  [
+    "Sea arch",
+    "Delta",
+    "Mountain",
+    "Sand dune"
+  ],
+
+  "Arco marino",
+
+  "Repeated wave erosion can carve an opening and form a sea arch.",
+
+  arch
+),
+
+
+make(
+  "Aplicación",
+
+  "¿Qué forma terrestre es más probable que se forme donde el viento mueve y deposita arena suelta?",
+
+  "Which landform is most likely to form where wind moves and deposits loose sand?",
+
+  [
+    "Duna de arena",
+    "Cañón",
+    "Arco marino",
+    "Montaña"
+  ],
+
+  [
+    "Sand dune",
+    "Canyon",
+    "Sea arch",
+    "Mountain"
+  ],
+
+  "Duna de arena",
+
+  "Wind transports and deposits loose sand, creating dunes.",
+
+  dune
+),
+
+
+make(
+  "Aplicación",
+
+  "¿Qué forma terrestre es más probable encontrar en la desembocadura de un río grande?",
+
+  "Which landform is most likely to be found at the mouth of a large river?",
+
+  [
+    "Delta de río",
+    "Arco marino",
+    "Montaña",
+    "Volcán"
+  ],
+
+  [
+    "River delta",
+    "Sea arch",
+    "Mountain",
+    "Volcano"
+  ],
+
+  "Delta de río",
+
+  "A delta forms where a river deposits sediment as it enters a larger body of water.",
+
+  delta
+),
+
+
+make(
+  "Aplicación",
+
+  "Si una erupción volcánica crea tierra nueva, en ese caso el volcán está actuando como un proceso…",
+
+  "If a volcanic eruption creates new land, the volcano is acting as what type of process?",
+
+  [
+    "Constructivo",
+    "Destructivo solamente",
+    "De erosión",
+    "De meteorización"
+  ],
+
+  [
+    "Constructive",
+    "Destructive only",
+    "Erosion",
+    "Weathering"
+  ],
+
+  "Constructivo",
+
+  "When volcanic activity builds new land, it is constructive.",
+
+  volcano
+),
+
+
+make(
+  "Aplicación",
+
+  "Si una erupción destruye una parte del paisaje, en ese caso está actuando como un proceso…",
+
+  "If an eruption destroys part of the landscape, it is acting as what type of process?",
+
+  [
+    "Destructivo",
+    "Constructivo solamente",
+    "De deposición",
+    "De formación de dunas"
+  ],
+
+  [
+    "Destructive",
+    "Constructive only",
+    "Deposition",
+    "Sand-dune formation"
+  ],
+
+  "Destructivo",
+
+  "When volcanic activity destroys existing land, it is destructive.",
+
+  volcano
+)
+
+];
+
+
+/* =========================================
+   QUIZ BALANCE
+========================================= */
+
+const quotas = {
+  "Procesos": 3,
+  "Formas terrestres": 5,
+  "Deposición": 2,
+  "Aplicación": 5
+};
+
+
+/* =========================================
+   STATE
+========================================= */
+
+let quiz = [];
+
+let idx = 0;
+
+let score = 0;
+
+let answered = false;
+
+let qTime = 75;
+
+let timerInt;
+
+let totalInt;
+
+let totalStart = 0;
+
+let stats = {};
+
+
+/* =========================================
+   HELPERS
+========================================= */
+
+const shuffle = arr =>
+  arr
+    .map(v => [Math.random(), v])
+    .sort((a, b) => a[0] - b[0])
+    .map(x => x[1]);
+
+
+/* =========================================
+   START
+========================================= */
+
+function startQuiz() {
+
+  document
+    .getElementById("start")
+    .style.display = "none";
+
+
+  document
+    .getElementById("results")
+    .classList.remove("active");
+
+
+  document
+    .getElementById("quiz")
+    .classList.add("active");
+
+
+  quiz = [];
+
+
+  Object.entries(quotas)
+    .forEach(([category, amount]) => {
+
+      const categoryQuestions =
+        shuffle(
+          bank.filter(
+            q =>
+              q.category === category
+          )
+        )
+        .slice(
+          0,
+          amount
+        );
+
+      quiz.push(
+        ...categoryQuestions
+      );
+
+    });
+
+
+  quiz =
+    shuffle(quiz);
+
+
+  idx = 0;
+
+  score = 0;
+
+  answered = false;
+
+  stats = {};
+
+
+  Object.keys(quotas)
+    .forEach(category => {
+
+      stats[category] = {
+        right: 0,
+        total: 0
+      };
+
+    });
+
+
+  totalStart =
+    Date.now();
+
+
+  clearInterval(
+    totalInt
+  );
+
+
+  totalInt =
+    setInterval(
+      updateElapsed,
+      1000
+    );
+
+
+  showQuestion();
+
+}
+
+
+/* =========================================
+   DISPLAY QUESTION
+========================================= */
+
+function showQuestion() {
+
+  answered = false;
+
+  clearInterval(
+    timerInt
+  );
+
+  qTime = 75;
+
+
+  const q =
+    quiz[idx];
+
+
+  document
+    .getElementById("qnum")
+    .textContent =
+      idx + 1;
+
+
+  document
+    .getElementById("score")
+    .textContent =
+      score;
+
+
+  document
+    .getElementById("progress")
+    .style.width =
+      `${idx / quiz.length * 100}%`;
+
+
+  document
+    .getElementById("badge")
+    .textContent =
+      q.category;
+
+
+  /* FULL QUESTION TRANSLATION */
+
+  document
+    .getElementById("question")
+    .innerHTML = `
+
+      <div
+        class="translate-box question-translate"
+        tabindex="0"
+        onclick="toggleQuestionTranslation(this, event)"
+      >
+
+        <div>
+          ${q.spanishQuestion}
+        </div>
+
+        <div class="translation-hint">
+          🌐 Hover / toca para inglés
+        </div>
+
+        <div class="translation-popup">
+          <b>English:</b><br>
+          ${q.englishQuestion}
+        </div>
+
+      </div>
+
+    `;
+
+
+  document
+    .getElementById("diagram")
+    .innerHTML =
+      q.diagram || "";
+
+
+  const feedback =
+    document.getElementById(
+      "feedback"
+    );
+
+
+  feedback.className =
+    "feedback";
+
+
+  feedback.innerHTML =
+    "";
+
+
+  document
+    .getElementById("next")
+    .style.display =
+      "none";
+
+
+  document
+    .getElementById("speed")
+    .textContent =
+      "";
+
+
+  const wrap =
+    document.getElementById(
+      "options"
+    );
+
+
+  wrap.innerHTML =
+    "";
+
+
+  /* PAIR SPANISH WITH ENGLISH */
+
+  const answerPairs =
+    q.spanishAnswers
+      .map(
+        (spanish, i) => ({
+          spanish,
+          english:
+            q.englishAnswers[i]
+        })
+      );
+
+
+  shuffle(answerPairs)
+    .forEach(pair => {
+
+      const button =
+        document.createElement(
+          "button"
+        );
+
+
+      button.className =
+        "option";
+
+
+      button.dataset.answer =
+        pair.spanish;
+
+
+      button.innerHTML = `
+
+        <div class="answer-spanish">
+          ${pair.spanish}
+        </div>
+
+        <div class="answer-help">
+          🌐 Hover para inglés
+        </div>
+
+        <div class="answer-translation">
+          <b>English:</b>
+          ${pair.english}
+        </div>
+
+      `;
+
+
+      /*
+       Desktop:
+       Hover = translation.
+       Click = answer.
+
+       Touch:
+       First tap = translation.
+       Second tap = answer.
+      */
+
+      button.addEventListener(
+        "click",
+        function(event) {
+
+          if (
+            window.matchMedia(
+              "(hover: none)"
+            ).matches
+          ) {
+
+            if (
+              !button.classList
+                .contains(
+                  "translation-open"
+                )
+            ) {
+
+              event.preventDefault();
+
+              closeTranslations();
+
+              button.classList.add(
+                "translation-open"
+              );
+
+              return;
+            }
+
+          }
+
+
+          answer(
+            pair.spanish,
+            button
+          );
+
+        }
+      );
+
+
+      wrap.appendChild(
+        button
+      );
+
+    });
+
+
+  renderTimer();
+
+
+  timerInt =
+    setInterval(
+      () => {
+
+        qTime--;
+
+        renderTimer();
+
+
+        if (
+          qTime <= 0
+        ) {
+
+          clearInterval(
+            timerInt
+          );
+
+          timeoutAnswer();
+
+        }
+
+      },
+      1000
+    );
+
+}
+
+
+/* =========================================
+   TRANSLATION
+========================================= */
+
+function toggleQuestionTranslation(
+  element,
+  event
+) {
+
+  if (
+    window.matchMedia(
+      "(hover: none)"
+    ).matches
+  ) {
+
+    event.stopPropagation();
+
+    element.classList.toggle(
+      "show-translation"
+    );
+
+  }
+
+}
+
+
+function closeTranslations() {
+
+  document
+    .querySelectorAll(
+      ".translation-open"
+    )
+    .forEach(
+      element =>
+        element.classList.remove(
+          "translation-open"
+        )
+    );
+
+}
+
+
+/* =========================================
+   TIMER
+========================================= */
+
+function renderTimer() {
+
+  const timer =
+    document.getElementById(
+      "timer"
+    );
+
+
+  timer.textContent =
+    qTime;
+
+
+  timer.className =
+    qTime <= 15
+      ? "danger"
+      : "";
+
+}
+
+
+/* =========================================
+   ANSWER
+========================================= */
+
+function answer(
+  value,
+  button
+) {
+
+  if (
+    answered
+  ) return;
+
+
+  answered = true;
+
+
+  clearInterval(
+    timerInt
+  );
+
+
+  const q =
+    quiz[idx];
+
+
+  stats[
+    q.category
+  ].total++;
+
+
+  const good =
+    value === q.correct;
+
+
+  if (
+    good
+  ) {
+
+    score++;
+
+    stats[
+      q.category
+    ].right++;
+
+
+    button.classList.add(
+      "correct"
+    );
+
+
+    if (
+      qTime > 50
+    ) {
+
+      document
+        .getElementById(
+          "speed"
+        )
+        .textContent =
+          "⚡ ¡Rápido!";
+
+    }
+
+  } else {
+
+    button.classList.add(
+      "wrong"
+    );
+
+
+    const correctButton =
+      [
+        ...document
+          .querySelectorAll(
+            ".option"
+          )
+      ]
+      .find(
+        b =>
+          b.dataset.answer ===
+          q.correct
+      );
+
+
+    if (
+      correctButton
+    ) {
+
+      correctButton
+        .classList
+        .add(
+          "correct"
+        );
+
+    }
+
+  }
+
+
+  document
+    .querySelectorAll(
+      ".option"
+    )
+    .forEach(
+      b =>
+        b.disabled = true
+    );
+
+
+  const feedback =
+    document.getElementById(
+      "feedback"
+    );
+
+
+  feedback.className =
+    "feedback show " +
+    (
+      good
+        ? "good"
+        : "bad"
+    );
+
+
+  feedback.innerHTML = `
+
+    <b>
+      ${
+        good
+          ? "¡Correcto! ✅"
+          : "Todavía no."
+      }
+    </b>
+
+    <div class="explanation">
+
+      <b>
+        Parent / English explanation:
+      </b>
+
+      <br>
+
+      ${q.explanation}
+
+    </div>
+
+  `;
+
+
+  document
+    .getElementById("score")
+    .textContent =
+      score;
+
+
+  document
+    .getElementById("next")
+    .style.display =
+      "block";
+
+}
+
+
+/* =========================================
+   TIMEOUT
+========================================= */
+
+function timeoutAnswer() {
+
+  if (
+    answered
+  ) return;
+
+
+  answered =
+    true;
+
+
+  const q =
+    quiz[idx];
+
+
+  stats[
+    q.category
+  ].total++;
+
+
+  document
+    .querySelectorAll(
+      ".option"
+    )
+    .forEach(
+      button => {
+
+        button.disabled =
+          true;
+
+
+        if (
+          button.dataset.answer ===
+          q.correct
+        ) {
+
+          button.classList.add(
+            "correct"
+          );
+
+        }
+
+      }
+    );
+
+
+  const feedback =
+    document.getElementById(
+      "feedback"
+    );
+
+
+  feedback.className =
+    "feedback show bad";
+
+
+  feedback.innerHTML = `
+
+    <b>
+      Se acabó el tiempo. ⏰
+    </b>
+
+    <div class="explanation">
+
+      <b>
+        Parent / English explanation:
+      </b>
+
+      <br>
+
+      ${q.explanation}
+
+    </div>
+
+  `;
+
+
+  document
+    .getElementById("next")
+    .style.display =
+      "block";
+
+}
+
+
+/* =========================================
+   NEXT
+========================================= */
+
+function nextQuestion() {
+
+  idx++;
+
+
+  if (
+    idx >= quiz.length
+  ) {
+
+    finish();
+
+  } else {
+
+    showQuestion();
+
+  }
+
+}
+
+
+/* =========================================
+   TOTAL TIME
+========================================= */
+
+function updateElapsed() {
+
+  const seconds =
+    Math.floor(
+      (
+        Date.now() -
+        totalStart
+      ) /
+      1000
+    );
+
+
+  document
+    .getElementById(
+      "elapsed"
+    )
+    .textContent =
+
+      `${
+        Math.floor(
+          seconds / 60
+        )
+      }:${
+        String(
+          seconds % 60
+        )
+        .padStart(
+          2,
+          "0"
+        )
+      }`;
+
+}
+
+
+/* =========================================
+   FINISH
+========================================= */
+
+function finish() {
+
+  clearInterval(
+    timerInt
+  );
+
+  clearInterval(
+    totalInt
+  );
+
+
+  document
+    .getElementById(
+      "quiz"
+    )
+    .classList
+    .remove(
+      "active"
+    );
+
+
+  document
+    .getElementById(
+      "results"
+    )
+    .classList
+    .add(
+      "active"
+    );
+
+
+  const percent =
+    Math.round(
+      score /
+      quiz.length *
+      100
+    );
+
+
+  document
+    .getElementById(
+      "big"
+    )
+    .textContent =
+
+      `${score}/${quiz.length} • ${percent}%`;
+
+
+  document
+    .getElementById(
+      "grade"
+    )
+    .textContent =
+
+      percent >= 90
+        ? "¡Excelente! 🌟"
+
+        : percent >= 80
+        ? "¡Muy buen trabajo! 👏"
+
+        : percent >= 70
+        ? "Buen trabajo — repasa algunos temas. 💪"
+
+        : "Sigue practicando. 📚";
+
+
+  const seconds =
+    Math.floor(
+      (
+        Date.now() -
+        totalStart
+      ) /
+      1000
+    );
+
+
+  document
+    .getElementById(
+      "timeResult"
+    )
+    .textContent =
+
+      `Tiempo total: ${
+        Math.floor(
+          seconds / 60
+        )
+      }:${
+        String(
+          seconds % 60
+        )
+        .padStart(
+          2,
+          "0"
+        )
+      } • Promedio: ${
+        Math.round(
+          seconds /
+          quiz.length
+        )
+      } segundos por pregunta`;
+
+
+  const breakdown =
+    document.getElementById(
+      "breakdown"
+    );
+
+
+  breakdown.innerHTML =
+    "";
+
+
+  Object.entries(
+    stats
+  )
+  .forEach(
+    ([category, result]) => {
+
+      const row =
+        document.createElement(
+          "div"
+        );
+
+
+      row.className =
+        "row";
+
+
+      const topicPercent =
+        result.total
+          ? Math.round(
+              result.right /
+              result.total *
+              100
+            )
+          : 0;
+
+
+      row.innerHTML = `
+
+        <span>
+          ${category}
+        </span>
+
+        <b>
+          ${result.right}/${result.total}
+          (${topicPercent}%)
+        </b>
+
+      `;
+
+
+      breakdown.appendChild(
+        row
+      );
+
+    }
+  );
+
+
+  const needsReview =
+    Object.entries(
+      stats
+    )
+    .filter(
+      ([, result]) =>
+        result.right <
+        result.total
+    )
+    .sort(
+      (a, b) => {
+
+        const aRate =
+          a[1].total
+            ? a[1].right /
+              a[1].total
+            : 0;
+
+        const bRate =
+          b[1].total
+            ? b[1].right /
+              b[1].total
+            : 0;
+
+        return (
+          aRate -
+          bRate
+        );
+
+      }
+    )
+    .map(
+      ([category]) =>
+        category
+    );
+
+
+  document
+    .getElementById(
+      "review"
+    )
+    .innerHTML =
+
+      needsReview.length
+
+        ? `
+          <b>Parent review:</b>
+          Focus next on:
+          ${needsReview.join(" • ")}.
+        `
+
+        : `
+          <b>Parent review:</b>
+          Perfect topic coverage —
+          no missed categories. 🎉
+        `;
+
+}
+
+
+/* =========================================
+   VOCAB REVIEW
+========================================= */
+
+function reviewVocab() {
+
+  document
+    .getElementById(
+      "results"
+    )
+    .classList
+    .remove(
+      "active"
+    );
+
+
+  document
+    .getElementById(
+      "start"
+    )
+    .style.display =
+      "block";
+
+}
+
+</script>
+
+</body>
+</html>
