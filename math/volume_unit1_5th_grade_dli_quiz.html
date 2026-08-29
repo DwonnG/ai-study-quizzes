@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📦 Quiz de Volumen - 5.º Grado DLI</title>
+<style>
+:root{--primary:#2196F3;--secondary:#FF9800;--accent:#4CAF50;--purple:#9C27B0;--danger:#f44336;--warning:#ff9800}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#1a237e 0%,#283593 50%,#3949ab 100%);min-height:100vh;padding:20px;color:#fff}
+.container{max-width:900px;margin:0 auto}
+header{text-align:center;padding:25px 20px;background:linear-gradient(135deg,rgba(33,150,243,.3),rgba(255,152,0,.3));border-radius:20px;margin-bottom:20px;border:1px solid rgba(255,255,255,.1)}
+h1{font-size:2.2em;margin-bottom:8px;background:linear-gradient(90deg,#64B5F6,#FFB74D,#81C784);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{opacity:.9}.panel{background:rgba(255,255,255,.96);color:#333;border-radius:20px;padding:28px;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+.start-screen h2{color:#1a237e;margin-bottom:10px;text-align:center}.start-screen>p{text-align:center;color:#666;margin-bottom:20px}
+.vocab-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:20px 0}
+.vocab-card{min-height:125px;background:linear-gradient(135deg,#f5f5f5,#eee);border-radius:14px;padding:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;text-align:center;border:2px solid transparent;transition:.3s}
+.vocab-card:hover{transform:translateY(-3px)}.vocab-card.volume{border-color:#4CAF50}.vocab-card.dimensions{border-color:#FF9800}.vocab-card.base{border-color:#2196F3}.vocab-card.cubes{border-color:#9C27B0}
+.back{display:none;font-size:.9em;line-height:1.35;color:#555}.vocab-card.flipped .front{display:none}.vocab-card.flipped .back{display:block}.term{font-weight:700;color:#333}.hint{font-size:.75em;color:#999;margin-top:8px}
+.btn{border:0;border-radius:28px;padding:14px 28px;font-size:1.05em;font-weight:700;cursor:pointer;transition:.2s}.btn:hover{transform:scale(1.03)}
+.btn-start{display:block;margin:22px auto 0;background:linear-gradient(135deg,#2196F3,#FF9800);color:#fff}.quiz-content,.results{display:none}.quiz-content.active,.results.active{display:block}
+.score-bar,.timer-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:rgba(255,255,255,.12);padding:12px 18px;border-radius:15px;margin-bottom:14px}
+.progress-container{height:8px;background:rgba(255,255,255,.2);border-radius:8px;margin-bottom:18px;overflow:hidden}.progress-bar{height:100%;width:0;background:linear-gradient(90deg,#2196F3,#FF9800);transition:.3s}
+.timer-circle{width:52px;height:52px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:800;background:#4CAF50}.timer-circle.warning{background:#ff9800}.timer-circle.danger{background:#f44336}
+.question-card{background:rgba(255,255,255,.97);color:#333;border-radius:20px;padding:26px;box-shadow:0 10px 40px rgba(0,0,0,.3)}.question-top{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:15px}
+.badge{display:inline-block;color:#fff;padding:5px 11px;border-radius:14px;font-size:.78em;font-weight:700}.badge.volume{background:#4CAF50}.badge.dimensions{background:#FF9800}.badge.cubes{background:#9C27B0}.badge.compare{background:#2196F3}
+.question{font-size:1.2em;line-height:1.55;margin-bottom:16px;font-weight:600}.diagram{display:flex;justify-content:center;margin:10px 0 20px}.diagram svg{max-width:100%;height:auto;background:#f8fbff;border-radius:12px;padding:8px}
+.options{display:grid;gap:10px}.option{width:100%;text-align:left;padding:14px 16px;border:2px solid #e0e0e0;border-radius:12px;background:#fff;cursor:pointer;font-size:1em;transition:.2s}.option:hover:not(:disabled){border-color:#2196F3;background:#f2f8ff}.option.correct{border-color:#4CAF50;background:#e8f5e9}.option.wrong{border-color:#f44336;background:#ffebee}
+.feedback{display:none;margin-top:18px;padding:15px;border-radius:12px;line-height:1.5}.feedback.show{display:block}.feedback.good{background:#e8f5e9;color:#1b5e20}.feedback.bad{background:#ffebee;color:#b71c1c}
+.next-btn{display:none;margin:18px auto 0;background:#1a237e;color:#fff}.results .panel{text-align:center}.big-score{font-size:3em;font-weight:800;color:#1a237e;margin:10px 0}.breakdown{text-align:left;margin-top:20px}
+.breakdown-row{display:flex;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #eee}.review-box{text-align:left;background:#fff3e0;padding:15px;border-radius:12px;margin:18px 0}.missed-list{text-align:left;margin:14px 0}.missed-item{padding:10px 0;border-bottom:1px solid #eee}
+.result-buttons{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.secondary{background:#eee;color:#333}.primary{background:linear-gradient(135deg,#2196F3,#FF9800);color:#fff}
+.trans{border-bottom:1px dotted #1565c0;color:#0d47a1;cursor:help;position:relative}.trans:hover::after,.trans.show-translation::after{content:attr(data-en);position:absolute;left:0;top:1.5em;z-index:20;min-width:max-content;max-width:240px;background:#263238;color:#fff;padding:6px 9px;border-radius:8px;font-size:.76em;font-weight:500;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.translation-note{text-align:center;color:#777;font-size:.88em;margin-top:12px}.speed-good{color:#81C784;font-weight:700}
+@media(max-width:600px){body{padding:10px}h1{font-size:1.7em}.panel,.question-card{padding:18px}.question{font-size:1.08em}.trans:hover::after{display:none}}
+</style>
+</head>
+<body>
+<div class="container">
+<header><h1>📦 Desafío de Volumen</h1><div class="subtitle">5.º Grado DLI • Prismas rectangulares • Cubos unitarios</div></header>
+
+<section id="start" class="start-screen panel">
+<h2>Repaso rápido antes de empezar</h2>
+<p>Toca cada tarjeta. El quiz selecciona 15 preguntas de un banco grande y mezcla las respuestas cada vez.</p>
+<div class="vocab-grid">
+<div class="vocab-card volume" onclick="this.classList.toggle('flipped')"><div class="front"><div class="term">Volumen</div><div class="hint">Toca para voltear</div></div><div class="back"><b>largo × ancho × altura</b><br>También: <b>área de la base × altura</b>.<br><br>Se mide en unidades cúbicas.</div></div>
+<div class="vocab-card dimensions" onclick="this.classList.toggle('flipped')"><div class="front"><div class="term">Dimensiones</div><div class="hint">Toca para voltear</div></div><div class="back">El <b>largo</b>, <b>ancho</b> y <b>altura</b> de un prisma rectangular.</div></div>
+<div class="vocab-card base" onclick="this.classList.toggle('flipped')"><div class="front"><div class="term">Área de la base</div><div class="hint">Toca para voltear</div></div><div class="back"><b>largo × ancho</b>.<br>Dice cuántas unidades cuadradas hay en una capa.</div></div>
+<div class="vocab-card cubes" onclick="this.classList.toggle('flipped')"><div class="front"><div class="term">Cubo unitario</div><div class="hint">Toca para voltear</div></div><div class="back">Un cubo de 1 × 1 × 1. Su volumen es <b>1 unidad cúbica</b>.</div></div>
+</div>
+<div class="translation-note">En el quiz, pasa el cursor o toca las palabras subrayadas para ver la traducción al inglés.</div>
+<button class="btn btn-start" onclick="startQuiz(false)">Comenzar quiz de 15 preguntas 🚀</button>
+</section>
+
+<section id="quiz" class="quiz-content">
+<div class="score-bar"><span>✅ Score: <b id="score">0</b></span><span>Pregunta <b id="qnum">1</b>/<span id="totalQ">15</span></span><span>⏱ Total: <b id="elapsed">0:00</b></span></div>
+<div class="timer-bar"><span>Tiempo para esta pregunta</span><span class="timer-circle" id="timerCircle"><span id="timer">120</span></span></div>
+<div class="progress-container"><div id="progress" class="progress-bar"></div></div>
+<div class="question-card">
+<div class="question-top"><span id="badge" class="badge"></span><span id="speed"></span></div>
+<div id="question" class="question"></div><div id="diagram" class="diagram"></div><div id="options" class="options"></div>
+<div id="feedback" class="feedback"></div><button id="nextBtn" class="btn next-btn" onclick="nextQuestion()">Siguiente →</button>
+</div>
+</section>
+
+<section id="results" class="results"><div class="panel">
+<h2>Quiz Complete! 🎉</h2><div id="bigScore" class="big-score"></div><div id="grade"></div><p id="timeResult" style="margin-top:8px;color:#666"></p>
+<div id="reviewBox" class="review-box"></div><div id="missedList" class="missed-list"></div>
+<div class="breakdown"><h3>Score by Topic</h3><div id="breakdown"></div></div>
+<div class="result-buttons">
+<button class="btn primary" onclick="startQuiz(false)">Try Another Quiz 🔄</button>
+<button id="missedBtn" class="btn primary" onclick="startMissedReview()">Practice Missed Questions 🎯</button>
+<button class="btn secondary" onclick="reviewVocab()">Review Vocab 📚</button>
+</div></div></section>
+</div>
+
+<script>
+const QUIZ_SIZE=15, QUESTION_TIME=120;
+const quotas={volume:5,dimensions:4,cubes:3,compare:3};
+const labels={volume:"Volumen",dimensions:"Dimensión faltante",cubes:"Cubos y capas",compare:"Mismo volumen"};
+const cls={volume:"volume",dimensions:"dimensions",cubes:"cubes",compare:"compare"};
+const T=(es,en)=>`<span class="trans" data-en="${en}">${es}</span>`;
+
+function prismSvg(l,w,h,unknown=""){
+  const L=unknown==="l"?"?":l,W=unknown==="w"?"?":w,H=unknown==="h"?"?":h;
+  return `<svg viewBox="0 0 360 190" width="360" aria-label="prisma rectangular">
+  <polygon points="70,65 220,65 285,30 135,30" fill="#e3f2fd" stroke="#29434e" stroke-width="2"/>
+  <polygon points="220,65 285,30 285,125 220,160" fill="#bbdefb" stroke="#29434e" stroke-width="2"/>
+  <polygon points="70,65 220,65 220,160 70,160" fill="#fff" stroke="#29434e" stroke-width="2"/>
+  <text x="132" y="181" font-size="16" font-weight="700">${L}</text>
+  <text x="286" y="103" font-size="16" font-weight="700">${H}</text>
+  <text x="250" y="38" font-size="16" font-weight="700">${W}</text>
+  <text x="110" y="178" font-size="11">largo</text><text x="289" y="119" font-size="11">altura</text><text x="245" y="23" font-size="11">ancho</text>
+  </svg>`;
+}
+function shuffle(a){const x=[...a];for(let i=x.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]]}return x}
+function numericOptions(correct,candidates,unit){
+  const vals=[correct,...candidates.filter(v=>v!==correct)];
+  let bump=2;
+  while(new Set(vals).size<4){vals.push(correct+bump);bump++;}
+  const unique=[...new Set(vals)].slice(0,4);
+  return shuffle(unique.map(v=>`${v} ${unit}`));
+}
+function q(category,question,options,correctAnswer,explanation,diagram=""){return{category,categoryClass:cls[category],question,options,correctAnswer,explanation,diagram}}
+
+const bank=[];
+const direct=[
+[3,3,3,"unidades"],[5,3,3,"unidades"],[4,3,5,"unidades"],[7,2,4,"pulgadas"],[4,4,2,"unidades"],
+[6,3,2,"pies"],[5,4,5,"pulgadas"],[8,2,3,"metros"],[9,2,3,"pies"],[6,5,2,"centímetros"],
+[4,5,3,"metros"],[10,2,3,"pulgadas"],[3,4,6,"centímetros"],[7,3,2,"pies"],[8,4,2,"metros"]
+];
+direct.forEach(([l,w,h,u],i)=>{
+  const v=l*w*h, unit=u==="unidades"?"unidades cúbicas":`${u} cúbicas`;
+  bank.push(q("volume",`Un ${T("prisma rectangular","rectangular prism")} mide <b>${l}</b> de ${T("largo","length")}, <b>${w}</b> de ${T("ancho","width")} y <b>${h}</b> de ${T("altura","height")}. ¿Cuál es su ${T("volumen","volume")}?`,
+    numericOptions(v,[l*w,l*h,w*h,v+l],unit),`${v} ${unit}`,
+    `Multiplica las tres dimensiones: ${l} × ${w} × ${h} = <b>${v}</b>. El volumen es <b>${v} ${unit}</b>.`,prismSvg(l,w,h)));
+});
+const missing=[
+[8,4,3,"h","pies"],[9,3,2,"w","pies"],[6,4,3,"h","centímetros"],[5,5,4,"w","pulgadas"],
+[7,2,4,"l","metros"],[10,3,2,"h","pies"],[6,5,2,"w","metros"],[4,3,5,"l","pulgadas"],
+[8,3,3,"w","centímetros"],[9,2,4,"h","pies"],[12,2,2,"w","pulgadas"],[5,4,3,"h","metros"],
+[6,2,6,"l","centímetros"],[7,3,3,"w","pies"],[10,2,4,"h","metros"]
+];
+missing.forEach(([l,w,h,m,u])=>{
+  const v=l*w*h, ans=m==="l"?l:m==="w"?w:h, known=m==="l"?`ancho ${w} y altura ${h}`:m==="w"?`largo ${l} y altura ${h}`:`largo ${l} y ancho ${w}`;
+  bank.push(q("dimensions",`Un prisma tiene un ${T("volumen","volume")} de <b>${v} ${u} cúbicos</b>. Conoces ${known}. ¿Cuál es la ${T(m==="l"?"longitud":m==="w"?"anchura":"altura",m==="l"?"length":m==="w"?"width":"height")} que falta?`,
+    numericOptions(ans,[ans+1,Math.max(1,ans-1),ans*2],u),`${ans} ${u}`,
+    `Usa V = largo × ancho × altura. Divide ${v} entre las dos dimensiones conocidas. La dimensión faltante es <b>${ans} ${u}</b>.`,prismSvg(l,w,h,m)));
+});
+const cubes=[
+[4,3,2],[5,2,3],[3,3,4],[6,2,2],[4,4,3],[5,3,2],[7,2,2],[3,5,3],[6,3,2],[4,2,5],[8,2,2],[5,4,2],[3,4,5],[6,2,4],[4,3,4]
+];
+cubes.forEach(([l,w,h])=>{
+  const layer=l*w,v=layer*h;
+  bank.push(q("cubes",`Un modelo tiene <b>${l}</b> ${T("cubos unitarios","unit cubes")} de largo, <b>${w}</b> de ancho y <b>${h}</b> ${T("capas","layers")} de alto. ¿Cuántos cubos hay en total?`,
+    numericOptions(v,[layer,l+h,v-layer],"cubos"),`${v} cubos`,
+    `Cada capa tiene ${l} × ${w} = ${layer} cubos. Hay ${h} capas: ${layer} × ${h} = <b>${v} cubos</b>.`,prismSvg(l,w,h)));
+});
+const compare=[
+[6,3,2,[[9,2,2],[6,2,4],[12,3,1],[4,3,4]],2],
+[5,4,3,[[10,2,3],[5,5,3],[6,4,3],[4,4,4]],0],
+[8,3,2,[[6,4,2],[8,2,2],[12,2,2],[4,3,3]],0],
+[7,2,3,[[6,7,1],[7,3,3],[14,2,2],[5,4,2]],0],
+[4,5,3,[[10,3,2],[5,5,2],[6,6,2],[12,2,2]],0],
+[9,2,2,[[6,3,2],[9,3,2],[12,3,1],[4,4,2]],0],
+[6,4,2,[[8,3,2],[6,3,3],[12,2,3],[4,4,2]],0],
+[5,3,4,[[10,3,2],[5,4,4],[6,3,4],[12,2,2]],0],
+[8,2,3,[[6,4,2],[8,3,3],[12,2,3],[4,5,2]],0],
+[3,4,5,[[5,4,3],[6,5,2],[10,3,2],[4,4,4]],0],
+[10,2,3,[[5,4,3],[10,3,3],[12,2,2],[6,4,2]],0],
+[6,5,2,[[10,3,2],[6,4,2],[12,3,2],[5,5,3]],0],
+[4,4,4,[[8,4,2],[4,5,3],[6,4,3],[10,2,3]],0],
+[7,4,2,[[8,7,1],[7,3,2],[14,3,2],[6,5,2]],0],
+[9,3,2,[[6,3,3],[9,2,2],[12,3,2],[5,4,3]],0]
+];
+compare.forEach(([l,w,h,alts,ci])=>{
+  const v=l*w*h, opts=shuffle(alts.map(a=>`${a[0]} × ${a[1]} × ${a[2]}`)), correctDims=alts[ci], correct=`${correctDims[0]} × ${correctDims[1]} × ${correctDims[2]}`;
+  bank.push(q("compare",`Un prisma mide <b>${l} × ${w} × ${h}</b> y tiene un ${T("volumen","volume")} de <b>${v} unidades cúbicas</b>. ¿Qué otras ${T("dimensiones","dimensions")} producen el mismo volumen?`,
+    opts,correct,`El prisma original tiene ${l} × ${w} × ${h} = ${v}. La opción <b>${correct}</b> también da ${v}.`));
+});
+
+let quizQuestions=[],current=0,score=0,answered=false,timer=null,timeLeft=QUESTION_TIME,totalStart=0,totalTimer=null,stats={},missed=[],reviewMode=false;
+function pickQuiz(){
+  const picked=[];
+  Object.entries(quotas).forEach(([cat,n])=>picked.push(...shuffle(bank.filter(x=>x.category===cat)).slice(0,n)));
+  return shuffle(picked);
+}
+function startQuiz(missedOnly=false){
+  reviewMode=missedOnly;
+  quizQuestions=missedOnly?shuffle(missed.map(x=>x.questionObj)):pickQuiz();
+  if(!quizQuestions.length) quizQuestions=pickQuiz();
+  current=0;score=0;answered=false;missed=[];stats={};quizQuestions.forEach(x=>{stats[x.category]={right:0,total:0}});
+  document.getElementById("start").style.display="none";document.getElementById("results").classList.remove("active");document.getElementById("quiz").classList.add("active");
+  document.getElementById("totalQ").textContent=quizQuestions.length;
+  totalStart=Date.now();clearInterval(totalTimer);totalTimer=setInterval(updateElapsed,1000);showQuestion();
+}
+function showQuestion(){
+  answered=false;const item=quizQuestions[current];timeLeft=QUESTION_TIME;
+  document.getElementById("qnum").textContent=current+1;document.getElementById("score").textContent=score;
+  document.getElementById("progress").style.width=`${(current/quizQuestions.length)*100}%`;
+  const badge=document.getElementById("badge");badge.textContent=labels[item.category];badge.className=`badge ${item.categoryClass}`;
+  document.getElementById("speed").textContent="";document.getElementById("question").innerHTML=item.question;document.getElementById("diagram").innerHTML=item.diagram||"";
+  const options=document.getElementById("options");options.innerHTML="";
+  shuffle(item.options).forEach(value=>{const b=document.createElement("button");b.className="option";b.type="button";b.innerHTML=value;b.onclick=()=>answer(value,b);options.appendChild(b)});
+  const fb=document.getElementById("feedback");fb.className="feedback";fb.innerHTML="";document.getElementById("nextBtn").style.display="none";startTimer();
+}
+function startTimer(){clearInterval(timer);updateTimerUI();timer=setInterval(()=>{timeLeft--;updateTimerUI();if(timeLeft<=0){clearInterval(timer);autoSubmit()}},1000)}
+function updateTimerUI(){document.getElementById("timer").textContent=timeLeft;const c=document.getElementById("timerCircle");c.className="timer-circle"+(timeLeft<=30?" danger":timeLeft<=60?" warning":"")}
+function answer(value,button){
+  if(answered)return;answered=true;clearInterval(timer);const item=quizQuestions[current],correct=value===item.correctAnswer;stats[item.category].total++;
+  document.querySelectorAll(".option").forEach(b=>{b.disabled=true;if(b.textContent.trim()===item.correctAnswer)b.classList.add("correct")});
+  if(correct){score++;stats[item.category].right++;}else{button.classList.add("wrong");missed.push({questionObj:item,chosen:value})}
+  const fb=document.getElementById("feedback");fb.className=`feedback show ${correct?"good":"bad"}`;fb.innerHTML=`<b>${correct?"¡Correcto!":"Todavía no."}</b><br>${item.explanation}`;
+  if(QUESTION_TIME-timeLeft<60)document.getElementById("speed").innerHTML='<span class="speed-good">⚡ Speed bonus!</span>';
+  document.getElementById("score").textContent=score;document.getElementById("nextBtn").style.display="block";
+}
+function autoSubmit(){if(answered)return;answered=true;const item=quizQuestions[current];stats[item.category].total++;missed.push({questionObj:item,chosen:"Tiempo agotado"});document.querySelectorAll(".option").forEach(b=>{b.disabled=true;if(b.textContent.trim()===item.correctAnswer)b.classList.add("correct")});const fb=document.getElementById("feedback");fb.className="feedback show bad";fb.innerHTML=`<b>Tiempo agotado.</b><br>${item.explanation}`;document.getElementById("nextBtn").style.display="block"}
+function nextQuestion(){if(current<quizQuestions.length-1){current++;showQuestion()}else{finishQuiz()}}
+function finishQuiz(){
+  clearInterval(timer);clearInterval(totalTimer);document.getElementById("quiz").classList.remove("active");document.getElementById("results").classList.add("active");
+  const pct=Math.round(score/quizQuestions.length*100),elapsed=Math.round((Date.now()-totalStart)/1000),avg=Math.round(elapsed/quizQuestions.length);
+  document.getElementById("bigScore").textContent=`${pct}%`;document.getElementById("grade").textContent=pct>=90?"A — Excellent work!":pct>=80?"B — Great job!":pct>=70?"C — Keep practicing!":pct>=60?"D — More review needed":"F — Let's review the missed skills.";
+  document.getElementById("timeResult").textContent=`Total time: ${fmt(elapsed)} • Average: ${avg}s per question`;
+  const weak=Object.entries(stats).filter(([k,v])=>v.total&&v.right/v.total<.75).map(([k])=>labels[k]);
+  document.getElementById("reviewBox").innerHTML=`<b>Topics to Review:</b><br>${weak.length?weak.join(", "):"None — strong performance across all topics!"}`;
+  document.getElementById("breakdown").innerHTML=Object.entries(stats).filter(([k,v])=>v.total).map(([k,v])=>`<div class="breakdown-row"><span>${labels[k]}</span><b>${v.right}/${v.total}</b></div>`).join("");
+  let missedHtml="<h3>Missed Question Review</h3>";
+  missed.forEach((m,i)=>{missedHtml += '<div class="missed-item"><b>'+(i+1)+'.</b> '+strip(m.questionObj.question)+'<br><span style="color:#b71c1c">Your answer: '+m.chosen+'</span><br><span style="color:#1b5e20">Correct: '+m.questionObj.correctAnswer+'</span><br>'+strip(m.questionObj.explanation)+'</div>';});
+  document.getElementById("missedList").innerHTML=missed.length?missedHtml:"<p>No missed questions. Excellent!</p>";
+  document.getElementById("missedBtn").style.display=missed.length?"inline-block":"none";
+}
+function startMissedReview(){startQuiz(true)}
+function reviewVocab(){clearInterval(timer);clearInterval(totalTimer);document.getElementById("results").classList.remove("active");document.getElementById("quiz").classList.remove("active");document.getElementById("start").style.display="block";window.scrollTo({top:0,behavior:"smooth"})}
+function updateElapsed(){document.getElementById("elapsed").textContent=fmt(Math.floor((Date.now()-totalStart)/1000))}
+function fmt(s){return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`}
+function strip(s){const d=document.createElement("div");d.innerHTML=s;return d.textContent}
+document.addEventListener("click",e=>{const t=e.target.closest(".trans");if(!t)return;document.querySelectorAll(".trans.show-translation").forEach(x=>{if(x!==t)x.classList.remove("show-translation")});t.classList.toggle("show-translation");e.stopPropagation()});
+document.addEventListener("click",()=>document.querySelectorAll(".trans.show-translation").forEach(x=>x.classList.remove("show-translation")));
+</script>
+</body>
+</html>
