@@ -227,46 +227,72 @@ async function buildCatalog(){
     .filter(x=>!ignoreNames.has(x.path.toLowerCase()))
     .filter(x=>x.path.includes('/'));
 
-  const items=htmlFiles.map(x=>{
+  const grouped={};
+  for(const x of htmlFiles){
     const parts=x.path.split('/');
     const folder=parts[0];
     const file=parts[parts.length-1];
-    return {path:x.path,folder,file,title:humanize(file),type:inferType(file),date:null};
-  });
+    const item={path:x.path,folder,file,title:humanize(file),type:inferType(file),date:null,dateLoaded:false};
+    (grouped[folder] ||= []).push(item);
+  }
 
-  // Limit concurrent API requests so GitHub isn't hammered.
-  const queue=[...items];
-  const workers=[];
-  const concurrency=5;
-  async function worker(){
-    while(queue.length){
-      const item=queue.shift();
-      try{ item.date=await getLatestCommitDate(item.path); }
-      catch(e){
-        // If we hit rate limits, stop dating remaining items.
-        if(e.status===403 || e.status===429){
-          queue.length=0;
-          break;
+  for(const arr of Object.values(grouped)){
+    arr.sort((a,b)=>a.title.localeCompare(b.title));
+  }
+  return grouped;
+}
+
+const subjectDateLoads={};
+
+async function loadDatesForSubject(folder){
+  if(!folder || subjectDateLoads[folder]) return subjectDateLoads[folder];
+  const items=catalog[folder] || [];
+  if(!items.length) return;
+
+  subjectDateLoads[folder]=(async()=>{
+    showStatus(`Loading ${subjectInfo(folder).label}…`);
+    const queue=items.filter(i=>!i.dateLoaded);
+    const workers=[];
+    const concurrency=4;
+
+    async function worker(){
+      while(queue.length){
+        const item=queue.shift();
+        try{
+          item.date=await getLatestCommitDate(item.path);
+        }catch(e){
+          item.date=null;
+          if(e.status===403 || e.status===429){
+            item.rateLimited=true;
+          }
+        }finally{
+          item.dateLoaded=true;
         }
       }
     }
-  }
-  for(let i=0;i<concurrency;i++) workers.push(worker());
-  await Promise.all(workers);
 
-  const grouped={};
-  for(const item of items){
-    (grouped[item.folder] ||= []).push(item);
-  }
-  for(const arr of Object.values(grouped)){
-    arr.sort((a,b)=>{
+    for(let i=0;i<concurrency;i++) workers.push(worker());
+    await Promise.all(workers);
+
+    items.sort((a,b)=>{
       if(a.date && b.date) return new Date(b.date)-new Date(a.date);
       if(a.date) return -1;
       if(b.date) return 1;
       return a.title.localeCompare(b.title);
     });
-  }
-  return grouped;
+
+    saveCache(catalog);
+    if(currentSubject===folder) renderQuizzes();
+
+    const rateLimited=items.some(i=>i.rateLimited);
+    showStatus(rateLimited
+      ? 'Some dates could not be loaded because GitHub temporarily rate-limited requests.'
+      : 'Study Hub is up to date.',
+      rateLimited ? 'error' : 'ok'
+    );
+  })();
+
+  return subjectDateLoads[folder];
 }
 
 function saveCache(data){
@@ -307,6 +333,7 @@ function renderSubjects(){
       els.search.value='';
       renderSubjects();
       renderQuizzes();
+      loadDatesForSubject(currentSubject);
     });
   });
 }
@@ -327,7 +354,7 @@ function renderQuizzes(){
     return `<a class="quiz" href="${i.path}">
       <div class="row">
         <span class="badge">${i.type}</span>
-        <span class="date">${formatDate(i.date)}</span>
+        <span class="date">${i.date ? formatDate(i.date) : ''}</span>
       </div>
       <b>${emoji} ${i.title}</b>
       <small>Open this ${i.type.toLowerCase()} →</small>
@@ -351,6 +378,7 @@ async function init(){
     renderSubjects();
     renderQuizzes();
     showStatus('Loading the latest Study Hub updates…');
+    loadDatesForSubject(currentSubject);
   }
 
   try{
@@ -360,6 +388,7 @@ async function init(){
     renderSubjects();
     renderQuizzes();
     showStatus('Study Hub is up to date.','ok');
+    loadDatesForSubject(currentSubject);
   }catch(e){
     if(cached){
       showStatus('GitHub is temporarily unavailable or rate-limited. Showing the most recently saved list.','error');
