@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Study Hub</title>
+<style>
+  :root{
+    --ink:#2b2440;--muted:#746b88;--card:#fff;--border:#eadff1;
+    --shadow:0 16px 40px rgba(102,67,125,.13);
+    --blue:#3b82f6;--purple:#7c3aed;--teal:#14b8a6;--yellow:#f8c84a;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;font-family:Inter,ui-rounded,"SF Pro Rounded",system-ui,-apple-system,"Segoe UI",sans-serif;
+    color:var(--ink);min-height:100vh;
+    background:
+      radial-gradient(circle at 0 0,#dbeafe 0,transparent 27%),
+      radial-gradient(circle at 100% 8%,#ccfbf1 0,transparent 29%),
+      radial-gradient(circle at 75% 100%,#fef3c7 0,transparent 23%),
+      linear-gradient(180deg,#f8fbff,#f4fffd);
+  }
+  button,input{font:inherit}
+  .wrap{max-width:1080px;margin:auto;padding:24px 16px 48px}
+  .hero{
+    background:linear-gradient(135deg,var(--blue),var(--purple) 52%,var(--teal));
+    color:white;border-radius:30px;padding:30px;box-shadow:var(--shadow);
+  }
+  .hero .tag{
+    display:inline-block;background:#ffffff26;border:1px solid #ffffff38;border-radius:999px;
+    padding:7px 11px;font-weight:800;font-size:.85rem
+  }
+  h1{font-size:clamp(2.2rem,7vw,4rem);line-height:1;margin:14px 0 10px}
+  .hero p{margin:0;max-width:720px;line-height:1.55;color:#fff8fd;font-size:1.05rem}
+  .section{margin-top:22px}.section h2{font-size:1.35rem;margin:0 0 12px}
+  .subjects{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .subject{
+    border:2px solid transparent;border-radius:20px;padding:18px;cursor:pointer;text-align:left;
+    box-shadow:0 8px 22px rgba(71,52,90,.07);transition:.18s transform,.18s border-color,.18s box-shadow
+  }
+  .subject:hover{transform:translateY(-2px);box-shadow:0 12px 25px rgba(71,52,90,.10)}
+  .subject.active{border-color:#8b5cf6;box-shadow:0 0 0 4px #f3e8ff}
+  .subject .emoji{font-size:1.8rem}.subject strong{display:block;margin-top:7px;font-size:1rem}
+  .subject span.meta{display:block;margin-top:4px;color:var(--muted);font-size:.84rem}
+  .tone-0{background:#f0e7ff}.tone-1{background:#ddfbf3}.tone-2{background:#fff0d9}
+  .tone-3{background:#dff4ff}.tone-4{background:#e3f2ff}.tone-5{background:#fff6c8}
+  .panel{
+    margin-top:16px;background:rgba(255,255,255,.96);border:1px solid var(--border);
+    border-radius:24px;padding:20px;box-shadow:var(--shadow)
+  }
+  .panel-head{display:flex;justify-content:space-between;gap:12px;align-items:end;flex-wrap:wrap}
+  .panel-head p{margin:4px 0 0;color:var(--muted)}
+  .search{
+    border:1px solid var(--border);border-radius:14px;padding:11px 13px;min-width:250px;
+    outline:none;background:white
+  }
+  .search:focus{border-color:#c084fc;box-shadow:0 0 0 3px #f3e8ff}
+  .status{
+    margin-top:14px;padding:12px 14px;border-radius:14px;background:#faf7ff;color:var(--muted);
+    border:1px solid #eee5f5;font-size:.9rem
+  }
+  .status.error{background:#fff7f7;color:#9f3a4b;border-color:#f5d5dc}
+  .status.ok{background:#f2fffb;color:#247461;border-color:#d3f5ea}
+  .quiz-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
+  .quiz{
+    display:block;text-decoration:none;color:inherit;border:1px solid var(--border);border-radius:18px;
+    padding:16px;background:#fff;transition:.18s transform,.18s box-shadow,.18s border-color
+  }
+  .quiz:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(90,60,110,.09);border-color:#d4b4ef}
+  .quiz b{display:block;font-size:1rem}.quiz small{display:block;color:var(--muted);margin-top:5px;line-height:1.35}
+  .row{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .badge{display:inline-block;font-size:.72rem;font-weight:850;border-radius:999px;padding:4px 8px;background:#f4ebff;color:#7e22ce}
+  .date{font-size:.76rem;color:#8a8198}
+  .empty{padding:24px;color:var(--muted);text-align:center;display:none}
+  .skeleton{
+    height:104px;border-radius:18px;background:linear-gradient(90deg,#f7f2fa 25%,#fff 40%,#f7f2fa 60%);
+    background-size:300% 100%;animation:shine 1.3s infinite
+  }
+  @keyframes shine{0%{background-position:100% 0}100%{background-position:0 0}}
+  footer{text-align:center;color:var(--muted);margin-top:22px;font-size:.86rem}
+  @media(max-width:780px){
+    .subjects{grid-template-columns:repeat(2,1fr)}.quiz-grid{grid-template-columns:1fr}
+    .hero{padding:23px}.search{width:100%;min-width:0}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <span class="tag">✨ Study Hub</span>
+    <h1>What are we studying today?</h1>
+    <p>Pick a subject, choose a topic, and jump straight into a quiz or study game.</p>
+  </header>
+
+  <section class="section">
+    <h2>Choose a subject</h2>
+    <div id="subjects" class="subjects"></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2 id="subjectTitle" style="margin:0">Loading…</h2>
+        <p id="subjectDesc">Finding the latest study pages from GitHub.</p>
+      </div>
+      <input id="search" class="search" type="search" placeholder="Search topics…" aria-label="Search topics" />
+    </div>
+
+    <div id="status" class="status">Loading quizzes…</div>
+    <div id="quizGrid" class="quiz-grid">
+      <div class="skeleton"></div><div class="skeleton"></div>
+      <div class="skeleton"></div><div class="skeleton"></div>
+    </div>
+    <div id="empty" class="empty">No topics match that search.</div>
+  </section>
+
+  <footer>Pick a subject and start practicing ✨</footer>
+</div>
+
+<script>
+const OWNER='DwonnG';
+const REPO='ai-study-quizzes';
+const BRANCH='main';
+const CACHE_KEY='studyHubCacheV3';
+const CACHE_MS=6*60*60*1000;
+
+const folderMeta={
+  'math':{label:'Math',emoji:'📐',desc:'Math quizzes & study tools'},
+  'science':{label:'Science',emoji:'🔬',desc:'Science quizzes & reviews'},
+  'social-studies':{label:'Social Studies',emoji:'🏛️',desc:'History, government & finance'},
+  'language-arts':{label:'Language Arts',emoji:'📚',desc:'Grammar & language practice'},
+  'games':{label:'Games',emoji:'🎮',desc:'Learning games & brain boosts'},
+  'coding':{label:'Coding',emoji:'💻',desc:'Coding & interview practice'}
+};
+
+const ignoreNames=new Set([
+  'index.html'
+]);
+
+let catalog={};
+let currentSubject=null;
+
+const els={
+  subjects:document.getElementById('subjects'),
+  grid:document.getElementById('quizGrid'),
+  title:document.getElementById('subjectTitle'),
+  desc:document.getElementById('subjectDesc'),
+  search:document.getElementById('search'),
+  empty:document.getElementById('empty'),
+  status:document.getElementById('status')
+};
+
+function humanize(name){
+  return name
+    .replace(/\.html$/i,'')
+    .replace(/[_-]+/g,' ')
+    .replace(/\b\w/g,m=>m.toUpperCase())
+    .replace(/\b5th Grade\b/gi,'5th Grade')
+    .replace(/\bDli\b/g,'DLI')
+    .replace(/\bQ3\b/g,'Q3');
+}
+
+function inferType(file){
+  const n=file.toLowerCase();
+  if(n.includes('study_guide')) return 'Study Guide';
+  if(n.includes('helper')) return 'Study Tool';
+  if(n.includes('review')) return 'Review';
+  if(n.includes('game')) return 'Game';
+  if(n.includes('answers')) return 'Answers';
+  if(n.includes('quiz')) return 'Quiz';
+  return 'Study Page';
+}
+
+function inferEmoji(file,folder){
+  const n=file.toLowerCase();
+  if(n.includes('finance')) return '💰';
+  if(n.includes('volume')) return '📦';
+  if(n.includes('fraction')) return '➗';
+  if(n.includes('angle') || n.includes('trig')) return '📐';
+  if(n.includes('earth')) return '🌎';
+  if(n.includes('ecosystem')) return '🌿';
+  if(n.includes('force') || n.includes('motion')) return '⚡';
+  if(n.includes('acid') || n.includes('solution') || n.includes('chem')) return '🧪';
+  if(n.includes('grammar')) return '📝';
+  if(n.includes('civil_war')) return '⚔️';
+  if(n.includes('westward')) return '🗺️';
+  if(n.includes('reformer')) return '✊';
+  if(n.includes('basketball')) return '🏀';
+  return (folderMeta[folder]||{}).emoji || '⭐';
+}
+
+function subjectInfo(folder){
+  return folderMeta[folder] || {
+    label:humanize(folder),
+    emoji:'⭐',
+    desc:`${humanize(folder)} study pages`
+  };
+}
+
+function formatDate(iso){
+  if(!iso) return 'Date unavailable';
+  const d=new Date(iso);
+  return d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});
+}
+
+async function gh(url){
+  const r=await fetch(url,{headers:{'Accept':'application/vnd.github+json'}});
+  if(!r.ok){
+    const err=new Error(`GitHub API ${r.status}`);
+    err.status=r.status;
+    throw err;
+  }
+  return r.json();
+}
+
+async function getLatestCommitDate(path){
+  const url=`https://api.github.com/repos/${OWNER}/${REPO}/commits?path=${encodeURIComponent(path)}&sha=${BRANCH}&per_page=1`;
+  const data=await gh(url);
+  return data?.[0]?.commit?.committer?.date || data?.[0]?.commit?.author?.date || null;
+}
+
+async function buildCatalog(){
+  const treeUrl=`https://api.github.com/repos/${OWNER}/${REPO}/git/trees/${BRANCH}?recursive=1`;
+  const treeData=await gh(treeUrl);
+  const htmlFiles=(treeData.tree||[])
+    .filter(x=>x.type==='blob' && /\.html$/i.test(x.path))
+    .filter(x=>!ignoreNames.has(x.path.toLowerCase()))
+    .filter(x=>x.path.includes('/'));
+
+  const items=htmlFiles.map(x=>{
+    const parts=x.path.split('/');
+    const folder=parts[0];
+    const file=parts[parts.length-1];
+    return {path:x.path,folder,file,title:humanize(file),type:inferType(file),date:null};
+  });
+
+  // Limit concurrent API requests so GitHub isn't hammered.
+  const queue=[...items];
+  const workers=[];
+  const concurrency=5;
+  async function worker(){
+    while(queue.length){
+      const item=queue.shift();
+      try{ item.date=await getLatestCommitDate(item.path); }
+      catch(e){
+        // If we hit rate limits, stop dating remaining items.
+        if(e.status===403 || e.status===429){
+          queue.length=0;
+          break;
+        }
+      }
+    }
+  }
+  for(let i=0;i<concurrency;i++) workers.push(worker());
+  await Promise.all(workers);
+
+  const grouped={};
+  for(const item of items){
+    (grouped[item.folder] ||= []).push(item);
+  }
+  for(const arr of Object.values(grouped)){
+    arr.sort((a,b)=>{
+      if(a.date && b.date) return new Date(b.date)-new Date(a.date);
+      if(a.date) return -1;
+      if(b.date) return 1;
+      return a.title.localeCompare(b.title);
+    });
+  }
+  return grouped;
+}
+
+function saveCache(data){
+  try{localStorage.setItem(CACHE_KEY,JSON.stringify({ts:Date.now(),data}));}catch{}
+}
+function loadCache(){
+  try{
+    const x=JSON.parse(localStorage.getItem(CACHE_KEY)||'null');
+    if(x && Date.now()-x.ts<CACHE_MS) return x.data;
+  }catch{}
+  return null;
+}
+
+function renderSubjects(){
+  const folders=Object.keys(catalog).sort((a,b)=>{
+    const preferred=['math','science','language-arts','social-studies','games','coding'];
+    const ia=preferred.indexOf(a), ib=preferred.indexOf(b);
+    if(ia!==-1 || ib!==-1){
+      if(ia===-1)return 1;if(ib===-1)return -1;return ia-ib;
+    }
+    return subjectInfo(a).label.localeCompare(subjectInfo(b).label);
+  });
+
+  if(!currentSubject || !catalog[currentSubject]) currentSubject=folders[0] || null;
+
+  els.subjects.innerHTML=folders.map((folder,i)=>{
+    const m=subjectInfo(folder);
+    return `<button class="subject tone-${i%6} ${folder===currentSubject?'active':''}" data-subject="${folder}">
+      <span class="emoji">${m.emoji}</span>
+      <strong>${m.label}</strong>
+      <span class="meta">${catalog[folder].length} ${catalog[folder].length===1?'page':'pages'}</span>
+    </button>`;
+  }).join('');
+
+  els.subjects.querySelectorAll('.subject').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      currentSubject=btn.dataset.subject;
+      els.search.value='';
+      renderSubjects();
+      renderQuizzes();
+    });
+  });
+}
+
+function renderQuizzes(){
+  if(!currentSubject){return;}
+  const m=subjectInfo(currentSubject);
+  els.title.textContent=m.label;
+  els.desc.textContent=`${m.desc}.`;
+
+  const q=els.search.value.trim().toLowerCase();
+  const items=(catalog[currentSubject]||[]).filter(i =>
+    `${i.title} ${i.type} ${i.path}`.toLowerCase().includes(q)
+  );
+
+  els.grid.innerHTML=items.map(i=>{
+    const emoji=inferEmoji(i.file,i.folder);
+    return `<a class="quiz" href="${i.path}">
+      <div class="row">
+        <span class="badge">${i.type}</span>
+        <span class="date">${formatDate(i.date)}</span>
+      </div>
+      <b>${emoji} ${i.title}</b>
+      <small>Open this ${i.type.toLowerCase()} →</small>
+    </a>`;
+  }).join('');
+
+  els.empty.style.display=items.length?'none':'block';
+}
+
+function showStatus(text,type=''){
+  els.status.textContent=text;
+  els.status.className='status'+(type?' '+type:'');
+}
+
+async function init(){
+  els.search.addEventListener('input',renderQuizzes);
+
+  const cached=loadCache();
+  if(cached){
+    catalog=cached;
+    renderSubjects();
+    renderQuizzes();
+    showStatus('Loading the latest Study Hub updates…');
+  }
+
+  try{
+    const fresh=await buildCatalog();
+    catalog=fresh;
+    saveCache(fresh);
+    renderSubjects();
+    renderQuizzes();
+    showStatus('Study Hub is up to date.','ok');
+  }catch(e){
+    if(cached){
+      showStatus('GitHub is temporarily unavailable or rate-limited. Showing the most recently saved list.','error');
+    }else{
+      showStatus('Could not load quizzes from GitHub right now. Refresh in a little while.','error');
+      els.grid.innerHTML='';
+    }
+  }
+}
+
+init();
+</script>
+</body>
+</html>
